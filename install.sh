@@ -9,6 +9,7 @@ default_packages=(
   vim visual-studio-code
 )
 
+stow_root="$(cd "$(dirname "$0")" && pwd -P)"
 packages=()
 while true; do
   case "$1" in
@@ -25,5 +26,5 @@ fi
 
 for package in "${packages[@]}"; do
   echo "Stowing $package to $HOME"
-  stow --restow --target "$HOME" "$package"
+  stow --restow --dir "$stow_root" --target "$HOME" "$package"
 done
