@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 default_packages=(
-  alacritty tmux
+  alacritty starship tmux
   vim
 )
 
