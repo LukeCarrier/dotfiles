@@ -4,7 +4,7 @@ default_packages=(
   fish
   alacritty starship tmux
   git
-  vim
+  vim visual-studio-code
 )
 
 packages=()
