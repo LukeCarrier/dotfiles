@@ -20,6 +20,22 @@ done
 
 set -eu -o pipefail
 
+if ! command -v stow >/dev/null; then
+  echo "stow not installed; will attempt installation" >&2
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    brew install stow
+  elif [[ "$OSTYPE" == "linux-gnu" ]]; then
+    if command -v apt >/dev/null; then
+      sudo apt install stow
+    else
+      echo "Failed to install stow; couldn't detect package manager" >&2
+    fi
+  else
+    echo "Failed to install stow; unknown OS $OSTYPE" >&2
+    exit 1
+  fi
+fi
+
 if (( ${#packages[@]} == 0 )); then
   packages=( ${default_packages[@]} )
 fi
