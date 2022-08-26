@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 default_packages=(
+  fish
   alacritty starship tmux
   vim
 )
