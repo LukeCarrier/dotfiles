@@ -3,6 +3,7 @@
 default_packages=(
   fish
   alacritty starship tmux
+  git
   vim
 )
 

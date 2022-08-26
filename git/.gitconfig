@@ -1,0 +1,22 @@
+[alias]
+  a = add
+  br = branch
+  cm = commit
+  cma = commit --amend
+  cme = commit --empty
+  cman = commit --amend --no-edit
+  cmf = commit --fixup
+  co = checkout
+  f = fetch
+  l = log
+  lg = log --graph --oneline
+  pf = push --force-with-lease
+  rb = rebase --interactive --autostash --autosquash
+  rs = restore --staged
+  s = status
+  st = stash
+[interactive]
+  singleKey = true
+[user]
+  email = luke@carrier.im
+  name = Luke Carrier
