@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 default_packages=(
-  bash fish
+  bash fish zsh
   alacritty starship tmux
   git
   vim visual-studio-code
