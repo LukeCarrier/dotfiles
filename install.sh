@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 default_packages=(
+  alacritty
 )
 
 packages=()
