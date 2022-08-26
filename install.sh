@@ -5,6 +5,7 @@ default_packages=(
   alacritty starship tmux
   asdf-vm
   git
+  openssh
   vim visual-studio-code
 )
 
