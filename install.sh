@@ -3,6 +3,7 @@
 default_packages=(
   bash fish zsh
   alacritty starship tmux
+  asdf-vm
   git
   vim visual-studio-code
 )
