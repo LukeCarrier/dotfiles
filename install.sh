@@ -2,6 +2,7 @@
 
 default_packages=(
   alacritty tmux
+  vim
 )
 
 packages=()
