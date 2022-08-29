@@ -69,5 +69,7 @@ autocmd FocusLost * :wa
 nnoremap ; :
 nnoremap : ;
 
-let mapleader = ","
-map <silent> <Leader>t :NERDTreeToggle<CR>
+nnoremap <space> <nop>
+let mapleader = " "
+
+map <silent> <Leader>t ;NERDTreeToggle<CR>
