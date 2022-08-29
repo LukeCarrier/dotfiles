@@ -37,6 +37,8 @@ let &t_EI = "\e[2 q"
 let g:airline_theme='wombat'
 let g:airline#extensions#tabline#enabled = 1
 
+let g:ctrlp_show_hidden = 1
+
 let NERDTreeShowHidden=1
 
 set number
