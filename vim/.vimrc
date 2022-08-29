@@ -64,5 +64,8 @@ cmap w!! w !sudo tee >/dev/null %
 
 autocmd FocusLost * :wa
 
+nnoremap ; :
+nnoremap : ;
+
 let mapleader = ","
 map <silent> <Leader>t :NERDTreeToggle<CR>
