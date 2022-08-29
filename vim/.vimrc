@@ -1,4 +1,8 @@
 set nocompatible
+
+set nobackup
+set noswapfile
+
 filetype off
 
 set rtp+=~/.vim/bundle/Vundle.vim
@@ -36,7 +40,29 @@ let g:airline#extensions#tabline#enabled = 1
 let NERDTreeShowHidden=1
 
 set number
+set relativenumber
+
+set wrap
+set linebreak
+
 set ruler
+
+set showmatch
+set autoindent
+set copyindent
+set shiftround
+
+nnoremap / /\v
+vnoremap / /\v
+set gdefault
+set ignorecase
+set smartcase
+set hlsearch
+set incsearch
+
+cmap w!! w !sudo tee >/dev/null %
+
+autocmd FocusLost * :wa
 
 let mapleader = ","
 map <silent> <Leader>t :NERDTreeToggle<CR>

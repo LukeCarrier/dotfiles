@@ -2,7 +2,7 @@
 
 default_packages=(
   bash fish zsh
-  alacritty starship tmux
+  alacritty starship tmux zoxide
   asdf-vm
   git
   openssh
