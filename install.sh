@@ -7,6 +7,7 @@ default_packages=(
   git
   openssh
   vim visual-studio-code
+  google-cloud-sdk
 )
 
 stow_root="$(cd "$(dirname "$0")" && pwd -P)"
