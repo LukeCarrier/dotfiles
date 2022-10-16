@@ -21,6 +21,8 @@ call vundle#begin()
   Plugin 'preservim/nerdtree'
   Plugin 'ryanoasis/vim-devicons'
   Plugin 'Xuyuanp/nerdtree-git-plugin'
+
+  Plugin 'chrisbra/SudoEdit.vim'
 call vundle#end()
 
 filetype plugin indent on
