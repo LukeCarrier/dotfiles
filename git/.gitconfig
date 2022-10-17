@@ -1,3 +1,16 @@
+[core]
+  excludesfile = ~/.gitignore
+
+[interactive]
+  singleKey = true
+
+[pull]
+  ff = only
+
+[user]
+  email = luke@carrier.im
+  name = Luke Carrier
+
 [alias]
   a = add
   br = branch
@@ -7,12 +20,12 @@
   cman = commit --amend --no-edit
   cmf = commit --fixup
   co = checkout
-	d = diff
-	ds = diff --staged
+  d = diff
+  ds = diff --staged
   f = fetch
   l = log
   lg = log --graph --oneline
-	mt = mergetool
+  mt = mergetool
   pf = push --force-with-lease
   pl = pull
   rb = rebase --interactive --autostash --autosquash
@@ -21,14 +34,16 @@
   rs = restore --staged
   s = status
   st = stash
-	sw = switch
-	wc = whatchanged
-[core]
-  excludesfile = ~/.gitignore
-[interactive]
-  singleKey = true
-[pull]
-  ff = only
-[user]
-  email = luke@carrier.im
-  name = Luke Carrier
+  sw = switch
+  wc = whatchanged
+
+[filter "lfs"]
+  clean = git-lfs clean -- %f
+  smudge = git-lfs smudge -- %f
+  process = git-lfs filter-process
+  required = true
+
+[diff]
+  tool = meld
+[merge]
+  tool = meld
