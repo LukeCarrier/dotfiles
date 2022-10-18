@@ -5,4 +5,6 @@ for f in "$HOME"/.shrc.d/*.bash; do
   . "$f"
 done
 
-set -o vi
+if [[ $- == *i* ]]; then
+  set -o vi
+fi

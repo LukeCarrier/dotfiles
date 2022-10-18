@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 default_packages=(
+  readline
   bash fish zsh
   alacritty starship tmux zoxide
   asdf-vm
