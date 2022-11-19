@@ -19,6 +19,7 @@ mouse:
 key_bindings:
   # alacritty/alacritty#1073
   - { key: Key3, mods: Alt, chars: "\x23" }
+  - { key: N, mods: Control|Shift, action: SpawnNewInstance }
 
 # Colors (Wombat)
 colors:
