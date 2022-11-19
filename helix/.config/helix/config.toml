@@ -1,0 +1,21 @@
+theme = "onedark"
+
+[editor]
+color-modes = true
+cursorline = true
+line-number = "relative"
+
+[editor.cursor-shape]
+insert = "bar"
+normal = "block"
+select = "underline"
+
+[editor.file-picker]
+hidden = false
+
+[editor.indent-guides]
+render = true
+
+[keys.normal]
+":" = "no_op"
+";" = "command_mode"

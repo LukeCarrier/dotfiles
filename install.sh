@@ -7,7 +7,7 @@ default_packages=(
   asdf-vm
   git
   openssh
-  vim visual-studio-code
+  helix vim visual-studio-code
   google-cloud-sdk
 )
 
