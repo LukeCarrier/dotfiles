@@ -13,6 +13,8 @@ font:
     family: JetBrainsMono Nerd Font
   size: 14
 
+draw_bold_text_with_bright_colours: true
+
 mouse:
   hide_when_typing: true
 
