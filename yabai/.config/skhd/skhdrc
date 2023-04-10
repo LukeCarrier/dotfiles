@@ -1,0 +1,19 @@
+# Moving focus within a space
+alt - k : yabai -m window --focus north
+alt - l : yabai -m window --focus east
+alt - j : yabai -m window --focus south
+alt - h : yabai -m window --focus west
+
+# Moving focus between spaces
+ctrl + alt - k : yabai -m display --focus north
+ctrl + alt - l : yabai -m display --focus east
+ctrl + alt - j : yabai -m display --focus south
+ctrl + alt - h : yabai -m display --focus west
+
+# Rotate the layout
+shift + alt - r : yabai -m space --rotate 270
+# Axis flips
+shift + alt - x : yabai -m space --mirror x-axis
+shift + alt - y : yabai -m space --mirror y-axis
+# Toggle window float
+shift + alt - f : yabai -m window --toggle float --grid 4:4:1:1:2:2

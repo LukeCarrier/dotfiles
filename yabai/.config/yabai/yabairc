@@ -1,0 +1,26 @@
+# Use binary spaced partitioning layout
+yabai -m config layout bsp
+
+# Padding
+yabai -m config top_padding 16
+yabai -m config bottom_padding 16
+yabai -m config left_padding 16
+yabai -m config right_padding 16
+yabai -m config window_gap 16
+
+# New windows are inserted after focused window
+yabai -m config window_placement second_child
+
+# Window focus follows mouse pointer
+yabai -m config mouse_follows_focus autofocus
+
+# Alt + click for window management operations
+yabai -m config mouse_modifier alt
+# Left click and drag moves window
+yabai -m config mouse_action1 move
+# Right click and drag resizes
+yabai -m config mouse_action2 resize
+# Dropping a window on another swaps them
+yabai -m mouse_drop_action swap
+
+# Disable for specific apps?
