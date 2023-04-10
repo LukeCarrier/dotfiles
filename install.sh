@@ -3,7 +3,7 @@
 default_packages=(
   readline
   bash fish zsh
-  alacritty starship tmux zoxide
+  alacritty direnv starship tmux zoxide
   asdf-vm
   git
   openssh
