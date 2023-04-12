@@ -23,4 +23,7 @@ yabai -m config mouse_action2 resize
 # Dropping a window on another swaps them
 yabai -m mouse_drop_action swap
 
-# Disable for specific apps?
+# Disable for specific apps
+yabai -m rule --add app="^FaceTime$" manage=off
+yabai -m rule --add app="^JetBrains Toolbox$" manage=off
+yabai -m rule --add app="^System Settings$" manage=off
