@@ -24,6 +24,11 @@ yabai -m config mouse_action2 resize
 yabai -m mouse_drop_action swap
 
 # Disable for specific apps
-yabai -m rule --add app="^FaceTime$" manage=off
-yabai -m rule --add app="^JetBrains Toolbox$" manage=off
-yabai -m rule --add app="^System Settings$" manage=off
+yabai -m rule --add app="^AWS VPN Client$"                                     manage=off
+yabai -m rule --add app="^FaceTime$"                                           manage=off
+yabai -m rule --add app="^Firefox$"            title="^(Picture-in-Picture)$"  manage=off
+yabai -m rule --add app="Google Chrome"        title="^Google Meet$"           manage=off
+yabai -m rule --add app="Google Chrome"        title="^Picture in Picture$"    manage=off
+yabai -m rule --add app="^JetBrains Toolbox$"                                  manage=off
+yabai -m rule --add app="^pullBar$"                                            manage=off
+yabai -m rule --add app="^System Settings$"                                    manage=off
