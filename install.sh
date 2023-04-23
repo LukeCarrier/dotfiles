@@ -16,9 +16,9 @@ force=0
 packages=()
 while true; do
   case "$1" in
-    -f|--force  ) force=1        ; shift 1 ;;
-    -p|--package) packages+="$2" ; shift 2 ;;
-    *           ) break                    ;;
+    -f|--force  ) force=1            ; shift 1 ;;
+    -p|--package) packages+=( "$2" ) ; shift 2 ;;
+    *           ) break                        ;;
   esac
 done
 
