@@ -1,3 +1,6 @@
+[branch]
+  sort=-committerdate
+
 [core]
   excludesfile = ~/.gitignore
 
