@@ -1,7 +1,7 @@
 # Moving focus within a space
-alt - k : yabai -m window --focus north
+alt - k : if yabai -m query --spaces --space | jq -e '.type == "stack"'; yabai -m window --focus stack.next || yabai -m window --focus stack.first; else; yabai -m window --focus north; end
 alt - l : yabai -m window --focus east
-alt - j : yabai -m window --focus south
+alt - j : if yabai -m query --spaces --space | jq -e '.type == "stack"'; yabai -m window --focus stack.prev || yabai -m window --focus stack.last; else; yabai -m window --focus south; end
 alt - h : yabai -m window --focus west
 
 # Moving focus between spaces
@@ -27,6 +27,9 @@ shift + alt - r : yabai -m space --rotate 270
 # Axis flips
 shift + alt - x : yabai -m space --mirror x-axis
 shift + alt - y : yabai -m space --mirror y-axis
+
+# Toggle space mode
+shift + alt - s : yabai -m space --layout "$(yabai -m query --spaces --space | jq -r 'if .type == "bsp" then "stack" else "bsp" end')"
 
 # Toggle window float
 shift + alt - f : yabai -m window --toggle float --grid 4:4:1:1:2:2
