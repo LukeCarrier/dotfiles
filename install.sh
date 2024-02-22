@@ -4,6 +4,7 @@ default_packages=(
   readline
   bash fish zsh
   alacritty direnv mcfly starship tmux zoxide
+  gnupg
   asdf-vm
   git
   openssh
