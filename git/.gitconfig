@@ -13,6 +13,7 @@
 [user]
   email = luke@carrier.family
   name = Luke Carrier
+  signingkey = 1CBBEBFE0CDC1C06DB324A7CCE439AFEC33D9E7F
 
 [alias]
   a = add
@@ -53,3 +54,5 @@
 
 [init]
   defaultBranch = main
+[commit]
+	gpgsign = true
