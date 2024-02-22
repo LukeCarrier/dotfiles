@@ -24,10 +24,10 @@ yabai -m rule --add app="^Firefox$"        title="^Picture-in-Picture$"  manage=
 yabai -m rule --add app="^Google Chrome$"  title="^Picture in Picture$"  manage=off
 
 # Disable for specific apps
-yabai -m rule --add app="^AWS VPN Client$"     manage=off
-yabai -m rule --add app="^FaceTime$"           manage=off
-yabai -m rule --add app="^Google Meet$"        manage=off
-yabai -m rule --add app="^JetBrains Toolbox$"  manage=off
-yabai -m rule --add app="^Kit$"                manage=off
-yabai -m rule --add app="^pullBar$"            manage=off
-yabai -m rule --add app="^System Settings$"    manage=off
+yabai -m rule --add app="^AWS VPN Client$"                    manage=off
+yabai -m rule --add app="^FaceTime$"                          manage=off
+yabai -m rule --add app="^Google Meet$"                       manage=off
+yabai -m rule --add app="^JetBrains Toolbox$"                 manage=off
+yabai -m rule --add app="^Kit$"                title="^Kit$"  manage=off
+yabai -m rule --add app="^pullBar$"                           manage=off
+yabai -m rule --add app="^System Settings$"                   manage=off
