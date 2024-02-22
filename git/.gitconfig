@@ -18,6 +18,7 @@
 [alias]
   a = add
   br = branch
+  brl = "!git branch --format \"%(ahead-behind:HEAD)\t%(refname:short)\t%(committerdate:relative)\t%(describe)\" | git column"
   cm = commit
   cma = commit --amend
   cme = commit --allow-empty
