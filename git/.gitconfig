@@ -55,8 +55,12 @@
 
 [init]
   defaultBranch = main
+
 [commit]
-	gpgsign = true
+  gpgsign = true
 
 [url "git@github.com:"]
   insteadOf = "https://github.com/"
+
+[gitbutler]
+  utmostDiscretion = 1
