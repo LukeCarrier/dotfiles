@@ -62,5 +62,8 @@
 [url "git@github.com:"]
   insteadOf = "https://github.com/"
 
+[includeIf "gitdir:~/Code/babylonhealth/"]
+  path = ~/Code/babylonhealth/.gitconfig
+
 [gitbutler]
   utmostDiscretion = 1
