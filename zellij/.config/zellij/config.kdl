@@ -1,0 +1,31 @@
+keybinds {
+  scroll {
+    bind "Ctrl space" "PageUp" "Left" "h" { PageScrollUp; }
+  }
+  search {
+    bind "Ctrl space" "PageUp" "Left" "h" { PageScrollUp; }
+  }
+  tmux {
+    bind "Ctrl space" { Write 2; SwitchToMode "Normal"; }
+  }
+  shared_except "locked" {
+    bind "Alt n" {
+      LaunchPlugin "filepicker" {
+        floating true
+        close_on_selection true
+      }
+    }
+  }
+  shared_except "tmux" "locked" {
+    bind "Ctrl space" { SwitchToMode "Tmux"; }
+  }
+}
+
+pane_frames false
+session_serialization false
+
+theme "catppuccin-mocha"
+
+default_layout "compact"
+
+copy_on_select false

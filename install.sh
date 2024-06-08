@@ -3,7 +3,7 @@
 default_packages=(
   readline
   bash fish zsh
-  alacritty direnv mcfly starship tmux zoxide
+  alacritty direnv mcfly starship tmux zellij zoxide
   gnupg
   asdf-vm
   git
