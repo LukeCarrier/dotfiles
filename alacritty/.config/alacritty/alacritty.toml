@@ -36,11 +36,6 @@ chars = "#"
 key = "Key3"
 mods = "Alt"
 
-[[keyboard.bindings]]
-action = "SpawnNewInstance"
-key = "N"
-mods = "Control|Shift"
-
 [mouse]
 hide_when_typing = true
 
@@ -50,6 +45,7 @@ history = 0
 [window]
 dynamic_padding = true
 dynamic_title = true
+option_as_alt = "both"
 
 [window.dimensions]
 columns = 80
