@@ -15,7 +15,3 @@ hidden = false
 
 [editor.indent-guides]
 render = true
-
-[keys.normal]
-":" = "no_op"
-";" = "command_mode"
