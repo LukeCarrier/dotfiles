@@ -11,11 +11,6 @@ size = 14
 [font.normal]
 family = "JetBrainsMono Nerd Font"
 
-[[keyboard.bindings]]
-chars = "#"
-key = "Key3"
-mods = "Alt"
-
 [mouse]
 hide_when_typing = true
 
