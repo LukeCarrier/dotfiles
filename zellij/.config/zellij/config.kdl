@@ -24,7 +24,7 @@ keybinds {
 pane_frames false
 session_serialization false
 
-theme "catppuccin-mocha"
+theme "tokyo-night-storm"
 
 default_layout "compact"
 
