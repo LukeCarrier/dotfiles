@@ -21,7 +21,7 @@ keybinds {
   }
 }
 
-pane_frames false
+pane_frames true
 session_serialization false
 
 theme "tokyo-night-storm"
