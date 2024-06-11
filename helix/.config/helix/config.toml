@@ -15,3 +15,6 @@ hidden = false
 
 [editor.indent-guides]
 render = true
+
+[editor.soft-wrap]
+enable = true
