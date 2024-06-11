@@ -1,6 +1,10 @@
 inherits = "tokyonight_storm"
 
+"ui.cursor" = { bg = "bg-cursor" }
+"ui.cursor.primary" = { bg = "primary-bg-cursor" }
 "ui.selection.primary" = { bg = "primary-bg-selection" }
 
 [palette]
+bg-cursor = "#434b6f"
+primary-bg-cursor = "#646fa1"
 primary-bg-selection = "#40538b"
