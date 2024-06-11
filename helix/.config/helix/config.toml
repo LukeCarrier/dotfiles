@@ -1,4 +1,4 @@
-theme = "tokyonight_storm"
+theme = "local_tokyonight_storm"
 
 [editor]
 color-modes = true

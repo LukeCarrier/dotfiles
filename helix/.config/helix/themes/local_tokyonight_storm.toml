@@ -1,0 +1,6 @@
+inherits = "tokyonight_storm"
+
+"ui.selection.primary" = { bg = "primary-bg-selection" }
+
+[palette]
+primary-bg-selection = "#40538b"
