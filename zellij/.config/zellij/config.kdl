@@ -21,11 +21,11 @@ keybinds {
   }
 }
 
-pane_frames true
 session_serialization false
 
 theme "tokyo-night-storm"
-
+pane_frames true
 default_layout "compact"
 
+copy_command "pbcopy"
 copy_on_select false
