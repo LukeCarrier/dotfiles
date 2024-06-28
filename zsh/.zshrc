@@ -26,4 +26,7 @@ if [[ -o interactive ]]; then
   preexec() {
      echo -ne '\e[5 q'
   }
+
+  autoload bashcompinit && bashcompinit
+  autoload -Uz compinit && compinit
 fi
