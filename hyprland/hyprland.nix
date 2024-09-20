@@ -141,11 +141,27 @@
         "waybar"
       ];
       "$mainMod" = "SUPER";
-      bind = [
-        "$mainMod, Q, exec, $terminal"
-        "$mainMod, SPACE, exec, $menu"
-        "$mainMod, w, exec, $menu"
+      workspace = [
+        "1,monitor:eDP-1"
+        "2,monitor:DP-8"
+        "3,monitor:DP-7"
       ];
+      bind =
+          [
+            "$mainMod, Q, exec, $terminal"
+            "$mainMod, SPACE, exec, $menu"
+            "$mainMod, w, exec, $menu"
+          ]
+          ++ (
+            builtins.concatLists (builtins.genList (i:
+              let ws = i + 1;
+              in [
+                "$mainMod, code:1${toString i}, workspace, ${toString ws}"
+                "$mainMod SHIFT, code:1${toString i}, movetoworkspace, ${toString ws}"
+              ]
+            )
+            9)
+          );
       # Repeat, and bound even when locked
       # Get the key names via xev
       bindel = [
