@@ -4,6 +4,8 @@ inputs@{ config, pkgs, ... }: {
 
   home.stateVersion = "24.05";
 
+  programs.direnv.enable = true;
+
   home.packages = with pkgs; [
     (pkgs.callPackage monaspace-fonts/monaspace-fonts.nix {
       monaspace-fonts = inputs.monaspace-fonts;
