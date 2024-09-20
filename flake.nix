@@ -32,6 +32,9 @@
 
         modules = [
           ./home.nix
+          ./bash/bash.nix
+          ./fish/fish.nix
+          ./zsh/zsh.nix
         ];
       };
     };
