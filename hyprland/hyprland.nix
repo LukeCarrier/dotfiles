@@ -122,7 +122,7 @@
     settings = {
       "$menu" = "wofi --allow-images --show drun";
       "$fileManager" = "nautilus";
-      "$terminal" = "xterm";
+      "$terminal" = "alacritty";
       env = [
         "XDG_CURRENT_DESKTOP,Hyprland"
         "XDG_SESSION_TYPE,wayland"
