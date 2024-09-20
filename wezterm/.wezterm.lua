@@ -1,8 +1,11 @@
 local wezterm = require 'wezterm'
 local config = wezterm.config_builder()
 
+config.enable_wayland = true
+config.front_end = "WebGpu"
+
 config.window_frame = {
-  font = wezterm.font { family = 'SF Pro Display' },
+  font = wezterm.font { family = 'Poppins' },
 }
 config.window_background_opacity = 0.85
 
