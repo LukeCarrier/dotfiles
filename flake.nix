@@ -28,6 +28,11 @@
             inherit system;
           };
           gitConfig.user.signingKey = "1CBBEBFE0CDC1C06DB324A7CCE439AFEC33D9E7F";
+          monaspace-fonts = {
+            url = "https://github.com/githubnext/monaspace/releases/download/v1.101/monaspace-v1.101.zip";
+            sha256 = "0v2423dc75pf5kzllyi3ia7l3nv2d1z158cj4wn0xa5h3df3i6x3";
+            version = "1.101";
+          };
         };
 
         modules = [
