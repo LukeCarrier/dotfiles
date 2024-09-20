@@ -10,5 +10,9 @@ inputs@{ config, pkgs, ... }: {
     })
   ];
 
+  home.sessionVariables = {
+    SSH_AUTH_SOCK = "$XDG_RUNTIME_DIR/keyring/ssh";
+  };
+
   programs.home-manager.enable = true;
 }
