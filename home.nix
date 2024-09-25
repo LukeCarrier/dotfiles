@@ -1,10 +1,14 @@
-inputs@{ config, pkgs, ... }: {
+inputs@{ config, lib, pkgs, ... }: {
   home.username = "lukecarrier";
   home.homeDirectory = "/home/lukecarrier";
 
   home.stateVersion = "24.05";
 
   programs.direnv.enable = true;
+
+  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
+    "jetbrains-toolbox"
+  ];
 
   home.packages = with pkgs; [
     bitwarden-cli btop gh freshfetch jq
@@ -14,6 +18,7 @@ inputs@{ config, pkgs, ... }: {
     (pkgs.callPackage stklos/stklos.nix {
       stklos = inputs.stklos;
     })
+    jetbrains-toolbox
   ];
 
   home.sessionVariables = {
