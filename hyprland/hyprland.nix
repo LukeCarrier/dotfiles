@@ -150,6 +150,8 @@
         "GDK_BACKEND,wayland,x11,*"
         "QT_QPA_PLATFORM,wayland;xcb"
         "NIXOS_OZONE_WL,1"
+        "GDK_SCALE,2"
+        "XCURSOR_SIZE,32"
       ];
       exec-once = [
         "waybar"
@@ -171,6 +173,9 @@
           "col.inactive" = "rgba(ccccccaa)";
           text_color = "rgb(000000)";
         };
+      };
+      xwayland = {
+        force_zero_scaling = true;
       };
       decoration = {
         rounding = 8;
