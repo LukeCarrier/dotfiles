@@ -1,3 +1,6 @@
+vmType: vz
+mountType: virtiofs
+
 cpus: 4
 memory: 8GiB
 arch: aarch64
