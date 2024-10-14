@@ -39,6 +39,7 @@
           ./starship/starship.nix
           ./git/git.nix
           ./alacritty/alacritty.nix
+          ./wezterm/wezterm.nix
         ];
       };
     };
