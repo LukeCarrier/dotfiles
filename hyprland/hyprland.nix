@@ -120,6 +120,8 @@
   wayland.windowManager.hyprland = {
     enable = true;
     settings = {
+      "$mainMod" = "SUPER";
+      "$moveMod" = "SHIFT";
       "$menu" = "wofi --allow-images --gtk-dark --show drun";
       "$fileManager" = "nautilus";
       "$terminal" = "alacritty";
@@ -143,7 +145,6 @@
       exec-once = [
         "waybar"
       ];
-      "$mainMod" = "SUPER";
       workspace = [
         "1,monitor:eDP-1"
         "2,monitor:DP-8"
@@ -160,7 +161,7 @@
               let ws = i + 1;
               in [
                 "$mainMod, code:1${toString i}, workspace, ${toString ws}"
-                "$mainMod SHIFT, code:1${toString i}, movetoworkspace, ${toString ws}"
+                "$mainMod $moveMod, code:1${toString i}, movetoworkspace, ${toString ws}"
               ]
             )
             9)
