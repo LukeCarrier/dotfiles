@@ -124,6 +124,8 @@
       misc = {
         disable_hyperland_logo = true;
         disable_splash_rendering = true;
+        vfr = true;
+        vrr = 1;
       };
       "$mainMod" = "SUPER";
       "$groupMod" = "ALT";
