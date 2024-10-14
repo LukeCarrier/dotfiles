@@ -123,6 +123,9 @@
       "$menu" = "wofi --allow-images --show drun";
       "$fileManager" = "nautilus";
       "$terminal" = "alacritty";
+      debug = {
+        suppress_errors = true;
+      };
       input = {
         touchpad = {
           natural_scroll = 1;
