@@ -1,6 +1,6 @@
 # My dotfiles
 
-Managed with GNU Stow this time around.
+Managed with [Home Manager](https://github.com/nix-community/home-manager).
 
 ---
 
@@ -9,19 +9,18 @@ Managed with GNU Stow this time around.
 macOS:
 
 ```console
-brew install stow
+```
+
+NixOS:
+
+```console
+nix run home-manager/release-24.05 -- init --switch ~/Code/LukeCarrier/dotfiles
 ```
 
 ## Usage
 
-Install the default set of packages:
+Apply:
 
 ```console
-./install.sh
-```
-
-Install specific packages:
-
-```console
-./install.sh -p package1 -p package2
+nix run home-manager/release-24.05 -- switch --flake ~/Code/LukeCarrier/dotfiles
 ```
