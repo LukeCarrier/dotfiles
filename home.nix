@@ -20,6 +20,7 @@ inputs@{ config, lib, pkgs, ... }: {
       stklos = inputs.stklos;
     })
     jetbrains-toolbox
+    gnome-network-displays
   ];
 
   home.sessionVariables = {
