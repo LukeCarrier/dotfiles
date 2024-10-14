@@ -11,6 +11,9 @@ inputs@{ config, pkgs, ... }: {
     (pkgs.callPackage monaspace-fonts/monaspace-fonts.nix {
       monaspace-fonts = inputs.monaspace-fonts;
     })
+    (pkgs.callPackage stklos/stklos.nix {
+      stklos = inputs.stklos;
+    })
   ];
 
   home.sessionVariables = {
