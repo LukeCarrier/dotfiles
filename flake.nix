@@ -36,6 +36,7 @@
           ./bash/bash.nix
           ./fish/fish.nix
           ./zsh/zsh.nix
+          ./starship/starship.nix
           ./git/git.nix
           ./alacritty/alacritty.nix
         ];
