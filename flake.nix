@@ -43,6 +43,7 @@
           ./zsh/zsh.nix
           ./openssh/openssh.nix
           ./starship/starship.nix
+          ./espanso/espanso.nix
           ./git/git.nix
           ./helix/helix.nix
           ./alacritty/alacritty.nix
