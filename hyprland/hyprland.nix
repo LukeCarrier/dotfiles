@@ -22,7 +22,16 @@
     noto-fonts
     noto-fonts-emoji
     proggyfonts
+
+    libsecret
+    gnome.seahorse
+    gcr
   ];
+
+  services.gnome-keyring = {
+    enable = true;
+    components = ["pkcs11" "secrets" "ssh"];
+  };
 
   fonts.fontconfig.enable = true;
 
@@ -391,6 +400,4 @@
       ];
     };
   };
-
-  services.gnome-keyring.enable = true;
 }
