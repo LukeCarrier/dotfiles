@@ -159,6 +159,18 @@
         border_size = 3;
         gaps_in = 5;
         gaps_out = 7;
+        "col.inactive_border" = "rgba(ccccccff)";
+        "col.active_border" = "rgba(ffffffff)";
+      };
+      group = {
+        "col.border_inactive" = "rgba(ccccccff)";
+        "col.border_active" = "rgba(ffffffff)";
+        groupbar = {
+          enabled = true;
+          "col.active" = "rgba(ffffffaa)";
+          "col.inactive" = "rgba(ccccccaa)";
+          text_color = "rgb(000000)";
+        };
       };
       decoration = {
         rounding = 8;
