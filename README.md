@@ -10,6 +10,15 @@ Managed with [Home Manager](https://github.com/nix-community/home-manager).
 
 After enabling FileVault on the first login, reboot the machine.
 
+Install Homebrew as appropriate for the architecture:
+
+- For Apple Silicon:
+  - Rosetta 2: `sudo softwareupdate --install-rosetta --agree-to-license`
+  - aarch64 (native): `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
+  - x86_64 (via Rosetta): `arch -x86_64 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
+- For Intel:
+  - x86_64 (native): `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
+
 Run and follow the interactive prompts:
 
 ```console
