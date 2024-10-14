@@ -18,4 +18,8 @@ inputs@{ config, pkgs, ... }: {
   };
 
   programs.home-manager.enable = true;
+
+  dconf.settings = {
+    "org/gnome/desktop/interface".color-scheme = "prefer-dark";
+  };
 }
