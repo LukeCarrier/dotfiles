@@ -1,8 +1,8 @@
 inputs@{ config, lib, pkgs, ... }: {
+  home.stateVersion = "24.05";
+
   home.username = "lukecarrier";
   home.homeDirectory = "/home/lukecarrier";
-
-  home.stateVersion = "24.05";
 
   programs.direnv.enable = true;
 
@@ -13,12 +13,6 @@ inputs@{ config, lib, pkgs, ... }: {
   home.packages = with pkgs; [
     bitwarden-cli btop gh freshfetch jq
     ungoogled-chromium
-    (pkgs.callPackage monaspace-fonts/monaspace-fonts.nix {
-      monaspace-fonts = inputs.monaspace-fonts;
-    })
-    (pkgs.callPackage stklos/stklos.nix {
-      stklos = inputs.stklos;
-    })
     jetbrains-toolbox
     gnome-network-displays
   ];
