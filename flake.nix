@@ -62,7 +62,7 @@
         packages;
   }) // {
     darwinConfigurations = {
-      fatman = darwin.lib.darwinSystem {
+      luke-fatman = darwin.lib.darwinSystem {
         system = "aarch64-darwin";
         modules = [
           ./platform/darwin/common.nix
@@ -72,7 +72,7 @@
     };
 
     nixosConfigurations = {
-      f1xable = nixpkgs.lib.nixosSystem rec {
+      luke-f1xable = nixpkgs.lib.nixosSystem rec {
         system = "x86_64-linux";
         specialArgs = {
           pkgs-unstable = import nixpkgs-unstable {
@@ -94,7 +94,7 @@
     };
 
     homeConfigurations = {
-      "lukecarrier@f1xable" = home-manager.lib.homeManagerConfiguration rec {
+      "lukecarrier@luke-f1xable" = home-manager.lib.homeManagerConfiguration rec {
         pkgs = import nixpkgs {
           system = "x86_64-linux";
         };
@@ -121,7 +121,7 @@
         ];
       };
 
-      "lukecarrier@fatman" = home-manager.lib.homeManagerConfiguration {
+      "lukecarrier@luke-fatman" = home-manager.lib.homeManagerConfiguration {
         pkgs = import nixpkgs {
           system = "aarch64-darwin";
         };
