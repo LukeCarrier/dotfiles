@@ -1,4 +1,4 @@
-{ config, pkgs, pkgs-unstable, ... }:
+{ pkgs, pkgs-unstable, ... }:
 {
   home.packages = with pkgs; [
     pkgs-unstable.kanshi
@@ -208,7 +208,7 @@
       "$mainMod" = "SUPER";
       "$groupMod" = "ALT";
       "$moveMod" = "SHIFT";
-      "$menu" = "wofi --allow-images --gtk-dark --show drun";
+      "$menu" = "wofi --allow-images --gtk-dark --insensitive --show drun";
       "$fileManager" = "nautilus";
       "$terminal" = "alacritty";
       debug = {
