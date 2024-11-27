@@ -17,6 +17,7 @@
     };
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
+    wezterm.url = "github:wez/wezterm/main?dir=nix";
   };
 
   outputs = {
@@ -26,6 +27,7 @@
     lanzaboote,
     nixpkgs,
     nixpkgs-unstable,
+    wezterm,
     self,
     ...
   }:
@@ -117,6 +119,7 @@
           ./home/git/git.nix
           ./home/helix/helix.nix
           ./home/alacritty/alacritty.nix
+           { programs.wezterm.package = wezterm.packages.${pkgs.system}.default; }
           ./home/wezterm/wezterm.nix
         ];
       };
