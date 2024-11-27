@@ -38,6 +38,7 @@
           ./zsh/zsh.nix
           ./starship/starship.nix
           ./git/git.nix
+          ./helix/helix.nix
           ./alacritty/alacritty.nix
           ./wezterm/wezterm.nix
         ];
