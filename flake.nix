@@ -203,6 +203,7 @@
             ./home/vim/vim.nix
             ./home/gnupg/gnupg.nix
             ./home/git/git.nix
+            ./home/zoxide/zoxide.nix
             ./home/espanso/espanso.nix
             ./home/alacritty/alacritty.nix
             ./home/wezterm/wezterm.nix
