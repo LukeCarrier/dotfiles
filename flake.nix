@@ -19,7 +19,7 @@
     };
   };
 
-  outputs = inputs@{
+  outputs = {
     darwin,
     flake-utils,
     home-manager,
@@ -70,7 +70,7 @@
     };
 
     homeConfigurations = {
-      "lukecarrier@fatman" = home-manager.lib.homeManagerConfiguration rec {
+      "lukecarrier@fatman" = home-manager.lib.homeManagerConfiguration {
         pkgs = import nixpkgs {
           system = "aarch64-darwin";
         };
