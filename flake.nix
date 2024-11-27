@@ -37,6 +37,7 @@
           ./fish/fish.nix
           ./zsh/zsh.nix
           ./git/git.nix
+          ./alacritty/alacritty.nix
         ];
       };
     };
