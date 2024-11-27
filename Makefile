@@ -1,4 +1,4 @@
-.PHONY: gc home host
+.PHONY: gc home host host-android
 
 gc:
 	nix-collect-garbage --delete-old
@@ -8,3 +8,6 @@ home:
 
 host:
 	sudo nixos-rebuild switch --upgrade --flake ".#$(shell hostname)"
+
+host-android:
+	nix-on-droid switch --flake .

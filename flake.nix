@@ -18,6 +18,11 @@
     nixos-hardware = {
       url = "github:NixOS/nixos-hardware/master";
     };
+    nix-on-droid = {
+      url = "github:nix-community/nix-on-droid/release-24.05";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     wezterm.url = "github:wez/wezterm/main?dir=nix";
   };
@@ -28,6 +33,7 @@
     home-manager,
     lanzaboote,
     nixos-hardware,
+    nix-on-droid,
     nixpkgs-unstable,
     wezterm,
     self,
@@ -39,7 +45,7 @@
         pkgs = import nixpkgs-unstable { inherit system; };
       in
         pkgs.mkShell {
-          packages = with pkgs; [ gnumake nil ];
+          packages = with pkgs; [ gnumake nil nix-index ];
         };
 
     packages =
@@ -77,6 +83,17 @@
       };
     };
 
+    nixOnDroidConfigurations = {
+      # Not sure we can provide different configurations to different devices?
+      default = nix-on-droid.lib.nixOnDroidConfiguration {
+        pkgs = import nixpkgs-unstable { system = "aarch64-linux"; };
+        modules = [
+          ./platform/android/common.nix
+          ./host/w1deboi/w1deboi.nix
+        ];
+      };
+    };
+
     nixosConfigurations = {
       luke-f1xable = nixpkgs-unstable.lib.nixosSystem {
         system = "x86_64-linux";
@@ -96,6 +113,25 @@
     };
 
     homeConfigurations = {
+      "nix-on-droid@" = home-manager.lib.homeManagerConfiguration {
+        pkgs = import nixpkgs-unstable {
+          system = "aarch64-linux";
+        };
+        extraSpecialArgs = {
+          gitConfig.user.signingKey = "1CBBEBFE0CDC1C06DB324A7CCE439AFEC33D9E7F";
+        };
+        modules = [
+          ./user/android/nix-on-droid.nix
+          # ./home/bash/bash.nix
+          ./home/fish/fish.nix
+          ./home/zsh/zsh.nix
+          ./home/openssh/openssh.nix
+          ./home/starship/starship.nix
+          ./home/git/git.nix
+          ./home/helix/helix.nix
+        ];
+      };
+
       "lukecarrier@luke-f1xable" = home-manager.lib.homeManagerConfiguration rec {
         pkgs = import nixpkgs-unstable rec {
           system = "x86_64-linux";
