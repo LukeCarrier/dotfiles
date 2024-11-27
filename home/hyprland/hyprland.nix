@@ -538,10 +538,10 @@
       splash = false;
       splash_offset = 2.0;
       preload = [
-        "~/Pictures/Wallpaper/Mountains under cloudy sky (Simon Berger).jpg"
+        "~/Pictures/Wallpaper/Monochromatic mountains.jpg"
       ];
       wallpaper = [
-        ",~/Pictures/Wallpaper/Mountains under cloudy sky (Simon Berger).jpg"
+        ",~/Pictures/Wallpaper/Monochromatic mountains.jpg"
       ];
     };
   };

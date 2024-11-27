@@ -1,7 +1,9 @@
+@define-color default-fg #2d3e4e;
+
 * {
   border: none;
   border-radius: 2px;
-  color: #ffffff;
+  color: @default-fg;
   font-family: "Poppins", "Font Awesome 6 Free";
   font-size: 12px;
 }
@@ -30,10 +32,10 @@ button:hover {
   transition: box-shadow 0.5s linear;
   padding: 0 5px;
   background-color: transparent;
-  color: #ffffff;
+  color: @default-fg;
 }
 #workspaces button.active {
-  box-shadow: inset 0 1px #ffffff;
+  box-shadow: inset 0 1px @default-fg;
 }
 #workspaces button.focused {
   background-color: #64727D;
@@ -58,7 +60,7 @@ button:hover {
   color: #ff7f50;
 }
 #battery.critical:not(.charging) {
-  color: #ffffff;
+  color: @default-fg;
   animation-name: blink;
   animation-duration: 0.5s;
   animation-timing-function: steps(12);
