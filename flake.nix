@@ -198,6 +198,7 @@
             ./home/starship/starship.nix
             ./home/helix/helix.nix
             ./home/git/git.nix
+            ./home/espanso/espanso.nix
             ./home/alacritty/alacritty.nix
             ./home/wezterm/wezterm.nix
             ./home/aws/aws.nix
