@@ -17,4 +17,8 @@
 
     optimise.automatic = true;
   };
+
+  homebrew = {
+    enable = true;
+  };
 }
