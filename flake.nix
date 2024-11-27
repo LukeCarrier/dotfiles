@@ -102,6 +102,7 @@
           pkgs-unstable = import nixpkgs-unstable {
             system = pkgs.system;
           };
+          pkgs-custom = self.packages.${pkgs.system};
           gitConfig.user.signingKey = "1CBBEBFE0CDC1C06DB324A7CCE439AFEC33D9E7F";
         };
         modules = [
