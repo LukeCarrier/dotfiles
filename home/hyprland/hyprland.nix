@@ -155,6 +155,21 @@
         ];
       }
       {
+        profile.name = "peacehavenSidecar";
+        profile.outputs = [
+          {
+            criteria = "Samsung Electric Company U32J59x HTPK602008";
+            status = "enable";
+            position = "0,0";
+          }
+          {
+            criteria = "eDP-1";
+            status = "enable";
+            position = "768,1728";
+          }
+        ];
+      }
+      {
         profile.name = "peacehavenMichaelDocked";
         profile.outputs = [
           {
