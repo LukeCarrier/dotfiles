@@ -131,6 +131,7 @@
       };
       input = {
         touchpad = {
+          clickfinger_behaviour = true;
           natural_scroll = 1;
         };
       };
@@ -146,6 +147,21 @@
       exec-once = [
         "waybar"
       ];
+      general = {
+        resize_on_border = true;
+        border_size = 3;
+        gaps_in = 5;
+        gaps_out = 7;
+      };
+      decoration = {
+        rounding = 8;
+        active_opacity = 0.8;
+        inactive_opacity = 0.5;
+        drop_shadow = true;
+        blur = {
+          enabled = true;
+        };
+      };
       workspace = [
         "1,monitor:eDP-1"
         "2,monitor:DP-8"
