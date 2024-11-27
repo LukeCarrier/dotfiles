@@ -1,4 +1,6 @@
 @define-color default-fg #2d3e4e;
+@define-color invert-fg #ffffff;
+@define-color alert #eb4d4b;
 
 * {
   border: none;
@@ -35,20 +37,19 @@ button:hover {
 }
 
 #workspaces button {
-  box-shadow: inherit;
-  transition: box-shadow 0.5s linear;
   padding: 0 5px;
   background-color: transparent;
   color: @default-fg;
 }
 #workspaces button.active {
-  box-shadow: inset 0 1px @default-fg;
+  box-shadow: none;
+  background: @default-fg;
 }
-#workspaces button.focused {
-  background-color: #64727D;
+#workspaces button.active label {
+  color: @invert-fg;
 }
 #workspaces button.urgent {
-  background-color: #eb4d4b;
+  background: @alert;
 }
 #window, #workspaces {
   padding-left: 2px;
@@ -86,7 +87,7 @@ button:hover {
 }
 #tray > .needs-attention {
   -gtk-icon-effect: highlight;
-  background-color: #eb4d4b;
+  background: @alert;
 }
 
 #privacy-item {
