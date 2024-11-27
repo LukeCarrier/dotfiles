@@ -123,6 +123,11 @@
       "$menu" = "wofi --allow-images --show drun";
       "$fileManager" = "nautilus";
       "$terminal" = "alacritty";
+      input = {
+        touchpad = {
+          natural_scroll = 1;
+        };
+      };
       env = [
         "XDG_CURRENT_DESKTOP,Hyprland"
         "XDG_SESSION_TYPE,wayland"
@@ -142,11 +147,6 @@
         "$mainMod, SPACE, exec, $menu"
         "$mainMod, w, exec, $menu"
       ];
-      input = {
-        touchpad = {
-          natural_scroll = 1;
-        };
-      };
       # Repeat, and bound even when locked
       # Get the key names via xev
       bindel = [
@@ -168,6 +168,10 @@
         ",switch:off:Lid Switch,exec,kanshictl switch peacehavenDockedOpen"
         ",switch:on:Lid Switch,exec,kanshictl switch peacehavenDockedClosed"
       ];
+      gestures = {
+        workspace_swipe = true;
+        workspace_swipe_fingers = 4;
+      };
     };
   };
 
