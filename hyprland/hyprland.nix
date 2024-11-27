@@ -122,6 +122,7 @@
     enable = true;
     settings = {
       "$mainMod" = "SUPER";
+      "$groupMod" = "ALT";
       "$moveMod" = "SHIFT";
       "$menu" = "wofi --allow-images --gtk-dark --show drun";
       "$fileManager" = "nautilus";
@@ -169,9 +170,27 @@
       ];
       bind =
           [
-            "$mainMod, Q, exec, $terminal"
+            # Window/application management
+            "$mainMod, W, closewindow"
+            "$mainMod, Q, killactive"
+            "$mainMod, G, togglegroup"
+            # Launcher, a la Spotlight
             "$mainMod, SPACE, exec, $menu"
-            "$mainMod, w, exec, $menu"
+            # Navigate between windows, Vi style
+            "$mainMod, h, movefocus, l"
+            "$mainMod, j, movefocus, d"
+            "$mainMod, k, movefocus, u"
+            "$mainMod, l, movefocus, r"
+            # Move windows, Vi style
+            "$mainMod $moveMod, h, movewindoworgroup, l"
+            "$mainMod $moveMod, j, movewindoworgroup, d"
+            "$mainMod $moveMod, k, movewindoworgroup, u"
+            "$mainMod $moveMod, l, movewindoworgroup, r"
+            # Navigate between grouped windows, Vi style
+            "$mainMod $groupMod, h, changegroupactive, b"
+            "$mainMod $groupMod, j, changegroupactive, f"
+            "$mainMod $groupMod, k, changegroupactive, b"
+            "$mainMod $groupMod, l, changegroupactive, f"
           ]
           ++ (
             builtins.concatLists (builtins.genList (i:
