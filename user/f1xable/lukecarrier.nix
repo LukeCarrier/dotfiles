@@ -5,8 +5,6 @@
   home.username = "lukecarrier";
   home.homeDirectory = "/home/lukecarrier";
 
-  programs.direnv.enable = true;
-
   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
     "jetbrains-toolbox"
   ];

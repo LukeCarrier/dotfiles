@@ -191,6 +191,7 @@
             ./home/bash/bash.nix
             ./home/fish/fish.nix
             ./home/zsh/zsh.nix
+            ./home/direnv/direnv.nix
             ./system/aerospace/home.nix
             ./system/1password/home.nix
             ./home/openssh/openssh.nix
@@ -237,6 +238,7 @@
             # ./home/bash/bash.nix
             ./home/fish/fish.nix
             ./home/zsh/zsh.nix
+            ./home/direnv/direnv.nix
             ./home/openssh/openssh.nix
             ./home/starship/starship.nix
             ./home/git/git.nix
@@ -259,6 +261,7 @@
             ./home/bash/bash.nix
             ./home/fish/fish.nix
             ./home/zsh/zsh.nix
+            ./home/direnv/direnv.nix
             ./home/openssh/openssh.nix
             ./home/starship/starship.nix
             # ./home/espanso/espanso.nix
