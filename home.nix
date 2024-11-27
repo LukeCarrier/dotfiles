@@ -12,6 +12,7 @@ inputs@{ config, lib, pkgs, ... }: {
 
   home.packages = with pkgs; [
     bitwarden-cli btop gh freshfetch jq
+    ungoogled-chromium
     (pkgs.callPackage monaspace-fonts/monaspace-fonts.nix {
       monaspace-fonts = inputs.monaspace-fonts;
     })
