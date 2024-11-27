@@ -17,6 +17,7 @@
     libnotify
 
     hyprcursor
+    bibata-cursors
 
     fira-code
     fira-code-symbols
