@@ -121,6 +121,10 @@
   wayland.windowManager.hyprland = {
     enable = true;
     settings = {
+      misc = {
+        disable_hyperland_logo = true;
+        disable_splash_rendering = true;
+      };
       "$mainMod" = "SUPER";
       "$groupMod" = "ALT";
       "$moveMod" = "SHIFT";
