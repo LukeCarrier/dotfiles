@@ -106,7 +106,7 @@
           ./home/zsh/zsh.nix
           ./home/openssh/openssh.nix
           ./home/starship/starship.nix
-          ./home/espanso/espanso.nix
+          # ./home/espanso/espanso.nix
           ./home/git/git.nix
           ./home/helix/helix.nix
           ./home/alacritty/alacritty.nix
