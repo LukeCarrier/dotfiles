@@ -9,4 +9,8 @@
   users.users."luke.carrier" = {
     description = "Luke Carrier";
   };
+
+  homebrew.casks = [
+    "qobuz"
+  ];
 }
