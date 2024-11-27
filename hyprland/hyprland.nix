@@ -6,6 +6,7 @@
 
     wl-clipboard
     wf-recorder
+    helvum
     pkgs-unstable.kanshi
     mako
     grim
@@ -274,15 +275,34 @@
           };
         };
         wireplumber = {
+          on-click = "helvum";
           format = "🔉 {volume}%";
           format-muted = "🔇";
         };
-        bluetooth = {};
+        bluetooth = {
+          on-click = "blueman-manager";
+        };
         network = {
+          on-click = "nm-connection-editor";
+          tooltip-format = ''
+            <tt>Interface: {ifname}</tt>
+            <tt>Primary IP: {ipaddr}</tt>
+            <tt>Gateway: {gwaddr}</tt>
+          '';
           format-ethernet = "🌐 {ifname}";
           format-wifi = "🛜 {essid}";
+          tooltip-fprmat-wifi = ''
+            <tt>eSSID: {essid}</tt>
+            <tt>Frequency: {frequency}</tt>
+            <tt>Interface: {ifname}</tt>
+            <tt>Primary IP: {ipaddr}</tt>
+            <tt>Gateway: {gwaddr}</tt>
+            <tt>Signal strength: {signalStrength}</tt>
+            <tt>Signal strength (dBm): {signalStrengthD}</tt>
+          '';
           format-linked = "🖇️ {ifname}";
           format-disconnected = "😱";
+          tooltip-format-disconnected = "No network connection";
         };
         idle_inhibitor = {
           format = "{icon}";
