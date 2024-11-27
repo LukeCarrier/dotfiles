@@ -41,6 +41,7 @@
           ./bash/bash.nix
           ./fish/fish.nix
           ./zsh/zsh.nix
+          ./openssh/openssh.nix
           ./starship/starship.nix
           ./git/git.nix
           ./helix/helix.nix
