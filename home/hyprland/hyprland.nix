@@ -46,6 +46,18 @@
       package = pkgs.poppins;
       name = "Poppins";
     };
+    theme = {
+      package = pkgs.tokyonight-gtk-theme;
+      name = "tokyonight-gtk-theme";
+    };
+    cursorTheme = {
+      package = pkgs.bibata-cursors;
+      name = "Bibata-Modern-Classic";
+    };
+    iconTheme = {
+      package = pkgs.gnome.adwaita-icon-theme;
+      name = "Adwaita";
+    };
   };
 
   home.pointerCursor = {
@@ -165,7 +177,9 @@
         "QT_QPA_PLATFORM,wayland;xcb"
         "NIXOS_OZONE_WL,1"
         "GDK_SCALE,2"
-        "XCURSOR_SIZE,32"
+        "HYPRCURSOR_THEME,Bibata-Modern-Classic"
+        "HYPRCURSOR_SIZE,16"
+        "XCURSOR_SIZE,64"
       ];
       exec = [
         "kanshctl reload"
@@ -196,8 +210,8 @@
       };
       decoration = {
         rounding = 8;
-        active_opacity = 0.8;
-        inactive_opacity = 0.5;
+        active_opacity = 1.0;
+        inactive_opacity = 0.75;
         drop_shadow = true;
         blur = {
           enabled = true;
