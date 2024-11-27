@@ -120,7 +120,7 @@
   wayland.windowManager.hyprland = {
     enable = true;
     settings = {
-      "$menu" = "wofi --allow-images --show drun";
+      "$menu" = "wofi --allow-images --gtk-dark --show drun";
       "$fileManager" = "nautilus";
       "$terminal" = "alacritty";
       debug = {
