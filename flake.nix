@@ -12,27 +12,52 @@
       url = "github:nix-community/home-manager/release-24.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    lanzaboote = {
+      url = "github:nix-community/lanzaboote/v0.4.1";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs@{
     darwin,
     home-manager,
+    lanzaboote,
     nixpkgs,
     nixpkgs-unstable,
     ...
   }:
   {
     darwinConfigurations = {
-      "fatman" = darwin.lib.darwinSystem {
+      fatman = darwin.lib.darwinSystem {
         system = "aarch64-darwin";
         modules = [
           ./platform/darwin/common.nix
-          ./host/fatman.nix
+          ./host/fatman/fatman.nix
         ];
       };
     };
 
-    nixosConfigurations = {};
+    nixosConfigurations = {
+      f1xable = nixpkgs.lib.nixosSystem rec {
+        system = "x86_64-linux";
+        specialArgs = {
+          pkgs-unstable = import nixpkgs-unstable {
+            inherit system;
+          };
+        };
+        modules = [
+          ./host/f1xable/hardware-configuration.nix
+          ./hw/framework-13-amd.nix
+          ./platform/nixos/enable-flakes.nix
+          ./platform/nixos/region/en-gb.nix
+          lanzaboote.nixosModules.lanzaboote
+          ./platform/nixos/secure-boot.nix
+          ./platform/nixos/graphical.nix
+          ./platform/nixos/containers.nix
+          ./host/f1xable/f1xable.nix
+        ];
+      };
+    };
 
     homeConfigurations = {
       "lukecarrier@fatman" = home-manager.lib.homeManagerConfiguration rec {
