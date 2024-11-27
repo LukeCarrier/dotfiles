@@ -1,1 +1,0 @@
-eval "$(mcfly init bash)"

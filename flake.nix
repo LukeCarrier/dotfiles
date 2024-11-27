@@ -195,6 +195,7 @@
             ./system/aerospace/home.nix
             ./system/1password/home.nix
             ./home/openssh/openssh.nix
+            ./home/mcfly/mcfly.nix
             ./home/starship/starship.nix
             ./home/helix/helix.nix
             ./home/gnupg/gnupg.nix

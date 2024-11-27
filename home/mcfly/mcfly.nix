@@ -1,0 +1,4 @@
+{ ... }:
+{
+  programs.mcfly.enable = true;
+}
