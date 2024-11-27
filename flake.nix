@@ -113,6 +113,7 @@
             ./employer/emed.nix
             ./system/aerospace/aerospace.nix
             ./system/1password/1password.nix
+            ./system/finicky/darwin.nix
             ./system/gauntlet/darwin.nix
             ./system/jetbrains-toolbox/darwin.nix
             ./system/logseq/darwin.nix

@@ -15,4 +15,11 @@
   # check the logs for that helper tool, which can be found at:
   # ~/Libary/Logs/SopsNix/std{out,err}
   sops.age.keyFile = "${config.home.homeDirectory}/Code/LukeCarrier/dotfiles/.sops/keys";
+
+  sops.secrets.finicky-config = {
+    sopsFile = ../../secrets/employer-emed.yaml;
+    format = "yaml";
+    key = ''finicky/config'';
+    path = "${config.home.homeDirectory}/.finicky.js";
+  };
 }
