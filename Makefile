@@ -1,4 +1,4 @@
-.PHONY: gc home host host-android
+.PHONY: gc home host host-android host-darwin
 
 gc:
 	nix-collect-garbage --delete-old

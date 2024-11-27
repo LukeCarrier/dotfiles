@@ -51,5 +51,7 @@ Don't need to do anything.
 Apply:
 
 ```console
-nix run home-manager/release-24.05 -- switch --flake ~/Code/LukeCarrier/dotfiles/#username@host
+make host home
 ```
+
+Note that Android and macOS have their own dedicated host targets (`host-android` and `host-darwin` respectively).
