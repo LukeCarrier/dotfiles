@@ -178,6 +178,7 @@
             ./home/fonts/fonts.nix
             ./home/bash/bash.nix
             ./home/fish/fish.nix
+            ./home/fish/default.nix
             ./home/zsh/zsh.nix
             ./home/direnv/direnv.nix
             ./system/aerospace/home.nix
@@ -203,6 +204,7 @@
             ./user/android/nix-on-droid.nix
             # ./home/bash/bash.nix
             ./home/fish/fish.nix
+            ./home/fish/default.nix
             ./home/zsh/zsh.nix
             ./home/direnv/direnv.nix
             ./home/openssh/openssh.nix
@@ -226,6 +228,7 @@
             ./home/hyprland/hyprland.nix
             ./home/bash/bash.nix
             ./home/fish/fish.nix
+            ./home/fish/default.nix
             ./home/zsh/zsh.nix
             ./home/direnv/direnv.nix
             ./home/openssh/openssh.nix
