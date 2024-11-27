@@ -22,9 +22,16 @@ button:hover {
   background: inherit;
 }
 
-.module {
+.modules-left > widget > .module,
+.modules-center > widget > .module,
+.modules-right > widget > .module {
   min-width: 0;
-  margin: 4px 4px;
+  margin: 4px 12px;
+}
+
+.modules-left > widget:first-child > .module,
+.modules-right > widget:last-child > .module {
+  margin: 4px;
 }
 
 #workspaces button {
