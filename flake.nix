@@ -105,6 +105,7 @@
             ./hw/macbook.nix
             ./platform/darwin/common.nix
             ./host/b-4653/b-4653.nix
+            ./employer/emed.nix
             ./system/aerospace/aerospace.nix
             ./system/jetbrains-toolbox/darwin.nix
             ./system/1password/1password.nix
