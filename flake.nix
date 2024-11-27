@@ -39,9 +39,12 @@
         pkgs = import nixpkgs {
           system = "aarch64-darwin";
         };
+        extraSpecialArgs = {
+          gitConfig.user.signingKey = "1CBBEBFE0CDC1C06DB324A7CCE439AFEC33D9E7F";
+        };
         modules = [
           ./user/fatman/lukecarrier.nix
-          # ./home/git/git.nix
+          ./home/git/git.nix
           ./home/alacritty/alacritty.nix
           ./home/helix/helix.nix
         ];
