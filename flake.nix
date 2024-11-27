@@ -113,18 +113,6 @@
           ];
         };
 
-        B-5091 = darwin.lib.darwinSystem rec {
-          system = "x86_64-darwin";
-          pkgs = pkgsForSystem({
-            inherit system;
-            pkgs = nixpkgs-unstable;
-          });
-          modules = [
-            ./platform/darwin/common.nix
-            ./host/b-5091/b-5091.nix
-          ];
-        };
-
         luke-fatman = darwin.lib.darwinSystem rec {
           system = "aarch64-darwin";
           pkgs = pkgsForSystem({
@@ -194,28 +182,6 @@
             ./home/direnv/direnv.nix
             ./system/aerospace/home.nix
             ./system/1password/home.nix
-            ./home/openssh/openssh.nix
-            ./home/starship/starship.nix
-            ./home/helix/helix.nix
-            ./home/git/git.nix
-            ./home/alacritty/alacritty.nix
-            ./home/wezterm/wezterm.nix
-          ];
-        };
-
-        "luke.carrier@B-5091.hq.babylonhealth.com" = home-manager.lib.homeManagerConfiguration rec {
-          pkgs = pkgsForSystem({
-            system = "x86_64-darwin";
-            pkgs = nixpkgs-unstable;
-          });
-          extraSpecialArgs = {
-            gitConfig.user.signingKey = "6E9AF94A377C55A36474CB0235975DF6B96AFDC1";
-          };
-          modules = [
-            ./user/b-5091/luke.carrier.nix
-            ./home/bash/bash.nix
-            ./home/fish/fish.nix
-            ./home/zsh/zsh.nix
             ./home/openssh/openssh.nix
             ./home/starship/starship.nix
             ./home/helix/helix.nix
