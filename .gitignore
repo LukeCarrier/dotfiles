@@ -1,2 +1,5 @@
+# direnv
+/.direnv/
+
 # Employer configuration
 /employer-*/

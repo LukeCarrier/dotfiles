@@ -48,7 +48,7 @@
     };
     theme = {
       package = pkgs.tokyonight-gtk-theme;
-      name = "tokyonight-gtk-theme";
+      name = "Tokyonight-Dark-B";
     };
     cursorTheme = {
       package = pkgs.bibata-cursors;
