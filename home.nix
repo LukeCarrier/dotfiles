@@ -7,6 +7,7 @@ inputs@{ config, pkgs, ... }: {
   programs.direnv.enable = true;
 
   home.packages = with pkgs; [
+    bitwarden-cli btop gh freshfetch jq
     (pkgs.callPackage monaspace-fonts/monaspace-fonts.nix {
       monaspace-fonts = inputs.monaspace-fonts;
     })
