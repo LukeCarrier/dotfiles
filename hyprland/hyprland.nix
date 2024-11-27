@@ -1,6 +1,9 @@
 { config, pkgs, pkgs-unstable, ... }:
 {
   home.packages = with pkgs; [
+    brightnessctl
+    playerctl
+
     wl-clipboard
     wf-recorder
     pkgs-unstable.kanshi
@@ -144,6 +147,27 @@
           natural_scroll = 1;
         };
       };
+      # Repeat, and bound even when locked
+      # Get the key names via xev
+      bindel = [
+        ",XF86AudioMute,exec,wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+        ",XF86AudioLowerVolume,exec,wpctl set-volume -l 1.4 @DEFAULT_AUDIO_SINK@ 2%-"
+        ",XF86AudioRaiseVolume,exec,wpctl set-volume -l 1.4 @DEFAULT_AUDIO_SINK@ 2%+"
+        ",XF86AudioPrev,exec,playerctl previous"
+        ",XF86AudioPlay,exec,playerctl play-pause"
+        ",xf86audioNext,exec,playerctl next"
+        ",XF86MonBrightnessDown,exec,brightnessctl set -2%"
+        ",XF86MonBrightnessUp,exec,brightnessctl set +2%"
+        ",XF86AudioMedia,exec,$terminal"
+        # The `EC takes care of this on the Framework 13 AMD:
+        # Display key sends Super+L, not XF86Display, for some reason
+        # XF86RFKill is done for us
+      ];
+      # FIXME: this won't work outside of Peacehaven; we need to script this
+      bindl = [
+        ",switch:off:Lid Switch,exec,kanshictl switch peacehavenDockedOpen"
+        ",switch:on:Lid Switch,exec,kanshictl switch peacehavenDockedClosed"
+      ];
     };
   };
 
