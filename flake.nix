@@ -2,6 +2,7 @@
   description = "Luke Carrier's dotfiles";
 
   inputs = {
+    flake-utils.url = "github:numtide/flake-utils";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     darwin = {
@@ -20,13 +21,22 @@
 
   outputs = inputs@{
     darwin,
+    flake-utils,
     home-manager,
     lanzaboote,
     nixpkgs,
     nixpkgs-unstable,
     ...
   }:
-  {
+  flake-utils.lib.eachDefaultSystem (system: {
+    devShells.default =
+      let
+        pkgs = import nixpkgs { inherit system; };
+      in
+        pkgs.mkShell {
+          packages = with pkgs; [ nil ];
+        };
+  }) // {
     darwinConfigurations = {
       fatman = darwin.lib.darwinSystem {
         system = "aarch64-darwin";
