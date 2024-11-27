@@ -5,6 +5,10 @@
   home.username = "luke.carrier";
   home.homeDirectory = "/Users/luke.carrier";
 
+  home.packages = with pkgs; [
+    saml2aws
+  ];
+
   home.sessionVariables = {
     EDITOR = "hx";
     SSH_AUTH_SOCK = "$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock";
@@ -24,7 +28,6 @@
     path = "${config.home.homeDirectory}/.finicky.js";
   };
 
-  home.packages = with pkgs; [ awscli2 aws-cli-tools saml2aws ];
   sops.secrets.aws-config = {
     sopsFile = ../../secrets/employer-emed.yaml;
     format = "yaml";

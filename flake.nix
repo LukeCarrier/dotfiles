@@ -200,6 +200,7 @@
             ./home/git/git.nix
             ./home/alacritty/alacritty.nix
             ./home/wezterm/wezterm.nix
+            ./home/aws/aws.nix
             ./home/lima/lima.nix
             ./home/rust/cargo.nix
           ];
