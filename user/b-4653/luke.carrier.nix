@@ -9,8 +9,6 @@
     EDITOR = "hx";
   };
 
-  home.packages = with pkgs; [ awscli2 aws-cli-tools saml2aws ];
-
   # sops-nix is pretty weird, in that it won't resolve any of these values
   # diring the Nix evaluation and will install a helper to do it when we switch
   # to the new generation. If secrets don't show up shortly after doing this,
@@ -21,7 +19,21 @@
   sops.secrets.finicky-config = {
     sopsFile = ../../secrets/employer-emed.yaml;
     format = "yaml";
-    key = ''finicky/config'';
+    key = "finicky/config";
     path = "${config.home.homeDirectory}/.finicky.js";
+  };
+
+  home.packages = with pkgs; [ awscli2 aws-cli-tools saml2aws ];
+  sops.secrets.aws-config = {
+    sopsFile = ../../secrets/employer-emed.yaml;
+    format = "yaml";
+    key = "aws/config";
+    path = "${config.home.homeDirectory}/.aws/config";
+  };
+  sops.secrets.aws-saml2aws = {
+    sopsFile = ../../secrets/employer-emed.yaml;
+    format = "yaml";
+    key = "aws/saml2aws/config";
+    path = "${config.home.homeDirectory}/.saml2aws";
   };
 }
