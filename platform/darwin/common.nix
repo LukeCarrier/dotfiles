@@ -18,6 +18,16 @@
     optimise.automatic = true;
   };
 
+  system.defaults = {
+    CustomSystemPreferences = {
+      "com.apple.AppleMultitouchTrackpad" = {
+         DragLock = false;
+         Dragging = false;
+         TrackpadThreeFingerDrag = true;
+      };
+    };
+  };
+
   homebrew = {
     enable = true;
   };
