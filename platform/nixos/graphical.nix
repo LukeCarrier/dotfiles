@@ -63,7 +63,10 @@
   security.pam.services.hyprlock = {};
 
   services.printing.enable = true;
-  services.flatpak.enable = true;
+  services.flatpak = {
+    enable = true;
+    package = pkgs.flatpak;
+  };
 
   programs.firefox = {
     enable = true;
