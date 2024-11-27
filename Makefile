@@ -11,3 +11,6 @@ host:
 
 host-android:
 	nix-on-droid switch --flake .
+
+host-darwin:
+	nix run nix-darwin -- switch --flake .
