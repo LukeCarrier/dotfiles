@@ -200,6 +200,7 @@
             ./home/starship/starship.nix
             ./home/tmux/tmux.nix
             ./home/helix/helix.nix
+            ./home/vim/vim.nix
             ./home/gnupg/gnupg.nix
             ./home/git/git.nix
             ./home/espanso/espanso.nix
