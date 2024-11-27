@@ -33,6 +33,11 @@
             sha256 = "0v2423dc75pf5kzllyi3ia7l3nv2d1z158cj4wn0xa5h3df3i6x3";
             version = "1.101";
           };
+          stklos = {
+            url = "https://stklos.net/download/stklos-2.00.tar.gz";
+            sha256 = "1jy7xvh8p4rcfcv4wqv43xxgi10wzw0ynyqm41wgpkhq596lb1gb";
+            version = "2.00";
+          };
         };
 
         modules = [
