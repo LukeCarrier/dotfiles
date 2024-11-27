@@ -153,6 +153,9 @@
         "GDK_SCALE,2"
         "XCURSOR_SIZE,32"
       ];
+      exec = [
+        "kanshctl reload"
+      ];
       exec-once = [
         "waybar"
       ];
