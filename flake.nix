@@ -102,6 +102,7 @@
             pkgs = nixpkgs-unstable;
           });
           modules = [
+            ./hw/macbook.nix
             ./platform/darwin/common.nix
             ./host/b-4653/b-4653.nix
             ./system/aerospace/aerospace.nix
@@ -128,6 +129,7 @@
             pkgs = nixpkgs-unstable;
           });
           modules = [
+            ./hw/macbook.nix
             ./platform/darwin/common.nix
             ./host/fatman/fatman.nix
           ];
