@@ -138,8 +138,7 @@
         "NIXOS_OZONE_WL,1"
       ];
       exec-once = [
-        "waybar &"
-        "$terminal"
+        "waybar"
       ];
       "$mainMod" = "SUPER";
       bind = [
@@ -177,12 +176,119 @@
 
   programs.waybar = {
     enable = true;
-    style = ''
-      * {
-        font-family: "Arimo Nerd Font", "Font Awesome 6 Free";
-        font-size: 10px;
-      }
-    '';
+    settings = {
+      mainBar = {
+        modules-left = [
+          "hyprland/workspaces"
+          "hyprland/window"
+        ];
+        modules-center = [
+          "clock"
+          "privacy"
+          "mpris"
+        ];
+        modules-right = [
+          "battery"
+          "power-profiles-daemon"
+          "wireplumber"
+          "bluetooth"
+          "network"
+          "idle_inhibitor"
+          "tray"
+        ];
+
+        clock = {
+          format = "{:%Y-%m-%d %H:%M (%Z)}";
+          tooltip-format = ''
+            <tt>{tz_list}</tt>
+            <tt></tt>
+            <tt>{calendar}</tt>
+          '';
+          timezones = [
+            "Europe/London"
+            "Etc/UTC"
+            "Europe/Warsaw"
+            "America/Miami"
+            "Asia/New_Delhi"
+          ];
+          calendar = {
+            mode = "year";
+            mode-mon-col = 3;
+            weeks-pos = "right";
+            format = {
+              months = "<span color='#ffead3'><b>{}</b></span>";
+              days = "<span color='#ecc6d9'><b>{}</b></span>";
+              weeks = "<span color='#99ffdd'><b>W{}</b></span>";
+              weekdays = "<span color='#ffcc66'><b>{}</b></span>";
+              today = "<span color='#ff6699'><b><u>{}</u></b></span>";
+            };
+          };
+        };
+        privacy = {
+          icon-size = 15;
+        };
+        battery = {
+          format = "{icon} {capacity}%";
+          format-icons = {
+            full = "";
+            good = "";
+            half = "";
+            warning = "";
+            critical = "";
+          };
+          full_at = 80;
+          states = {
+            full = 100;
+            good = 80;
+            half = 60;
+            warning = 40;
+            critical = 20;
+          };
+        };
+        power-profiles-daemon = {
+          format-icons = {
+            default = "🐾";
+            performance = "🦄";
+            balanced = "🦡";
+            power-saver = "🦥";
+          };
+        };
+        wireplumber = {
+          format = "🔉 {volume}%";
+          format-muted = "🔇";
+        };
+        bluetooth = {};
+        network = {
+          format-ethernet = "🌐 {ifname}";
+          format-wifi = "🛜 {essid}";
+          format-linked = "🖇️ {ifname}";
+          format-disconnected = "😱";
+        };
+        idle_inhibitor = {
+          format = "{icon}";
+          format-icons = {
+            activated = "☕️";
+            deactivated = "🍻";
+          };
+        };
+      };
+    };
+    style = builtins.readFile ./waybar.css;
+  };
+
+  services.hyprpaper = {
+    enable = true;
+    settings = {
+      ipc = "on";
+      splash = false;
+      splash_offset = 2.0;
+      preload = [
+        "~/Pictures/Wallpaper/Mountains under cloudy sky (Simon Berger).jpg"
+      ];
+      wallpaper = [
+        ",~/Pictures/Wallpaper/Mountains under cloudy sky (Simon Berger).jpg"
+      ];
+    };
   };
 
   services.gnome-keyring.enable = true;
