@@ -1,7 +1,7 @@
-{ pkgs, pkgs-unstable, ... }:
+{ pkgs, ... }:
 {
   home.packages = with pkgs; [
-    pkgs-unstable.kanshi
+    pkgs.kanshi
 
     brightnessctl
     playerctl
@@ -66,7 +66,7 @@
 
   services.kanshi = {
     enable = true;
-    package = pkgs-unstable.kanshi;
+    package = pkgs.kanshi;
     systemdTarget = "hyprland-session.target";
     settings = [
       # Laptop's own display

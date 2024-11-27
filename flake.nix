@@ -4,18 +4,17 @@
   inputs = {
     darwin = {
       url = "github:lnl7/nix-darwin";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     flake-utils.url = "github:numtide/flake-utils";
     home-manager = {
-      url = "github:nix-community/home-manager/release-24.05";
-      inputs.nixpkgs.follows = "nixpkgs";
+      url = "github:nix-community/home-manager/master";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     lanzaboote = {
-      url = "github:nix-community/lanzaboote/v0.4.1";
-      inputs.nixpkgs.follows = "nixpkgs";
+      url = "github:nix-community/lanzaboote/master";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     wezterm.url = "github:wez/wezterm/main?dir=nix";
   };
@@ -25,7 +24,6 @@
     flake-utils,
     home-manager,
     lanzaboote,
-    nixpkgs,
     nixpkgs-unstable,
     wezterm,
     self,
@@ -34,15 +32,15 @@
   flake-utils.lib.eachDefaultSystem (system: {
     devShells.default =
       let
-        pkgs = import nixpkgs { inherit system; };
+        pkgs = import nixpkgs-unstable { inherit system; };
       in
         pkgs.mkShell {
-          packages = with pkgs; [ nil ];
+          packages = with pkgs; [ gnumake nil ];
         };
 
     packages =
       let
-        pkgs = import nixpkgs { inherit system; };
+        pkgs = import nixpkgs-unstable { inherit system; };
         packages = {
           monaspace-fonts = pkgs.callPackage ./package/monaspace-fonts/monaspace-fonts.nix {
             monaspace-fonts = {
@@ -74,13 +72,8 @@
     };
 
     nixosConfigurations = {
-      luke-f1xable = nixpkgs.lib.nixosSystem rec {
+      luke-f1xable = nixpkgs-unstable.lib.nixosSystem rec {
         system = "x86_64-linux";
-        specialArgs = {
-          pkgs-unstable = import nixpkgs-unstable {
-            inherit system;
-          };
-        };
         modules = [
           ./host/f1xable/hardware-configuration.nix
           ./hw/framework-13-amd.nix
@@ -97,13 +90,10 @@
 
     homeConfigurations = {
       "lukecarrier@luke-f1xable" = home-manager.lib.homeManagerConfiguration rec {
-        pkgs = import nixpkgs {
+        pkgs = import nixpkgs-unstable {
           system = "x86_64-linux";
         };
         extraSpecialArgs = {
-          pkgs-unstable = import nixpkgs-unstable {
-            system = pkgs.system;
-          };
           pkgs-custom = self.packages.${pkgs.system};
           gitConfig.user.signingKey = "1CBBEBFE0CDC1C06DB324A7CCE439AFEC33D9E7F";
         };
@@ -126,7 +116,7 @@
       };
 
       "lukecarrier@luke-fatman" = home-manager.lib.homeManagerConfiguration {
-        pkgs = import nixpkgs {
+        pkgs = import nixpkgs-unstable {
           system = "aarch64-darwin";
         };
         extraSpecialArgs = {

@@ -1,8 +1,8 @@
-{ config, lib, pkgs, pkgs-unstable, modulesPath, ... }:
+{ pkgs, ... }:
 {
   nixpkgs.config.allowUnfree = true;
   environment.systemPackages = with pkgs; [
-    pkgs-unstable.firefoxpwa
+    firefoxpwa
     flatpak
     gnome.gnome-software
     home-manager
@@ -67,6 +67,6 @@
   programs.firefox = {
     enable = true;
     package = pkgs.firefox;
-    nativeMessagingHosts.packages = [ pkgs-unstable.firefoxpwa ];
+    nativeMessagingHosts.packages = with pkgs; [ firefoxpwa ];
   };
 }
