@@ -109,6 +109,7 @@
         };
         modules = [
           ./user/f1xable/lukecarrier.nix
+          ./home/fonts/fonts.nix
           ./home/hyprland/hyprland.nix
           ./home/bash/bash.nix
           ./home/fish/fish.nix

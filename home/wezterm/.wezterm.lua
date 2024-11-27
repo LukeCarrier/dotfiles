@@ -14,7 +14,7 @@ config.command_palette_font_size = 18.0
 config.use_fancy_tab_bar = true
 config.hide_tab_bar_if_only_one_tab = true
 
-config.font = wezterm.font('MonaSpiceKr NF')
+config.font = wezterm.font('MonaspiceKr NF')
 config.font_size = 14.0
 
 config.color_scheme = 'TokyoNightStorm'

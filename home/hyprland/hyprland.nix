@@ -19,16 +19,6 @@
     hyprcursor
     bibata-cursors
 
-    fira-code
-    fira-code-symbols
-    font-awesome
-    liberation_ttf
-    mplus-outline-fonts.githubRelease
-    nerdfonts
-    noto-fonts
-    noto-fonts-emoji
-    proggyfonts
-
     libsecret
     gnome.seahorse
     gcr
@@ -38,8 +28,6 @@
     enable = true;
     components = ["pkcs11" "secrets" "ssh"];
   };
-
-  fonts.fontconfig.enable = true;
 
   dconf.settings = {
     "org/gnome/desktop/interface" = {
