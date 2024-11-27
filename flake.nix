@@ -90,11 +90,16 @@
 
     homeConfigurations = {
       "lukecarrier@luke-f1xable" = home-manager.lib.homeManagerConfiguration rec {
-        pkgs = import nixpkgs-unstable {
+        pkgs = import nixpkgs-unstable rec {
           system = "x86_64-linux";
+          overlays = [
+            (final: prev: {
+              monaspace-fonts = self.packages.${system}.monaspace-fonts;
+              stklos = self.packages.${system}.stklos;
+            })
+          ];
         };
         extraSpecialArgs = {
-          pkgs-custom = self.packages.${pkgs.system};
           gitConfig.user.signingKey = "1CBBEBFE0CDC1C06DB324A7CCE439AFEC33D9E7F";
         };
         modules = [

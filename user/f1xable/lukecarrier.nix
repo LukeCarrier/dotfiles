@@ -11,20 +11,13 @@
     "jetbrains-toolbox"
   ];
 
-  home.packages = lib.mkMerge [
-    (
-      with pkgs; [
-        bitwarden-cli btop gh freshfetch jq
-        ungoogled-chromium
-        jetbrains-toolbox
-        gnome-network-displays
-      ]
-    ) (
-      with pkgs-custom; [
-        monaspace-fonts
-        stklos
-      ]
-    )
+  home.packages = with pkgs; [
+    bitwarden-cli btop gh freshfetch jq
+    ungoogled-chromium
+    jetbrains-toolbox
+    gnome-network-displays
+    monaspace-fonts
+    stklos
   ];
 
   home.sessionVariables = {
