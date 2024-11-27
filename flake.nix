@@ -197,6 +197,7 @@
             ./home/openssh/openssh.nix
             ./home/starship/starship.nix
             ./home/helix/helix.nix
+            ./home/gnupg/gnupg.nix
             ./home/git/git.nix
             ./home/espanso/espanso.nix
             ./home/alacritty/alacritty.nix
