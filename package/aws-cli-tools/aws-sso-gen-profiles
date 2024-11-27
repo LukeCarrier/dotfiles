@@ -1,0 +1,82 @@
+# Generate AWS configuration profiles for all accounts and roles accessible via
+# the given SSO start URL.
+
+direct=0
+prefix=
+profile="$AWS_PROFILE"
+
+set -eu -o pipefail
+IFS=$'\n\t'
+
+parse_args() {
+  while true; do
+    case "${1:-}" in
+      -d|--direct ) direct=1     ; shift   ;;
+      -n|--prefix ) prefix="$2"  ; shift 2 ;;
+      -p|--profile) profile="$2" ; shift 2 ;;
+      *           ) break                  ;;
+    esac
+  done
+}
+
+main() {
+  echo "$0: fetching ${profile}'s SSO configuration" >&2
+  local account_id="$(aws configure get sso_account_id --profile "${profile}")"
+  local role_name="$(aws configure get sso_role_name --profile "${profile}")"
+  local region="$(aws configure get region --profile "${profile}")"
+  local start_url="$(aws configure get sso_start_url --profile "${profile}")"
+
+  local cache_key
+  if [[ -n "$start_url" ]] ; then
+    # sso_start_url is defined directly in the profile
+    cache_key="$(printf "%s" "$start_url" | shasum -a 1 | awk '{print $1}')"
+  else
+    # sso_session might be defined in the profile
+    local sso_session="$(aws configure get sso_session --profile "${profile}")"
+    if [[ -z "$sso_session" ]] ; then
+      echo "$0: failed to determine sso_start_url and sso_session for profile ${profile}" >&2
+      exit 1
+    fi
+    start_url="$(sed -nr "/^\[sso-session[ ]*${sso_session}\]/ { :l /^sso_start_url[ ]*=/ { s/[^=]*=[ ]*//; p; q; }; n; b l; }" "${HOME}/.aws/config")"
+    if [[ -z "$start_url" ]] ; then
+      echo "$0: failed to determine sso_start_url for profile ${profile}" >&2
+      exit 1
+    fi
+    # Use the session name as the cache key, idk why they do this
+    cache_key="$(printf "%s" "$sso_session" | shasum -a 1 | awk '{print $1}')"
+  fi
+  echo "$0: using cached credential ${cache_key}" >&2
+
+  local cache_file="${HOME}/.aws/sso/cache/$cache_key.json"
+  if [[ ! -f "$cache_file" ]] ; then
+    echo "$0: no SSO session found; retry after running: aws sso login --profile \"${profile}\"" >&2
+    exit 1
+  fi
+  local access_token="$(jq -r .accessToken "$cache_file")"
+  local sso_region="$(jq -r .region "$cache_file")"
+
+  accounts="$(aws sso list-accounts \
+      --region "$sso_region" \
+      --access-token "$access_token" \
+      --output json)"
+  local num_accounts="$(printf "%s" "$accounts" | jq -r '.accountList | length')"
+  echo "$0: found ${num_accounts} accounts" >&2
+  printf "%s" "$accounts" | jq -r '.accountList | to_entries[] | [.key, .value.accountId, .value.accountName] | @tsv' | \
+    while IFS=$'\t' read -r dest_account_index dest_account_id dest_account_name; do
+      echo "$0: processing ${dest_account_name} (${dest_account_id}; $(( dest_account_index + 1 )) of ${num_accounts})" >&2
+      if (( $direct == 0 )); then
+        template='.roleList[] | "[profile '"${prefix}${dest_account_name}"'--\(.roleName)]\nsso_session = '"$sso_session"'\nsso_account_id = '"$dest_account_id"'\nsso_role_name = \(.roleName)"'
+      else
+        template='.roleList[] | "[profile '"${prefix}${dest_account_name}"'--\(.roleName)]\nsso_start_url = '"$start_url"'\nsso_region = '"$sso_region"'\nsso_account_id = '"$dest_account_id"'\nsso_role_name = \(.roleName)"'
+      fi
+      aws sso list-account-roles \
+          --region "$sso_region" \
+          --access-token "${access_token}" \
+          --account-id "${dest_account_id}" \
+          --output json | jq -r "$template"
+      printf "\n"
+    done
+}
+
+parse_args "$@"
+main

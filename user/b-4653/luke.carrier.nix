@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, pkgs, ... }:
 {
   home.stateVersion = "24.05";
 
@@ -8,6 +8,8 @@
   home.sessionVariables = {
     EDITOR = "hx";
   };
+
+  home.packages = with pkgs; [ awscli2 aws-cli-tools saml2aws ];
 
   # sops-nix is pretty weird, in that it won't resolve any of these values
   # diring the Nix evaluation and will install a helper to do it when we switch
