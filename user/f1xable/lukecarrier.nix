@@ -12,7 +12,7 @@
   ];
 
   home.packages = with pkgs; [
-    bitwarden-cli btop gh freshfetch jq
+    bitwarden-cli bw-cli-tools btop gh freshfetch jq
     ungoogled-chromium
     jetbrains-toolbox
     gnome-network-displays

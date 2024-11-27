@@ -1,4 +1,4 @@
-{ monaspace-fonts, lib, pkgs }:
+{ monaspace-fonts, pkgs }:
 let monaspaceSrc = pkgs.fetchzip {
   url = monaspace-fonts.url;
   sha256 = monaspace-fonts.sha256;

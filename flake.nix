@@ -46,6 +46,8 @@
       let
         pkgs = import nixpkgs-unstable { inherit system; };
         packages = {
+          bw-cli-tools = pkgs.callPackage ./package/bw-cli-tools/bw-cli-tools.nix {};
+
           monaspace-fonts = pkgs.callPackage ./package/monaspace-fonts/monaspace-fonts.nix {
             monaspace-fonts = {
               url = "https://github.com/githubnext/monaspace/releases/download/v1.101/monaspace-v1.101.zip";
@@ -99,6 +101,7 @@
           system = "x86_64-linux";
           overlays = [
             (final: prev: {
+              bw-cli-tools = self.packages.${pkgs.system}.bw-cli-tools;
               monaspace-fonts = self.packages.${system}.monaspace-fonts;
               stklos = self.packages.${system}.stklos;
             })

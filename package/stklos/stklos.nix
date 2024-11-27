@@ -1,5 +1,5 @@
-{ stdenv, fetchurl, pkgs, stklos }:
-stdenv.mkDerivation rec {
+{ pkgs, fetchurl, stklos }:
+pkgs.stdenv.mkDerivation {
   pname = "stklos";
   version = stklos.version;
 
