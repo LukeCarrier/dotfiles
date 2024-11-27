@@ -21,6 +21,8 @@
   ];
   boot.loader.timeout = 0;
 
+  services.upower.enable = true;
+
   hardware.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {

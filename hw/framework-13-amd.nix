@@ -1,4 +1,4 @@
-{ config, lib, pkgs, modulesPath, ... }:
+{ pkgs, ... }:
 let
   lidFprint = pkgs.writeShellScriptBin "fw13-amd-lid-fprint" ''
     AUTH_PATH=/sys/bus/usb/devices/1-4:1.0/authorized
@@ -12,6 +12,8 @@ let
     echo "$auth" >"$AUTH_PATH"
   '';
 in {
+  boot.kernelPackages = pkgs.linuxPackages_latest;
+
   services.acpid = {
     enable = true;
     lidEventCommands = ''${lidFprint}/bin/fw13-amd-lid-fprint'';

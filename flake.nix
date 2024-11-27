@@ -15,6 +15,9 @@
       url = "github:nix-community/lanzaboote/master";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
+    nixos-hardware = {
+      url = "github:NixOS/nixos-hardware/master";
+    };
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     wezterm.url = "github:wez/wezterm/main?dir=nix";
   };
@@ -24,6 +27,7 @@
     flake-utils,
     home-manager,
     lanzaboote,
+    nixos-hardware,
     nixpkgs-unstable,
     wezterm,
     self,
@@ -72,10 +76,11 @@
     };
 
     nixosConfigurations = {
-      luke-f1xable = nixpkgs-unstable.lib.nixosSystem rec {
+      luke-f1xable = nixpkgs-unstable.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
           ./host/f1xable/hardware-configuration.nix
+          nixos-hardware.nixosModules.framework-13-7040-amd
           ./hw/framework-13-amd.nix
           ./host/f1xable/f1xable.nix
           ./platform/nixos/enable-flakes.nix
