@@ -187,6 +187,7 @@
             sops-nix.homeManagerModules.sops
             ./home/homebrew/homebrew.nix
             ./home/fonts/fonts.nix
+            ./home/readline/readline.nix
             ./home/bash/bash.nix
             ./home/fish/fish.nix
             ./home/fish/default.nix
