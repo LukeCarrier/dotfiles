@@ -10,6 +10,8 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
+  programs.adb.enable = true;
+
   services.udev.extraRules = ''
     SUBSYSTEM=="power_supply", ENV{POWER_SUPPLY_ONLINE}=="1", RUN+="${pkgs.bash}/bin/bash -c 'echo 80 >/sys/class/power_supply/BAT?/charge_control_end_threshold'"
   '';
@@ -17,6 +19,6 @@
   users.users.lukecarrier = {
     isNormalUser = true;
     description = "Luke Carrier";
-    extraGroups = [ "input" "networkmanager" "wheel" ];
+    extraGroups = [ "adbusers" "input" "networkmanager" "wheel" ];
   };
 }
