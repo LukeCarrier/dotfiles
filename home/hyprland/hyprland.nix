@@ -310,7 +310,7 @@
         ",XF86AudioPrev,exec,playerctl previous"
         ",XF86AudioPlay,exec,playerctl play-pause"
         ",xf86audioNext,exec,playerctl next"
-        ",XF86MonBrightnessDown,exec,brightnessctl set -2%"
+        ",XF86MonBrightnessDown,exec,brightnessctl set 2%-"
         ",XF86MonBrightnessUp,exec,brightnessctl set +2%"
         ",XF86AudioMedia,exec,$terminal"
         # The `EC takes care of this on the Framework 13 AMD:
