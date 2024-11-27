@@ -1,17 +1,22 @@
 { config, pkgs, pkgs-unstable, ... }:
 {
   home.packages = with pkgs; [
+    pkgs-unstable.kanshi
+
     brightnessctl
     playerctl
 
     wl-clipboard
     wf-recorder
     helvum
-    pkgs-unstable.kanshi
-    mako
     grim
     slurp
     wofi
+
+    mako
+    libnotify
+
+    hyprcursor
 
     fira-code
     fira-code-symbols
@@ -399,5 +404,16 @@
         ",~/Pictures/Wallpaper/Mountains under cloudy sky (Simon Berger).jpg"
       ];
     };
+  };
+
+  services.mako = {
+    enable = true;
+    borderColor = "#ffffff";
+    borderRadius = 8;
+    borderSize = 3;
+    groupBy = "app-name";
+    font = "Poppins 12";
+    backgroundColor = "#000000bf";
+    textColor = "#ffffff";
   };
 }
