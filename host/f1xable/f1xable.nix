@@ -3,6 +3,7 @@
   system.stateVersion = "24.05";
 
   networking.hostName = "luke-f1xable";
+  networking.domain = "peacehaven.carrier.family";
 
   boot.initrd.luks.devices."luks-d0d2e346-4317-481e-98cc-3a1d879f3b2a".device =
     "/dev/disk/by-uuid/d0d2e346-4317-481e-98cc-3a1d879f3b2a";
