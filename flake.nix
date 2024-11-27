@@ -104,6 +104,7 @@
           modules = [
             ./platform/darwin/common.nix
             ./host/b-4653/b-4653.nix
+            ./system/aerospace/aerospace.nix
             ./system/1password/1password.nix
           ];
         };
@@ -183,6 +184,7 @@
             ./home/bash/bash.nix
             ./home/fish/fish.nix
             ./home/zsh/zsh.nix
+            ./system/aerospace/home.nix
             ./system/1password/home.nix
             ./home/openssh/openssh.nix
             ./home/starship/starship.nix
