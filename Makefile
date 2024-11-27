@@ -1,4 +1,7 @@
-.PHONY: home host
+.PHONY: gc home host
+
+gc:
+	nix-collect-garbage --delete-old
 
 home:
 	nix run home-manager/release-24.05 -- switch --flake ".#$(USER)@$(shell hostname)"
