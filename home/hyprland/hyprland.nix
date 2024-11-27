@@ -40,6 +40,15 @@
 
   fonts.fontconfig.enable = true;
 
+  dconf.settings = {
+    "org/gnome/desktop/interface" = {
+      color-scheme = "prefer-dark";
+    };
+    "org/gnome/desktop/wm/preferences" = {
+      button-layout = "menu:";
+    };
+  };
+
   gtk = {
     enable = true;
     font = {
@@ -47,8 +56,8 @@
       name = "Poppins";
     };
     theme = {
-      package = pkgs.tokyonight-gtk-theme;
-      name = "Tokyonight-Dark-B";
+      package = pkgs.colloid-gtk-theme;
+      name = "Colloid-Dark";
     };
     cursorTheme = {
       package = pkgs.bibata-cursors;
