@@ -39,19 +39,33 @@
     self,
     ...
   }:
-  flake-utils.lib.eachDefaultSystem (system: {
-    devShells.default =
-      let
-        pkgs = import nixpkgs-unstable { inherit system; };
-      in
+  let
+    pkgsForSystem = ({ pkgs, system }: (
+      import pkgs {
+        system = system;
+        overlays = [
+          (final: prev: {
+            bw-cli-tools = self.packages.${system}.bw-cli-tools;
+            monaspace-fonts = self.packages.${system}.monaspace-fonts;
+            stklos = self.packages.${system}.stklos;
+          })
+        ];
+      }
+    ));
+  in flake-utils.lib.eachDefaultSystem (system:
+    let
+      pkgs = pkgsForSystem({
+        pkgs = nixpkgs-unstable;
+        system = system;
+      });
+    in {
+      devShells.default =
         pkgs.mkShell {
           packages = with pkgs; [ gnumake nil nix-index ];
         };
 
-    packages =
-      let
-        pkgs = import nixpkgs-unstable { inherit system; };
-        packages = {
+      packages =
+        {
           bw-cli-tools = pkgs.callPackage ./package/bw-cli-tools/bw-cli-tools.nix {};
 
           monaspace-fonts = pkgs.callPackage ./package/monaspace-fonts/monaspace-fonts.nix {
@@ -70,114 +84,119 @@
             };
           };
         };
-      in
-        packages;
-  }) // {
-    darwinConfigurations = {
-      luke-fatman = darwin.lib.darwinSystem {
-        system = "aarch64-darwin";
-        modules = [
-          ./platform/darwin/common.nix
-          ./host/fatman/fatman.nix
-        ];
-      };
-    };
-
-    nixOnDroidConfigurations = {
-      # Not sure we can provide different configurations to different devices?
-      default = nix-on-droid.lib.nixOnDroidConfiguration {
-        pkgs = import nixpkgs-unstable { system = "aarch64-linux"; };
-        modules = [
-          ./platform/android/common.nix
-          ./host/w1deboi/w1deboi.nix
-        ];
-      };
-    };
-
-    nixosConfigurations = {
-      luke-f1xable = nixpkgs-unstable.lib.nixosSystem {
-        system = "x86_64-linux";
-        modules = [
-          ./host/f1xable/hardware-configuration.nix
-          nixos-hardware.nixosModules.framework-13-7040-amd
-          ./hw/framework-13-amd.nix
-          ./host/f1xable/f1xable.nix
-          ./platform/nixos/enable-flakes.nix
-          ./platform/nixos/region/en-gb.nix
-          lanzaboote.nixosModules.lanzaboote
-          ./platform/nixos/secure-boot.nix
-          ./platform/nixos/graphical.nix
-          ./platform/nixos/containers.nix
-        ];
-      };
-    };
-
-    homeConfigurations = {
-      "nix-on-droid@" = home-manager.lib.homeManagerConfiguration {
-        pkgs = import nixpkgs-unstable {
-          system = "aarch64-linux";
-        };
-        extraSpecialArgs = {
-          gitConfig.user.signingKey = "1CBBEBFE0CDC1C06DB324A7CCE439AFEC33D9E7F";
-        };
-        modules = [
-          ./user/android/nix-on-droid.nix
-          # ./home/bash/bash.nix
-          ./home/fish/fish.nix
-          ./home/zsh/zsh.nix
-          ./home/openssh/openssh.nix
-          ./home/starship/starship.nix
-          ./home/git/git.nix
-          ./home/helix/helix.nix
-        ];
-      };
-
-      "lukecarrier@luke-f1xable" = home-manager.lib.homeManagerConfiguration rec {
-        pkgs = import nixpkgs-unstable rec {
-          system = "x86_64-linux";
-          overlays = [
-            (final: prev: {
-              bw-cli-tools = self.packages.${pkgs.system}.bw-cli-tools;
-              monaspace-fonts = self.packages.${system}.monaspace-fonts;
-              stklos = self.packages.${system}.stklos;
-            })
+    }) // {
+      darwinConfigurations = {
+        luke-fatman = darwin.lib.darwinSystem rec {
+          system = "aarch64-darwin";
+          pkgs = pkgsForSystem({
+            inherit system;
+            pkgs = nixpkgs-unstable;
+          });
+          modules = [
+            ./platform/darwin/common.nix
+            ./host/fatman/fatman.nix
           ];
         };
-        extraSpecialArgs = {
-          gitConfig.user.signingKey = "1CBBEBFE0CDC1C06DB324A7CCE439AFEC33D9E7F";
-        };
-        modules = [
-          ./user/f1xable/lukecarrier.nix
-          ./home/fonts/fonts.nix
-          ./home/hyprland/hyprland.nix
-          ./home/bash/bash.nix
-          ./home/fish/fish.nix
-          ./home/zsh/zsh.nix
-          ./home/openssh/openssh.nix
-          ./home/starship/starship.nix
-          # ./home/espanso/espanso.nix
-          ./home/git/git.nix
-          ./home/helix/helix.nix
-          ./home/alacritty/alacritty.nix
-           { programs.wezterm.package = wezterm.packages.${pkgs.system}.default; }
-          ./home/wezterm/wezterm.nix
-        ];
       };
 
-      "lukecarrier@luke-fatman" = home-manager.lib.homeManagerConfiguration {
-        pkgs = import nixpkgs-unstable {
-          system = "aarch64-darwin";
+      nixOnDroidConfigurations = {
+        # Not sure we can provide different configurations to different devices?
+        default = nix-on-droid.lib.nixOnDroidConfiguration {
+          pkgs = pkgsForSystem({
+            system = "aarch64-darwin";
+            pkgs = nixpkgs-unstable;
+          });
+          modules = [
+            ./platform/android/common.nix
+            ./host/w1deboi/w1deboi.nix
+          ];
         };
-        extraSpecialArgs = {
-          gitConfig.user.signingKey = "1CBBEBFE0CDC1C06DB324A7CCE439AFEC33D9E7F";
+      };
+
+      nixosConfigurations = {
+        luke-f1xable = nixpkgs-unstable.lib.nixosSystem rec {
+          system = "x86_64-linux";
+          pkgs = pkgsForSystem({
+            inherit system;
+            pkgs = nixpkgs-unstable;
+          });
+          modules = [
+            ./host/f1xable/hardware-configuration.nix
+            nixos-hardware.nixosModules.framework-13-7040-amd
+            ./hw/framework-13-amd.nix
+            ./host/f1xable/f1xable.nix
+            ./platform/nixos/enable-flakes.nix
+            ./platform/nixos/region/en-gb.nix
+            lanzaboote.nixosModules.lanzaboote
+            ./platform/nixos/secure-boot.nix
+            ./platform/nixos/graphical.nix
+            ./platform/nixos/containers.nix
+          ];
         };
-        modules = [
-          ./user/fatman/lukecarrier.nix
-          ./home/git/git.nix
-          ./home/alacritty/alacritty.nix
-          ./home/helix/helix.nix
-        ];
+      };
+
+      homeConfigurations = {
+        "nix-on-droid@" = home-manager.lib.homeManagerConfiguration {
+          pkgs = pkgsForSystem({
+            system = "aarch64-linux";
+            pkgs = nixpkgs-unstable;
+          });
+          extraSpecialArgs = {
+            gitConfig.user.signingKey = "1CBBEBFE0CDC1C06DB324A7CCE439AFEC33D9E7F";
+          };
+          modules = [
+            ./user/android/nix-on-droid.nix
+            # ./home/bash/bash.nix
+            ./home/fish/fish.nix
+            ./home/zsh/zsh.nix
+            ./home/openssh/openssh.nix
+            ./home/starship/starship.nix
+            ./home/git/git.nix
+            ./home/helix/helix.nix
+          ];
+        };
+
+        "lukecarrier@luke-f1xable" = home-manager.lib.homeManagerConfiguration rec {
+          pkgs = pkgsForSystem({
+            system = "x86_64-linux";
+            pkgs = nixpkgs-unstable;
+          });
+          extraSpecialArgs = {
+            gitConfig.user.signingKey = "1CBBEBFE0CDC1C06DB324A7CCE439AFEC33D9E7F";
+          };
+          modules = [
+            ./user/f1xable/lukecarrier.nix
+            ./home/fonts/fonts.nix
+            ./home/hyprland/hyprland.nix
+            ./home/bash/bash.nix
+            ./home/fish/fish.nix
+            ./home/zsh/zsh.nix
+            ./home/openssh/openssh.nix
+            ./home/starship/starship.nix
+            # ./home/espanso/espanso.nix
+            ./home/git/git.nix
+            ./home/helix/helix.nix
+            ./home/alacritty/alacritty.nix
+             { programs.wezterm.package = wezterm.packages.${pkgs.pkgs.system}.default; }
+            ./home/wezterm/wezterm.nix
+          ];
+        };
+
+        "lukecarrier@luke-fatman" = home-manager.lib.homeManagerConfiguration {
+          pkgs = pkgsForSystem({
+            system = "aarch64-darwin";
+            pkgs = nixpkgs-unstable;
+          });
+          extraSpecialArgs = {
+            gitConfig.user.signingKey = "1CBBEBFE0CDC1C06DB324A7CCE439AFEC33D9E7F";
+          };
+          modules = [
+            ./user/fatman/lukecarrier.nix
+            ./home/git/git.nix
+            ./home/alacritty/alacritty.nix
+            ./home/helix/helix.nix
+          ];
+        };
       };
     };
-  };
 }
