@@ -12,6 +12,8 @@ ssh:
 mounts:
   - location: "/tmp/lima"
     writable: true
+  - location: ~/Code
+    writable: true
 
 images:
   - location: "https://cloud-images.ubuntu.com/releases/24.04/release-20240423/ubuntu-24.04-server-cloudimg-amd64.img"
