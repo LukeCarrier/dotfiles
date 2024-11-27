@@ -20,7 +20,7 @@
     bibata-cursors
 
     libsecret
-    gnome.seahorse
+    seahorse
     gcr
   ];
 
@@ -53,14 +53,14 @@
       name = "Bibata-Modern-Classic";
     };
     iconTheme = {
-      package = pkgs.gnome.adwaita-icon-theme;
+      package = pkgs.adwaita-icon-theme;
       name = "Adwaita";
     };
   };
 
   home.pointerCursor = {
     gtk.enable = true;
-    package = pkgs.gnome.adwaita-icon-theme;
+    package = pkgs.adwaita-icon-theme;
     name = "Adwaita";
   };
 
