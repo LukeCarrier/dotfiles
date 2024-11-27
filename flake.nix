@@ -42,12 +42,13 @@
   let
     pkgsForSystem = ({ pkgs, system }: (
       import pkgs {
-        system = system;
+        inherit system;
         overlays = [
           (final: prev: {
             bw-cli-tools = self.packages.${system}.bw-cli-tools;
             monaspace-fonts = self.packages.${system}.monaspace-fonts;
             stklos = self.packages.${system}.stklos;
+            wezterm = wezterm.packages.${system}.default;
           })
           (final: prev: {
             flatpak = (import (builtins.fetchTarball {
@@ -185,7 +186,6 @@
             ./home/git/git.nix
             ./home/helix/helix.nix
             ./home/alacritty/alacritty.nix
-             { programs.wezterm.package = wezterm.packages.${pkgs.pkgs.system}.default; }
             ./home/wezterm/wezterm.nix
           ];
         };
