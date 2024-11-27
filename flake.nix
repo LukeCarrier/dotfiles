@@ -24,6 +24,10 @@
     };
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     wezterm.url = "github:wez/wezterm/main?dir=nix";
   };
 
@@ -35,6 +39,7 @@
     nixos-hardware,
     nix-on-droid,
     nixpkgs-unstable,
+    sops-nix,
     wezterm,
     self,
     ...
@@ -70,7 +75,7 @@
     in {
       devShells.default =
         pkgs.mkShell {
-          packages = with pkgs; [ gnumake nil nix-index ];
+          packages = with pkgs; [ age gnumake nil nix-index sops ];
         };
 
       packages =
@@ -174,6 +179,7 @@
           };
           modules = [
             ./user/b-4653/luke.carrier.nix
+            sops-nix.homeManagerModules.sops
             ./home/homebrew/homebrew.nix
             ./home/fonts/fonts.nix
             ./home/bash/bash.nix

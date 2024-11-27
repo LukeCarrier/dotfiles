@@ -6,6 +6,10 @@ Managed with [Home Manager](https://github.com/nix-community/home-manager).
 
 ## Setup
 
+### Secrets
+
+Secrets are managed by SOPS. Place AGE private keys in the file `.sops/keys`, and edit files with `sops $path`.
+
 ### macOS
 
 After enabling FileVault on the first login, reboot the machine.
