@@ -183,6 +183,7 @@
           };
           modules = [
             ./user/b-4653/luke.carrier.nix
+            ./home/fonts/fonts.nix
             ./home/bash/bash.nix
             ./home/fish/fish.nix
             ./home/zsh/zsh.nix
