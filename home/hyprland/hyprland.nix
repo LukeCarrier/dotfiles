@@ -335,6 +335,10 @@
         workspace_swipe = true;
         workspace_swipe_fingers = 4;
       };
+      windowrulev2 = [
+        "opacity 1.0 override 1.0 override 1.0 override, title:(Picture-in-Picture)"
+        "opacity 1.0 override 1.0 override 1.0 override, title:.*(Twitch|YouTube).*Mozilla Firefox$"
+      ];
     };
   };
 
