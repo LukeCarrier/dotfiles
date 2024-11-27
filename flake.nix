@@ -198,6 +198,7 @@
             ./home/openssh/openssh.nix
             ./home/mcfly/mcfly.nix
             ./home/starship/starship.nix
+            ./home/tmux/tmux.nix
             ./home/helix/helix.nix
             ./home/gnupg/gnupg.nix
             ./home/git/git.nix

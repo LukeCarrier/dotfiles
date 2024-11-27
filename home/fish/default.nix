@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 {
   # Written for stupid macOS ps
 
@@ -15,4 +15,6 @@
       exec fish $LOGIN_OPTION
     fi
   '';
+
+  programs.tmux.shell = "${pkgs.fish}/bin/fish";
 }
