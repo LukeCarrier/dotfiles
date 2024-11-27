@@ -36,6 +36,7 @@
           ./bash/bash.nix
           ./fish/fish.nix
           ./zsh/zsh.nix
+          ./git/git.nix
         ];
       };
     };
