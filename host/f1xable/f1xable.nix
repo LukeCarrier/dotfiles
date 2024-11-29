@@ -17,9 +17,27 @@
     SUBSYSTEM=="power_supply", ENV{POWER_SUPPLY_ONLINE}=="1", RUN+="${pkgs.bash}/bin/bash -c 'echo 80 >/sys/class/power_supply/BAT?/charge_control_end_threshold'"
   '';
 
+  virtualisation.libvirtd = {
+    enable = true;
+    qemu = {
+      ovmf = {
+        enable = true;
+        packages = [ pkgs.OVMFFull.fd ];
+      };
+      swtpm.enable = true;
+    };
+  };
+  environment.systemPackages = [ pkgs.swtpm ];
+
   users.users.lukecarrier = {
     isNormalUser = true;
     description = "Luke Carrier";
-    extraGroups = [ "adbusers" "input" "networkmanager" "wheel" ];
+    extraGroups = [
+      "adbusers"
+      "input"
+      "kvm" "libvirtd" "qemu-libvirtd"
+      "networkmanager"
+      "wheel"
+    ];
   };
 }
