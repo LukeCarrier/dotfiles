@@ -201,7 +201,7 @@
       "$moveMod" = "SHIFT";
       "$menu" = "wofi --allow-images --gtk-dark --insensitive --show drun";
       "$fileManager" = "nautilus";
-      "$terminal" = "alacritty";
+      "$terminal" = "xdg-terminal";
       debug = {
         suppress_errors = true;
       };
@@ -212,6 +212,7 @@
         };
       };
       env = [
+        "TERM,wezterm"
         "XDG_CURRENT_DESKTOP,Hyprland"
         "XDG_SESSION_TYPE,wayland"
         "XDG_SESSION_DESKTOP,Hyprland"
