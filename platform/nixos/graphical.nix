@@ -3,6 +3,7 @@
   environment.systemPackages = with pkgs; [
     firefoxpwa
     flatpak
+    gnome-keyring
     gnome-software
     home-manager
   ];
@@ -39,16 +40,6 @@
   services.avahi.enable = true;
 
   security.polkit.enable = true;
-
-  xdg.portal = {
-    enable = true;
-    extraPortals = with pkgs; [
-      xdg-desktop-portal-gtk
-      xdg-desktop-portal-hyprland
-      xdg-desktop-portal-wlr
-      xdg-desktop-portal-gnome
-    ];
-  };
 
   services.xserver.enable = true;
   services.greetd.enable = true;

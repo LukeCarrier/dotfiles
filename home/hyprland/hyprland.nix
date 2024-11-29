@@ -38,6 +38,15 @@
     };
   };
 
+  xdg.portal = {
+    enable = true;
+    extraPortals = with pkgs; [ xdg-desktop-portal-hyprland ];
+    configPackages = with pkgs; [ gnome-keyring ];
+    config.hyprland = {
+      default = [ "hyprland" ];
+    };
+  };
+
   gtk = {
     enable = true;
     font = {
