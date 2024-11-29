@@ -3,7 +3,7 @@
   environment.systemPackages = with pkgs; [
     firefoxpwa
     flatpak
-    gnome.gnome-software
+    gnome-software
     home-manager
   ];
 
