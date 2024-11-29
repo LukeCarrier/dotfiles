@@ -268,11 +268,10 @@
       bind =
           [
             # Session management
-            "$mainMod, 0, exec, hyprlock"  # backslash
+            "$mainMod, 0, exec, hyprlock"
             # Window/application management
-            "$mainMod, W, closewindow"
-            "$mainMod, Q, killactive"
-            "$mainMod, G, togglegroup"
+            "$mainMod, w, killactive"
+            "$mainMod, g, togglegroup"
             # Launcher, a la Spotlight
             "$mainMod, SPACE, exec, $menu"
             # Navigate between windows, Vi style
@@ -290,6 +289,8 @@
             "$mainMod $groupMod, j, changegroupactive, f"
             "$mainMod $groupMod, k, changegroupactive, b"
             "$mainMod $groupMod, l, changegroupactive, f"
+            # Shift workspace between monitors
+            "$mainMod $moveMod, Tab, movecurrentworkspacetomonitor, +1"
           ]
           ++ (
             builtins.concatLists (builtins.genList (i:
