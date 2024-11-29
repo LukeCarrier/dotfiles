@@ -63,6 +63,12 @@
             }) {
               inherit system;
             }).flatpak;
+            ostree = (import (builtins.fetchTarball {
+              url = "https://github.com/NixOS/nixpkgs/archive/ee20248665468359a46992b9f4b19007ce7fa586.tar.gz";
+              sha256 = "0r1cxhr75aiaz0bs7xh8ikvl9r22an3grzp6v2171nhn8cmiq02n";
+            }) {
+              inherit system;
+            }).ostree;
           })
         ];
       }
