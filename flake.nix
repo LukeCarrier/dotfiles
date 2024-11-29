@@ -58,17 +58,11 @@
           })
           (final: prev: {
             flatpak = (import (builtins.fetchTarball {
-              url = "https://github.com/NixOS/nixpkgs/archive/ee20248665468359a46992b9f4b19007ce7fa586.tar.gz";
-              sha256 = "0r1cxhr75aiaz0bs7xh8ikvl9r22an3grzp6v2171nhn8cmiq02n";
+              url = "https://github.com/NixOS/nixpkgs/archive/543fe7f213b34740f1d92b3d2d70879106dd6290.tar.gz";
+              sha256 = "1qv4d4dgp4n871dqngd4lb28l3mbp73jn6gfjpyz5yn8rap9lgnw";
             }) {
               inherit system;
             }).flatpak;
-            ostree = (import (builtins.fetchTarball {
-              url = "https://github.com/NixOS/nixpkgs/archive/ee20248665468359a46992b9f4b19007ce7fa586.tar.gz";
-              sha256 = "0r1cxhr75aiaz0bs7xh8ikvl9r22an3grzp6v2171nhn8cmiq02n";
-            }) {
-              inherit system;
-            }).ostree;
           })
         ];
       }
