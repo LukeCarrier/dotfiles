@@ -174,6 +174,7 @@
             lanzaboote.nixosModules.lanzaboote
             ./platform/nixos/secure-boot.nix
             ./platform/nixos/graphical.nix
+            ./platform/wireguard/wireguard.nix
             ./platform/nixos/containers.nix
           ];
         };
