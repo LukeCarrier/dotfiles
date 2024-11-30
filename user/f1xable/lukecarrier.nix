@@ -1,4 +1,4 @@
-{ lib, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 {
   home.stateVersion = "24.05";
 
@@ -22,6 +22,15 @@
     SSH_AUTH_SOCK = "$XDG_RUNTIME_DIR/keyring/ssh";
   };
 
+  sops.age.keyFile = "${config.home.homeDirectory}/Code/LukeCarrier/dotfiles/.sops/keys";
+
+  sops.secrets.aws-config = {
+    sopsFile = ../../secrets/personal.yaml;
+    format = "yaml";
+    key = "aws/config";
+    path = "${config.home.homeDirectory}/.aws/config";
+  };
+  
   programs.home-manager.enable = true;
 
   dconf.settings = {
