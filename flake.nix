@@ -86,19 +86,25 @@
           bw-cli-tools = pkgs.callPackage ./package/bw-cli-tools/bw-cli-tools.nix {};
 
           monaspace-fonts = pkgs.callPackage ./package/monaspace-fonts/monaspace-fonts.nix {
-            monaspace-fonts = {
-              url = "https://github.com/githubnext/monaspace/releases/download/v1.101/monaspace-v1.101.zip";
-              sha256 = "0v2423dc75pf5kzllyi3ia7l3nv2d1z158cj4wn0xa5h3df3i6x3";
-              version = "1.101";
-            };
+            monaspace-fonts =
+              let
+                version = "1.101";
+              in {
+                inherit version;
+                url = "https://github.com/githubnext/monaspace/releases/download/v${version}/monaspace-v${version}.zip";
+                hash = "sha256-o5s4XBuwqA4sJ5KhEn5oYttBj4ojekr/LO6Ww9oQRGw=";
+              };
           };
 
           stklos = pkgs.callPackage ./package/stklos/stklos.nix {
-            stklos = {
-              url = "https://stklos.net/download/stklos-2.00.tar.gz";
-              sha256 = "1jy7xvh8p4rcfcv4wqv43xxgi10wzw0ynyqm41wgpkhq596lb1gb";
-              version = "2.00";
-            };
+            stklos =
+              let
+                version = "2.10";
+              in {
+                inherit version;
+                url = "https://stklos.net/download/stklos-${version}.tar.gz";
+                hash = "sha256-bb8DRfkgSP7GEzrW5V1x0L47d21YF0sIftCPfEsuoEE=";
+              };
           };
         };
     }) // {

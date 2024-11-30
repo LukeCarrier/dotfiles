@@ -5,7 +5,7 @@ pkgs.stdenv.mkDerivation {
 
   src = fetchurl {
     url = stklos.url;
-    sha256 = stklos.sha256;
+    hash = stklos.hash;
   };
 
   postPatch = ''
