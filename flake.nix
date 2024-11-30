@@ -252,7 +252,9 @@
           };
           modules = [
             ./user/f1xable/lukecarrier.nix
+            sops-nix.homeManagerModules.sops
             ./home/fonts/fonts.nix
+            ./home/readline/readline.nix
             ./home/hyprland/hyprland.nix
             ./home/bash/bash.nix
             ./home/fish/fish.nix
@@ -260,12 +262,19 @@
             ./home/zsh/zsh.nix
             ./home/direnv/direnv.nix
             ./home/openssh/openssh.nix
+            ./home/mcfly/mcfly.nix
             ./home/starship/starship.nix
-            # ./home/espanso/espanso.nix
-            ./home/git/git.nix
+            ./home/tmux/tmux.nix
             ./home/helix/helix.nix
+            ./home/vim/vim.nix
+            ./home/gnupg/gnupg.nix
+            ./home/git/git.nix
+            ./home/zoxide/zoxide.nix
+            ./home/espanso/espanso.nix
             ./home/alacritty/alacritty.nix
             ./home/wezterm/wezterm.nix
+            ./home/rust/cargo.nix
+            ./home/aws/aws.nix
           ];
         };
 
