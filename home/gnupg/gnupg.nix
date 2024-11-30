@@ -5,7 +5,7 @@
       os = pkgs.lib.lists.last (pkgs.lib.strings.splitString "-" pkgs.system);
       pinentries = {
         darwin = pkgs.pinentry_mac;
-        linux = pkgs.pinentry-rof2;
+        linux = pkgs.pinentry-rofi;
       };
     in {
       enable = true;
