@@ -8,8 +8,13 @@
   boot.initrd.luks.devices."luks-d0d2e346-4317-481e-98cc-3a1d879f3b2a".device =
     "/dev/disk/by-uuid/d0d2e346-4317-481e-98cc-3a1d879f3b2a";
 
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader = {
+    systemd-boot = {
+      enable = true;
+      configurationLimit = 10;
+    };
+    efi.canTouchEfiVariables = true;
+  };
 
   programs.adb.enable = true;
 
