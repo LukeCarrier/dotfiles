@@ -1,5 +1,5 @@
 keys:
-  - &employer_emed: age14ddy9t7d0dnlmrumefw45ft9jqvzwz6l9d2th8hfd738xhjluckskuhe7p
+  - &employer_emed age14ddy9t7d0dnlmrumefw45ft9jqvzwz6l9d2th8hfd738xhjluckskuhe7p
 creation_rules:
   - path_regex: secrets/employer-emed\.yaml
     age: *employer_emed
