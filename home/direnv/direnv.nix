@@ -2,6 +2,7 @@
 {
   programs.direnv = {
     enable = true;
+    nix-direnv.enable = true;
     stdlib = ''
       layout_poetry() {
         PYPROJECT_TOML="$${PYPROJECT_TOML:-pyproject.toml}"
