@@ -12,7 +12,7 @@
   # FIXME: should we be keeping all of this cruft in a devShell?
   home.packages = with pkgs; [
     saml2aws
-    docker-client
+    docker-client docker-credential-helpers
     kubectl krew kyverno
     vault
   ];
