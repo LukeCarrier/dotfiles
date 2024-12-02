@@ -1,0 +1,15 @@
+region="${1:-$AWS_REGION}"
+
+account="$(aws sts get-caller-identity --query Account --output text)"
+registry="$account.dkr.ecr.$region.amazonaws.com"
+
+temp_password="$(env AWS_REGION="$region" aws ecr get-login-password)"
+
+if command -v docker >/dev/null; then
+  docker login --username AWS --password-stdin "$registry" <<<"$temp_password"
+fi
+
+if command -v podman >/dev/null; then
+  podman login --username AWS --password-stdin "$registry" <<<"$temp_password"
+fi
+
