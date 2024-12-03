@@ -23,5 +23,6 @@
 
   homebrew.casks = [
     "qobuz"
+    "vnc-viewer"
   ];
 }
