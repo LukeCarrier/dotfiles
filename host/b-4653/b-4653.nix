@@ -22,6 +22,7 @@
   };
 
   homebrew.casks = [
+    "bettertouchtool"
     "qobuz"
     "vnc-viewer"
   ];
