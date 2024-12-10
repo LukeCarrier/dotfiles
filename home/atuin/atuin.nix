@@ -1,0 +1,4 @@
+{ ... }:
+{
+  programs.atuin.enable = true;
+}

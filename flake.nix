@@ -203,7 +203,7 @@
             ./system/aerospace/home.nix
             ./system/1password/home.nix
             ./home/openssh/openssh.nix
-            ./home/mcfly/mcfly.nix
+            ./home/atuin/atuin.nix
             ./home/starship/starship.nix
             ./home/tmux/tmux.nix
             ./home/helix/helix.nix
@@ -263,7 +263,7 @@
             ./home/zsh/zsh.nix
             ./home/direnv/direnv.nix
             ./home/openssh/openssh.nix
-            ./home/mcfly/mcfly.nix
+            ./home/atuin/atuin.nix
             ./home/starship/starship.nix
             ./home/tmux/tmux.nix
             ./home/helix/helix.nix
