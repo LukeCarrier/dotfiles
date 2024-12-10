@@ -8,23 +8,41 @@
     home-manager
   ];
 
-  boot.initrd.systemd.enable = true;
-  boot.plymouth = {
-    enable = true;
-    theme = "bgrt";
+  boot = {
+    initrd = {
+      systemd.enable = true;
+      verbose = false;
+    };
+
+    plymouth = {
+      enable = true;
+      theme = "bgrt";
+    };
+
+    consoleLogLevel = 0;
+
+    kernelModules = [
+      # Dynamically loading this module means permissions don't get applied to
+      # device nodes created when it's loaded, breaking some input methods.
+      "uinput"
+    ];
+
+    kernelParams = [
+      "quiet"
+      "splash"
+      "shell_on_fail"
+      "loglevel=3"
+      "rd.systemd.show_status=false"
+      "rd.udev.log_level=3"
+      "udev.log_priority=3"
+    ];
+
+    loader.timeout = 3;
   };
-  boot.consoleLogLevel = 0;
-  boot.initrd.verbose = false;
-  boot.kernelParams = [
-    "quiet"
-    "splash"
-    "boot.shell_on_fail"
-    "loglevel=3"
-    "rd.systemd.show_status=false"
-    "rd.udev.log_level=3"
-    "udev.log_priority=3"
-  ];
-  boot.loader.timeout = 0;
+
+  services.udev.extraRules = ''
+    SUBSYSTEM=="misc", KERNEL=="uinput", MODE="0660", GROUP="input"
+  '';
 
   services.upower.enable = true;
 
