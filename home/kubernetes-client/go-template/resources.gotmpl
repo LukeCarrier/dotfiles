@@ -1,0 +1,45 @@
+{{- define "resource" -}}
+	{{- .metadata.namespace }}{{ "," }}{{ .kind }}{{ "," }}{{ .metadata.name }}{{ "," -}}
+	{{- index .metadata.labels "app.kubernetes.io/name" }}{{ "," -}}
+	{{- index .metadata.labels "app.kubernetes.io/instance" }}{{ "," -}}
+	{{- or .spec.replicas 1 }}{{ "," -}}
+{{- end -}}
+
+{{- define "resources" -}}
+	{{- or .cpu 0 }}{{ "," }}{{ or .memory 0 }}{{ "," }}{{ or (index . "ephemeral-storage") 0 -}}
+{{- end -}}
+{{- define "no-resources" -}}
+	{{- 0 }}{{ "," }}{{ 0 }}{{ "," }}{{  0 -}}
+{{- end -}}
+
+{{- define "container" -}}
+	{{- .name }}{{ "," -}}
+	{{- with .resources.requests -}}
+		{{- template "resources" . -}}
+	{{- else -}}
+		{{- template "no-resources" -}}
+	{{- end -}}
+	{{- "," -}}
+	{{- with .resources.limits -}}
+		{{- template "resources" . -}}
+	{{- else -}}
+		{{- template "no-resources" -}}
+	{{- end -}}
+	{{- "\n" -}}
+{{- end -}}
+
+{{- "namespace,kind,name,app,instance,replicas,container,req-cpu,req-mem,req-ephemeral-storage,limit-cpu,limit-mem,limit-ephemeral-storage\n" -}}
+{{- range .items -}}
+	{{ $p := . }}
+	{{- if .spec.containers -}}
+		{{- range .spec.containers -}}
+			{{- template "resource" $p -}}
+			{{- template "container" . -}}
+		{{- end -}}
+	{{- else if .spec.template.spec.containers -}}
+		{{- range .spec.template.spec.containers -}}
+			{{- template "resource" $p -}}
+			{{- template "container" . -}}
+		{{- end -}}
+	{{- end -}}
+{{- end -}}

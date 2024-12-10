@@ -9,13 +9,13 @@ gc-aggressive:
 	sudo nix-env -p /nix/var/nix/profiles/system --delete-generations $(PRESERVE_GENERATIONS)
 
 home:
-	nix run home-manager/release-24.05 -- switch --flake ".#$(USER)@$(shell hostname)"
+	nix run home-manager -- switch --flake ".#$(USER)@$(shell hostname)" --show-trace
 
 host:
-	sudo nixos-rebuild switch --upgrade --flake ".#$(shell hostname)"
+	sudo nixos-rebuild switch --upgrade --flake ".#$(shell hostname)" --show-trace
 
 host-android:
-	nix-on-droid switch --flake .
+	nix-on-droid switch --flake . --show-trace
 
 host-darwin:
-	nix run nix-darwin -- switch --flake .
+	nix run nix-darwin -- switch --flake . --show-trace

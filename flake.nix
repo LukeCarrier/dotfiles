@@ -215,6 +215,7 @@
             ./home/alacritty/alacritty.nix
             ./home/wezterm/wezterm.nix
             ./home/aws/aws.nix
+            ./home/kubernetes-client/kubernetes-client.nix
             ./home/lima/lima.nix
             ./home/rust/cargo.nix
           ];

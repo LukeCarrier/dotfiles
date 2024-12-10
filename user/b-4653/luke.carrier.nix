@@ -13,7 +13,6 @@
   home.packages = with pkgs; [
     saml2aws
     docker-client docker-credential-helpers
-    kubectl krew kyverno
     vault
   ];
 
@@ -48,12 +47,4 @@
     key = "aws/saml2aws/config";
     path = "${config.home.homeDirectory}/.saml2aws";
   };
-
-  home.sessionPath = [
-    "$HOME/.krew/bin"
-  ];
-
-  programs.bash.initExtra = "eval $(kubectl shell_ctx hook bash)";
-  programs.fish.shellInit = "kubectl shell_ctx hook fish | source";
-  programs.zsh.initExtra = "eval $(kubectl shell_ctx hook zsh)";
 }
