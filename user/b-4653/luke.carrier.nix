@@ -14,6 +14,8 @@
     saml2aws
     docker-client docker-credential-helpers
     vault
+
+    csvlens tv
   ];
 
   home.sessionVariables = {
