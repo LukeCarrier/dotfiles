@@ -1,4 +1,9 @@
-{ config, gitConfig, pkgs, ... }:
+{
+  config,
+  gitConfig,
+  pkgs,
+  ...
+}:
 {
   home.shellAliases = {
     g = "git";
@@ -20,7 +25,7 @@
     diff.tool = "meld";
     merge.tool = "meld";
 
-    safe.directory = ["/etc/nixos"];
+    safe.directory = [ "/etc/nixos" ];
 
     url."git@github.com:".insteadOf = "https://github.com/";
 

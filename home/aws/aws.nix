@@ -1,7 +1,8 @@
 { config, pkgs, ... }:
 {
   home.packages = with pkgs; [
-    awscli2 aws-cli-tools
+    awscli2
+    aws-cli-tools
     fzf
   ];
 

@@ -49,7 +49,9 @@
     extraGroups = [
       "adbusers"
       "input"
-      "kvm" "libvirtd" "qemu-libvirtd"
+      "kvm"
+      "libvirtd"
+      "qemu-libvirtd"
       "networkmanager"
       "wheel"
     ];

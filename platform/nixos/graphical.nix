@@ -16,8 +16,13 @@
   boot.consoleLogLevel = 0;
   boot.initrd.verbose = false;
   boot.kernelParams = [
-    "quiet" "splash" "boot.shell_on_fail"
-    "loglevel=3" "rd.systemd.show_status=false" "rd.udev.log_level=3" "udev.log_priority=3"
+    "quiet"
+    "splash"
+    "boot.shell_on_fail"
+    "loglevel=3"
+    "rd.systemd.show_status=false"
+    "rd.udev.log_level=3"
+    "udev.log_priority=3"
   ];
   boot.loader.timeout = 0;
 
@@ -45,13 +50,17 @@
   services.greetd.enable = true;
   programs.regreet = {
     enable = true;
-    cageArgs = [ "-m" "last" "-s" ];
+    cageArgs = [
+      "-m"
+      "last"
+      "-s"
+    ];
     settings = {
       GTK.application_prefer_dark_theme = true;
     };
   };
   programs.hyprland.enable = true;
-  security.pam.services.hyprlock = {};
+  security.pam.services.hyprlock = { };
 
   services.printing.enable = true;
   services.flatpak = {

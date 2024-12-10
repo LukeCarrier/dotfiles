@@ -1,4 +1,7 @@
 { pkgs, ... }:
 {
-  homebrew.casks = [ "1password" "1password-cli" ];
+  homebrew.casks = [
+    "1password"
+    "1password-cli"
+  ];
 }

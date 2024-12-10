@@ -4,7 +4,7 @@
     "com.apple.dock" = {
       autohide = true;
       show-recents = false;
-      recent-apps = [];
+      recent-apps = [ ];
       minimize-to-application = true;
     };
   };

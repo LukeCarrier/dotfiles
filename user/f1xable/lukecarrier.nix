@@ -1,16 +1,23 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 {
   home.stateVersion = "24.05";
 
   home.username = "lukecarrier";
   home.homeDirectory = "/home/lukecarrier";
 
-  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
-    "jetbrains-toolbox"
-  ];
 
   home.packages = with pkgs; [
-    bitwarden-cli bw-cli-tools btop gh freshfetch jq
+    bitwarden-cli
+    bw-cli-tools
+    btop
+    gh
+    freshfetch
+    jq
     ungoogled-chromium
     jetbrains-toolbox
     gnome-network-displays
@@ -30,7 +37,7 @@
     key = "aws/config";
     path = "${config.home.homeDirectory}/.aws/config";
   };
-  
+
   programs.home-manager.enable = true;
 
   dconf.settings = {

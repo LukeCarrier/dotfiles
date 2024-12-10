@@ -31,65 +31,81 @@
     wezterm.url = "github:wez/wezterm/main?dir=nix";
   };
 
-  outputs = {
-    darwin,
-    flake-utils,
-    home-manager,
-    lanzaboote,
-    nixos-hardware,
-    nix-on-droid,
-    nixpkgs-unstable,
-    sops-nix,
-    wezterm,
-    self,
-    ...
-  }:
-  let
-    pkgsForSystem = ({ pkgs, system }: (
-      import pkgs {
-        inherit system;
-        overlays = [
-          (final: prev: {
-            aws-cli-tools = self.packages.${system}.aws-cli-tools;
-            bw-cli-tools = self.packages.${system}.bw-cli-tools;
-            monaspace-fonts = self.packages.${system}.monaspace-fonts;
-            stklos = self.packages.${system}.stklos;
-            wezterm = wezterm.packages.${system}.default;
-          })
-          (final: prev: {
-            flatpak = (import (builtins.fetchTarball {
-              url = "https://github.com/NixOS/nixpkgs/archive/ce4ee3029b29631ebdb59dccbec2953c3d70abd6.tar.gz";
-              sha256 = "0qp3jsl3r0b7zv4q067zribb434hf1cnkb8pjjzka26mwqiiv6v2";
-            }) {
-              inherit system;
-            }).flatpak;
-          })
-        ];
-      }
-    ));
-  in flake-utils.lib.eachDefaultSystem (system:
+  outputs =
+    {
+      darwin,
+      flake-utils,
+      home-manager,
+      lanzaboote,
+      nixos-hardware,
+      nix-on-droid,
+      nixpkgs-unstable,
+      sops-nix,
+      wezterm,
+      self,
+      ...
+    }:
     let
-      pkgs = pkgsForSystem({
-        pkgs = nixpkgs-unstable;
-        system = system;
-      });
-    in {
-      devShells.default =
-        pkgs.mkShell {
-          packages = with pkgs; [ age gnumake nil nix-index sops ];
+      pkgsForSystem = (
+        { pkgs, system }:
+        (import pkgs {
+          inherit system;
+          overlays = [
+            (final: prev: {
+              aws-cli-tools = self.packages.${system}.aws-cli-tools;
+              bw-cli-tools = self.packages.${system}.bw-cli-tools;
+              monaspace-fonts = self.packages.${system}.monaspace-fonts;
+              stklos = self.packages.${system}.stklos;
+              wezterm = wezterm.packages.${system}.default;
+            })
+            (final: prev: {
+              flatpak =
+                (import
+                  (builtins.fetchTarball {
+                    url = "https://github.com/NixOS/nixpkgs/archive/ce4ee3029b29631ebdb59dccbec2953c3d70abd6.tar.gz";
+                    sha256 = "0qp3jsl3r0b7zv4q067zribb434hf1cnkb8pjjzka26mwqiiv6v2";
+                  })
+                  {
+                    inherit system;
+                  }
+                ).flatpak;
+            })
+          ];
+        })
+      );
+    in
+    flake-utils.lib.eachDefaultSystem (
+      system:
+      let
+        pkgs = pkgsForSystem ({
+          pkgs = nixpkgs-unstable;
+          system = system;
+        });
+      in
+      {
+        devShells.default = pkgs.mkShell {
+          packages = with pkgs; [
+            age
+            gnumake
+            nil
+            nix-index
+            nixfmt-rfc-style
+            sops
+            treefmt2
+          ];
         };
 
-      packages =
-        {
-          aws-cli-tools = pkgs.callPackage ./package/aws-cli-tools/aws-cli-tools.nix {};
+        packages = {
+          aws-cli-tools = pkgs.callPackage ./package/aws-cli-tools/aws-cli-tools.nix { };
 
-          bw-cli-tools = pkgs.callPackage ./package/bw-cli-tools/bw-cli-tools.nix {};
+          bw-cli-tools = pkgs.callPackage ./package/bw-cli-tools/bw-cli-tools.nix { };
 
           monaspace-fonts = pkgs.callPackage ./package/monaspace-fonts/monaspace-fonts.nix {
             monaspace-fonts =
               let
                 version = "1.101";
-              in {
+              in
+              {
                 inherit version;
                 url = "https://github.com/githubnext/monaspace/releases/download/v${version}/monaspace-v${version}.zip";
                 hash = "sha256-o5s4XBuwqA4sJ5KhEn5oYttBj4ojekr/LO6Ww9oQRGw=";
@@ -100,18 +116,21 @@
             stklos =
               let
                 version = "2.10";
-              in {
+              in
+              {
                 inherit version;
                 url = "https://stklos.net/download/stklos-${version}.tar.gz";
                 hash = "sha256-bb8DRfkgSP7GEzrW5V1x0L47d21YF0sIftCPfEsuoEE=";
               };
           };
         };
-    }) // {
+      }
+    )
+    // {
       darwinConfigurations = {
         B-4653 = darwin.lib.darwinSystem rec {
           system = "aarch64-darwin";
-          pkgs = pkgsForSystem({
+          pkgs = pkgsForSystem ({
             inherit system;
             pkgs = nixpkgs-unstable;
           });
@@ -131,7 +150,7 @@
 
         luke-fatman = darwin.lib.darwinSystem rec {
           system = "aarch64-darwin";
-          pkgs = pkgsForSystem({
+          pkgs = pkgsForSystem ({
             inherit system;
             pkgs = nixpkgs-unstable;
           });
@@ -146,7 +165,7 @@
       nixOnDroidConfigurations = {
         # Not sure we can provide different configurations to different devices?
         default = nix-on-droid.lib.nixOnDroidConfiguration {
-          pkgs = pkgsForSystem({
+          pkgs = pkgsForSystem ({
             system = "aarch64-darwin";
             pkgs = nixpkgs-unstable;
           });
@@ -160,7 +179,7 @@
       nixosConfigurations = {
         luke-f1xable = nixpkgs-unstable.lib.nixosSystem rec {
           system = "x86_64-linux";
-          pkgs = pkgsForSystem({
+          pkgs = pkgsForSystem ({
             inherit system;
             pkgs = nixpkgs-unstable;
           });
@@ -182,7 +201,7 @@
 
       homeConfigurations = {
         "luke.carrier@B-4653.hq.babylonhealth.com" = home-manager.lib.homeManagerConfiguration rec {
-          pkgs = pkgsForSystem({
+          pkgs = pkgsForSystem ({
             system = "aarch64-darwin";
             pkgs = nixpkgs-unstable;
           });
@@ -222,7 +241,7 @@
         };
 
         "nix-on-droid@" = home-manager.lib.homeManagerConfiguration {
-          pkgs = pkgsForSystem({
+          pkgs = pkgsForSystem ({
             system = "aarch64-linux";
             pkgs = nixpkgs-unstable;
           });
@@ -244,7 +263,7 @@
         };
 
         "lukecarrier@luke-f1xable" = home-manager.lib.homeManagerConfiguration rec {
-          pkgs = pkgsForSystem({
+          pkgs = pkgsForSystem ({
             system = "x86_64-linux";
             pkgs = nixpkgs-unstable;
           });
@@ -280,7 +299,7 @@
         };
 
         "lukecarrier@luke-fatman" = home-manager.lib.homeManagerConfiguration {
-          pkgs = pkgsForSystem({
+          pkgs = pkgsForSystem ({
             system = "aarch64-darwin";
             pkgs = nixpkgs-unstable;
           });

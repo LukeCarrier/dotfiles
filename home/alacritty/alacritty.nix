@@ -1,8 +1,8 @@
 { config, pkgs, ... }:
 {
   home.file = {
-    "${config.xdg.configHome}/alacritty/themes/tokyo-night-storm.toml".source
-      = ./.config/alacritty/themes/tokyo-night-storm.toml;
+    "${config.xdg.configHome}/alacritty/themes/tokyo-night-storm.toml".source =
+      ./.config/alacritty/themes/tokyo-night-storm.toml;
   };
 
   programs.alacritty = {

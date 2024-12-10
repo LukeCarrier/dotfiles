@@ -10,8 +10,13 @@ let
   bwSshAddAskpass = pkgs.writeShellScriptBin "bw-ssh-add-askpass" ''
     bw get password "$BW_PASSWORD"
   '';
-in pkgs.symlinkJoin {
+in
+pkgs.symlinkJoin {
   pname = "bw-cli-tools";
   version = "0.1.0";
-  paths = [ bwSession bwSshAdd bwSshAddAskpass ];
+  paths = [
+    bwSession
+    bwSshAdd
+    bwSshAddAskpass
+  ];
 }

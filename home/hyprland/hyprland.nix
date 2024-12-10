@@ -26,7 +26,11 @@
 
   services.gnome-keyring = {
     enable = true;
-    components = ["pkcs11" "secrets" "ssh"];
+    components = [
+      "pkcs11"
+      "secrets"
+      "ssh"
+    ];
   };
 
   dconf.settings = {
@@ -278,42 +282,44 @@
         "3,monitor:DP-7"
       ];
       bind =
-          [
-            # Session management
-            "$mainMod, 0, exec, hyprlock"
-            # Window/application management
-            "$mainMod, w, killactive"
-            "$mainMod, g, togglegroup"
-            # Launcher, a la Spotlight
-            "$mainMod, SPACE, exec, $menu"
-            # Navigate between windows, Vi style
-            "$mainMod, h, movefocus, l"
-            "$mainMod, j, movefocus, d"
-            "$mainMod, k, movefocus, u"
-            "$mainMod, l, movefocus, r"
-            # Move windows, Vi style
-            "$mainMod $moveMod, h, movewindoworgroup, l"
-            "$mainMod $moveMod, j, movewindoworgroup, d"
-            "$mainMod $moveMod, k, movewindoworgroup, u"
-            "$mainMod $moveMod, l, movewindoworgroup, r"
-            # Navigate between grouped windows, Vi style
-            "$mainMod $groupMod, h, changegroupactive, b"
-            "$mainMod $groupMod, j, changegroupactive, f"
-            "$mainMod $groupMod, k, changegroupactive, b"
-            "$mainMod $groupMod, l, changegroupactive, f"
-            # Shift workspace between monitors
-            "$mainMod $moveMod, Tab, movecurrentworkspacetomonitor, +1"
-          ]
-          ++ (
-            builtins.concatLists (builtins.genList (i:
-              let ws = i + 1;
-              in [
-                "$mainMod, code:1${toString i}, workspace, ${toString ws}"
-                "$mainMod $moveMod, code:1${toString i}, movetoworkspace, ${toString ws}"
-              ]
-            )
-            9)
-          );
+        [
+          # Session management
+          "$mainMod, 0, exec, hyprlock"
+          # Window/application management
+          "$mainMod, w, killactive"
+          "$mainMod, g, togglegroup"
+          # Launcher, a la Spotlight
+          "$mainMod, SPACE, exec, $menu"
+          # Navigate between windows, Vi style
+          "$mainMod, h, movefocus, l"
+          "$mainMod, j, movefocus, d"
+          "$mainMod, k, movefocus, u"
+          "$mainMod, l, movefocus, r"
+          # Move windows, Vi style
+          "$mainMod $moveMod, h, movewindoworgroup, l"
+          "$mainMod $moveMod, j, movewindoworgroup, d"
+          "$mainMod $moveMod, k, movewindoworgroup, u"
+          "$mainMod $moveMod, l, movewindoworgroup, r"
+          # Navigate between grouped windows, Vi style
+          "$mainMod $groupMod, h, changegroupactive, b"
+          "$mainMod $groupMod, j, changegroupactive, f"
+          "$mainMod $groupMod, k, changegroupactive, b"
+          "$mainMod $groupMod, l, changegroupactive, f"
+          # Shift workspace between monitors
+          "$mainMod $moveMod, Tab, movecurrentworkspacetomonitor, +1"
+        ]
+        ++ (builtins.concatLists (
+          builtins.genList (
+            i:
+            let
+              ws = i + 1;
+            in
+            [
+              "$mainMod, code:1${toString i}, workspace, ${toString ws}"
+              "$mainMod $moveMod, code:1${toString i}, movetoworkspace, ${toString ws}"
+            ]
+          ) 9
+        ));
       # Repeat, and bound even when locked
       # Get the key names via xev
       bindel = [

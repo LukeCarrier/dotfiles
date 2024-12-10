@@ -11,7 +11,8 @@ let
     fi
     echo "$auth" >"$AUTH_PATH"
   '';
-in {
+in
+{
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
   services.acpid = {

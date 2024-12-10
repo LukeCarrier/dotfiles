@@ -5,13 +5,13 @@
   home.username = "nix-on-droid";
   home.homeDirectory = "/data/data/com.termux.nix/files/home";
 
-
   home.packages = lib.mkMerge [
-    (
-      with pkgs; [
-        bitwarden-cli gh freshfetch jq
-      ]
-    )
+    (with pkgs; [
+      bitwarden-cli
+      gh
+      freshfetch
+      jq
+    ])
   ];
 
   programs.home-manager.enable = true;

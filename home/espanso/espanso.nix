@@ -1,4 +1,4 @@
-{ pkgs, stdenv, ... }:
+{ pkgs, ... }:
 {
   services.espanso =
     let
@@ -7,7 +7,8 @@
         darwin = pkgs.espanso;
         linux = pkgs.espanso-wayland;
       };
-    in {
+    in
+    {
       enable = true;
       package = package.${os};
     };

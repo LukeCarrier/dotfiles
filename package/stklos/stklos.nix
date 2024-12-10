@@ -1,4 +1,8 @@
-{ pkgs, fetchurl, stklos }:
+{
+  pkgs,
+  fetchurl,
+  stklos,
+}:
 pkgs.stdenv.mkDerivation {
   pname = "stklos";
   version = stklos.version;
@@ -14,9 +18,9 @@ pkgs.stdenv.mkDerivation {
     done
   '';
 
-  buildInputs = [];
+  buildInputs = [ ];
 
-  configureFlags = [];
+  configureFlags = [ ];
 
-  hardeningDisable = [];
+  hardeningDisable = [ ];
 }

@@ -21,9 +21,9 @@
   system.defaults = {
     CustomSystemPreferences = {
       "com.apple.AppleMultitouchTrackpad" = {
-         DragLock = false;
-         Dragging = false;
-         TrackpadThreeFingerDrag = true;
+        DragLock = false;
+        Dragging = false;
+        TrackpadThreeFingerDrag = true;
       };
     };
   };

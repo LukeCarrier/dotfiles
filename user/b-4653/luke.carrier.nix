@@ -1,21 +1,30 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 {
   home.stateVersion = "24.05";
 
   home.username = "luke.carrier";
   home.homeDirectory = "/Users/luke.carrier";
 
-  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
-    "vault"
-  ];
+  nixpkgs.config.allowUnfreePredicate =
+    pkg:
+    builtins.elem (lib.getName pkg) [
+      "vault"
+    ];
 
   # FIXME: should we be keeping all of this cruft in a devShell?
   home.packages = with pkgs; [
     saml2aws
-    docker-client docker-credential-helpers
+    docker-client
+    docker-credential-helpers
     vault
 
-    csvlens tv
+    csvlens
+    tv
   ];
 
   home.sessionVariables = {

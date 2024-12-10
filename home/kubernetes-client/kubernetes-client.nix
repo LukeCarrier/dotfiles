@@ -1,7 +1,9 @@
 { config, pkgs, ... }:
 {
   home.packages = with pkgs; [
-    kubectl kubectx krew
+    kubectl
+    kubectx
+    krew
     kyverno
   ];
 

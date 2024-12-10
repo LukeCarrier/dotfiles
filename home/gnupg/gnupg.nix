@@ -7,7 +7,8 @@
         darwin = pkgs.pinentry_mac;
         linux = pkgs.pinentry-rofi;
       };
-    in {
+    in
+    {
       enable = true;
       pinentryPackage = pinentries.${os};
     };
