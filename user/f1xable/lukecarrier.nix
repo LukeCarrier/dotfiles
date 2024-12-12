@@ -10,7 +10,6 @@
   home.username = "lukecarrier";
   home.homeDirectory = "/home/lukecarrier";
 
-
   home.packages = with pkgs; [
     bitwarden-cli
     bw-cli-tools
