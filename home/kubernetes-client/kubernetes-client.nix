@@ -12,7 +12,6 @@
   ];
 
   home.file = {
-    "${config.xdg.configHome}/fish/completions/kubie.fish".source = ./kubie.fish;
     ".kube/go-template/resources.gotmpl".source = ./go-template/resources.gotmpl;
   };
 }
