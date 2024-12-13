@@ -1,5 +1,8 @@
 { pkgs }:
 let
+  awsConfigureViewProfile = pkgs.writeShellScriptBin "aws-configure-view-profile" (
+    builtins.readFile ./aws-configure-view-profile
+  );
   awsEcrAuth = pkgs.writeShellScriptBin "aws-ecr-auth" (builtins.readFile ./aws-ecr-auth);
   awsEksUpdateKubeconfig = pkgs.writeShellScriptBin "aws-eks-update-kubeconfig" (
     builtins.readFile ./aws-eks-update-kubeconfig
@@ -13,6 +16,7 @@ pkgs.symlinkJoin {
   version = "0.1.0";
   paths =
     [
+      awsConfigureViewProfile
       awsEcrAuth
       awsEksUpdateKubeconfig
       awsSsoGenProfiles
@@ -20,6 +24,7 @@ pkgs.symlinkJoin {
     ++ (with pkgs; [
       awscli2
       gnused
+      jc
       jq
     ]);
 }

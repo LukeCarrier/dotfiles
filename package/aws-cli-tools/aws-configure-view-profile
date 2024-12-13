@@ -1,0 +1,13 @@
+# View the named profile.
+
+set -eu -o pipefail
+
+profile_name="$1"
+expr="$(printf '.["profile %s"]' "$profile_name")"
+profile="$(jc --ini <"$HOME/.aws/config" | jq "$expr")"
+if [[ "$profile" == "null" ]]; then
+  echo "Unable to match profile"
+  exit 1
+fi
+printf '[profile "%s"]\n' "$profile_name"
+jq -r '. | to_entries | sort_by(.key) | map("\(.key) = \(.value)")[]' <<<"$profile"
