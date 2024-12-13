@@ -18,7 +18,7 @@
 
       font = {
         size = 12;
-        normal.family = "JetBrainsMono Nerd Font";
+        normal.family = "MonaspiceKr NF";
       };
 
       mouse.hide_when_typing = true;
