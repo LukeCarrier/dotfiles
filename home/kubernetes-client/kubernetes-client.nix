@@ -16,7 +16,6 @@ in
   ];
 
   home.file = {
-    ".kube/config".text = "";
     ".kube/go-template/resources.gotmpl".source = ./go-template/resources.gotmpl;
   };
 
