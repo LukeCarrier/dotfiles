@@ -25,5 +25,6 @@
     "bettertouchtool"
     "qobuz"
     "vnc-viewer"
+    "wezterm"
   ];
 }
