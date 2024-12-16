@@ -1,7 +1,7 @@
 { config, pkgs, ... }:
 let
   selectConfigCmd = ''
-    fzf --walker file --walker-root "$HOME/.kube/configs" --preview 'cat {}' --prompt "Kubernetes configuration (currently $KUBECONFIG)"
+    fzf --walker file --walker-root "$HOME/.kube/configs" --delimiter / --with-nth -1 --preview 'cat {}' --prompt "Kubernetes configuration (currently $KUBECONFIG)"
   '';
 in
 {
