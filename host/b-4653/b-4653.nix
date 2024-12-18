@@ -23,6 +23,7 @@
 
   homebrew.casks = [
     "bettertouchtool"
+    "gitbutler"
     "qobuz"
     "vnc-viewer"
     "wezterm"
