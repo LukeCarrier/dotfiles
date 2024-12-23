@@ -34,6 +34,8 @@
   home.sessionVariables = {
     EDITOR = "hx";
     SSH_AUTH_SOCK = "$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock";
+
+    SHIPCAT_MANIFEST_DIR = "$HOME/Code/babylonhealth/manifests";
   };
 
   # sops-nix is pretty weird, in that it won't resolve any of these values
