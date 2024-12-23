@@ -19,13 +19,23 @@ in
     ".kube/go-template/resources.gotmpl".source = ./go-template/resources.gotmpl;
   };
 
-  programs.bash.shellAliases.kube-config = ''
-    export KUBECONFIG="$(${selectConfigCmd})"
-    echo "Selected $KUBECONFIG"
+  programs.bash.initExtra = ''
+    kube-config() {
+      if [[ -n "$1" ]]; then
+        export KUBECONFIG="$1"
+      else
+        export KUBECONFIG="$(${selectConfigCmd})"
+      fi
+      echo "Selected $KUBECONFIG"
+    }
   '';
   programs.fish.functions.kube-config.body = ''
-    export KUBECONFIG=(${selectConfigCmd})
+    if test -n "$argv[1]"
+      export KUBECONFIG=$argv[1]
+    else
+      export KUBECONFIG=(${selectConfigCmd})
+    end
     echo "Selected $KUBECONFIG"
   '';
-  programs.zsh.shellAliases.kube-config = config.programs.bash.shellAliases.kube-config;
+  programs.zsh.initExtra = config.programs.bash.initExtra;
 }
