@@ -29,6 +29,8 @@
 
   home.sessionPath = [
     "$HOME/Code/emed-labs/engineer-toolbox/bin"
+    # Jetbrains IDE wrappers
+    "$HOME/.local/bin"
   ];
 
   home.sessionVariables = {
