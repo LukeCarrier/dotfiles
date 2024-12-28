@@ -58,12 +58,26 @@
               stklos = self.packages.${system}.stklos;
               wezterm = wezterm.packages.${system}.default;
             })
+            # NixOS/nixpkgs#367876
+            (final: prev: {
+              awscli2 =
+                (import
+                  (builtins.fetchTarball {
+                    url = "https://github.com/NixOS/nixpkgs/archive/7b7d8a3ecf1e2d6f21e8292b6bea3bd569bd7f6d.tar.gz";
+                    sha256 = "1cfwxw391q3v7kh9j1ywb3nq0a7ffiy570x2a3h3smg03wlvpg2g";
+                  })
+                  {
+                    inherit system;
+                  }
+                ).awscli2;
+            })
+            # NixOS/nixpkgs#355523
             (final: prev: {
               flatpak =
                 (import
                   (builtins.fetchTarball {
-                    url = "https://github.com/NixOS/nixpkgs/archive/ce4ee3029b29631ebdb59dccbec2953c3d70abd6.tar.gz";
-                    sha256 = "0qp3jsl3r0b7zv4q067zribb434hf1cnkb8pjjzka26mwqiiv6v2";
+                    url = "https://github.com/NixOS/nixpkgs/archive/5305b74162bdbdc264396d67d9433df71870cd81.tar.gz";
+                    sha256 = "0nj2gdfni6vlsbxmnnmyppwbxfkdbc23af9l4lqwy0ifcavz5rlr";
                   })
                   {
                     inherit system;
