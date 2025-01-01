@@ -54,6 +54,7 @@
             (final: prev: {
               aws-cli-tools = self.packages.${system}.aws-cli-tools;
               bw-cli-tools = self.packages.${system}.bw-cli-tools;
+              docker-cli-tools = self.packages.${system}.docker-cli-tools;
               monaspace-fonts = self.packages.${system}.monaspace-fonts;
               stklos = self.packages.${system}.stklos;
               wezterm = wezterm.packages.${system}.default;
@@ -113,6 +114,8 @@
           aws-cli-tools = pkgs.callPackage ./package/aws-cli-tools/aws-cli-tools.nix { };
 
           bw-cli-tools = pkgs.callPackage ./package/bw-cli-tools/bw-cli-tools.nix { };
+
+          docker-cli-tools = pkgs.callPackage ./package/docker-cli-tools/docker-cli-tools.nix { };
 
           monaspace-fonts = pkgs.callPackage ./package/monaspace-fonts/monaspace-fonts.nix {
             monaspace-fonts =

@@ -24,6 +24,7 @@
     bitwarden-cli
     bw-cli-tools
     btop
+    docker-cli-tools
     gh
     freshfetch
     jq
