@@ -17,6 +17,7 @@
     libnotify
 
     hyprcursor
+    hyprpolkitagent
     bibata-cursors
 
     libsecret
