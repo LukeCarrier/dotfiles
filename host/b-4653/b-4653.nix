@@ -22,11 +22,6 @@
   };
 
   homebrew.casks = [
-    "bettertouchtool"
     "gitbutler"
-    "postman"
-    "qobuz"
-    "vnc-viewer"
-    "wezterm"
   ];
 }

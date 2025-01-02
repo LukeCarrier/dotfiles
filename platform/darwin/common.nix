@@ -30,5 +30,11 @@
 
   homebrew = {
     enable = true;
+
+    casks = [
+      "bettertouchtool"
+      "qobuz"
+      "wezterm"
+    ];
   };
 }

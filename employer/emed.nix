@@ -10,6 +10,8 @@
       "keycastr"
       "meetingbar"
       "meld"
+      "postman"
+      "vnc-viewer"
 
       # Installed via the MDM
       # "slack"
