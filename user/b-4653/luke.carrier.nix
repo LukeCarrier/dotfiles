@@ -66,4 +66,11 @@
     key = "aws/saml2aws/config";
     path = "${config.home.homeDirectory}/.saml2aws";
   };
+
+  sops.secrets.npmrc = {
+    sopsFile = ../../secrets/employer-emed.yaml;
+    format = "yaml";
+    key = "npm/rc";
+    path = "${config.home.homeDirectory}/.npmrc";
+  };
 }
