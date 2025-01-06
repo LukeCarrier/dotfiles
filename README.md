@@ -36,12 +36,6 @@ mkdir -p ~/.config/nix
 echo "experimental-features = nix-command flakes" >>~/.config/nix/nix.conf
 ```
 
-Apply global system configuration:
-
-```console
-nix run nix-darwin -- switch --flake ~/Code/LukeCarrier/dotfiles/
-```
-
 ### NixOS
 
 Don't need to do anything.
