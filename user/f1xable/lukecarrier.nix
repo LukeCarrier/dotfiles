@@ -34,6 +34,9 @@
     monaspace-fonts
     stklos
     nautilus
+
+    psmisc
+    ripgrep
   ];
 
   home.sessionVariables = {
