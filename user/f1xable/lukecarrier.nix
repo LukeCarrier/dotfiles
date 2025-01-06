@@ -39,6 +39,10 @@
     ripgrep
   ];
 
+  home.sessionPath = [
+    "$HOME/.local/share/JetBrains/Toolbox/scripts"
+  ];
+
   home.sessionVariables = {
     SSH_AUTH_SOCK = "$XDG_RUNTIME_DIR/keyring/ssh";
   };
