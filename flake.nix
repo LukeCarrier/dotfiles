@@ -22,7 +22,7 @@
       url = "github:nix-community/nix-on-droid/release-24.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     sops-nix = {
       url = "github:Mic92/sops-nix";
