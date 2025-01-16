@@ -218,6 +218,7 @@
           };
           modules = [
             ./user/b-4653/luke.carrier.nix
+            ./employer/emed/emed.nix
             sops-nix.homeManagerModules.sops
             ./home/homebrew/homebrew.nix
             ./home/fonts/fonts.nix
