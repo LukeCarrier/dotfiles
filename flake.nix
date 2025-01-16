@@ -208,13 +208,13 @@
       };
 
       homeConfigurations = {
-        "luke.carrier@B-4653.hq.babylonhealth.com" = home-manager.lib.homeManagerConfiguration rec {
+        "luke.carrier@B-4653.hq.babylonhealth.com" = home-manager.lib.homeManagerConfiguration {
           pkgs = pkgsForSystem ({
             system = "aarch64-darwin";
             pkgs = nixpkgs-unstable;
           });
           extraSpecialArgs = {
-            gitConfig.user.signingKey = "6E9AF94A377C55A36474CB0235975DF6B96AFDC1";
+            gitConfig.user.signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJnEY8uRHXNidhl/e5+WMDKMDbA551pOE3DN9xWg4NH0 luke.carrier+id_ed25519_2025@emed.com";
           };
           modules = [
             ./user/b-4653/luke.carrier.nix
@@ -254,7 +254,7 @@
             pkgs = nixpkgs-unstable;
           });
           extraSpecialArgs = {
-            gitConfig.user.signingKey = "1CBBEBFE0CDC1C06DB324A7CCE439AFEC33D9E7F";
+            gitConfig.user.signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
           };
           modules = [
             ./user/android/nix-on-droid.nix
@@ -270,13 +270,13 @@
           ];
         };
 
-        "lukecarrier@luke-f1xable" = home-manager.lib.homeManagerConfiguration rec {
+        "lukecarrier@luke-f1xable" = home-manager.lib.homeManagerConfiguration {
           pkgs = pkgsForSystem ({
             system = "x86_64-linux";
             pkgs = nixpkgs-unstable;
           });
           extraSpecialArgs = {
-            gitConfig.user.signingKey = "1CBBEBFE0CDC1C06DB324A7CCE439AFEC33D9E7F";
+            gitConfig.user.signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
           };
           modules = [
             ./user/f1xable/lukecarrier.nix
@@ -313,7 +313,7 @@
             pkgs = nixpkgs-unstable;
           });
           extraSpecialArgs = {
-            gitConfig.user.signingKey = "1CBBEBFE0CDC1C06DB324A7CCE439AFEC33D9E7F";
+            gitConfig.user.signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
           };
           modules = [
             ./user/fatman/lukecarrier.nix
