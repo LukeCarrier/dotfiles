@@ -30,7 +30,7 @@
     };
     waybar = {
       url = "github:Alexays/Waybar";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     wezterm.url = "github:wez/wezterm/main?dir=nix";
   };
