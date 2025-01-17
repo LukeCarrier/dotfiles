@@ -10,21 +10,21 @@ function bw_ensure_session() {
   local app_id="com.bitwarden.bw"
   local label="Bitwarden CLI session"
 
-  BW_SESSION=$(secret-tool search app_id "$app_id" || true)
+  BW_SESSION="$(secret-tool search --unlock app_id "$app_id" || true)"
   export BW_SESSION
 
-  status=$(bw status | jq -r .status)
+  status="$(bw status | jq -r .status)"
   case "$status" in
   "unauthenticated")
     echo "Unauthenticated; clearing session token and logging in" >&2
     unset BW_SESSION
-    export BW_SESSION=$(bw login --raw)
+    export BW_SESSION="$(bw login --raw)"
     secret-tool store --label "$label" app_id "$app_id" <<<"$BW_SESSION"
     ;;
   "locked")
     echo "Locked; unlocking" >&2
     unset BW_SESSION
-    export BW_SESSION=$(bw unlock --raw)
+    export BW_SESSION="$(bw unlock --raw)"
     secret-tool store --label "$label" app_id "$app_id" <<<"$BW_SESSION"
     ;;
   "unlocked")
