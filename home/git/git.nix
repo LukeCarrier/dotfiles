@@ -1,8 +1,11 @@
 {
   gitConfig,
+  pkgs,
   ...
 }:
 {
+  home.packages = [ pkgs.meld ];
+
   home.shellAliases = {
     g = "git";
   };
