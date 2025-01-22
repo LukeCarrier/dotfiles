@@ -24,6 +24,7 @@
     vault
 
     csvlens
+    ripgrep
     tv
   ];
 
