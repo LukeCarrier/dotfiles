@@ -1,0 +1,18 @@
+# Enable a Nix devShell defined in dotfiles.
+
+main() {
+  local dir="$HOME/Code/LukeCarrier/dotfiles"
+  local shell="$1"
+  if [[ -z "$shell" ]]; then
+    local current_system="$(nix eval --expr 'builtins.currentSystem' --impure)"
+    local flake_info="$(nix flake show "$dir" --json)"
+    local dev_shells="$(jq -r ".devShells[$current_system] | keys | sort[]" <<<"$flake_info")"
+    shell="$(echo "$dev_shells" | fzf)"
+  fi
+  if [[ -n "$shell" ]]; then
+    echo "Activating devShell $shell"
+    exec nix develop "$dir#$shell"
+  fi
+}
+
+main "$@"

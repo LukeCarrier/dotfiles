@@ -60,6 +60,7 @@
               aws-cli-tools = self.packages.${system}.aws-cli-tools;
               bw-cli-tools = self.packages.${system}.bw-cli-tools;
               docker-cli-tools = self.packages.${system}.docker-cli-tools;
+              dotfiles-meta = self.packages.${system}.dotfiles-meta;
               monaspace-fonts = self.packages.${system}.monaspace-fonts;
               stklos = self.packages.${system}.stklos;
               wezterm = wezterm.packages.${system}.default;
@@ -89,16 +90,29 @@
         });
       in
       {
-        devShells.default = pkgs.mkShell {
-          packages = with pkgs; [
-            age
-            gnumake
-            nil
-            nix-index
-            nixfmt-rfc-style
-            sops
-            treefmt2
-          ];
+        devShells = {
+          default = pkgs.mkShell {
+            packages = with pkgs; [
+              age
+              gnumake
+              nil
+              nix-index
+              nixfmt-rfc-style
+              sops
+              treefmt2
+            ];
+          };
+
+          goDev = pkgs.mkShell {
+            packages = with pkgs; [
+              delve
+              gnumake
+              go
+              golangci-lint
+              golangci-lint-langserver
+              gopls
+            ];
+          };
         };
 
         packages = {
@@ -107,6 +121,8 @@
           bw-cli-tools = pkgs.callPackage ./package/bw-cli-tools/bw-cli-tools.nix { };
 
           docker-cli-tools = pkgs.callPackage ./package/docker-cli-tools/docker-cli-tools.nix { };
+
+          dotfiles-meta = pkgs.callPackage ./package/dotfiles-meta/dotfiles-meta.nix { };
 
           monaspace-fonts = pkgs.callPackage ./package/monaspace-fonts/monaspace-fonts.nix {
             monaspace-fonts =
@@ -271,7 +287,7 @@
           ];
         };
 
-        "lukecarrier@luke-f1xable" = home-manager.lib.homeManagerConfiguration {
+        "lukecarrier@luke-f1xable" = home-manager.lib.homeManagerConfiguration rec {
           pkgs = pkgsForSystem ({
             system = "x86_64-linux";
             pkgs = nixpkgs-unstable;
@@ -280,6 +296,7 @@
             gitConfig.user.signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
           };
           modules = [
+            { home.packages = [ pkgs.dotfiles-meta ]; }
             ./user/f1xable/lukecarrier.nix
             sops-nix.homeManagerModules.sops
             ./home/fonts/fonts.nix
