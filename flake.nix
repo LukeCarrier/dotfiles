@@ -61,6 +61,7 @@
               bw-cli-tools = self.packages.${system}.bw-cli-tools;
               docker-cli-tools = self.packages.${system}.docker-cli-tools;
               dotfiles-meta = self.packages.${system}.dotfiles-meta;
+              kubernetes-client-tools = self.packages.${system}.kubernetes-client-tools;
               monaspace-fonts = self.packages.${system}.monaspace-fonts;
               stklos = self.packages.${system}.stklos;
               wezterm = wezterm.packages.${system}.default;
@@ -123,6 +124,10 @@
           docker-cli-tools = pkgs.callPackage ./package/docker-cli-tools/docker-cli-tools.nix { };
 
           dotfiles-meta = pkgs.callPackage ./package/dotfiles-meta/dotfiles-meta.nix { };
+
+          kubernetes-client-tools =
+            pkgs.callPackage ./package/kubernetes-client-tools/kubernetes-client-tools.nix
+              { };
 
           monaspace-fonts = pkgs.callPackage ./package/monaspace-fonts/monaspace-fonts.nix {
             monaspace-fonts =

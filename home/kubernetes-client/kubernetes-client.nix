@@ -30,6 +30,7 @@ in
 {
   home.packages = with pkgs; [
     kubectl
+    kubernetes-client-tools
     krew
     kyverno
   ];
