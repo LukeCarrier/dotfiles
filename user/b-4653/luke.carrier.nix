@@ -17,16 +17,20 @@
     ];
 
   # FIXME: should we be keeping all of this cruft in a devShell?
-  home.packages = with pkgs; [
-    saml2aws
-    docker-client
-    docker-credential-helpers
-    vault
+  home.packages =
+    (with pkgs; [
+      saml2aws
+      docker-client
+      docker-credential-helpers
+      vault
 
-    csvlens
-    ripgrep
-    tv
-  ];
+      csvlens
+      ripgrep
+      tv
+    ])
+    ++ (with pkgs.unixtools; [
+      watch
+    ]);
 
   home.sessionPath = [
     "$HOME/Code/emed-labs/engineer-toolbox/bin"
