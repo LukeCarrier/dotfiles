@@ -8,7 +8,7 @@ let
       docker container export "$container_id"
     fi
     docker container rm "$container_id"
- '';
+  '';
 in
 pkgs.symlinkJoin {
   pname = "docker-image-extract";

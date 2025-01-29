@@ -18,7 +18,8 @@
         ProgramArguments = [
           "/opt/homebrew/bin/op"
           "daemon"
-          "--timeout" "0"
+          "--timeout"
+          "0"
           "--verbose"
         ];
         RunAtLoad = true;
