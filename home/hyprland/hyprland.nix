@@ -355,6 +355,7 @@
       windowrulev2 = [
         "opacity 1.0 override 1.0 override 1.0 override, title:(Picture-in-Picture)"
         "opacity 1.0 override 1.0 override 1.0 override, title:.*(Twitch|YouTube).*Mozilla Firefox$"
+        "float, class:^(org.telegram.desktop|telegramdesktop)$, title:^(Media viewer)$"
       ];
     };
   };
