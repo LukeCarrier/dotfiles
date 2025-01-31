@@ -40,6 +40,11 @@
     loader.timeout = 3;
   };
 
+  systemd.sleep.extraConfig = ''
+    HibernateDelaySec=30m
+    SuspendState=mem
+  '';
+
   services.udev.extraRules = ''
     SUBSYSTEM=="misc", KERNEL=="uinput", MODE="0660", GROUP="input"
   '';
