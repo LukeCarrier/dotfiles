@@ -4,7 +4,10 @@
   ...
 }:
 {
-  home.packages = [ pkgs.meld ];
+  home.packages = with pkgs; [
+    gitu
+    meld
+  ];
 
   home.shellAliases = {
     g = "git";
