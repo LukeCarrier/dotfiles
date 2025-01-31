@@ -43,19 +43,23 @@
     };
   };
 
-  xdg.portal = {
-    enable = true;
-    extraPortals = with pkgs; [
-      xdg-desktop-portal-gtk
-      xdg-desktop-portal-hyprland
-    ];
-    configPackages = with pkgs; [
-      gnome-keyring
-      hyprland
-    ];
-    config.hyprland = {
-      default = [ "hyprland" ];
+  xdg = {
+    portal = {
+      enable = true;
+      extraPortals = with pkgs; [
+        xdg-desktop-portal-gtk
+        xdg-desktop-portal-hyprland
+      ];
+      configPackages = with pkgs; [
+        gnome-keyring
+        hyprland
+      ];
+      config.hyprland = {
+        default = [ "hyprland" ];
+      };
     };
+
+    userDirs.enable = true;
   };
 
   gtk = {
