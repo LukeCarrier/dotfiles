@@ -6,11 +6,11 @@
     brightnessctl
     playerctl
 
+    flameshot
+    grim
     wl-clipboard
     wf-recorder
     helvum
-    grim
-    slurp
     wofi
 
     mako
@@ -293,6 +293,8 @@
       ];
       bind =
         [
+          # Utilities
+          ", print, exec, flameshot gui"
           # Session management
           "$mainMod, 0, exec, hyprlock"
           # Window/application management
@@ -359,6 +361,11 @@
         "opacity 1.0 override 1.0 override 1.0 override, title:(Picture-in-Picture)"
         "opacity 1.0 override 1.0 override 1.0 override, title:.*(Twitch|YouTube).*Mozilla Firefox$"
         "float, class:^(org.telegram.desktop|telegramdesktop)$, title:^(Media viewer)$"
+
+        "float, class:^flameshot$, title:^flameshot$"
+        "move 0 0, class:^flameshot$, title:^flameshot$"
+        "suppressevent fullscreen, class:^flameshot$, title:^flameshot$"
+        "noanim, class:^flameshot$, title:^flameshot$"
       ];
     };
   };
