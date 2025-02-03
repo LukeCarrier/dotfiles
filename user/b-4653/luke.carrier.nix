@@ -27,6 +27,7 @@
       csvlens
       ripgrep
       tv
+      docker-cli-tools
     ])
     ++ (with pkgs.unixtools; [
       watch
