@@ -105,6 +105,14 @@
           };
 
           goDev = pkgs.mkShell {
+            shellHook = ''
+              echo -n "dlv "; dlv --version
+              echo -n "go "; go --version
+              echo -n "golangic-lint "; golangic-lint --version
+              echo -n "golangci-lint-langserver "; golangci-lint-langserver --version
+              echo -n "go "; go --version
+              echo -n "make "; make --version
+            '';
             packages = with pkgs; [
               delve
               gnumake
