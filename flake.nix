@@ -122,6 +122,21 @@
               gopls
             ];
           };
+
+          nodeDev = pkgs.mkShell {
+            shellHook = ''
+              echo -n "node "; node --version
+              echo -n "pnpm "; pnpm --version
+              echo -n "yarn "; yarn --version
+            '';
+            packages = with pkgs; [
+              bun
+              nodejs
+              pnpm
+              typescript-language-server
+              yarn
+            ];
+          };
         };
 
         packages = {
