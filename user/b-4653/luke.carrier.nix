@@ -28,6 +28,8 @@
       ripgrep
       tv
       docker-cli-tools
+
+      dotfiles-meta
     ])
     ++ (with pkgs.unixtools; [
       watch

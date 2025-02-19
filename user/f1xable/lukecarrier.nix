@@ -35,6 +35,7 @@
     stklos
     nautilus
 
+    dotfiles-meta
     psmisc
     ripgrep
   ];
