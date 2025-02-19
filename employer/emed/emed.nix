@@ -7,6 +7,8 @@ let
 
     index="$("$yq" eval -r '. | keys[]' "$platforms" | \
       "$fzf" --preview "'$yq' eval '.[\"{}\"]' '$platforms'")"
+    platform_integrations="$("$yq" eval -r ".$index.emed.platformIntegrations" "$platforms")"
+    platform_services="$("$yq" eval -r ".$index.emed.platformServices" "$platforms")"
     aws_profile="$("$yq" eval -r ".$index.aws.profile" "$platforms")"
     aws_region="$("$yq" eval -r ".$index.aws.region" "$platforms")"
     env AWS_PROFILE="$aws_profile" AWS_REGION="$aws_region" aws sts get-caller-identity >&2 || \
@@ -15,6 +17,8 @@ let
     cluster="$(env AWS_PROFILE="$aws_profile" AWS_REGION="$aws_region" aws ssm get-parameter \
         --name /eks/current_cluster --query Parameter.Value --output text)"
 
+    printf 'export EMED_PLATFORM_INTEGRATIONS_API=%s\n' "$platform_integrations"
+    printf 'export EMED_PLATFORM_SERVICES_API=%s\n' "$platform_services"
     printf 'export AWS_PROFILE=%s\n' "$aws_profile"
     printf 'export AWS_REGION=%s\n' "$aws_region"
     printf 'export KUBECONFIG=%s\n' "$kubeconfig"
