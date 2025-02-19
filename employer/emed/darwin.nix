@@ -17,5 +17,9 @@
       # Installed via the MDM
       # "slack"
     ];
+
+    masApps = {
+      Xcode = 497799835;
+    };
   };
 }
