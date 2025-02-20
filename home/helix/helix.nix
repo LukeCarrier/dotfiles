@@ -22,6 +22,21 @@
         indent-guides.render = true;
         soft-wrap.enable = true;
       };
+      keys.normal = {
+        # Remap "goto x" commands to open in splits
+        g =
+          let
+            gotoDefinitionKeys = {
+              d = "goto_definition";
+              D = "goto_declaration";
+              f = "goto_file";
+              i = "goto_implementation";
+              y = "goto_type_definition";
+            };
+            gotoDefinitionSplitCmds = builtins.mapAttrs (key: value:
+              [ "hsplit" "jump_view_up" value]);
+          in gotoDefinitionSplitCmds gotoDefinitionKeys;
+      };
     };
   };
 }
