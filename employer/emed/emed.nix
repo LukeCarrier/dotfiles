@@ -17,8 +17,8 @@ let
     cluster="$(env AWS_PROFILE="$aws_profile" AWS_REGION="$aws_region" aws ssm get-parameter \
         --name /eks/current_cluster --query Parameter.Value --output text)"
 
-    printf 'export EMED_PLATFORM_INTEGRATIONS_API=%s\n' "$platform_integrations"
-    printf 'export EMED_PLATFORM_SERVICES_API=%s\n' "$platform_services"
+    printf 'export EMED_PLATFORM_INTEGRATIONS=%s\n' "$platform_integrations"
+    printf 'export EMED_PLATFORM_SERVICES=%s\n' "$platform_services"
     printf 'export AWS_PROFILE=%s\n' "$aws_profile"
     printf 'export AWS_REGION=%s\n' "$aws_region"
     printf 'export KUBECONFIG=%s\n' "$kubeconfig"
