@@ -1,9 +1,7 @@
-{ pkgs, ... }:
+{ ... }:
 {
-  services.nix-daemon.enable = true;
-
   nix = {
-    configureBuildUsers = true;
+    enable = true;
 
     gc = {
       automatic = true;
