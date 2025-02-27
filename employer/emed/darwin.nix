@@ -11,6 +11,7 @@
       "keycastr"
       "meetingbar"
       "meld"
+      "microsoft-teams"
       "postman"
       "vnc-viewer"
 
