@@ -15,12 +15,15 @@
       url = "github:nix-community/lanzaboote/master";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
-    nixos-hardware = {
-      url = "github:NixOS/nixos-hardware/master";
-    };
     nix-on-droid = {
       url = "github:nix-community/nix-on-droid/release-24.05";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nixos-hardware = {
+      url = "github:NixOS/nixos-hardware/master";
+    };
+    nix-vscode-extensions = {
+      url = "github:nix-community/nix-vscode-extensions";
     };
     nixpkgs.url = "github:NixOS/nixpkgs/release-24.11";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -69,7 +72,7 @@
               flatpak =
                 (import (builtins.fetchTarball {
                   url = "https://github.com/NixOS/nixpkgs/archive/86b314a1a2ff82bacb5b62c645026d8c39ed1cfe.tar.gz";
-                  sha256 = "0nj2gdfni6vlsbxmnnmyppwbxfkdbc23af9l4lqwy0ifcavz5rlr";
+                  sha256 = "14n6bay9kl0ah9778wr9cagiyxyqvs41bwjr194i947cq85xh0jn";
                 }) { inherit system; }).flatpak;
             })
             # NixOS/nixpkgs#380227
