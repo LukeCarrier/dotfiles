@@ -3,6 +3,7 @@
 
 direct=0
 prefix=
+config="${AWS_CONFIG_FILE:-$HOME/.aws/config}"
 profile="$AWS_PROFILE"
 
 set -eu -o pipefail
@@ -37,7 +38,7 @@ main() {
       echo "$0: failed to determine sso_start_url and sso_session for profile ${profile}" >&2
       exit 1
     fi
-    start_url="$(sed -nr "/^\[sso-session[ ]*${sso_session}\]/ { :l /^sso_start_url[ ]*=/ { s/[^=]*=[ ]*//; p; q; }; n; b l; }" "${HOME}/.aws/config")"
+    start_url="$(sed -nr "/^\[sso-session[ ]*${sso_session}\]/ { :l /^sso_start_url[ ]*=/ { s/[^=]*=[ ]*//; p; q; }; n; b l; }" "$config")"
     if [[ -z "$start_url" ]] ; then
       echo "$0: failed to determine sso_start_url for profile ${profile}" >&2
       exit 1
