@@ -344,6 +344,7 @@
             ./home/vim/vim.nix
             ./home/gnupg/gnupg.nix
             ./home/git/git.nix
+            ./home/jj/jj.nix
             ./home/zoxide/zoxide.nix
             ./home/espanso/espanso.nix
             ./home/alacritty/alacritty.nix
