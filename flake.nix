@@ -78,6 +78,12 @@
                   sha256 = "0nj2gdfni6vlsbxmnnmyppwbxfkdbc23af9l4lqwy0ifcavz5rlr";
                 }) { inherit system; }).flatpak;
             })
+            # NixOS/nixpkgs#380227
+            (final: prev: {
+              bitwarden-cli = prev.bitwarden-cli.overrideAttrs {
+                dontCheckForBrokenSymlinks = true;
+              };
+            })
           ];
         })
       );
