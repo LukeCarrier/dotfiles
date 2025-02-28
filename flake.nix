@@ -22,17 +22,16 @@
       url = "github:nix-community/nix-on-droid/release-24.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/release-24.11";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     sops-nix = {
       url = "github:Mic92/sops-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    waybar = {
-      url = "github:Alexays/Waybar";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
-    wezterm.url = "github:wez/wezterm/main?dir=nix";
+    wezterm = {
+      url = "github:wez/wezterm/main?dir=nix";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
   };
 
   outputs =
@@ -45,7 +44,6 @@
       nix-on-droid,
       nixpkgs-unstable,
       sops-nix,
-      waybar,
       wezterm,
       self,
       ...
@@ -65,10 +63,6 @@
               monaspace-fonts = self.packages.${system}.monaspace-fonts;
               stklos = self.packages.${system}.stklos;
               wezterm = wezterm.packages.${system}.default;
-            })
-            # Alexays/Waybar#3371
-            (final: prev: {
-              waybar = waybar.packages.${system}.waybar;
             })
             # NixOS/nixpkgs#355523
             (final: prev: {
