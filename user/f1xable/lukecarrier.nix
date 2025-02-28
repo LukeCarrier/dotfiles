@@ -19,6 +19,7 @@
       "vscode"
       "vscode-extension-github-copilot"
       "vscode-extension-github-copilot-chat"
+      "vscode-extension-ms-vsliveshare-vsliveshare"
     ];
 
   home.packages = with pkgs; [
@@ -62,14 +63,5 @@
 
   dconf.settings = {
     "org/gnome/desktop/interface".color-scheme = "prefer-dark";
-  };
-
-  programs.vscode = {
-    enable = true;
-    package = pkgs.vscode-fhs;
-    extensions = with pkgs.vscode-extensions; [
-      github.copilot
-      github.copilot-chat
-    ];
   };
 }

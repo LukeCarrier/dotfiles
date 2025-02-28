@@ -342,6 +342,7 @@
             ./home/coder/coder.nix
             ./home/helix/helix.nix
             ./home/vim/vim.nix
+            ./home/vscode/vscode.nix
             ./home/gnupg/gnupg.nix
             ./home/git/git.nix
             ./home/jj/jj.nix
