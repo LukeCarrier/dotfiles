@@ -13,8 +13,9 @@
   nixpkgs.config.allowUnfreePredicate =
     pkg:
     builtins.elem (lib.getName pkg) [
-      "jetbrains-toolbox"
       "code"
+      "jetbrains-toolbox"
+      "terraform"
       "vscode"
       "vscode-extension-github-copilot"
       "vscode-extension-github-copilot-chat"

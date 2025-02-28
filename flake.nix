@@ -345,6 +345,7 @@
             ./home/atuin/atuin.nix
             ./home/starship/starship.nix
             ./home/tmux/tmux.nix
+            ./home/coder/coder.nix
             ./home/helix/helix.nix
             ./home/vim/vim.nix
             ./home/gnupg/gnupg.nix
