@@ -270,8 +270,14 @@
         "col.border_active" = "rgba(ffffffff)";
         groupbar = {
           enabled = true;
-          "col.active" = "rgba(ffffffaa)";
-          "col.inactive" = "rgba(ccccccaa)";
+          height = 24;
+          indicator_height = 0;
+          gradients = true;
+          gradient_rounding = 12;
+          gradient_round_only_edges = true;
+          "col.active" = "rgba(ffffffff)";
+          "col.inactive" = "rgba(ccccccff)";
+          font_size = 16;
           text_color = "rgb(000000)";
         };
       };
