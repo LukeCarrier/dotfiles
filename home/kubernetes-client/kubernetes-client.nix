@@ -5,13 +5,16 @@
   ...
 }:
 let
+  configsPath = "$HOME/.kube/configs";
   selectCmds = {
     config = rec {
       env = "KUBECONFIG";
       optionCmd =
-        ''fzf --walker file --walker-root "$HOME/.kube/configs" --delimiter / --with-nth -1 --preview 'cat {}' --prompt "Kubernetes configuration (currently $''
+        ''fzf --walker file --walker-root "${configsPath}" --delimiter / --with-nth -1 --preview 'cat {}' --prompt "Kubernetes configuration (currently $''
         + env
         + '')"'';
+      value = ''$(printf "%s/%s" "${configsPath}" "$1")'';
+      valueFish = ''(printf "%s/%s" "${configsPath}" $argv[1])'';
     };
     context = rec {
       env = "KUBECTX";
@@ -24,6 +27,8 @@ let
         + env
         + '')"'';
       setCmd = ''kubectl config use-context "$'' + env + ''"'';
+      value = "$1";
+      valueFish = ''$argv[1]'';
     };
   };
 in
@@ -50,7 +55,7 @@ in
         ''
           kube-${name}() {
             if [[ -n "$1" ]]; then
-              export ${options.env}="$1"
+              export ${options.env}="${options.value}"
             else
               export ${options.env}="$(${options.optionCmd})"
             fi
@@ -68,7 +73,7 @@ in
       body =
         ''
           if test -n "$argv[1]"
-            export ${options.env}=$argv[1]
+            export ${options.env}=${options.valueFish}
           else
             export ${options.env}=(${options.optionCmdFish or options.optionCmd})
           end
