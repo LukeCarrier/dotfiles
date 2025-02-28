@@ -47,7 +47,7 @@
   ];
 
   home.sessionVariables = {
-    SSH_AUTH_SOCK = "$XDG_RUNTIME_DIR/keyring/ssh";
+    SSH_AUTH_SOCK = "$HOME/.bitwarden/ssh-agent.sock";
   };
 
   sops.age.keyFile = "${config.home.homeDirectory}/Code/LukeCarrier/dotfiles/.sops/keys";
