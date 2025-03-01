@@ -1,10 +1,10 @@
 { pkgs, ... }:
 let
   lidFprint = pkgs.writeShellScriptBin "fw13-amd-lid-fprint" ''
-    AUTH_PATH=/sys/bus/usb/devices/1-4:1.0/authorized
+    AUTH_PATH="/sys/bus/usb/devices/1-4:1.0/authorized"
     LID_PATH="/proc/acpi/button/lid/LID0/state"
     lid="$(cat "$LID_PATH")"
-    lid="''${lid##state:+([[:space:]])}"
+    lid="''${lid##* }"
     auth="0"
     if [[ "$lid" == "open" ]]; then
       auth="1"
