@@ -22,6 +22,7 @@
     nixos-hardware = {
       url = "github:NixOS/nixos-hardware/master";
     };
+    nix-flatpak.url = "github:gmodena/nix-flatpak/main";
     nix-vscode-extensions = {
       url = "github:nix-community/nix-vscode-extensions";
     };
@@ -44,6 +45,7 @@
       home-manager,
       lanzaboote,
       nixos-hardware,
+      nix-flatpak,
       nix-on-droid,
       nixpkgs-unstable,
       sops-nix,
@@ -66,14 +68,6 @@
               monaspace-fonts = self.packages.${system}.monaspace-fonts;
               stklos = self.packages.${system}.stklos;
               wezterm = wezterm.packages.${system}.default;
-            })
-            # NixOS/nixpkgs#355523
-            (final: prev: {
-              flatpak =
-                (import (builtins.fetchTarball {
-                  url = "https://github.com/NixOS/nixpkgs/archive/86b314a1a2ff82bacb5b62c645026d8c39ed1cfe.tar.gz";
-                  sha256 = "14n6bay9kl0ah9778wr9cagiyxyqvs41bwjr194i947cq85xh0jn";
-                }) { inherit system; }).flatpak;
             })
             # NixOS/nixpkgs#380227
             (final: prev: {
@@ -241,6 +235,7 @@
           modules = [
             ./host/f1xable/hardware-configuration.nix
             nixos-hardware.nixosModules.framework-13-7040-amd
+            nix-flatpak.nixosModules.nix-flatpak
             ./hw/framework-13-amd.nix
             ./host/f1xable/f1xable.nix
             ./platform/nixos/enable-flakes.nix
@@ -331,6 +326,7 @@
           };
           modules = [
             ./user/f1xable/lukecarrier.nix
+            nix-flatpak.homeManagerModules.nix-flatpak
             sops-nix.homeManagerModules.sops
             ./home/fonts/fonts.nix
             ./home/readline/readline.nix

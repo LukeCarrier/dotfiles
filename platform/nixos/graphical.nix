@@ -101,6 +101,7 @@
   services.flatpak = {
     enable = true;
     package = pkgs.flatpak;
+    overrides.global.Context.filesystems = [ "/nix/store:ro" ];
   };
 
   programs.firefox = {
