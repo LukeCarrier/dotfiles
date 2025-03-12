@@ -21,7 +21,6 @@
         behavior = "own";
         backend = "ssh";
         key = jjConfig.signing.key;
-        sign-all = true;
       };
 
       ui = {
