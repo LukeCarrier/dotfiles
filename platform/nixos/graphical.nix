@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
 {
   environment.systemPackages = with pkgs; [
     firefoxpwa
@@ -94,6 +94,10 @@
       GTK.application_prefer_dark_theme = true;
     };
   };
+
+  # Won't have any effect on Niri, which we configure to use xwayland-satellite.
+  programs.xwayland.enable = lib.mkForce true;
+  programs.niri.enable = true;
   programs.hyprland.enable = true;
   security.pam.services.hyprlock = { };
 

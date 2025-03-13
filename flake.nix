@@ -15,6 +15,10 @@
       url = "github:nix-community/lanzaboote/master";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
+    niri = {
+      url = "github:sodiboo/niri-flake";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
     nix-on-droid = {
       url = "github:nix-community/nix-on-droid/release-24.05";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -44,6 +48,7 @@
       flake-utils,
       home-manager,
       lanzaboote,
+      niri,
       nixos-hardware,
       nix-flatpak,
       nix-on-droid,
@@ -59,6 +64,7 @@
         (import pkgs {
           inherit system;
           overlays = [
+            niri.overlays.niri
             (final: prev: {
               aws-cli-tools = self.packages.${system}.aws-cli-tools;
               bw-cli-tools = self.packages.${system}.bw-cli-tools;
@@ -326,15 +332,17 @@
             jjConfig.signing.key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
           };
           modules = [
-            ./user/f1xable/lukecarrier.nix
+            niri.homeModules.niri
             nix-flatpak.homeManagerModules.nix-flatpak
             sops-nix.homeManagerModules.sops
+            ./user/f1xable/lukecarrier.nix
             ./home/fonts/fonts.nix
             ./home/readline/readline.nix
             ./home/kanshi/kanshi.nix
             ./home/gnome-headless/gnome-headless.nix
             ./home/waybar/waybar.nix
             ./home/hyprland/hyprland.nix
+            ./home/niri/niri.nix
             ./home/bash/bash.nix
             ./home/fish/fish.nix
             ./home/fish/default.nix
