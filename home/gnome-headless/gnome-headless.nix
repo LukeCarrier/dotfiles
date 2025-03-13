@@ -4,6 +4,8 @@
     libsecret
     seahorse
     gcr
+
+    bibata-cursors
   ];
 
   services.gnome-keyring = {

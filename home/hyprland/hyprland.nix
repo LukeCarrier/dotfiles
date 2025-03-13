@@ -1,5 +1,7 @@
-{ pkgs, ... }:
-{
+{ config, pkgs, ... }:
+let
+  pointerCursor = config.home.pointerCursor.name;
+in {
   home.packages = with pkgs; [
     brightnessctl
     playerctl
@@ -16,20 +18,16 @@
 
     hyprcursor
     hyprpolkitagent
-    bibata-cursors
   ];
 
-  xdg = {
-    portal = {
-      enable = true;
-      extraPortals = [ pkgs.xdg-desktop-portal-hyprland ];
-      configPackages = [ pkgs.hyprland ];
-      config.hyprland = {
-        default = [ "hyprland" "gtk" ];
-        "org.freedesktop.impl.portal.Settings" = "gtk";
-      };
+  xdg.portal = {
+    enable = true;
+    extraPortals = [ pkgs.xdg-desktop-portal-hyprland ];
+    configPackages = [ pkgs.hyprland ];
+    config.hyprland = {
+      default = [ "hyprland" "gtk" ];
+      "org.freedesktop.impl.portal.Settings" = "gtk";
     };
-
   };
 
   wayland.windowManager.hyprland = {
@@ -45,7 +43,6 @@
       "$groupMod" = "ALT";
       "$moveMod" = "SHIFT";
       "$menu" = "wofi --allow-images --gtk-dark --insensitive --show drun";
-      "$fileManager" = "nautilus";
       "$terminal" = "xdg-terminal";
       debug = {
         suppress_errors = true;
@@ -66,9 +63,9 @@
         "NIXOS_OZONE_WL,1"
         "GDK_SCALE,1.5"
         "GDK_DPI_SCALE,1"
-        "HYPRCURSOR_THEME,Bibata-Modern-Classic"
+        "HYPRCURSOR_THEME,${pointerCursor}"
         "HYPRCURSOR_SIZE,32"
-        "XCURSOR_THEME,Bibata-Modern-Classic"
+        "XCURSOR_THEME,${pointerCursor}"
         "XCURSOR_SIZE,32"
       ];
       exec = [
