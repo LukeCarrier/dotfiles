@@ -331,6 +331,8 @@
             sops-nix.homeManagerModules.sops
             ./home/fonts/fonts.nix
             ./home/readline/readline.nix
+            ./home/kanshi/kanshi.nix
+            ./home/gnome-headless/gnome-headless.nix
             ./home/waybar/waybar.nix
             ./home/hyprland/hyprland.nix
             ./home/bash/bash.nix

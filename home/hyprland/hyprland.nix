@@ -19,77 +19,19 @@
     hyprcursor
     hyprpolkitagent
     bibata-cursors
-
-    libsecret
-    seahorse
-    gcr
   ];
-
-  services.gnome-keyring = {
-    enable = true;
-    components = [
-      "pkcs11"
-      "secrets"
-      "ssh"
-    ];
-  };
-
-  dconf.settings = {
-    "org/gnome/desktop/interface" = {
-      color-scheme = "prefer-dark";
-    };
-    "org/gnome/desktop/wm/preferences" = {
-      button-layout = "menu:";
-    };
-  };
 
   xdg = {
     portal = {
       enable = true;
-      extraPortals = with pkgs; [
-        xdg-desktop-portal-gtk
-        xdg-desktop-portal-hyprland
-      ];
-      configPackages = with pkgs; [
-        gnome-keyring
-        hyprland
-      ];
+      extraPortals = [ pkgs.xdg-desktop-portal-hyprland ];
+      configPackages = [ pkgs.hyprland ];
       config.hyprland = {
         default = [ "hyprland" "gtk" ];
         "org.freedesktop.impl.portal.Settings" = "gtk";
       };
     };
 
-    userDirs.enable = true;
-  };
-
-  gtk = {
-    enable = true;
-    font = {
-      package = pkgs.poppins;
-      name = "Poppins";
-    };
-    theme = {
-      package = pkgs.colloid-gtk-theme;
-      name = "Colloid-Dark";
-    };
-    cursorTheme = {
-      package = pkgs.bibata-cursors;
-      name = "Bibata-Modern-Classic";
-      size = 32;
-    };
-    iconTheme = {
-      package = pkgs.adwaita-icon-theme;
-      name = "Adwaita";
-    };
-  };
-
-  home.pointerCursor = {
-    gtk.enable = true;
-    package = pkgs.bibata-cursors;
-    name = "Bibata-Modern-Classic";
-    size = 32;
-  };
 
   services.kanshi = {
     enable = true;
