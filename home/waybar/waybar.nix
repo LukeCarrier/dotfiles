@@ -3,10 +3,6 @@
     enable = true;
     settings = {
       mainBar = {
-        modules-left = [
-          "hyprland/workspaces"
-          "hyprland/window"
-        ];
         modules-center = [
           "clock"
           "privacy"

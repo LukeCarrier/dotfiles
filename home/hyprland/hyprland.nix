@@ -319,4 +319,9 @@
     backgroundColor = "#000000bf";
     textColor = "#ffffff";
   };
+
+  programs.waybar.settings.mainBar.modules-left = [
+    "hyprland/workspaces"
+    "hyprland/window"
+  ];
 }
