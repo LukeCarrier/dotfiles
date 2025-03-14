@@ -119,6 +119,7 @@ in {
         [
           # Utilities
           ", print, exec, flameshot gui"
+          "$mainMod, s, exec, flameshot gui"
           # Session management
           "$mainMod, 0, exec, hyprlock"
           # Window/application management

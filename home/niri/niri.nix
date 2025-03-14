@@ -1,6 +1,11 @@
 { config, lib, pkgs, ... }:
 let
   pointerCursor = config.home.pointerCursor.name;
+  workspaceRename = pkgs.writeShellScriptBin "niri-workspace-rename" ''
+    niri="${pkgs.niri}/bin/niri"
+    wofi="${pkgs.wofi}/bin/wofi"
+    "$niri" msg action set-workspace-name "$("$wofi" --dmenu --lines 1 </dev/null)"
+  '';
 in {
   home.packages = with pkgs; [
     brightnessctl
@@ -69,6 +74,7 @@ in {
         in with config.lib.niri.actions; ({
           # Utilities
           "Print".action = screenshot;
+          "${mainMod}+S".action = screenshot;
           "XF86AudioMute".action.spawn = [ "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle" ];
           "XF86AudioLowerVolume".action.spawn = [ "wpctl" "set-volume" "-l" "1.4" "@DEFAULT_AUDIO_SINK@" "2%-" ];
           "XF86AudioRaiseVolume".action.spawn = [ "wpctl" "set-volume" "-l" "1.4" "@DEFAULT_AUDIO_SINK@" "2%+" ];
@@ -104,6 +110,8 @@ in {
           "${mainMod}+${moveMod}+BracketRight".action = consume-or-expel-window-right;
           # Shift workspace between monitors
           "${mainMod}+${moveMod}+Tab".action = move-workspace-to-monitor-next;
+          # Space management
+          "${mainMod}+R".action.spawn = [ "${workspaceRename}/bin/niri-workspace-rename" ];
         })
         // lib.attrsets.listToAttrs (builtins.concatMap (i: with config.lib.niri.actions; [
           {
