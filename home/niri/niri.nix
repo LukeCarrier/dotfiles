@@ -164,8 +164,12 @@ in {
     };
   };
 
-  programs.waybar.settings.mainBar.modules-left = [
-    "niri/workspaces"
-    "niri/window"
-  ];
+  programs.waybar.settings.mainBar = {
+    modules-left = [
+      "niri/workspaces"
+      "niri/window"
+    ];
+
+    "niri/workspaces".format = "{index}:{value}";
+  };
 }
