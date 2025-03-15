@@ -11,7 +11,6 @@ in {
     wl-clipboard
     wf-recorder
     helvum
-    wofi
 
     mako
     libnotify
@@ -42,7 +41,7 @@ in {
       "$mainMod" = "SUPER";
       "$groupMod" = "ALT";
       "$moveMod" = "SHIFT";
-      "$menu" = "wofi --allow-images --gtk-dark --insensitive --show drun";
+      "$menu" = "wofi --allow-images --insensitive --show drun";
       "$terminal" = "xdg-terminal";
       debug = {
         suppress_errors = true;

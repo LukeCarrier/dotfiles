@@ -340,6 +340,7 @@
             ./home/readline/readline.nix
             ./home/kanshi/kanshi.nix
             ./home/gnome-headless/gnome-headless.nix
+            ./home/wofi/wofi.nix
             ./home/waybar/waybar.nix
             ./home/hyprland/hyprland.nix
             ./home/niri/niri.nix

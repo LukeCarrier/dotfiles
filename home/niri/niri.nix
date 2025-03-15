@@ -14,7 +14,6 @@ in {
     wl-clipboard
     wf-recorder
     helvum
-    wofi
 
     mako
     libnotify
@@ -89,11 +88,11 @@ in {
           # XF86RFKill is done for us
           # Session management
           "${mainMod}+0".action.spawn = "hyprlock";
-          # Window/appliucation management
+          # Window/application management
           "${mainMod}+W".action = close-window;
           "${mainMod}+G".action = toggle-column-tabbed-display;
           # Launcher, a la Spotlight
-          "${mainMod}+Space".action.spawn = [ "wofi" "--allow-images" "--gtk-dark" "--insensitive" "--show" "drun" ];
+          "${mainMod}+Space".action.spawn = [ "wofi" "--allow-images" "--insensitive" "--show" "drun" ];
           # Navigate between windows and columns, Vi style
           # Window commands navigate tabs, no need for separate bindings
           "${mainMod}+H".action = focus-column-left;
