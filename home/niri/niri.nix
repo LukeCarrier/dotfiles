@@ -69,6 +69,7 @@ in {
         let
           mainMod = "Super";
           moveMod = "Shift";
+          spaceMod = "Alt";
           terminal = "xdg-terminal";
         in with config.lib.niri.actions; ({
           # Utilities
@@ -111,6 +112,8 @@ in {
           "${mainMod}+${moveMod}+Tab".action = move-workspace-to-monitor-next;
           # Space management
           "${mainMod}+R".action.spawn = [ "${workspaceRename}/bin/niri-workspace-rename" ];
+          # Space navigation
+          "${mainMod}+${spaceMod}+Tab".action = focus-workspace-previous;
         })
         // lib.attrsets.listToAttrs (builtins.concatMap (i: with config.lib.niri.actions; [
           {
