@@ -111,6 +111,8 @@ in {
           # Shift workspace between monitors
           "${mainMod}+${moveMod}+Tab".action = move-workspace-to-monitor-next;
           # Space management
+          "${mainMod}+${spaceMod}+${moveMod}+J".action = move-workspace-down;
+          "${mainMod}+${spaceMod}+${moveMod}+K".action = move-workspace-up;
           "${mainMod}+R".action.spawn = [ "${workspaceRename}/bin/niri-workspace-rename" ];
           # Space navigation
           "${mainMod}+${spaceMod}+Tab".action = focus-workspace-previous;
