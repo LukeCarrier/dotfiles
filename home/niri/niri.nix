@@ -116,6 +116,8 @@ in {
           "${mainMod}+R".action.spawn = [ "${workspaceRename}/bin/niri-workspace-rename" ];
           # Space navigation
           "${mainMod}+${spaceMod}+Tab".action = focus-workspace-previous;
+          "${mainMod}+${spaceMod}+J".action = focus-workspace-down;
+          "${mainMod}+${spaceMod}+K".action = focus-workspace-up;
         })
         // lib.attrsets.listToAttrs (builtins.concatMap (i: with config.lib.niri.actions; [
           {
