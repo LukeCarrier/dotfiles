@@ -96,6 +96,7 @@ in {
           "${mainMod}+Space".action.spawn = [ "wofi" "--allow-images" "--insensitive" "--show" "drun" ];
           # Navigate between windows and columns, Vi style
           # Window commands navigate tabs, no need for separate bindings
+          "${mainMod}+Tab".action = focus-window-previous;
           "${mainMod}+H".action = focus-column-left;
           "${mainMod}+J".action = focus-window-down;
           "${mainMod}+K".action = focus-window-up;
