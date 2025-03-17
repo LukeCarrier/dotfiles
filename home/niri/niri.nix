@@ -1,6 +1,7 @@
 { config, lib, pkgs, ... }:
 let
   pointerCursor = config.home.pointerCursor.name;
+  xwaylandSatelliteDisplay = ":1";
   workspaceRename = pkgs.writeShellScriptBin "niri-workspace-rename" ''
     niri="${pkgs.niri}/bin/niri"
     wofi="${pkgs.wofi}/bin/wofi"
@@ -17,6 +18,8 @@ in {
 
     mako
     libnotify
+
+    xwayland-satellite
   ];
 
   xdg.portal = {
@@ -50,11 +53,12 @@ in {
       };
       spawn-at-startup = [
         { command = [ "waybar" ]; }
-        { command = [ "xwayland-satellite" ]; }
+        { command = [ "xwayland-satellite" xwaylandSatelliteDisplay ]; }
         { command = [ "kanshictl" "reload" ]; }
       ];
       environment = {
         XDG_SESSION_DESKTOP = "niri";
+        DISPLAY = xwaylandSatelliteDisplay;
         CLUTTER_BACKEND = "wayland";
         GDK_BACKEND = "wayland,x11,*";
         QT_QPA_PLATFORM = "wayland;xcb";
