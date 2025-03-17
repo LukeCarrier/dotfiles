@@ -165,6 +165,14 @@ in {
             bottom-right = 8.0;
           };
         }
+        {
+          match = ''app-id="^Bitwarden$"'';
+          block-out-from = "screencast";
+        }
+        {
+          match = ''title="^Picture-in-Picture$"'';
+          open-floating = true;
+        }
       ];
     };
   };
