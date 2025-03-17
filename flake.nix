@@ -29,6 +29,7 @@
     nix-flatpak.url = "github:gmodena/nix-flatpak/main";
     nix-vscode-extensions = {
       url = "github:nix-community/nix-vscode-extensions";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     nixpkgs.url = "github:NixOS/nixpkgs/release-24.11";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -52,6 +53,7 @@
       nixos-hardware,
       nix-flatpak,
       nix-on-droid,
+      nix-vscode-extensions,
       nixpkgs-unstable,
       sops-nix,
       wezterm,
@@ -65,6 +67,7 @@
           inherit system;
           overlays = [
             niri.overlays.niri
+            nix-vscode-extensions.overlays.default
             (final: prev: {
               aws-cli-tools = self.packages.${system}.aws-cli-tools;
               bw-cli-tools = self.packages.${system}.bw-cli-tools;

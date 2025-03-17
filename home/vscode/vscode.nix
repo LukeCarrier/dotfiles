@@ -2,15 +2,11 @@
 {
   programs.vscode = {
     enable = true;
-    package = pkgs.vscode-fhs;
+    package = pkgs.vscodium-fhs;
     profiles.default = {
-      extensions = with pkgs.vscode-extensions; [
-        editorconfig.editorconfig
+      extensions = (with pkgs.vscode-extensions; [
         github.copilot
         github.copilot-chat
-        github.vscode-pull-request-github
-        hediet.vscode-drawio
-        johnpapa.vscode-peacock
         ms-vsliveshare.vsliveshare
 
         # 1yib.svelte-bundle
@@ -93,7 +89,14 @@
         # webfreak.debug
         # wholroyd.jinja
         # zowe.vscode-extension-for-zowe
-      ];
+      ])
+      ++ (with pkgs.open-vsx; [
+        editorconfig.editorconfig
+        github.vscode-pull-request-github
+        hediet.vscode-drawio
+        jasew.vscode-helix-emulation
+        johnpapa.vscode-peacock
+      ]);
       userSettings = {
         # Privacy
         "telemetry.telemetryLevel" = "off";
@@ -104,7 +107,9 @@
         # Restore windows on re-open
         "window.restoreWindows" = "all";
         # Extension host
-        "extensions.experimental.affinity" = {};
+        "extensions.experimental.affinity" = {
+          "jasew.vscode-helix-emulation" = 1;
+        };
         # UI
         "gitlens.codeLens.enabled" = false;
         "window.titleBarStyle" = "custom";
@@ -127,7 +132,7 @@
         "editor.fontLigatures" = true;
         "disableLigatures.mode" = "Cursor";
         # copy without formatting
-        "editor.copywithsyntaxhighlighting" = false;
+        "editor.copyWithSyntaxHighlighting" = false;
         # Screencasting
         "screencastMode.keyboardOverlayTimeout" = 1200;
         "screencastMode.fontSize" = 24;
