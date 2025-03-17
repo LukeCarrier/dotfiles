@@ -141,10 +141,11 @@ in {
       prefer-no-csd = true;
       layout = {
         always-center-single-column = true;
-        gaps = 6;
+        gaps = 12;
         border.enable = false;
         focus-ring = {
           enable = true;
+          width = 2;
           active.color = "#ffffff";
         };
         shadow.enable = true;
@@ -154,6 +155,14 @@ in {
           position = "top";
         };
       };
+      layer-rules = [
+        {
+          matches = [
+            { namespace = "^notifications$"; }
+          ];
+          block-out-from = "screencast";
+        }
+      ];
       window-rules = [
         {
           clip-to-geometry = true;
@@ -166,11 +175,15 @@ in {
           };
         }
         {
-          match = ''app-id="^Bitwarden$"'';
+          matches = [
+            { app-id = "^Bitwarden$"; }
+          ];
           block-out-from = "screencast";
         }
         {
-          match = ''title="^Picture-in-Picture$"'';
+          matches = [
+            { title = "^Picture-in-Picture$"; }
+          ];
           open-floating = true;
         }
       ];
