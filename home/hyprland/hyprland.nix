@@ -53,19 +53,20 @@ in {
         };
       };
       env = [
-        "TERM,wezterm"
         "XDG_SESSION_TYPE,wayland"
         "XDG_SESSION_DESKTOP,Hyprland"
         "CLUTTER_BACKEND,wayland"
         "GDK_BACKEND,wayland,x11,*"
+        "QT_AUTO_SCREEN_SCALE_FACTOR,1"
         "QT_QPA_PLATFORM,wayland;xcb"
         "NIXOS_OZONE_WL,1"
-        "GDK_SCALE,1.5"
-        "GDK_DPI_SCALE,1"
+        "GDK_SCALE,1.0"
+        "GDK_DPI_SCALE,1.0"
         "HYPRCURSOR_THEME,${pointerCursor}"
         "HYPRCURSOR_SIZE,32"
         "XCURSOR_THEME,${pointerCursor}"
         "XCURSOR_SIZE,32"
+        "TERM,wezterm"
       ];
       exec = [
         "kanshctl reload"
