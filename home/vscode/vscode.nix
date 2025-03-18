@@ -1,103 +1,31 @@
 { pkgs, ... }:
 {
-  programs.vscode = {
-    enable = true;
-    package = pkgs.vscodium-fhs;
-    profiles.default = {
-      extensions = (with pkgs.vscode-extensions; [
-        github.copilot
-        github.copilot-chat
-        ms-vsliveshare.vsliveshare
-
-        # 1yib.svelte-bundle
-        # 42crunch.vscode-openapi
-        # 4ops.packer
-        # 4ops.terraform
-        # arcanis.vscode-zipfs
-        # asvetliakov.vscode-neovim
-        # be5invis.vscode-icontheme-nomo-dark
-        # bierner.markdown-mermaid
-        # bmalehorn.vscode-fish
-        # carlos-algms.make-task-provider
-        # chrischinchilla.vale-vscode
-        # ciarant.vscode-structurizr
-        # coder.coder-remote
-        # coenraads.disableligatures
-        # dart-code.dart-code
-        # dart-code.flutter
-        # daylerees.rainglow
-        # enkia.tokyo-night
-        # esbenp.prettier-vscode
-        # foxundermoon.shell-format
-        # fwcd.kotlin
-        # golang.go
-        # graphql.vscode-graphql
-        # graphql.vscode-graphql-syntax
-        # hashicorp.hcl
-        # hashicorp.terraform
-        # hediet.vscode-drawio
-        # jacobpfeifer.pfeifer-hurl
-        # jasew.vscode-helix-emulation
-        # jebbs.plantuml
-        # joelalejandro.nrql-language
-        # josetr.cmake-language-support-vscode
-        # jq-syntax-highlighting.jq-syntax-highlighting
-        # kdl-org.kdl
-        # localizely.flutter-intl
-        # mathiasfrohlich.kotlin
-        # michaelcsickles.honeycomb-derived
-        # ms-azure-devops.azure-pipelines
-        # ms-azuretools.vscode-docker
-        # ms-dotnettools.csharp
-        # ms-dotnettools.vscode-dotnet-runtime
-        # ms-kubernetes-tools.vscode-kubernetes-tools
-        # ms-python.debugpy
-        # ms-python.isort
-        # ms-python.python
-        # ms-python.vscode-pylance
-        # ms-toolsai.jupyter
-        # ms-toolsai.jupyter-keymap
-        # ms-toolsai.jupyter-renderers
-        # ms-toolsai.vscode-jupyter-cell-tags
-        # ms-toolsai.vscode-jupyter-slideshow
-        # ms-vscode-remote.remote-containers
-        # ms-vscode-remote.remote-ssh
-        # ms-vscode-remote.remote-ssh-edit
-        # ms-vscode.cmake-tools
-        # ms-vscode.powershell
-        # ms-vscode.remote-explorer
-        # ms-vscode.vscode-speech
-        # mtxr.sqltools
-        # mtxr.sqltools-driver-sqlite
-        # paulvarache.vscode-taskfile
-        # pbkit.vscode-pbkit
-        # prisma.prisma
-        # randomchance.logstash
-        # redhat.vscode-commons
-        # redhat.vscode-xml
-        # redhat.vscode-yaml
-        # robocorp.robocorp-code
-        # robocorp.robotframework-lsp
-        # rust-lang.rust-analyzer
-        # scala-lang.scala
-        # shopify.ruby-lsp
-        # svelte.svelte-vscode
-        # tamasfe.even-better-toml
-        # twxs.cmake
-        # vadimcn.vscode-lldb
-        # vscodevim.vim
-        # webfreak.debug
-        # wholroyd.jinja
-        # zowe.vscode-extension-for-zowe
-      ])
-      ++ (with pkgs.open-vsx; [
-        editorconfig.editorconfig
-        github.vscode-pull-request-github
-        hediet.vscode-drawio
-        jasew.vscode-helix-emulation
-        johnpapa.vscode-peacock
-      ]);
-      userSettings = {
+  programs.vscode =
+    let
+      globalExtensions =
+        (with pkgs.open-vsx; [
+          bierner.markdown-mermaid
+          bmalehorn.vscode-fish
+          ciarant.vscode-structurizr
+          editorconfig.editorconfig
+          enkia.tokyo-night
+          github.vscode-pull-request-github
+          hediet.vscode-drawio
+          jasew.vscode-helix-emulation
+          jebbs.plantuml
+          johnpapa.vscode-peacock
+          jq-syntax-highlighting.jq-syntax-highlighting
+        ])
+        ++ (with pkgs.vscode-marketplace; [
+          be5invis.vscode-icontheme-nomo-dark
+          coder.coder-remote
+          coenraads.disableligatures
+          github.copilot
+          github.copilot-chat
+          kdl-org.kdl
+          ms-vsliveshare.vsliveshare
+        ]);
+      globalUserSettings = {
         # Privacy
         "telemetry.telemetryLevel" = "off";
         "redhat.telemetry.enabled" = false;
@@ -115,6 +43,7 @@
         "window.titleBarStyle" = "custom";
         "window.commandCenter" = true;
         "window.autoDetectColorScheme" = true;
+        "workbench.preferredDarkColorTheme" = "Tokyo Night Storm";
         "workbench.iconTheme" = "vs-nomo-dark"; # zhuangtongfa.material-theme
         "hediet.vscode-drawio.theme" = "dark"; # hediet.vscode-drawio
         "workbench.startupEditor" = "readme";
@@ -243,10 +172,6 @@
           "Vagrantfile" = "ruby";
           "Vagrantfile.*" = "ruby";
         };
-        # Spelling
-        "cSpell.language" = "en-GB";
-        "spellright.groupDictionaries" = false;
-        "spellright.language" = ["en_GB"];
         # Editor
         "editor.renderWhitespace" = "all";
         "editor.rulers" = [80];
@@ -265,9 +190,6 @@
         "go.formatTool" = "goimports";
         "go.useLanguageServer" = true;
         "go.toolsManagement.autoUpdate" = true;
-        "gopls" = {
-          "experimentalWorkspaceModule" = true;
-        };
         # Kubernetes
         "vs-kubernetes" = {
           "checkForMinikubeUpgrade" = false;
@@ -292,6 +214,122 @@
           "editor.defaultFormatter" = "hashicorp.terraform";
         };
       };
+    in {
+      enable = true;
+      package = pkgs.vscodium-fhs;
+      profiles = {
+        default = {
+          extensions = globalExtensions;
+          userSettings = globalUserSettings;
+        };
+        LukeCarrier-denote = {
+          extensions =
+            globalExtensions
+            ++ (with pkgs.open-vsx; [
+              golang.go
+            ]);
+          userSettings = globalUserSettings;
+        };
+        LukeCarrier-infra = {
+          extensions =
+            globalExtensions
+            ++ (with pkgs.open-vsx; [
+              hashicorp.hcl
+              hashicorp.terraform
+              mtxr.sqltools-driver-pg
+              paulvarache.vscode-taskfile
+            ])
+            ++ [ pkgs.vscode-marketplace."4ops".packer ];
+          userSettings = globalUserSettings;
+        };
+      };
     };
-  };
 }
+
+# Dart
+# dart-code.dart-code
+# dart-code.flutter
+# localizely.flutter-intl
+
+# JS
+# esbenp.prettier-vscode
+# foxundermoon.shell-format
+# prisma.prisma
+# svelte.svelte-vscode
+
+# Kotlin
+# fwcd.kotlin
+# mathiasfrohlich.kotlin
+
+# APIs
+# graphql.vscode-graphql
+# graphql.vscode-graphql-syntax
+# jacobpfeifer.pfeifer-hurl
+# pbkit.vscode-pbkit
+
+# O11y
+# joelalejandro.nrql-language
+# michaelcsickles.honeycomb-derived
+# randomchance.logstash
+
+# C/C++
+# josetr.cmake-language-support-vscode
+# ms-vscode.cmake-tools
+# twxs.cmake
+# vadimcn.vscode-lldb
+# webfreak.debug
+
+# C#
+# ms-dotnettools.csharp
+# ms-dotnettools.vscode-dotnet-runtime
+
+# DevOps
+# ms-azure-devops.azure-pipelines
+# ms-azuretools.vscode-docker
+# ms-kubernetes-tools.vscode-kubernetes-tools
+
+# Python
+# ms-python.debugpy
+# ms-python.isort
+# ms-python.python
+# ms-python.vscode-pylance
+
+# Data
+# ms-toolsai.jupyter
+# ms-toolsai.jupyter-keymap
+# ms-toolsai.jupyter-renderers
+# ms-toolsai.vscode-jupyter-cell-tags
+# ms-toolsai.vscode-jupyter-slideshow
+
+# PowerShell
+# ms-vscode.powershell
+
+# Remoting
+# ms-vscode-remote.remote-containers
+# ms-vscode-remote.remote-ssh
+# ms-vscode-remote.remote-ssh-edit
+# ms-vscode.remote-explorer
+# mtxr.sqltools
+
+# Support
+# ms-vscode.vscode-speech
+# redhat.vscode-commons
+
+# Formats
+# redhat.vscode-xml
+# redhat.vscode-yaml
+# tamasfe.even-better-toml
+# wholroyd.jinja
+
+# Rust
+# rust-lang.rust-analyzer
+
+# Scala
+# scala-lang.scala
+
+# Ruby
+# shopify.ruby-lsp
+
+# RPA
+# robocorp.robocorp-code
+# robocorp.robotframework-lsp
