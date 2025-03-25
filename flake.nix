@@ -154,6 +154,16 @@
               yarn
             ];
           };
+
+          kotlinDev = pkgs.mkShell {
+            shellHook = ''
+              kotlin -version
+            '';
+            packages = with pkgs; [
+              kotlin
+              kotlin-language-server
+            ];
+          };
         };
 
         packages = {
