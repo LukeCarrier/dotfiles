@@ -360,6 +360,7 @@
             nix-flatpak.homeManagerModules.nix-flatpak
             sops-nix.homeManagerModules.sops
             ./user/f1xable/lukecarrier.nix
+            ./home/privacy/privacy.nix
             ./home/fonts/fonts.nix
             ./home/readline/readline.nix
             ./home/kanshi/kanshi.nix
