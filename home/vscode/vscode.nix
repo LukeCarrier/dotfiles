@@ -242,6 +242,14 @@
             ++ [ pkgs.vscode-marketplace."4ops".packer ];
           userSettings = globalUserSettings;
         };
+        LukeCarrier-kotlin = {
+          extensions =
+            globalExtensions
+            ++ (with pkgs.open-vsx; [
+              fwcd.kotlin
+            ]);
+          userSettings = globalUserSettings;
+        };
       };
     };
 }
@@ -258,7 +266,6 @@
 # svelte.svelte-vscode
 
 # Kotlin
-# fwcd.kotlin
 # mathiasfrohlich.kotlin
 
 # APIs
