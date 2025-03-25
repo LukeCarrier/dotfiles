@@ -117,7 +117,7 @@
               nix-index
               nixfmt-rfc-style
               sops
-              treefmt2
+              treefmt
             ];
           };
 
