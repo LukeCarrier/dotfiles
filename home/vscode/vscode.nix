@@ -27,6 +27,7 @@
         ]);
       globalUserSettings = {
         # Privacy
+        "amazonQ.telemetry" = false;
         "telemetry.telemetryLevel" = "off";
         "redhat.telemetry.enabled" = false;
         # Nagging
@@ -54,7 +55,7 @@
         "editor.bracketPairColorization.enabled" = true;
         "editor.lineNumbers" = "relative";
         # Fonts
-        "editor.fontFamily" = "'JetBrains Mono', 'Cascadia Code', Menlo, Monaco, Consolas, 'Courier New', monospace";
+        "editor.fontFamily" = "'MonaspiceKr NF', 'JetBrains Mono', 'Cascadia Code', Menlo, Monaco, Consolas, 'Courier New', monospace";
         "editor.fontSize" = 13;
         "terminal.integrated.fontFamily" = "'JetBrainsMono Nerd Font', 'JetBrains Mono', 'CaskaydiaCove Nerd Font', 'Cascadia Code PL', 'Cascadia Code', Menlo, Monaco, Consolas, 'Courier New', monospace";
         "terminal.integrated.fontSize" = 13;
@@ -234,10 +235,20 @@
           extensions =
             globalExtensions
             ++ (with pkgs.open-vsx; [
+              amazonwebservices.amazon-q-vscode
+              aquasecurityofficial.trivy-vulnerability-scanner
               hashicorp.hcl
               hashicorp.terraform
+              jnoortheen.nix-ide
+              ms-azuretools.vscode-docker
+              ms-kubernetes-tools.vscode-kubernetes-tools
+              mtxr.sqltools
               mtxr.sqltools-driver-pg
               paulvarache.vscode-taskfile
+              redhat.vscode-yaml
+            ])
+            ++ (with pkgs.vscode-marketplace; [
+              ms-ossdata.vscode-postgresql
             ])
             ++ [ pkgs.vscode-marketplace."4ops".packer ];
           userSettings = globalUserSettings;
