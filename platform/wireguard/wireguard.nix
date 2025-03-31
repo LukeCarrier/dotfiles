@@ -5,8 +5,7 @@
     logReversePathDrops = true;
 
     # If the below doesn't work, be more permissive.
-    #checkReversePath = false;
-    #checkReversePath = "loose";
+    checkReversePath = "loose";
 
     extraCommands = ''
       ip46tables -t mangle -I nixos-fw-rpfilter -p udp -m udp --sport 51820 -j RETURN
