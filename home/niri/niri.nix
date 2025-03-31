@@ -132,7 +132,7 @@ in {
           }
           {
             name = "${mainMod}+${moveMod}+${toString i}";
-            value.action = move-window-to-workspace i;
+            value.action = move-column-to-workspace i;
           }
         ]) (lib.range 1 9));
       switch-events = {
