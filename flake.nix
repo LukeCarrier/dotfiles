@@ -237,6 +237,10 @@
             ./hw/macbook.nix
             ./platform/darwin/common.nix
             ./host/fatman/fatman.nix
+            ./system/aerospace/aerospace.nix
+            ./system/gauntlet/darwin.nix
+            ./system/jetbrains-toolbox/darwin.nix
+            ./system/logseq/darwin.nix
           ];
         };
       };
@@ -403,12 +407,37 @@
           });
           extraSpecialArgs = {
             gitConfig.user.signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
+            jjConfig.signing.key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
           };
           modules = [
             ./user/fatman/lukecarrier.nix
-            ./home/git/git.nix
-            ./home/alacritty/alacritty.nix
+            sops-nix.homeManagerModules.sops
+            ./home/homebrew/homebrew.nix
+            ./home/fonts/fonts.nix
+            ./home/readline/readline.nix
+            ./home/bash/bash.nix
+            ./home/fish/fish.nix
+            ./home/zsh/zsh.nix
+            ./home/fish/default.nix
+            ./home/direnv/direnv.nix
+            ./system/aerospace/home.nix
+            ./home/openssh/openssh.nix
+            ./home/atuin/atuin.nix
+            ./home/starship/starship.nix
+            ./home/tmux/tmux.nix
             ./home/helix/helix.nix
+            ./home/vim/vim.nix
+            ./home/gnupg/gnupg.nix
+            ./home/git/git.nix
+            ./home/jj/jj.nix
+            ./home/zoxide/zoxide.nix
+            # ./home/espanso/espanso.nix
+            ./home/alacritty/alacritty.nix
+            ./home/wezterm/wezterm.nix
+            ./home/aws/aws.nix
+            ./home/kubernetes-client/kubernetes-client.nix
+            ./home/lima/lima.nix
+            ./home/rust/cargo.nix
           ];
         };
       };
