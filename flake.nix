@@ -396,7 +396,7 @@
           ];
         };
 
-        "lukecarrier@luke-fatman" = home-manager.lib.homeManagerConfiguration {
+        "lukecarrier@luke-fatman.peacehaven.carrier.family" = home-manager.lib.homeManagerConfiguration {
           pkgs = pkgsForSystem ({
             system = "aarch64-darwin";
             pkgs = nixpkgs-unstable;

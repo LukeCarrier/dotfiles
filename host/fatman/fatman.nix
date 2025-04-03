@@ -2,8 +2,11 @@
 {
   system.stateVersion = 5;
 
-  networking.hostName = "luke-fatman";
-  networking.domain = "peacehaven.carrier.family";
+  networking = {
+    computerName = "luke-fatman";
+    hostName = "luke-fatman.peacehaven.carrier.family";
+    localHostName = "luke-fatman";
+  };
 
   users.users.lukecarrier = {
     description = "Luke Carrier";
