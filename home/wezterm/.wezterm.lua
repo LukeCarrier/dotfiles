@@ -10,6 +10,7 @@ config.front_end = "WebGpu"
 config.window_frame = {
   font = wezterm.font { family = 'Poppins' },
 }
+config.adjust_window_size_when_changing_font_size = false
 config.window_background_opacity = 0.85
 
 config.command_palette_font_size = 18.0
