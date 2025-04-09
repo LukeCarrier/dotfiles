@@ -217,7 +217,7 @@
       };
     in {
       enable = true;
-      package = pkgs.vscodium-fhs;
+      package = (if pkgs.stdenv.isDarwin then pkgs.vscodium else pkgs.vscodium-fhs);
       profiles = {
         default = {
           extensions = globalExtensions;

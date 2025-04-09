@@ -14,6 +14,8 @@
     pkg:
     builtins.elem (lib.getName pkg) [
       "vault"
+      "vscode-extension-github-copilot"
+      "vscode-extension-github-copilot-chat"
     ];
 
   # FIXME: should we be keeping all of this cruft in a devShell?
