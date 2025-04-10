@@ -13,7 +13,14 @@ let
   '';
 in
 {
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot = {
+    kernelPackages = pkgs.linuxPackages_latest;
+    kernelParams = [
+      # Try to mitigate session-wide soft locks and artifacting in X11\
+      # applications by disabling PSR and PR.
+      "amdgpu.dcdebugmask=0x410"
+    ];
+  };
 
   services.acpid = {
     enable = true;
