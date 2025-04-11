@@ -22,6 +22,7 @@
           coenraads.disableligatures
           github.copilot
           github.copilot-chat
+          jjk.jjk
           kdl-org.kdl
           ms-vsliveshare.vsliveshare
         ]);
