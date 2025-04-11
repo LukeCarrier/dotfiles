@@ -28,19 +28,23 @@ main() {
   local start_url="$(aws configure get sso_start_url --profile "${profile}")"
 
   local cache_key
-  if [[ -n "$start_url" ]] ; then
+  if [[ -n "$start_url" ]]; then
     # sso_start_url is defined directly in the profile
     cache_key="$(printf "%s" "$start_url" | shasum -a 1 | awk '{print $1}')"
   else
     # sso_session might be defined in the profile
     local sso_session="$(aws configure get sso_session --profile "${profile}")"
-    if [[ -z "$sso_session" ]] ; then
+    if [[ -z "$sso_session" ]]; then
       echo "$0: failed to determine sso_start_url and sso_session for profile ${profile}" >&2
       exit 1
     fi
     start_url="$(sed -nr "/^\[sso-session[ ]*${sso_session}\]/ { :l /^sso_start_url[ ]*=/ { s/[^=]*=[ ]*//; p; q; }; n; b l; }" "$config")"
-    if [[ -z "$start_url" ]] ; then
+    if [[ -z "$start_url" ]]; then
       echo "$0: failed to determine sso_start_url for profile ${profile}" >&2
+      exit 1
+    fi
+    if (( $direct == 0 )); then
+      echo "$0: either use separate sso-session node snd sso_session property in profiles, or specify --direct" >&1
       exit 1
     fi
     # Use the session name as the cache key, idk why they do this
