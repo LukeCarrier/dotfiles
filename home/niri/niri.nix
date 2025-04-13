@@ -175,12 +175,26 @@ in {
             bottom-right = 8.0;
           };
         }
+        # Messaging clients
+        {
+          matches = [
+            { app-id = "^org.mozilla.Thunderbird$"; }
+            { app-id = "^org.signal.Signal$"; }
+            { app-id = "^org.telegram.desktop$"; }
+            { app-id = "^discord$"; }
+            { app-id = "^Slack$"; }
+            { title = "^WhatsApp Web$"; }
+          ];
+          block-out-from = "screencast";
+        }
+        # Password managers
         {
           matches = [
             { app-id = "^Bitwarden$"; }
           ];
           block-out-from = "screencast";
         }
+        # PiP overlays
         {
           matches = [
             { title = "^Picture-in-Picture$"; }
