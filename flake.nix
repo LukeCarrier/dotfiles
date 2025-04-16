@@ -373,6 +373,8 @@
             ./home/wofi/wofi.nix
             ./home/waybar/waybar.nix
             ./home/hyprland/hyprland.nix
+            ./home/hypridle/hypridle.nix
+            ./home/hyprlock/hyprlock.nix
             ./home/niri/niri.nix
             ./home/bash/bash.nix
             ./home/fish/fish.nix
