@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, desktopConfig, pkgs, ... }:
 let
   pointerCursor = config.home.pointerCursor.name;
 in {
@@ -202,10 +202,10 @@ in {
       splash = false;
       splash_offset = 2.0;
       preload = [
-        "~/Pictures/Wallpaper/Monochromatic mountains.jpg"
+        desktopConfig.background
       ];
       wallpaper = [
-        ",~/Pictures/Wallpaper/Monochromatic mountains.jpg"
+        ",${desktopConfig.background}"
       ];
     };
   };

@@ -1,11 +1,11 @@
-{ ... }:
+{ desktopConfig, ... }:
 {
   programs.hyprlock = {
     enable = true;
     settings = {
       background = {
         monitor = "";
-        path = "$HOME/Pictures/Wallpaper/London as theme park.jpg";
+        path = desktopConfig.background;
         blur_passes = 2;
         noise = 0.0117;
         contrast = 0.8916;

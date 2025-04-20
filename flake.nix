@@ -98,6 +98,7 @@
           ];
         })
       );
+      desktopBackground = "~/Pictures/Wallpaper/Monochromatic mountains.jpg";
     in
     flake-utils.lib.eachDefaultSystem (
       system:
@@ -280,6 +281,9 @@
             ./platform/wireguard/wireguard.nix
             ./platform/nixos/containers.nix
           ];
+          specialArgs = {
+            desktopConfig.background = desktopBackground;
+          };
         };
       };
 
@@ -357,6 +361,7 @@
             pkgs = nixpkgs-unstable;
           });
           extraSpecialArgs = {
+            desktopConfig.background = desktopBackground;
             gitConfig.user.signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
             jjConfig.signing.key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
           };
