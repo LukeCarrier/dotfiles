@@ -388,7 +388,7 @@
             ./home/hypridle/hypridle.nix
             ./home/hyprland/hyprland.nix
             ./home/hyprlock/hyprlock.nix
-            ./home/hyprpaper/hyprpaper.nix
+            ./home/wpaperd/wpaperd.nix
             ./home/mako/mako.nix
             ./home/niri/niri.nix
             ./home/bash/bash.nix
