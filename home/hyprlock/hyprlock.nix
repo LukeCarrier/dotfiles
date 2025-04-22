@@ -1,6 +1,6 @@
-{ desktopConfig, ... }:
+{ config, desktopConfig, ... }:
 let
-  lockCmd = "pidof hyprlock || hyprlock";
+  lockCmd = "pidof hyprlock || ${config.programs.hyprlock.package}/bin/hyprlock";
 in {
   services.hypridle.settings.general.lock_cmd = lockCmd;
 
