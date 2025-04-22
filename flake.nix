@@ -385,7 +385,6 @@
             ./home/wofi/wofi.nix
             ./home/waybar/waybar.nix
             ./home/hyprcursor/hyprcursor.nix
-            ./home/hyprland/hyprland.nix
             ./home/swayidle/swayidle.nix
             ./home/swaylock/swaylock.nix
             ./home/wpaperd/wpaperd.nix
