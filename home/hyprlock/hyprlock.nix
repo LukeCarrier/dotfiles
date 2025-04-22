@@ -1,6 +1,15 @@
 { desktopConfig, ... }:
-{
-  services.hypridle.settings.general.lock_cmd = "pidof hyprlock || hyprlock";
+let
+  lockCmd = "pidof hyprlock || hyprlock";
+in {
+  services.hypridle.settings.general.lock_cmd = lockCmd;
+
+  services.swayidle.events = [
+    {
+      event = "lock";
+      command = lockCmd;
+    }
+  ];
 
   programs.hyprlock = {
     enable = true;
