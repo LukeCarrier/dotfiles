@@ -1,5 +1,7 @@
 { desktopConfig, ... }:
 {
+  services.hypridle.settings.general.lock_cmd = "pidof hyprlock || hyprlock";
+
   programs.hyprlock = {
     enable = true;
     settings = {
