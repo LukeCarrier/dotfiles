@@ -1,7 +1,5 @@
 { config, desktopConfig, pkgs, ... }:
-let
-  pointerCursor = config.home.pointerCursor.name;
-in {
+{
   home.packages = with pkgs; [
     brightnessctl
     playerctl
@@ -12,10 +10,8 @@ in {
     wf-recorder
     helvum
 
-    mako
     libnotify
 
-    hyprcursor
     hyprpolkitagent
   ];
 
@@ -62,9 +58,6 @@ in {
         "NIXOS_OZONE_WL,1"
         "GDK_SCALE,1.0"
         "GDK_DPI_SCALE,1.0"
-        "HYPRCURSOR_THEME,${pointerCursor}"
-        "HYPRCURSOR_SIZE,32"
-        "XCURSOR_THEME,${pointerCursor}"
         "XCURSOR_SIZE,32"
         "TERM,wezterm"
       ];
@@ -193,32 +186,6 @@ in {
         "noanim, class:^flameshot$, title:^flameshot$"
       ];
     };
-  };
-
-  services.hyprpaper = {
-    enable = true;
-    settings = {
-      ipc = "on";
-      splash = false;
-      splash_offset = 2.0;
-      preload = [
-        desktopConfig.background
-      ];
-      wallpaper = [
-        ",${desktopConfig.background}"
-      ];
-    };
-  };
-
-  services.mako = {
-    enable = true;
-    borderColor = "#ffffff";
-    borderRadius = 8;
-    borderSize = 3;
-    groupBy = "app-name";
-    font = "Poppins 12";
-    backgroundColor = "#000000bf";
-    textColor = "#ffffff";
   };
 
   programs.waybar.settings.mainBar.modules-left = [

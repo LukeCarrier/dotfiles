@@ -1,6 +1,5 @@
-{ config, lib, pkgs, ... }:
+{ config, desktopConfig, lib, pkgs, ... }:
 let
-  pointerCursor = config.home.pointerCursor.name;
   xwaylandSatelliteDisplay = ":1";
   workspaceRename = pkgs.writeShellScriptBin "niri-workspace-rename" ''
     niri="${pkgs.niri}/bin/niri"
@@ -66,7 +65,7 @@ in {
         NIXOS_OZONE_WL = "1";
         GDK_SCALE = "1.0";
         GDK_DPI_SCALE = "1.0";
-        XCURSOR_THEME = pointerCursor;
+        XCURSOR_THEME = desktopConfig.pointerCursor.name;
         XCURSOR_SIZE = "32";
         TERM = "wezterm";
       };

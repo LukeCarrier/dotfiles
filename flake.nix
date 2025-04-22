@@ -361,7 +361,14 @@
             pkgs = nixpkgs-unstable;
           });
           extraSpecialArgs = {
-            desktopConfig.background = desktopBackground;
+            desktopConfig = {
+              background = desktopBackground;
+              pointerCursor = {
+                package = pkgs.bibata-cursors;
+                name = "Bibata-Modern-Classic";
+                size = 32;
+              };
+            };
             gitConfig.user.signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
             jjConfig.signing.key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
           };
@@ -377,9 +384,12 @@
             ./home/gnome-headless/gnome-headless.nix
             ./home/wofi/wofi.nix
             ./home/waybar/waybar.nix
-            ./home/hyprland/hyprland.nix
+            ./home/hyprcursor/hyprcursor.nix
             ./home/hypridle/hypridle.nix
+            ./home/hyprland/hyprland.nix
             ./home/hyprlock/hyprlock.nix
+            ./home/hyprpaper/hyprpaper.nix
+            ./home/mako/mako.nix
             ./home/niri/niri.nix
             ./home/bash/bash.nix
             ./home/fish/fish.nix

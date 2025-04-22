@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ desktopConfig, pkgs, ... }:
 {
   home.packages = with pkgs; [
     libsecret
@@ -37,9 +37,7 @@
 
   home.pointerCursor = {
     gtk.enable = true;
-    package = pkgs.bibata-cursors;
-    name = "Bibata-Modern-Classic";
-    size = 32;
+    inherit (desktopConfig.pointerCursor) package name size;
   };
 
   gtk = {
