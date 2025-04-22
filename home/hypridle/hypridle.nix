@@ -5,7 +5,6 @@
     settings = {
       general = {
         before_sleep_cmd = "loginctl lock-session";
-        after_sleep_cmd = "loginctl unlock-session";
       };
       listener = [
         {
