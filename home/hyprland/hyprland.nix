@@ -114,7 +114,7 @@
           ", print, exec, flameshot gui"
           "$mainMod, s, exec, flameshot gui"
           # Session management
-          "$mainMod, 0, exec, hyprlock"
+          "$mainMod, 0, exec, loginctl lock-session"
           # Window/application management
           "$mainMod, w, killactive"
           "$mainMod, g, togglegroup"

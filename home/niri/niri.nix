@@ -92,7 +92,7 @@ in {
           # Display key sends Super+L, not XF86Display, for some reason
           # XF86RFKill is done for us
           # Session management
-          "${mainMod}+0".action.spawn = "hyprlock";
+          "${mainMod}+0".action.spawn = [ "loginctl" "lock-session" ];
           # Window/application management
           "${mainMod}+W".action = close-window;
           "${mainMod}+G".action = toggle-column-tabbed-display;
