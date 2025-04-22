@@ -385,9 +385,9 @@
             ./home/wofi/wofi.nix
             ./home/waybar/waybar.nix
             ./home/hyprcursor/hyprcursor.nix
-            ./home/hypridle/hypridle.nix
             ./home/hyprland/hyprland.nix
             ./home/hyprlock/hyprlock.nix
+            ./home/swayidle/swayidle.nix
             ./home/wpaperd/wpaperd.nix
             ./home/mako/mako.nix
             ./home/niri/niri.nix
