@@ -33,6 +33,10 @@
     };
     nixpkgs.url = "github:NixOS/nixpkgs/release-24.11";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nur = {
+      url = "github:nix-community/NUR";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
@@ -59,6 +63,7 @@
       nix-on-droid,
       nix-vscode-extensions,
       nixpkgs-unstable,
+      nur,
       sops-nix,
       waybar,
       wezterm,
@@ -73,6 +78,7 @@
           overlays = [
             niri.overlays.niri
             nix-vscode-extensions.overlays.default
+            nur.overlays.default
             (final: prev: {
               waybar = waybar.packages.${system}.waybar.overrideAttrs {
                 # "Did not find version * in the output of the command *"
