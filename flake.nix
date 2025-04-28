@@ -329,7 +329,7 @@
             ./home/git/git.nix
             ./home/jj/jj.nix
             ./home/zoxide/zoxide.nix
-            # FIXME ./home/espanso/espanso.nix
+            # ./home/espanso/espanso.nix
             ./home/alacritty/alacritty.nix
             ./home/wezterm/wezterm.nix
             ./home/aws/aws.nix
@@ -350,7 +350,7 @@
           };
           modules = [
             ./user/android/nix-on-droid.nix
-            # FIXME ./home/bash/bash.nix
+            # ./home/bash/bash.nix
             ./home/fish/fish.nix
             ./home/fish/default.nix
             ./home/zsh/zsh.nix
@@ -455,7 +455,7 @@
             ./home/git/git.nix
             ./home/jj/jj.nix
             ./home/zoxide/zoxide.nix
-            # FIXME ./home/espanso/espanso.nix
+            # ./home/espanso/espanso.nix
             ./home/alacritty/alacritty.nix
             ./home/wezterm/wezterm.nix
             ./home/aws/aws.nix
