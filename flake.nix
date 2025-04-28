@@ -403,6 +403,7 @@
             ./home/fish/default.nix
             ./home/zsh/zsh.nix
             ./home/direnv/direnv.nix
+            ./home/firefox/firefox.nix
             ./home/bitwarden/bitwarden.nix
             ./home/openssh/openssh.nix
             ./home/atuin/atuin.nix

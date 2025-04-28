@@ -1,8 +1,6 @@
 { lib, pkgs, ... }:
 {
   environment.systemPackages = with pkgs; [
-    firefoxpwa
-    flatpak
     gnome-keyring
     gnome-software
     home-manager
@@ -106,11 +104,5 @@
     enable = true;
     package = pkgs.flatpak;
     overrides.global.Context.filesystems = [ "/nix/store:ro" ];
-  };
-
-  programs.firefox = {
-    enable = true;
-    package = pkgs.firefox;
-    nativeMessagingHosts.packages = with pkgs; [ firefoxpwa ];
   };
 }
