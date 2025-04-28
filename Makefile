@@ -9,7 +9,7 @@ gc-aggressive:
 	sudo nix-env -p /nix/var/nix/profiles/system --delete-generations $(PRESERVE_GENERATIONS)
 
 home:
-	nix run home-manager/2f5819a962489e037a57835f63ed6ff8dbc2d5fb -- switch --flake ".#$(USER)@$(shell hostname)" --show-trace
+	nix run home-manager/2f5819a962489e037a57835f63ed6ff8dbc2d5fb -- switch -b hmbak --flake ".#$(USER)@$(shell hostname)" --show-trace
 
 host:
 	sudo nixos-rebuild switch --upgrade --flake ".#$(shell hostname)" --show-trace
