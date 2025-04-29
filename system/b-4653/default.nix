@@ -9,6 +9,7 @@
     inputs.sops-nix.darwinModules.sops
     ../../employer/emed/darwin.nix
     ../../component/1password/1password.nix
+    ../../component/espanso/darwin.nix
     ../../component/finicky/darwin.nix
     ../../component/jetbrains-toolbox/darwin.nix
     ../../component/vscode/darwin.nix

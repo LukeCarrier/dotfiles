@@ -2,8 +2,17 @@
 let
   inherit (pkgs) stdenv;
   os = pkgs.lib.lists.last (pkgs.lib.strings.splitString "-" stdenv.hostPlatform.system);
+  dummy = stdenv.mkDerivation {
+    pname = "dummy";
+    version = "2";
+
+    phases = [ "installPhase" ];
+    installPhase = ''
+      mkdir -p $out/bin
+    '';
+  };
   package = {
-    darwin = pkgs.espanso;
+    darwin = dummy;
     linux = pkgs.espanso-wayland;
   };
   dependencies = {
