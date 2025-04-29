@@ -59,14 +59,7 @@
     ];
 
   # FIXME: should we be keeping all of this cruft in a devShell?
-  home.packages = (
-    with pkgs;
-    [
-      saml2aws
-      vault
+  home.packages = with pkgs; [ docker-cli-tools ];
 
-      docker-cli-tools
-    ]
-  );
   sops.secrets.opencode-github-token.sopsFile = pkgs.lib.mkForce ../../../../secrets/employer-emed.yaml;
 }
