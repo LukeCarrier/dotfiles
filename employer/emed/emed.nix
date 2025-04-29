@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 let
   selectMiniplatform = pkgs.writeShellScriptBin "emed-mini-platform" ''
     fzf="${pkgs.fzf}/bin/fzf"
@@ -106,4 +106,34 @@ in
     export PIP_EXTRA_INDEX_URL_BABYLON="$(cat "${config.sops.secrets.pip-extra-index-urls-babylon.path}")"
   '';
   programs.zsh.initContent = config.programs.bash.initExtra;
+
+  programs.librewolf.profiles.default =
+    let browserActions = {
+      "1password" = "_d634138d-c276-4fc8-924b-40a0ea21d284_-browser-action";
+    };
+    in {
+      extensions.packages = lib.mkForce (with pkgs.nur.repos.rycee.firefox-addons; [
+        istilldontcareaboutcookies
+        multi-account-containers
+        markdownload
+        onepassword-password-manager
+        read-aloud
+        refined-github
+        ublock-origin
+        vimium
+      ]);
+      settings."browser.uiCustomization.navBarWhenVerticalTabs" = lib.mkForce [
+        "sidebar-button"
+        "back-button"
+        "forward-button"
+        "stop-reload-button"
+        "customizableui-special-spring3"
+        "urlbar-container"
+        "vertical-spacer"
+        "alltabs-button"
+        "firefox-view-button"
+        "unified-extensions-button"
+        browserActions."1password"
+      ];
+    };
 }

@@ -13,6 +13,7 @@
   nixpkgs.config.allowUnfreePredicate =
     pkg:
     builtins.elem (lib.getName pkg) [
+      "onepassword-password-manager"
       "vault"
       "vscode-extension-github-copilot"
       "vscode-extension-github-copilot-chat"
