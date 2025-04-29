@@ -13,6 +13,7 @@
     ../../component/espanso/darwin.nix
     ../../component/finicky/darwin.nix
     ../../component/logseq/darwin.nix
+    ../../component/goose/darwin.nix
     ../../component/opencode/darwin.nix
     ../../component/zed/darwin.nix
   ];
