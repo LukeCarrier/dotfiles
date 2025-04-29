@@ -140,6 +140,9 @@
                 ];
                 separateDebugInfo = false;
               });
+              direnv = prev.direnv.overrideAttrs (_old: {
+                doCheck = false;
+              });
             })
             (
               final: prev:
