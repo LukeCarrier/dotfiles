@@ -219,7 +219,7 @@
             ./platform/darwin/common.nix
             ./host/b-4653/b-4653.nix
             ./employer/emed/darwin.nix
-            ./system/aerospace/aerospace.nix
+            ./system/hammerspoon/hammerspoon.nix
             ./system/1password/1password.nix
             ./system/finicky/darwin.nix
             ./system/gauntlet/darwin.nix
@@ -238,7 +238,7 @@
             ./hw/macbook.nix
             ./platform/darwin/common.nix
             ./host/fatman/fatman.nix
-            ./system/aerospace/aerospace.nix
+            ./system/hammerspoon/hammerspoon.nix
             ./system/gauntlet/darwin.nix
             ./system/jetbrains-toolbox/darwin.nix
             ./system/logseq/darwin.nix
@@ -309,7 +309,7 @@
             ./home/fish/default.nix
             ./home/zsh/zsh.nix
             ./home/direnv/direnv.nix
-            ./system/aerospace/home.nix
+            ./system/hammerspoon/home.nix
             ./system/1password/home.nix
             ./home/openssh/openssh.nix
             ./home/atuin/atuin.nix
@@ -348,6 +348,7 @@
             ./home/fish/default.nix
             ./home/zsh/zsh.nix
             ./home/direnv/direnv.nix
+            ./system/hammerspoon/home.nix
             ./home/openssh/openssh.nix
             ./home/starship/starship.nix
             ./home/git/git.nix
@@ -437,7 +438,6 @@
             ./home/zsh/zsh.nix
             ./home/fish/default.nix
             ./home/direnv/direnv.nix
-            ./system/aerospace/home.nix
             ./home/openssh/openssh.nix
             ./home/atuin/atuin.nix
             ./home/starship/starship.nix
