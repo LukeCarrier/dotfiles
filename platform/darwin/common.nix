@@ -61,9 +61,9 @@
   homebrew = {
     enable = true;
 
+    brews = [ "mas" ];
     casks = [
       "bettertouchtool"
-      "mas"
       "swiftdefaultappsprefpane"
       "thunderbird"
     ];
