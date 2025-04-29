@@ -1,4 +1,9 @@
-{ config, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 {
   programs.tmux = {
     enable = true;
@@ -18,7 +23,9 @@
     extraConfig = ''
       # Work around nix-community/home-manager#5952
       set -gu default-command
-      set -g default-shell "${config.programs.tmux.shell}"
+      ${lib.optionalString (
+        config.programs.tmux.shell != null
+      ) ''set -g default-shell "${config.programs.tmux.shell}"''}
 
       # Deal with broken terminfo
       set  -g default-terminal tmux-256color
