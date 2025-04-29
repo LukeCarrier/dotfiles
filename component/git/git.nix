@@ -5,7 +5,7 @@
 }:
 {
   home.packages = with pkgs; [
-    gitu
+    # gitu
     meld
   ];
 
