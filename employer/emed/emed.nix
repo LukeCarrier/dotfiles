@@ -72,6 +72,12 @@ in
     key = "npm/rc";
     path = "${config.home.homeDirectory}/.npmrc";
   };
+  sops.secrets.yarnrc = {
+    sopsFile = ../../secrets/employer-emed.yaml;
+    format = "yaml";
+    key = "yarn/rc";
+    path = "${config.home.homeDirectory}/.yarnrc.yml";
+  };
 
   sops.secrets.emed-mini-platforms = {
     sopsFile = ../../secrets/employer-emed.yaml;
