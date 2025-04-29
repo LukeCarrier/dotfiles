@@ -22,7 +22,7 @@ let
     env AWS_PROFILE="$aws_profile" AWS_REGION="$aws_region" aws sts get-caller-identity >&2 || \
       env AWS_PROFILE="$aws_profile" AWS_REGION="$aws_region" aws sso login >&2
     kubeconfig="$(printf %s/.kube/configs/%s "$HOME" "$("$yq" eval -r ".$index.kubeconfig" "$platforms")")"
-    cluster="$(env AWS_PROFILE="$aws_profile" AWS_REGION="$aws_region" aws ssm get-parameter \
+    clusters="$(env AWS_PROFILE="$aws_profile" AWS_REGION="$aws_region" aws ssm get-parameter \
         --name /eks/current_cluster --query Parameter.Value --output text)"
 
     printf 'export EMED_PLATFORM_INTEGRATIONS=%s\n' "$platform_integrations"
@@ -31,7 +31,11 @@ let
     printf 'export AWS_REGION=%s\n' "$aws_region"
     printf 'export KUBECONFIG=%s\n' "$kubeconfig"
     printf '%s --region %s\n' "$awsEksUpdateKubeconfig" "$aws_region"
-    printf 'kubectl config use-context %s' "$aws_profile--$cluster"
+    if [[ "$clusters" == *","* ]]; then
+      printf "(!) Multiple clusters are enabled in this region; select one with kubectl config use-context %s\n" "$clusters"
+    else
+      printf 'kubectl config use-context %s' "$aws_profile--$clusters"
+    fi
   '';
   emedHelmTemplate = pkgs.writeShellApplication {
     name = "emed-helm-template";

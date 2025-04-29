@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(jj status *)",
+      "Bash(~/.nix-profile/bin/jj status *)",
+      "Bash(/run/current-system/sw/bin/jj status *)",
+      "Read(//nix/store/**)"
+    ]
+  }
+}
