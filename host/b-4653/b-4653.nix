@@ -13,8 +13,15 @@
   };
   system.primaryUser = "luke.carrier";
 
-  homebrew.casks = [
-    "cursor"
-    "visual-studio-code@insiders"
-  ];
+  homebrew = {
+    casks = [
+      "chatgpt"
+      "cursor"
+      "visual-studio-code@insiders"
+    ];
+
+    masApps = {
+      Perplexity = 6714467650;
+    };
+  };
 }
