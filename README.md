@@ -41,6 +41,20 @@ mkdir -p ~/.config/nix
 echo "experimental-features = nix-command flakes" >>~/.config/nix/nix.conf
 ```
 
+When things inevitably break, start watching nix-daemon logs in one terminal:
+
+```console
+sudo launchctl debug system/org.nixos.nix-daemon --stderr
+```
+
+And restart it in another:
+
+```console
+sudo launchctl kickstart -k system/org.nixos.nix-daemon
+```
+
+launchd's interface somehow manages to be even more obtuse than Git's. Think Different strikes again.
+
 ### NixOS
 
 Don't need to do anything.
