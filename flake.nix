@@ -144,9 +144,10 @@
           pkgs
           legacyPackages
           ;
+        lib = import ./lib/node.nix { inherit pkgs; inherit (pkgs) stdenv; };
       in
       {
-        devShells = import ./shell { inherit pkgs; };
+        devShells = import ./shell { lib = pkgs.lib // lib; inherit pkgs; };
 
         packages = import ./package { inherit pkgs; };
 
