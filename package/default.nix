@@ -24,6 +24,8 @@ in
 
   excalidraw-mcp-app = callPackage ./excalidraw-mcp-app { };
 
+  grafana-mcp = callPackage ./grafana-mcp { };
+
   kubernetes-client-tools = callPackage ./kubernetes-client-tools { };
 
   mcp-remote = callPackage ./mcp-remote { };
