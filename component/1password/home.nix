@@ -7,7 +7,7 @@
     };
   };
 
-  programs.git.extraConfig.gpg.ssh.program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign";
+  programs.git.settings.gpg.ssh.program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign";
 
   launchd = lib.mkIf pkgs.stdenv.isDarwin {
     enable = true;
