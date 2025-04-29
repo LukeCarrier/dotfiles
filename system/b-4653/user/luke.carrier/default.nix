@@ -20,6 +20,8 @@
     ../../../../component/firefox/firefox.nix
     ../../../../component/rift/rift.nix
     ../../../../component/1password/home.nix
+    ../../../../component/opencode/opencode.nix
+    ../../../../component/spec-kit/spec-kit.nix
     ../../../../component/openssh/openssh.nix
     ../../../../component/atuin/atuin.nix
     ../../../../component/starship/starship.nix
