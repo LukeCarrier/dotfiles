@@ -82,7 +82,7 @@
   };
 
   homeConfigurations = {
-    "luke.carrier@B-4653.hq.babylonhealth.com" = home-manager.lib.homeManagerConfiguration {
+    "luke.carrier@b-4653" = home-manager.lib.homeManagerConfiguration {
       pkgs =
         (pkgsForSystem {
           system = "aarch64-darwin";
