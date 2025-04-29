@@ -11,8 +11,11 @@
   #   127.0.0.1 localhost.sg.preprod.babylontech.co.uk
   # '';
   
+# Changes require restarting nix-daemon manually
+  # sudo launchctl unload /Library/LaunchDaemons/org.nixos.nix-daemon.plist
+  # sudo launchctl load -w /Library/LaunchDaemons/org.nixos.nix-daemon.plist
   sops.secrets.nix-github = {
-    sopsFile = ../../secrets/employer-emed.yaml;
+      sopsFile = ../../secrets/employer-emed.yaml;
     format = "yaml";
     key = "nix/github";
     path = "/etc/nix/github.env";
