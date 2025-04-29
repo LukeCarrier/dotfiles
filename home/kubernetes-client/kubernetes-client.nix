@@ -83,5 +83,5 @@ in
         + ''"'';
     }
   ) selectCmds;
-  programs.zsh.initExtra = config.programs.bash.initExtra;
+  programs.zsh.initContent = config.programs.bash.initExtra;
 }

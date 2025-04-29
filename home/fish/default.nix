@@ -10,7 +10,7 @@
     fi
   '';
 
-  programs.zsh.initExtra = ''
+  programs.zsh.initContent = ''
     if [[ $- == *i* ]] && [[ $(ps -p $PPID -o comm=) != "fish" ]] && [[ -z ''${ZSH_EXECUTION_STRING} ]]; then
       [[ $- == *l* ]] && LOGIN_OPTION='--login' || LOGIN_OPTION=
       exec fish $LOGIN_OPTION

@@ -1,7 +1,7 @@
 { config, pkgs, ... }:
 {
   programs.zsh.enable = true;
-  programs.zsh.initExtra = ''
+  programs.zsh.initContent = ''
     if [[ -o interactive ]]; then
       bindkey -v
 

@@ -88,5 +88,5 @@ in
   programs.fish.functions.emed-mini-platform = ''
     ${selectMiniplatform}/bin/emed-mini-platform | source
   '';
-  programs.zsh.initExtra = config.programs.bash.initExtra;
+  programs.zsh.initContent = config.programs.bash.initExtra;
 }
