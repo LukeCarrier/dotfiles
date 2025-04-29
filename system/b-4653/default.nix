@@ -12,7 +12,6 @@
     ../../component/1password/1password.nix
     ../../component/espanso/darwin.nix
     ../../component/finicky/darwin.nix
-    ../../component/vscode/darwin.nix
     ../../component/logseq/darwin.nix
     ../../component/opencode/darwin.nix
     ../../component/zed/darwin.nix
