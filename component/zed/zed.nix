@@ -52,6 +52,7 @@ in
         github-copilot-cli.type = "registry";
         goose.type = "registry";
         kilo.type = "registry";
+        opencode.type = "registry";
         pi-acp.type = "registry";
         stakpak.type = "registry";
       };
@@ -70,7 +71,6 @@ in
       # Fonts
       ui_font_size = 16;
       ui_font_weight = 500;
-      agent_ui_font_size = 14;
       buffer_font_size = 14;
       ui_font_family = "IBM Plex Sans";
       buffer_font_family = "MonaspiceKr Nerd Font";
