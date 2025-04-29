@@ -145,7 +145,7 @@ in
             "eMed/Go" = {
               definedAliases = [ "go" ];
               urls = [
-                { template = "https://go.ops.babylontech.co.uk/{searchTerms}"; }
+                { template = "https://api.eu-west-2.emed.health/go-url/{searchTerms}"; }
               ];
             };
           };
