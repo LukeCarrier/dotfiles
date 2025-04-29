@@ -171,6 +171,15 @@
               kotlin-language-server
             ];
           };
+
+          pythonDev = pkgs.mkShell {
+            shellHook = ''
+              python --version
+            '';
+            packages = with pkgs; [
+              python
+            ];
+          };
         };
 
         packages = {
