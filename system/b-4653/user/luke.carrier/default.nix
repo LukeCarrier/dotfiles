@@ -6,8 +6,9 @@
 }:
 {
   imports = [
-    ../../../../employer/emed/emed.nix
     inputs.sops-nix.homeManagerModules.sops
+    ../../../../platform/darwin/home.nix
+    ../../../../employer/emed/emed.nix
     ../../../../component/shell-essential/shell-essential.nix
     ../../../../component/homebrew/homebrew.nix
     ../../../../component/fonts/fonts.nix
@@ -67,4 +68,5 @@
       docker-cli-tools
     ]
   );
+  sops.secrets.opencode-github-token.sopsFile = pkgs.lib.mkForce ../../../../secrets/employer-emed.yaml;
 }

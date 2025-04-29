@@ -1,5 +1,6 @@
 {
   inputs,
+  pkgs,
   ...
 }:
 {
@@ -33,4 +34,6 @@
     "cursor"
     "visual-studio-code@insiders"
   ];
+
+  secrets.nix-github.sopsFile = pkgs.lib.mkForce ../../secrets/emed.yaml;
 }
