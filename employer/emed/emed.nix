@@ -6,6 +6,7 @@
 }:
 let
   selectMiniplatform = pkgs.writeShellScriptBin "emed-mini-platform" ''
+    awsEksUpdateKubeconfig="${pkgs.aws-cli-tools}/bin/aws-eks-update-kubeconfig"
     fzf="${pkgs.fzf}/bin/fzf"
     yq="${pkgs.yq-go}/bin/yq"
     platforms="$HOME/.config/emed/miniplatforms.yaml"
@@ -27,6 +28,7 @@ let
     printf 'export AWS_PROFILE=%s\n' "$aws_profile"
     printf 'export AWS_REGION=%s\n' "$aws_region"
     printf 'export KUBECONFIG=%s\n' "$kubeconfig"
+    printf '%s --region %s\n' "$awsEksUpdateKubeconfig" "$aws_region"
     printf 'kubectl config use-context %s' "$aws_profile--$cluster"
   '';
 in
