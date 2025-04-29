@@ -62,11 +62,6 @@ let
             color = "orange";
             icon = "fingerprint";
           };
-          eMed = {
-            id = 1;
-            color = "purple";
-            icon = "briefcase";
-          };
         };
         containersForce = true;
         extensions.packages = lib.mkDefault (with pkgs.nur.repos.rycee.firefox-addons; [

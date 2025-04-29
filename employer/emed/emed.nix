@@ -112,6 +112,18 @@ in
       "1password" = "_d634138d-c276-4fc8-924b-40a0ea21d284_-browser-action";
     };
     in {
+      containers = {
+        eMed = {
+          id = 1;
+          color = "purple";
+          icon = "briefcase";
+        };
+        TELUS = {
+          id = 2;
+          color = "orange";
+          icon = "briefcase";
+        };
+      };
       extensions.packages = lib.mkForce (with pkgs.nur.repos.rycee.firefox-addons; [
         istilldontcareaboutcookies
         multi-account-containers
