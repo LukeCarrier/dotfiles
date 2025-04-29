@@ -69,6 +69,15 @@ in
   sops.secrets = {
     opencode-github-token.sopsFile = pkgs.lib.mkForce ../../../../secrets/employer-emed.yaml;
 
+    grafana-cloud-url = {
+      sopsFile = pkgs.lib.mkDefault ../../../../secrets/employer-emed.yaml;
+      key = "grafana/cloud/url";
+    };
+    grafana-cloud-service-account-token = {
+      sopsFile = pkgs.lib.mkDefault ../../../../secrets/employer-emed.yaml;
+      key = "grafana/cloud/service-account-token";
+    };
+
     coralogix-uk-nonprod-api-key = {
       sopsFile = pkgs.lib.mkDefault ../../../../secrets/employer-emed.yaml;
       format = "yaml";
@@ -102,11 +111,24 @@ in
     github = {
       type = "local";
       command = [
-        "${getExe pkgs.github-mcp-server}"
+        (getExe pkgs.github-mcp-server)
         "stdio"
       ];
       env.GITHUB_PERSONAL_ACCESS_TOKEN = "@TOKEN@";
       secrets."@TOKEN@" = config.sops.placeholder.opencode-github-token;
+    };
+
+    grafana-cloud = {
+      type = "local";
+      command = [ (getExe pkgs.mcp-grafana) ];
+      env = {
+        GRAFANA_URL = "@URL@";
+        GRAFANA_SERVICE_ACCOUNT_TOKEN = "@SERVICE_ACCOUNT_TOKEN@";
+      };
+      secrets = {
+        "@URL@" = config.sops.placeholder.grafana-cloud-url;
+        "@SERVICE_ACCOUNT_TOKEN@" = config.sops.placeholder.grafana-cloud-service-account-token;
+      };
     };
 
     coralogix-uk-nonprod = {
