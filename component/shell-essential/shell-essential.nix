@@ -5,6 +5,7 @@
     [
       # System management
       btop
+      coreutils-full
       freshfetch
       pv
       unixtools.watch
