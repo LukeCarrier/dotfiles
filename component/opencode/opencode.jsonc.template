@@ -16,6 +16,12 @@
     "input_newline": "enter",
   },
 
+  "compaction": {
+    "auto": true,
+    "prune": false,
+    "reserved": 10000,
+  },
+
   "mcp": @MCP_CONFIG_JSON@,
 
   "tools": {
