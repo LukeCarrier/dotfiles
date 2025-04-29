@@ -8,6 +8,7 @@
 {
   imports = [
     inputs.sops-nix.homeManagerModules.sops
+    ../../../../platform/darwin/home.nix
     ../../../../component/shell-essential/shell-essential.nix
     ../../../../component/bitwarden/bitwarden.nix
     ../../../../component/homebrew/homebrew.nix
