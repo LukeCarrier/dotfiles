@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 let
   firefoxpwa = pkgs.firefoxpwa.overrideAttrs ({ postInstall ? "", ... }: {
     postInstall = postInstall + ''
@@ -6,8 +6,9 @@ let
       ln -s $out/share/firefoxpwa/runtime/firefox-bin $out/share/firefoxpwa/runtime/librewolf-bin
     '';
   });
-in {
-  home.packages = [ firefoxpwa ];
+  inherit (pkgs) lib stdenv;
+ in {
+  home.packages = lib.mkIf (!stdenv.isDarwin) [ firefoxpwa ];
 
   # FIXME: pure evaluation mode prevents this:
   # home.file.".librewolf/native-messaging-hosts".source = "${config.home.homeDirectory}/.mozilla/native-messaging-hosts";
@@ -19,7 +20,7 @@ in {
  
     languagePacks = [ "en-GB" "en-US" ];
 
-    nativeMessagingHosts = [ firefoxpwa ];
+    nativeMessagingHosts = lib.mkIf (!stdenv.isDarwin) [ firefoxpwa ];
 
     profiles.default = {
       isDefault = true;
@@ -41,11 +42,10 @@ in {
         multi-account-containers
         markdownload
         istilldontcareaboutcookies
-        pwas-for-firefox
         refined-github
         ublock-origin
         vimium
-      ];
+      ] ++ (if stdenv.isDarwin then [] else [ pkgs.nur.repos.rycee.firefox-addons.pwas-for-firefox ]);
       search = {
         default = "ddg";
         engines = {

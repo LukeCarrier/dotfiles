@@ -325,6 +325,7 @@
             ./home/fish/default.nix
             ./home/zsh/zsh.nix
             ./home/direnv/direnv.nix
+            ./home/firefox/firefox.nix
             ./system/hammerspoon/home.nix
             ./system/1password/home.nix
             ./home/openssh/openssh.nix
@@ -455,6 +456,7 @@
             ./home/zsh/zsh.nix
             ./home/fish/default.nix
             ./home/direnv/direnv.nix
+            ./home/firefox/firefox.nix
             ./home/openssh/openssh.nix
             ./home/atuin/atuin.nix
             ./home/starship/starship.nix
