@@ -35,6 +35,7 @@
 
   homebrew.casks = [
     "cursor"
+    "cursor-cli"
   ];
 
   sops.secrets.nix-github.sopsFile = pkgs.lib.mkForce ../../secrets/employer-emed.yaml;
