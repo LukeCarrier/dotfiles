@@ -22,6 +22,7 @@
           coenraads.disableligatures
           github.copilot
           github.copilot-chat
+          io-github-oops418.nix-env-picker
           jjk.jjk
           kdl-org.kdl
           ms-vsliveshare.vsliveshare
