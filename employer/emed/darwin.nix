@@ -43,7 +43,9 @@
           set -e
           /bin/wait4path /nix/store
           if ${timeout} 30s wait4path ${config.sops.secrets.nix-github-private.path}; then
+            set +e
             source ${config.sops.secrets.nix-github-private.path}
+            set -e
           fi
           exec ${lib.getExe' config.nix.package "nix-daemon"}
         ''
