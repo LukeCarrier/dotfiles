@@ -1,8 +1,13 @@
 keys:
   - &personal age19ndv83pvgryxmk2ndd3fy49jpx4hra5au3zu0vhw0f24splxnu7sq8mtz6
   - &employer_emed age14ddy9t7d0dnlmrumefw45ft9jqvzwz6l9d2th8hfd738xhjluckskuhe7p
+  - &employer_emed_b-4653 age1jklllmcjlj8ln8jfrdmp2scg2q93tkk3msnsc5jxcjsamwp5vdgshwr7my
+recipients:
+  - &emed >-
+    age14ddy9t7d0dnlmrumefw45ft9jqvzwz6l9d2th8hfd738xhjluckskuhe7p,
+    age1jklllmcjlj8ln8jfrdmp2scg2q93tkk3msnsc5jxcjsamwp5vdgshwr7my
 creation_rules:
   - path_regex: ^secrets/employer-emed\.yaml$
-    age: *employer_emed
+    age: *emed
   - path_regex: ^secrets/personal\.yaml$
     age: *personal

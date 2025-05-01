@@ -217,6 +217,7 @@
           modules = [
             ./hw/macbook.nix
             ./platform/darwin/common.nix
+            sops-nix.darwinModules.sops
             ./host/b-4653/b-4653.nix
             ./employer/emed/darwin.nix
             ./system/hammerspoon/hammerspoon.nix
