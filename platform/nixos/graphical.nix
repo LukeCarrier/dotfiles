@@ -75,7 +75,11 @@
   services.blueman.enable = true;
 
   networking.networkmanager.enable = true;
-  services.avahi.enable = true;
+  services.avahi = {
+    enable = true;
+    nssmdns4 = true;
+    openFirewall = true;
+  };
 
   security.polkit.enable = true;
 
@@ -99,7 +103,9 @@
   programs.hyprland.enable = true;
   security.pam.services.hyprlock = { };
 
+  services.colord.enable = true;
   services.printing.enable = true;
+  
   services.flatpak = {
     enable = true;
     package = pkgs.flatpak;
