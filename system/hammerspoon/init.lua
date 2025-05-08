@@ -1,3 +1,6 @@
+MenuBarSpaces = hs.loadSpoon("MenuBarSpaces")
+MenuBarSpaces:start()
+
 -- Warp mouse between left and right edges to displays above and below.
 -- Required for PaperWM.
 WarpMouse = hs.loadSpoon("WarpMouse")
