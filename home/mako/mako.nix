@@ -4,12 +4,14 @@
 
   services.mako = {
     enable = true;
-    borderColor = "#ffffff";
-    borderRadius = 8;
-    borderSize = 3;
-    groupBy = "app-name";
-    font = "Poppins 12";
-    backgroundColor = "#000000bf";
-    textColor = "#ffffff";
+    settings = {
+      border-color = "#ffffff";
+      border-radius = 8;
+      border-size = 3;
+      group-by = "app-name";
+      font = "Poppins 12";
+      background-color = "#000000bf";
+      text-color = "#ffffff";
+    };
   };
 }

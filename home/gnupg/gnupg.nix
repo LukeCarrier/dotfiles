@@ -10,7 +10,7 @@
     in
     {
       enable = true;
-      pinentryPackage = pinentries.${os};
+      pinentry.package = pinentries.${os};
     };
 
   programs.gpg.enable = true;
