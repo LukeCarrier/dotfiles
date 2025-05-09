@@ -176,9 +176,15 @@
             shellHook = ''
               python --version
             '';
-            packages = with pkgs; [
-              python
-            ];
+            packages =
+              (with pkgs; [
+                python314
+              ])
+              ++ (with pkgs.python312Packages; [
+                jedi-language-server
+                python-lsp-server
+                ruff
+              ]);
           };
         };
 
