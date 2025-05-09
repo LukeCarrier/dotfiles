@@ -80,6 +80,7 @@
             nix-vscode-extensions.overlays.default
             nur.overlays.default
             (final: prev: {
+              niri = niri.packages.${system}.niri-unstable;
               waybar = waybar.packages.${system}.waybar.overrideAttrs {
                 # "Did not find version * in the output of the command *"
                 doInstallCheck = false;

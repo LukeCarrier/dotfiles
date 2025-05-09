@@ -1,8 +1,12 @@
-{ config, desktopConfig, lib, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 let
+  systemctl = "${pkgs.systemd}/bin/systemctl";
+  xwaylandSatellite = "${pkgs.xwayland-satellite}/bin/xwayland-satellite";
+  kanshictl = "${pkgs.kanshi}/bin/kanshictl";
+  waybar = "${pkgs.waybar}/bin/waybar";
   xwaylandSatelliteDisplay = ":1";
   workspaceRename = pkgs.writeShellScriptBin "niri-workspace-rename" ''
-    niri="${pkgs.niri}/bin/niri"
+    niri="${config.programs.niri.package}/bin/niri"
     wofi="${pkgs.wofi}/bin/wofi"
     "$niri" msg action set-workspace-name "$("$wofi" --dmenu --lines 1 </dev/null)"
   '';
@@ -17,8 +21,6 @@ in {
 
     mako
     libnotify
-
-    xwayland-satellite
   ];
 
   xdg.portal = {
@@ -28,13 +30,14 @@ in {
       xdg-desktop-portal-gnome
     ];
     config.niri = {
-      default = [ "gtk" "gnome" ];
+      default = [ "gtk" ];
       "org.freedesktop.impl.portal.Settings" = "gtk";
     };
   };
 
   programs.niri = {
     enable = true;
+    package = pkgs.niri-unstable;
     settings = {
       input = {
         keyboard = {
@@ -51,9 +54,10 @@ in {
         focus-follows-mouse = {};
       };
       spawn-at-startup = [
-        { command = [ "waybar" ]; }
-        { command = [ "xwayland-satellite" xwaylandSatelliteDisplay ]; }
-        { command = [ "kanshictl" "reload" ]; }
+        { command = [ systemctl "--user" "import-environment" "WAYLAND_DISPLAY" "XDG_CURRENT_DESKTOP" ]; }
+        { command = [ waybar ]; }
+        { command = [ xwaylandSatellite xwaylandSatelliteDisplay ]; }
+        { command = [ kanshictl "reload" ]; }
       ];
       environment = {
         XDG_SESSION_DESKTOP = "niri";
@@ -65,7 +69,6 @@ in {
         NIXOS_OZONE_WL = "1";
         GDK_SCALE = "1.0";
         GDK_DPI_SCALE = "1.0";
-        XCURSOR_THEME = desktopConfig.pointerCursor.name;
         XCURSOR_SIZE = "32";
         TERM = "wezterm";
       };
@@ -114,12 +117,13 @@ in {
           "${mainMod}+${moveMod}+BracketLeft".action = consume-or-expel-window-left;
           "${mainMod}+${moveMod}+BracketRight".action = consume-or-expel-window-right;
           # Shift workspace between monitors
-          "${mainMod}+${moveMod}+Tab".action = move-workspace-to-monitor-next;
+          "${mainMod}+${moveMod}+Tab".action = move-column-to-monitor-next;
           # Space management
           "${mainMod}+${spaceMod}+${moveMod}+J".action = move-workspace-down;
           "${mainMod}+${spaceMod}+${moveMod}+K".action = move-workspace-up;
           "${mainMod}+R".action.spawn = [ "${workspaceRename}/bin/niri-workspace-rename" ];
           # Space navigation
+          "${mainMod}+${spaceMod}+Space".action = toggle-overview;
           "${mainMod}+${spaceMod}+Tab".action = focus-workspace-previous;
           "${mainMod}+${spaceMod}+J".action = focus-workspace-down;
           "${mainMod}+${spaceMod}+K".action = focus-workspace-up;
@@ -129,10 +133,11 @@ in {
             name = "${mainMod}+${toString i}";
             value.action = focus-workspace i;
           }
-          {
-            name = "${mainMod}+${moveMod}+${toString i}";
-            value.action = move-column-to-workspace i;
-          }
+          # FIXME: seems to exist in niri's config module, but not in the memo in niri-flake?
+          # {
+          #   name = "${mainMod}+${moveMod}+${toString i}";
+          #   value.action = move-column-to-workspace i;
+          # }
         ]) (lib.range 1 9));
       switch-events = {
         lid-close.action.spawn = [ "kanshictl" "switch" "peacehavenDockedClosed" ];

@@ -1,5 +1,8 @@
-{ config, desktopConfig, pkgs, ... }:
-{
+{ pkgs, ... }:
+let
+  kanshictl = "${pkgs.kanshi}/bin/kanshictl";
+  waybar = "${pkgs.waybar}/bin/waybar";
+in {
   home.packages = with pkgs; [
     brightnessctl
     playerctl
@@ -65,7 +68,7 @@
         "kanshctl reload"
       ];
       exec-once = [
-        "waybar"
+        waybar
       ];
       general = {
         resize_on_border = true;
@@ -168,8 +171,8 @@
       ];
       # FIXME: this won't work outside of Peacehaven; we need to script this
       bindl = [
-        ",switch:off:Lid Switch,exec,kanshictl switch peacehavenDockedOpen"
-        ",switch:on:Lid Switch,exec,kanshictl switch peacehavenDockedClosed"
+        ",switch:off:Lid Switch,exec,${kanshictl} switch peacehavenDockedOpen"
+        ",switch:on:Lid Switch,exec,${kanshictl} switch peacehavenDockedClosed"
       ];
       gestures = {
         workspace_swipe = true;
