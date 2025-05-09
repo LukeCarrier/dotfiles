@@ -1,8 +1,7 @@
-{ config, desktopConfig, pkgs, ... }:
+{ desktopConfig, pkgs, ... }:
 let
-  pidof = "${pkgs.procps}/bin/pidof";
-  swaylock = "${config.programs.swaylock.package}/bin/swaylock";
-  lockCmd = "${pidof} swaylock || ${swaylock}";
+  swaylock = "${pkgs.swaylock}/bin/swaylock";
+  lockCmd = "${swaylock} -fF";
 in {
   services.hypridle.settings.general.lock_cmd = lockCmd;
 

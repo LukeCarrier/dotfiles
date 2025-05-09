@@ -1,8 +1,8 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 let
   brightnessctl = "${pkgs.brightnessctl}/bin/brightnessctl";
-  loginctl = "${pkgs.systemd}/bin/loginctl";
   systemctl = "${pkgs.systemd}/bin/systemctl";
+  lockCmd = (builtins.head (builtins.filter (e: e.event == "lock") config.services.swayidle.events)).command;
 in {
   services.swayidle = {
     enable = true;
@@ -10,7 +10,7 @@ in {
     events = [
       {
         event = "before-sleep";
-        command = "${loginctl} lock-session";
+        command = lockCmd;
       }
     ];
 
@@ -22,7 +22,7 @@ in {
       }
       {
         timeout = 120;
-        command = "${loginctl} lock-session";
+        command = lockCmd;
       }
       {
         timeout = 300;
