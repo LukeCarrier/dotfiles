@@ -1,17 +1,18 @@
 { config, lib, pkgs, ... }:
 let
-  systemctl = "${pkgs.systemd}/bin/systemctl";
-  xwaylandSatellite = "${pkgs.xwayland-satellite}/bin/xwayland-satellite";
   kanshictl = "${pkgs.kanshi}/bin/kanshictl";
+  niri = "${config.programs.niri.package}/bin/niri";
+  systemctl = "${pkgs.systemd}/bin/systemctl";
   waybar = "${pkgs.waybar}/bin/waybar";
+  xwaylandSatellite = "${pkgs.xwayland-satellite}/bin/xwayland-satellite";
   xwaylandSatelliteDisplay = ":1";
   workspaceRename = pkgs.writeShellScriptBin "niri-workspace-rename" ''
-    niri="${config.programs.niri.package}/bin/niri"
+    niri="${niri}"
     wofi="${pkgs.wofi}/bin/wofi"
     "$niri" msg action set-workspace-name "$("$wofi" --dmenu --lines 1 </dev/null)"
   '';
 in {
-  home.packages = with pkgs; [
+  home.packages = (with pkgs; [
     brightnessctl
     playerctl
 
@@ -21,7 +22,7 @@ in {
 
     mako
     libnotify
-  ];
+  ]);
 
   xdg.portal = {
     enable = true;
@@ -85,25 +86,25 @@ in {
           # Utilities
           "Print".action = screenshot;
           "${mainMod}+S".action = screenshot;
-          "XF86AudioMute".action.spawn = [ "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle" ];
-          "XF86AudioLowerVolume".action.spawn = [ "wpctl" "set-volume" "-l" "1.4" "@DEFAULT_AUDIO_SINK@" "2%-" ];
-          "XF86AudioRaiseVolume".action.spawn = [ "wpctl" "set-volume" "-l" "1.4" "@DEFAULT_AUDIO_SINK@" "2%+" ];
-          "XF86AudioPrev".action.spawn = [ "playerctl" "previous" ];
-          "XF86AudioPlay".action.spawn = [ "playerctl" "play-pause" ];
-          "xf86audioNext".action.spawn = [ "playerctl" "next" ];
-          "XF86MonBrightnessDown".action.spawn = [ "brightnessctl" "set" "2%-" ];
-          "XF86MonBrightnessUp".action.spawn = [ "brightnessctl" "set" "+2%" ];
-          "XF86AudioMedia".action.spawn = [ terminal ];
+          "XF86AudioMute".action = spawn [ "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle" ];
+          "XF86AudioLowerVolume".action = spawn [ "wpctl" "set-volume" "-l" "1.4" "@DEFAULT_AUDIO_SINK@" "2%-" ];
+          "XF86AudioRaiseVolume".action = spawn [ "wpctl" "set-volume" "-l" "1.4" "@DEFAULT_AUDIO_SINK@" "2%+" ];
+          "XF86AudioPrev".action = spawn [ "playerctl" "previous" ];
+          "XF86AudioPlay".action = spawn [ "playerctl" "play-pause" ];
+          "xf86audioNext".action = spawn [ "playerctl" "next" ];
+          "XF86MonBrightnessDown".action = spawn [ "brightnessctl" "set" "2%-" ];
+          "XF86MonBrightnessUp".action = spawn [ "brightnessctl" "set" "+2%" ];
+          "XF86AudioMedia".action = spawn [ terminal ];
           # The `EC takes care of this on the Framework 13 AMD:
           # Display key sends Super+L, not XF86Display, for some reason
           # XF86RFKill is done for us
           # Session management
-          "${mainMod}+0".action.spawn = [ "loginctl" "lock-session" ];
+          "${mainMod}+0".action = spawn [ "loginctl" "lock-session" ];
           # Window/application management
           "${mainMod}+W".action = close-window;
           "${mainMod}+G".action = toggle-column-tabbed-display;
           # Launcher, a la Spotlight
-          "${mainMod}+Space".action.spawn = [ "wofi" "--allow-images" "--insensitive" "--show" "drun" ];
+          "${mainMod}+Space".action = spawn [ "wofi" "--allow-images" "--insensitive" "--show" "drun" ];
           # Navigate between windows and columns, Vi style
           # Window commands navigate tabs, no need for separate bindings
           "${mainMod}+Tab".action = focus-window-previous;
@@ -124,7 +125,7 @@ in {
           # Space management
           "${mainMod}+${spaceMod}+${moveMod}+J".action = move-workspace-down;
           "${mainMod}+${spaceMod}+${moveMod}+K".action = move-workspace-up;
-          "${mainMod}+R".action.spawn = [ "${workspaceRename}/bin/niri-workspace-rename" ];
+          "${mainMod}+R".action = spawn [ "${workspaceRename}/bin/niri-workspace-rename" ];
           # Space navigation
           "${mainMod}+${spaceMod}+Space".action = toggle-overview;
           "${mainMod}+${spaceMod}+Tab".action = focus-workspace-previous;
@@ -136,15 +137,15 @@ in {
             name = "${mainMod}+${toString i}";
             value.action = focus-workspace i;
           }
-          # FIXME: seems to exist in niri's config module, but not in the memo in niri-flake?
-          # {
-          #   name = "${mainMod}+${moveMod}+${toString i}";
-          #   value.action = move-column-to-workspace i;
-          # }
+          # FIXME: use the action directly once sodiboo/niri-flake#1018 is fixed.
+          {
+            name = "${mainMod}+${moveMod}+${toString i}";
+            value.action = spawn [ niri "msg" "action" "move-column-to-workspace" (toString i) ];
+          }
         ]) (lib.range 1 9));
-      switch-events = {
-        lid-close.action.spawn = [ "kanshictl" "switch" "peacehavenDockedClosed" ];
-        lid-open.action.spawn = [ "kanshictl" "switch" "peacehavenDockedOpen" ];
+      switch-events = with config.lib.niri.actions; {
+        lid-close.action = spawn [ "kanshictl" "switch" "peacehavenDockedClosed" ];
+        lid-open.action = spawn [ "kanshictl" "switch" "peacehavenDockedOpen" ];
       };
       prefer-no-csd = true;
       layout = {
