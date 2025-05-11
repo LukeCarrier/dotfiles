@@ -16,5 +16,6 @@ in
   services.espanso = {
     enable = true;
     package = package.${os};
+    configs.default.search_shortcut = "CTRL+SPACE";
   };
 }
