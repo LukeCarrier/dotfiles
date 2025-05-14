@@ -7,6 +7,7 @@ WarpMouse = hs.loadSpoon("WarpMouse")
 WarpMouse:start()
 
 PaperWM = hs.loadSpoon("PaperWM")
+PaperWM.swipe_fingers = 3
 PaperWM:bindHotkeys({
     focus_left  = {{"alt"}, "h"},
     focus_down  = {{"alt"}, "j"},
