@@ -11,6 +11,7 @@
   users.users."luke.carrier" = {
     description = "Luke Carrier";
   };
+  system.primaryUser = "luke.carrier";
 
   homebrew.casks = [
     "gitbutler"

@@ -18,4 +18,4 @@ host-android:
 	nix-on-droid switch --flake . --show-trace
 
 host-darwin:
-	nix run nix-darwin -- switch --flake . --show-trace
+	sudo nix run nix-darwin -- switch --flake . --show-trace

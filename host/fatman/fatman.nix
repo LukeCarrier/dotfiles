@@ -11,4 +11,5 @@
   users.users.lukecarrier = {
     description = "Luke Carrier";
   };
+  system.primaryUser = "lukecarrier";
 }
