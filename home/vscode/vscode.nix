@@ -46,6 +46,7 @@
         "window.titleBarStyle" = "custom";
         "window.commandCenter" = true;
         "window.autoDetectColorScheme" = true;
+        "workbench.activityBar.location" = "top";
         "workbench.preferredDarkColorTheme" = "Tokyo Night Storm";
         "workbench.iconTheme" = "vs-nomo-dark"; # zhuangtongfa.material-theme
         "hediet.vscode-drawio.theme" = "dark"; # hediet.vscode-drawio
