@@ -126,6 +126,7 @@ let
               "_testpilot-containers-browser-action"
               "ublock0_raymondhill_net-browser-action"
               "unified-extensions-button"
+              "_446900e4-71c2-419f-a6a7-df9c091e268b_-browser-action"
               "urlbar-container"
               "forward-button"
               "back-button"
@@ -171,12 +172,14 @@ let
           "sidebar-button"
           "back-button"
           "forward-button"
+          "stop-reload-button"
           "customizableui-special-spring3"
           "urlbar-container"
           "vertical-spacer"
           "alltabs-button"
           "firefox-view-button"
           "unified-extensions-button"
+          "_446900e4-71c2-419f-a6a7-df9c091e268b_-browser-action"
         ];	
         "browser.uiCustomization.state" = {
           "placements" = {
@@ -188,18 +191,20 @@ let
               "_1c5e4c6f-5530-49a3-b216-31ce7d744db0_-browser-action"
               "_a4c4eda4-fb84-4a84-b4a1-f7c1cbf2a1ad_-browser-action"
               "firefoxpwa_filips_si-browser-action"
-              "_446900e4-71c2-419f-a6a7-df9c091e268b_-browser-action"
+              "idcac-pub_guus_ninja-browser-action"
             ];
             "nav-bar" = [
               "sidebar-button"
               "back-button"
               "forward-button"
+              "stop-reload-button"
               "customizableui-special-spring3"
               "urlbar-container"
               "vertical-spacer"
               "alltabs-button"
               "firefox-view-button"
               "unified-extensions-button"
+              "_446900e4-71c2-419f-a6a7-df9c091e268b_-browser-action"
             ];
             "toolbar-menubar" = [ "menubar-items" ];
             "TabsToolbar" = [];
@@ -211,13 +216,14 @@ let
           };
           "seen" = [
             "_1c5e4c6f-5530-49a3-b216-31ce7d744db0_-browser-action"
+            "_446900e4-71c2-419f-a6a7-df9c091e268b_-browser-action"
             "_a4c4eda4-fb84-4a84-b4a1-f7c1cbf2a1ad_-browser-action"
             "_d7742d87-e61d-4b78-b8a1-b469842139fa_-browser-action"
             "_testpilot-containers-browser-action"
-            "firefoxpwa_filips_si-browser-action"
-            "ublock0_raymondhill_net-browser-action"
-            "_446900e4-71c2-419f-a6a7-df9c091e268b_-browser-action"
             "developer-button"
+            "firefoxpwa_filips_si-browser-action"
+            "idcac-pub_guus_ninja-browser-action"
+            "ublock0_raymondhill_net-browser-action"
           ];
           "dirtyAreaCache" = [
             "unified-extensions-area"
