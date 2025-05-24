@@ -6,7 +6,7 @@
         modules-center = [
           "clock"
           "privacy"
-          "mpris"
+          # "mpris"
         ];
         modules-right = [
           "battery"
