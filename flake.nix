@@ -438,6 +438,7 @@
             ./home/kanshi/kanshi.nix
             ./home/gnome-headless/gnome-headless.nix
             ./home/wofi/wofi.nix
+            ./home/eww/eww.nix
             ./home/waybar/waybar.nix
             ./home/hyprcursor/hyprcursor.nix
             ./home/swayidle/swayidle.nix
