@@ -1,0 +1,37 @@
+$default-fg: #2d3e4e;
+$invert-fg: #ffffff;
+$alert: #eb4d4b;
+
+* {
+  all: unset;
+  border-radius: 2px;
+  font-family: "Poppins", "Font Awesome 6 Free";
+  font-size: 12px;
+  color: $default-fg;
+}
+
+.bar {
+  margin: 2px;
+}
+
+widget.left > box,
+widget.center > box,
+widget.right > box {
+  min-width: 0;
+  margin: 4px 12px;
+}
+widget.left > box:first-child,
+widget.right > box:last-child {
+  margin: 4px 0;
+}
+
+label {
+  padding: 2px;
+}
+
+.workspaces .workspace.active {
+  background-color: $default-fg;
+  label {
+    color: $invert-fg;
+  }
+}
