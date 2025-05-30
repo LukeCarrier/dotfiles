@@ -5,8 +5,8 @@
 }:
 {
   home.packages = with pkgs; [
+    jjui
     jujutsu
-    lazyjj
   ];
 
   programs.jujutsu = {
