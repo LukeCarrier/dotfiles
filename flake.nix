@@ -119,7 +119,7 @@
       {
         devShells = {
           default = pkgs.mkShell {
-            packages = with pkgs; [
+            nativeBuildInputs = with pkgs; [
               age
               gnumake
               nil
@@ -139,7 +139,7 @@
               echo -n "go "; go --version
               echo -n "make "; make --version
             '';
-            packages = with pkgs; [
+            nativeBuildInputs = with pkgs; [
               delve
               gnumake
               go
@@ -155,7 +155,7 @@
               echo -n "pnpm "; pnpm --version
               echo -n "yarn "; yarn --version
             '';
-            packages = with pkgs; [
+            nativeBuildInputs = with pkgs; [
               bun
               nodejs
               pnpm
@@ -168,7 +168,7 @@
             shellHook = ''
               kotlin -version
             '';
-            packages = with pkgs; [
+            nativeBuildInputs = with pkgs; [
               kotlin
               kotlin-language-server
             ];
