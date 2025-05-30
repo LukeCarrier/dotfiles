@@ -1,4 +1,10 @@
-{ ... }: {  
+{ pkgs, ... }:
+let
+  bluemanManager = "${pkgs.blueman}/bin/blueman-manager";
+  playerctl = "${pkgs.playerctl}/bin/playerctl";
+  waybarNowPlaying = pkgs.writeShellScriptBin "waybar-now-playing" (builtins.readFile ./waybar-now-playing.sh) + "/bin/waybar-now-playing";
+in
+{  
   programs.waybar = {
     enable = true;
     settings = {
@@ -6,7 +12,7 @@
         modules-center = [
           "clock"
           "privacy"
-          # "mpris"
+          "custom/now-playing"
         ];
         modules-right = [
           "battery"
@@ -80,7 +86,7 @@
           format-muted = "🔇";
         };
         bluetooth = {
-          on-click = "blueman-manager";
+          on-click = bluemanManager;
         };
         network = {
           on-click = "nm-connection-editor";
@@ -110,6 +116,15 @@
             activated = "☕️";
             deactivated = "🍻";
           };
+        };
+        "custom/now-playing" = {
+          format = "{}";
+          return-type = "json";
+          max-length = 100;
+          exec = "${waybarNowPlaying} 2>/dev/null";
+          on-click = "${playerctl} play-pause";
+      		on-scroll-up = "playerctl position 3+";
+      		on-scroll-down = "playerctl position 3-";
         };
       };
     };
