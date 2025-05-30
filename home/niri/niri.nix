@@ -127,8 +127,10 @@ in {
           # Group windows
           "${mainMod}+${moveMod}+BracketLeft".action = consume-or-expel-window-left;
           "${mainMod}+${moveMod}+BracketRight".action = consume-or-expel-window-right;
-          # Shift workspace between monitors
+          # Shift column between monitors
           "${mainMod}+${moveMod}+Tab".action = move-column-to-monitor-next;
+          # Shift workspace between monitors
+          "${mainMod}+${spaceMod}+${moveMod}+Tab".action = move-workspace-to-monitor-next;
           # Space management
           "${mainMod}+${spaceMod}+${moveMod}+J".action = move-workspace-down;
           "${mainMod}+${spaceMod}+${moveMod}+K".action = move-workspace-up;
