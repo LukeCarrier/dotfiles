@@ -39,6 +39,13 @@ in {
     };
   };
 
+  # sodiboo/niri-flake#509
+  systemd.user.services.niri-flake-polkit = {
+    after = {
+      "graphical-session.target" = true;
+    };
+  };
+
   programs.niri = {
     enable = true;
     package = pkgs.niri-unstable;
