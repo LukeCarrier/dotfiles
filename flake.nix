@@ -201,11 +201,12 @@
 
           eww-niri-workspaces = pkgs.callPackage ./package/eww-niri-workspaces/eww-niri-workspaces.nix {
             ewwNiriWorkspaces = rec {
+              owner = "LukeCarrier";
               # FIXME: there are currently no tags available :-(
-              rev = "86e1e7065f002e410c85a473e53088f9ec256dcb";
+              rev = "refs/heads/main";
               version = "0.0.0-${rev}";
-              hash = "sha256-9JS/T1zcX45UrNdLJq19O7SOgHU92AjQrH1jyhrvsbc=";
-              cargoHash = "sha256-AKqT5EezdHRVVc9SFDKoj1OMKFWkWzn3vjPxGuJM+w0=";
+              hash = "sha256-w/qGm7eOIhN+Uzj5pFRWk3jLcL8ABo3SPzksOBtYgwM=";
+              cargoHash = "sha256-45X5XrDC74znu78cKpsJ32OBpGiRNRXJ597/+c/Hcpk=";
             };
           };
 
