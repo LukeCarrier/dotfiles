@@ -1,0 +1,12 @@
+--- a/Cargo.toml	2025-05-29 23:54:25.705031169 +0100
++++ b/Cargo.toml	2025-05-29 23:55:25.982393983 +0100
+@@ -4,8 +4,7 @@
+ edition = "2021"
+ 
+ [dependencies]
+-#niri-ipc = { git = "https://github.com/YaLTeR/niri", tag = "v0.1.9" }
+-niri-ipc = { git = "https://github.com/yrkv/niri", branch = "main" }
++niri-ipc = { git = "https://github.com/YaLTeR/niri", tag = "v25.05.1" }
+ serde = "1.0.219"
+ serde_json = "1.0"
+ eyre = "0.6"

@@ -9,7 +9,7 @@ rustPlatform.buildRustPackage rec {
   version = ewwNiriWorkspaces.version;
 
   src = fetchFromGitHub {
-    owner = "druskus20";
+    owner = ewwNiriWorkspaces.owner;
     repo = pname;
     rev = ewwNiriWorkspaces.rev;
     hash = ewwNiriWorkspaces.hash;
