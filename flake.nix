@@ -91,6 +91,7 @@
               bw-cli-tools = self.packages.${system}.bw-cli-tools;
               docker-cli-tools = self.packages.${system}.docker-cli-tools;
               dotfiles-meta = self.packages.${system}.dotfiles-meta;
+              eww-niri-workspaces = self.packages.${system}.eww-niri-workspaces;
               kubernetes-client-tools = self.packages.${system}.kubernetes-client-tools;
               monaspace-fonts = self.packages.${system}.monaspace-fonts;
               stklos = self.packages.${system}.stklos;
@@ -197,6 +198,16 @@
           docker-cli-tools = pkgs.callPackage ./package/docker-cli-tools/docker-cli-tools.nix { };
 
           dotfiles-meta = pkgs.callPackage ./package/dotfiles-meta/dotfiles-meta.nix { };
+
+          eww-niri-workspaces = pkgs.callPackage ./package/eww-niri-workspaces/eww-niri-workspaces.nix {
+            ewwNiriWorkspaces = rec {
+              # FIXME: there are currently no tags available :-(
+              rev = "86e1e7065f002e410c85a473e53088f9ec256dcb";
+              version = "0.0.0-${rev}";
+              hash = "sha256-9JS/T1zcX45UrNdLJq19O7SOgHU92AjQrH1jyhrvsbc=";
+              cargoHash = "sha256-AKqT5EezdHRVVc9SFDKoj1OMKFWkWzn3vjPxGuJM+w0=";
+            };
+          };
 
           kubernetes-client-tools =
             pkgs.callPackage ./package/kubernetes-client-tools/kubernetes-client-tools.nix
