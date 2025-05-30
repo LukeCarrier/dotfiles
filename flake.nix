@@ -37,6 +37,10 @@
       url = "github:nix-community/NUR";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
@@ -64,6 +68,7 @@
       nix-vscode-extensions,
       nixpkgs-unstable,
       nur,
+      rust-overlay,
       sops-nix,
       waybar,
       wezterm,
@@ -79,6 +84,7 @@
             niri.overlays.niri
             nix-vscode-extensions.overlays.default
             nur.overlays.default
+            rust-overlay.overlays.default
             (final: prev: {
               niri = niri.packages.${system}.niri-unstable;
               waybar = waybar.packages.${system}.waybar.overrideAttrs {
@@ -187,6 +193,19 @@
                 python-lsp-server
                 ruff
               ]);
+          };
+
+          rustDev = pkgs.mkShell {
+            shellHook = ''
+              cargo --version
+              rustc --version
+            '';
+            nativeBuildInputs = with pkgs; [
+              lldb_19
+              pkg-config
+              rust-analyzer
+              rust-bin.stable.latest.default
+            ];
           };
         };
 
