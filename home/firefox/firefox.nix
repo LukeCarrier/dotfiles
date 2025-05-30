@@ -53,6 +53,19 @@ let
           ebay.metaData.hidden = true;
           google.metaData.hidden = true;
 
+          "GitHub" = {
+            definedAliases = [ "gh" ];
+            urls = [
+              { template = "https://github.com/{searchTerms}"; }
+            ];
+          };
+          "GitHub/Search" = {
+            definedAliases = [ "ghs" ];
+            urls = [
+              { template = "https://github.com/search?q={searchTerms}&type=repositories"; }
+            ];
+          };
+          
           "nixpkgs/Options" = {
             definedAliases = [ "no" ];
             urls = [
