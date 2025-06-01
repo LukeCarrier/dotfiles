@@ -226,6 +226,7 @@
           extensions = globalExtensions;
           userSettings = globalUserSettings;
         };
+        # DownTheStack-wealthgraph 
         LukeCarrier-denote = {
           extensions =
             globalExtensions
@@ -264,6 +265,18 @@
             ]);
           userSettings = globalUserSettings;
         };
+        LukeCarrier-rust = {
+          extensions =
+            globalExtensions
+            ++ (with pkgs.open-vsx; [
+              rust-lang.rust-analyzer
+              vadimcn.vscode-lldb
+            ])
+            ++ (with pkgs.vscode-marketplace; [
+              vadimcn.vscode-lldb
+            ]);
+            userSettings = globalUserSettings;
+        };
       };
     };
 }
@@ -297,7 +310,6 @@
 # josetr.cmake-language-support-vscode
 # ms-vscode.cmake-tools
 # twxs.cmake
-# vadimcn.vscode-lldb
 # webfreak.debug
 
 # C#
