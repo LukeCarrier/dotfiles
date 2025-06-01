@@ -294,7 +294,6 @@
             ./host/fatman/fatman.nix
             ./system/hammerspoon/hammerspoon.nix
             ./system/gauntlet/darwin.nix
-            ./system/jetbrains-toolbox/darwin.nix
             ./system/logseq/darwin.nix
           ];
         };

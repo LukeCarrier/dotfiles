@@ -14,7 +14,6 @@
     pkg:
     builtins.elem (lib.getName pkg) [
       "code"
-      "jetbrains-toolbox"
       "terraform"
       "vscode"
       "vscode-extension-github-copilot"
@@ -31,7 +30,6 @@
     freshfetch
     jq
     ungoogled-chromium
-    jetbrains-toolbox
     gnome-network-displays
     monaspace-fonts
     stklos
