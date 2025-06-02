@@ -4,6 +4,7 @@
     let
       globalExtensions =
         (with pkgs.open-vsx; [
+          arrterian.nix-env-selector
           bierner.markdown-mermaid
           bmalehorn.vscode-fish
           ciarant.vscode-structurizr
