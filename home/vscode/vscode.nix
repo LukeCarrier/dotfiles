@@ -271,9 +271,8 @@
             globalExtensions
             ++ (with pkgs.open-vsx; [
               rust-lang.rust-analyzer
-              vadimcn.vscode-lldb
             ])
-            ++ (with pkgs.vscode-marketplace; [
+            ++ (with pkgs.vscode-extensions; [
               vadimcn.vscode-lldb
             ]);
             userSettings = globalUserSettings;
