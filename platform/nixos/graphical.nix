@@ -70,8 +70,11 @@
     };
   };
 
-  hardware.bluetooth.enable = true;
-  hardware.bluetooth.powerOnBoot = true;
+  hardware.bluetooth = {
+    enable = true;
+    powerOnBoot = true;
+    input.General.UserspaceHID = true;
+  };
   services.blueman.enable = true;
 
   networking.networkmanager.enable = true;
