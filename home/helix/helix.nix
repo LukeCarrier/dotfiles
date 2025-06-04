@@ -1,11 +1,46 @@
 { config, pkgs, ... }:
-{
+let
+  lldbDapRustcPrimer = "${config.xdg.configHome}/helix/debug/lldb_dap_rustc_primer.py";
+in {
+  home.file."${lldbDapRustcPrimer}".source =
+    ./.config/helix/debug/lldb_dap_rustc_primer.py;
   home.file."${config.xdg.configHome}/helix/themes/local_tokyonight_storm.toml".source =
     ./.config/helix/themes/local_tokyonight_storm.toml;
 
   programs.helix = {
     enable = true;
     defaultEditor = true;
+
+    languages = {
+      language = [
+        {
+          name = "rust";
+          debugger = {
+            name = "lldb-dap";
+            transport = "stdio";
+            command = "lldb-dap";
+            templates = [
+              {
+                name = "binary";
+                request = "launch";
+                completion = [
+                  {
+                    name = "binary";
+                    completion = "filename";
+                  }
+                ];
+                args = {
+                  program = "{0}";
+                  initCommands = [
+                    "command script import ${lldbDapRustcPrimer}"
+                  ];
+                };
+              }
+            ];
+          };
+        }
+      ];
+    };
 
     settings = {
       theme = "local_tokyonight_storm";
