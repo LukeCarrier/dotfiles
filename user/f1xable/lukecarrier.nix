@@ -39,10 +39,6 @@
     watchexec
   ];
 
-  home.sessionPath = [
-    "$HOME/.local/share/JetBrains/Toolbox/scripts"
-  ];
-
   home.sessionVariables = {
     SSH_AUTH_SOCK = config.home.sessionVariables.BITWARDEN_SSH_AUTH_SOCK;
   };
