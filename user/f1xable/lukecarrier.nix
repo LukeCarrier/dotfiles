@@ -22,8 +22,6 @@
     ];
 
   home.packages = with pkgs; [
-    bitwarden-cli
-    bw-cli-tools
     btop
     docker-cli-tools
     gh
@@ -46,7 +44,7 @@
   ];
 
   home.sessionVariables = {
-    SSH_AUTH_SOCK = "$HOME/.bitwarden/ssh-agent.sock";
+    SSH_AUTH_SOCK = config.home.sessionVariables.BITWARDEN_SSH_AUTH_SOCK;
   };
 
   sops.age.keyFile = "${config.home.homeDirectory}/Code/LukeCarrier/dotfiles/.sops/keys";

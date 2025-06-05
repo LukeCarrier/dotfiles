@@ -1,6 +1,10 @@
 { pkgs, ... }:
 {
-  home.packages = [ pkgs.bitwarden-desktop ];
+  home.packages = with pkgs; [
+    bitwarden-desktop
+    bitwarden-cli
+    bw-cli-tools
+  ];
 
   home.sessionVariables.BITWARDEN_SSH_AUTH_SOCK = "$HOME/.bitwarden/ssh-agent.sock";
 
