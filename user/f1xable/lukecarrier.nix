@@ -38,6 +38,7 @@
     dotfiles-meta
     psmisc
     ripgrep
+    watchexec
   ];
 
   home.sessionPath = [
