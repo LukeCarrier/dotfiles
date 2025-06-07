@@ -326,7 +326,7 @@
             nix-flatpak.nixosModules.nix-flatpak
             ./hw/framework-13-amd.nix
             ./host/f1xable/f1xable.nix
-            ./platform/nixos/enable-flakes.nix
+            ./platform/nixos/common.nix
             ./platform/nixos/region/en-gb.nix
             lanzaboote.nixosModules.lanzaboote
             ./platform/nixos/secure-boot.nix
