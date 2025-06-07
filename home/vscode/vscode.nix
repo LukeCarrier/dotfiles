@@ -253,7 +253,7 @@
               redhat.vscode-yaml
             ])
             ++ (with pkgs.vscode-marketplace; [
-              ms-ossdata.vscode-postgresql
+              ms-ossdata.vscode-pgsql
             ])
             ++ [ pkgs.vscode-marketplace."4ops".packer ];
           userSettings = globalUserSettings;
