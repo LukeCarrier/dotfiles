@@ -333,6 +333,7 @@
             ./platform/nixos/graphical.nix
             ./platform/wireguard/wireguard.nix
             ./platform/nixos/containers.nix
+            ./system/valent/valent.nix
           ];
           specialArgs = {
             desktopConfig.background = desktopBackground;
@@ -451,6 +452,7 @@
             ./home/zsh/zsh.nix
             ./home/direnv/direnv.nix
             ./home/firefox/firefox.nix
+            ./system/valent/home.nix
             ./home/bitwarden/bitwarden.nix
             ./home/openssh/openssh.nix
             ./home/atuin/atuin.nix
