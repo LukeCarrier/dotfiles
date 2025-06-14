@@ -86,10 +86,8 @@
 
   security.polkit.enable = true;
 
-  services.xserver = {
-    enable = true;
-    libinput.enable = true;
-  };
+  services.xserver.enable = true;
+  services.libinput.enable = true;
   services.greetd.enable = true;
   programs.regreet = {
     enable = true;
