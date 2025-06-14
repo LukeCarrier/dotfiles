@@ -11,11 +11,11 @@
   #   127.0.0.1 localhost.sg.preprod.babylontech.co.uk
   # '';
   
-  sops.secrets.nix-github-private = {
+  sops.secrets.nix-github = {
     sopsFile = ../../secrets/employer-emed.yaml;
     format = "yaml";
-    key = "nix/github-private";
-    path = "/etc/nix/github-private.env";
+    key = "nix/github";
+    path = "/etc/nix/github.env";
   };
 
   nix = {
@@ -42,9 +42,9 @@
         ''
           set -e
           /bin/wait4path /nix/store
-          if ${timeout} 30s wait4path ${config.sops.secrets.nix-github-private.path}; then
+          if ${timeout} 30s wait4path ${config.sops.secrets.nix-github.path}; then
             set +e
-            source ${config.sops.secrets.nix-github-private.path}
+            source ${config.sops.secrets.nix-github.path}
             set -e
           fi
           exec ${lib.getExe' config.nix.package "nix-daemon"}

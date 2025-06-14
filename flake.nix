@@ -131,6 +131,7 @@
               nil
               nix-index
               nixfmt-rfc-style
+              ssh-to-age
               sops
               treefmt
             ];
@@ -324,6 +325,7 @@
             ./host/f1xable/hardware-configuration.nix
             nixos-hardware.nixosModules.framework-13-7040-amd
             nix-flatpak.nixosModules.nix-flatpak
+            sops-nix.nixosModules.sops
             ./hw/framework-13-amd.nix
             ./host/f1xable/f1xable.nix
             ./platform/nixos/common.nix
