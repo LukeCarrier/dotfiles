@@ -1,5 +1,12 @@
 { ... }:
 {
+  networking = {
+    nftables.enable = true;
+    firewall = {
+      enable = true;
+    };
+  };
+
   nix = {
     enable = true;
 
