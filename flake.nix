@@ -334,6 +334,7 @@
             ./platform/nixos/secure-boot.nix
             ./platform/nixos/graphical.nix
             ./platform/nixos/containers.nix
+            ./system/gnome-network-displays/gnome-network-displays.nix
             ./system/valent/valent.nix
           ];
           specialArgs = {
@@ -453,6 +454,7 @@
             ./home/zsh/zsh.nix
             ./home/direnv/direnv.nix
             ./home/firefox/firefox.nix
+            # ./system/gnome-network-displays/home.nix
             ./system/valent/home.nix
             ./home/bitwarden/bitwarden.nix
             ./home/openssh/openssh.nix

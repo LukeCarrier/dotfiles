@@ -21,6 +21,7 @@
       "vscode-extension-ms-vsliveshare-vsliveshare"
     ];
 
+  
   home.packages = with pkgs; [
     btop
     docker-cli-tools
@@ -28,7 +29,6 @@
     freshfetch
     jq
     ungoogled-chromium
-    gnome-network-displays
     monaspace-fonts
     stklos
     nautilus

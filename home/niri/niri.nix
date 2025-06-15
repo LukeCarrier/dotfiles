@@ -31,9 +31,10 @@ in {
       xdg-desktop-portal-gnome
     ];
     config.niri = {
-      default = [ "gnome" "gtk" ];
+      default = [ "gtk" "gnome" ];
       "org.freedesktop.impl.portal.Access" = "gtk";
       "org.freedesktop.impl.portal.Notification" = "gtk";
+      "org.freedesktop.impl.portal.Screencast" = "gnome";
       "org.freedesktop.impl.portal.Secret" = "gnome-keyring";
       "org.freedesktop.impl.portal.Settings" = "gtk";
     };
