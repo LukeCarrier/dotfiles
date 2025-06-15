@@ -15,6 +15,24 @@ let
   # So we have to:
   # ln -s ~/.mozilla/native-messaging-hosts ~/.librewolf/
 
+  xdg.mimeApps.defaultApplications =
+    let
+      app = "librewolf.desktop";
+    in {
+      "text/html" = app;
+      "x-scheme-handler/about" = app;
+      "x-scheme-handler/chrome" = app;
+      "x-scheme-handler/http" = app;
+      "x-scheme-handler/https" = app;
+      "x-scheme-handler/unknown" = app;
+      "application/x-extension-htm" = app;
+      "application/x-extension-html" = app;
+      "application/x-extension-shtml" = app;
+      "application/xhtml+xml" = app;
+      "application/x-extension-xhtml" = app;
+      "application/x-extension-xht" = app;
+    };
+
   programs.librewolf = {
     enable = true;
  

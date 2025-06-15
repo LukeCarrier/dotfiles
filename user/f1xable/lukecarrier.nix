@@ -54,6 +54,8 @@
 
   programs.home-manager.enable = true;
 
+  xdg.mimeApps.enable = true;
+
   dconf.settings = {
     "org/gnome/desktop/interface".color-scheme = "prefer-dark";
   };
