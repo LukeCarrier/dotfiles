@@ -60,6 +60,7 @@ let
         multi-account-containers
         markdownload
         istilldontcareaboutcookies
+        read-aloud
         refined-github
         ublock-origin
         vimium
