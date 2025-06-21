@@ -62,7 +62,7 @@ in {
           natural-scroll = true;
           tap = true;
         };
-        warp-mouse-to-focus = true;
+        warp-mouse-to-focus.enable = true;
         focus-follows-mouse = {};
       };
       spawn-at-startup = [
