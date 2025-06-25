@@ -2,6 +2,10 @@
   description = "Luke Carrier's dotfiles";
 
   inputs = {
+    code-insiders = {
+      url = "github:iosmanthus/code-insiders-flake";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
     darwin = {
       url = "github:lnl7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
@@ -57,6 +61,7 @@
 
   outputs =
     {
+      code-insiders,
       darwin,
       flake-utils,
       home-manager,
@@ -81,6 +86,7 @@
         (import pkgs {
           inherit system;
           overlays = [
+            code-insiders.overlays.default
             niri.overlays.niri
             nix-vscode-extensions.overlays.default
             nur.overlays.default

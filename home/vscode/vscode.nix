@@ -279,6 +279,8 @@
         };
       };
     };
+
+  home.packages = [ pkgs.vscode-insiders ];
 }
 
 # Dart

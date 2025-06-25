@@ -1,5 +1,25 @@
 {
   "nodes": {
+    "code-insiders": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs-unstable"
+        ]
+      },
+      "locked": {
+        "lastModified": 1750983438,
+        "narHash": "sha256-oJgvtnhGG0GibTcMGvYGSq8aaAzsB3Tmn2XYIB5O0Jg=",
+        "owner": "iosmanthus",
+        "repo": "code-insiders-flake",
+        "rev": "0a5616c028cf5aaaed566296957debe35dc1bee5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "iosmanthus",
+        "repo": "code-insiders-flake",
+        "type": "github"
+      }
+    },
     "crane": {
       "locked": {
         "lastModified": 1750266157,
@@ -648,6 +668,7 @@
     },
     "root": {
       "inputs": {
+        "code-insiders": "code-insiders",
         "darwin": "darwin",
         "flake-utils": "flake-utils",
         "home-manager": "home-manager",
