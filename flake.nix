@@ -277,7 +277,6 @@
             ./system/hammerspoon/hammerspoon.nix
             ./system/1password/1password.nix
             ./system/finicky/darwin.nix
-            ./system/gauntlet/darwin.nix
             ./system/jetbrains-toolbox/darwin.nix
             ./system/logseq/darwin.nix
           ];
@@ -294,7 +293,6 @@
             ./platform/darwin/common.nix
             ./host/fatman/fatman.nix
             ./system/hammerspoon/hammerspoon.nix
-            ./system/gauntlet/darwin.nix
             ./system/logseq/darwin.nix
           ];
         };
