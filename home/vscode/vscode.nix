@@ -1,5 +1,23 @@
 { pkgs, ... }:
 {
+  xdg.mimeApps.defaultApplications =
+    let app = "codium-url-handler.desktop";
+  in {
+    "x-scheme-handler/vscode" = app;
+  };
+
+  home.file.".vscode-oss/argv.json".text =
+    let
+      attrs = {
+        # Scream at creepy Microsoft telemetry perverts
+      	"enable-crash-reporter" = false;
+      	"crash-reporter-id" = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa";
+
+        # Default to GNOME/Seahorse via libsecret for credential storage on Linux.
+        "password-store" = pkgs.lib.mkIf pkgs.stdenv.isLinux "gnome-libsecret";
+      };
+    in builtins.toJSON attrs;
+
   programs.vscode =
     let
       globalExtensions =
@@ -36,6 +54,9 @@
         # Nagging
         "extensions.ignoreRecommendations" = true;
         "explorer.confirmDragAndDrop" = false;
+        # Updates
+        "update.mode" = "manual";
+        "extensions.autoUpdate" = false;
         # Restore windows on re-open
         "window.restoreWindows" = "all";
         # Extension host
@@ -65,13 +86,14 @@
         "terminal.integrated.fontSize" = 13;
         "editor.fontLigatures" = true;
         "disableLigatures.mode" = "Cursor";
-        # copy without formatting
+        # Copy without formatting
         "editor.copyWithSyntaxHighlighting" = false;
         # Screencasting
         "screencastMode.keyboardOverlayTimeout" = 1200;
         "screencastMode.fontSize" = 24;
         # Editing
         "editor.comments.ignoreEmptyLines" = false;
+        # Project colours
         "peacock.favoriteColors" = [
           {
             "name" = "Angular Red";
@@ -186,6 +208,23 @@
         "terminal.integrated.tabs.enabled" = true;
         "terminal.integrated.scrollback" = 0; # Use tmux instead
         "terminal.integrated.cursorBlinking" = true;
+        # AI
+        "chat.agent.enabled" = true;
+        "github.copilot.chat.agent.autoFix" = true;
+        "github.copilot.chat.agent.runTasks" = true;
+        "mcp" = {
+          "servers" = {
+            "markitdown" = {
+              "command" = "docker";
+              "args" = [
+                "run"
+                "--rm"
+                "-i"
+                "markitdown-mcp:latest"
+              ];
+            };
+          };
+        };
         # Zen mode
         "zenMode.centerLayout" = false;
         "zenMode.fullScreen" = false;
