@@ -14,6 +14,6 @@
   system.primaryUser = "luke.carrier";
 
   homebrew.casks = [
-    "gitbutler"
+    "visual-studio-code@insiders"
   ];
 }
