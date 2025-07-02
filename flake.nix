@@ -355,6 +355,7 @@
             ./user/b-4653/luke.carrier.nix
             ./employer/emed/emed.nix
             sops-nix.homeManagerModules.sops
+            ./home/shell-essential/shell-essential.nix
             ./home/homebrew/homebrew.nix
             ./home/fonts/fonts.nix
             ./home/readline/readline.nix
@@ -398,6 +399,7 @@
           };
           modules = [
             ./user/android/nix-on-droid.nix
+            ./home/shell-essential/shell-essential.nix
             # ./home/bash/bash.nix
             ./home/fish/fish.nix
             ./home/fish/default.nix
@@ -433,7 +435,7 @@
             nix-flatpak.homeManagerModules.nix-flatpak
             sops-nix.homeManagerModules.sops
             ./user/f1xable/lukecarrier.nix
-            ./home/privacy/privacy.nix
+            ./home/shell-essential/shell-essential.nix
             ./home/fonts/fonts.nix
             ./home/readline/readline.nix
             ./home/kanshi/kanshi.nix
@@ -488,6 +490,7 @@
           modules = [
             ./user/fatman/lukecarrier.nix
             sops-nix.homeManagerModules.sops
+            ./home/shell-essential/shell-essential.nix
             ./home/homebrew/homebrew.nix
             ./home/fonts/fonts.nix
             ./home/readline/readline.nix

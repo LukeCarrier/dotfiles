@@ -20,23 +20,13 @@
       "vscode-extension-github-copilot-chat"
       "vscode-extension-ms-vsliveshare-vsliveshare"
     ];
-
   
   home.packages = with pkgs; [
-    btop
     docker-cli-tools
-    gh
-    freshfetch
-    jq
     ungoogled-chromium
     monaspace-fonts
     stklos
     nautilus
-
-    dotfiles-meta
-    psmisc
-    ripgrep
-    watchexec
   ];
 
   home.sessionVariables = {
