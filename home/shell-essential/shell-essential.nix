@@ -7,6 +7,7 @@
       freshfetch
       gh
       jq
+      pv
       ripgrep
       watchexec
     ]
