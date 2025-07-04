@@ -12,7 +12,16 @@ in {
     defaultEditor = true;
 
     languages = {
+      language-server = {
+        regal = {
+          command = "regal";
+        };
+      };
       language = [
+        {
+          name = "rego";
+          language-servers = [ "regal" "regols" ];
+        }
         {
           name = "rust";
           debugger = {
