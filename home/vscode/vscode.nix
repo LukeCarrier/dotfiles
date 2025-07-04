@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
 {
   xdg.mimeApps.defaultApplications =
     let app = "codium-url-handler.desktop";
@@ -14,7 +14,7 @@
       	"crash-reporter-id" = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa";
 
         # Default to GNOME/Seahorse via libsecret for credential storage on Linux.
-        "password-store" = pkgs.lib.mkIf pkgs.stdenv.isLinux "gnome-libsecret";
+        "password-store" = lib.mkIf pkgs.stdenv.isLinux "gnome-libsecret";
       };
     in builtins.toJSON attrs;
 
@@ -319,7 +319,7 @@
       };
     };
 
-  home.packages = [ pkgs.vscode-insiders ];
+  home.packages = lib.mkIf pkgs.stdenv.isLinux [ pkgs.vscode-insiders ];
 }
 
 # Dart

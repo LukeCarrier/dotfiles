@@ -282,6 +282,7 @@
             ./system/1password/1password.nix
             ./system/finicky/darwin.nix
             ./system/jetbrains-toolbox/darwin.nix
+            ./home/vscode/darwin.nix
             ./system/logseq/darwin.nix
           ];
         };
