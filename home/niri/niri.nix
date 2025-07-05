@@ -9,7 +9,12 @@ let
   workspaceRename = pkgs.writeShellScriptBin "niri-workspace-rename" ''
     niri="${niri}"
     wofi="${pkgs.wofi}/bin/wofi"
-    "$niri" msg action set-workspace-name "$("$wofi" --dmenu --lines 1 </dev/null)"
+    name="$("$wofi" --dmenu --lines 1 </dev/null)"
+    if [[ "$name" == "" ]]; then
+      "$niri" msg action unset-workspace-name
+    else
+      "$niri" msg action set-workspace-name "$name"
+    fi
   '';
 in {
   home.packages = (with pkgs; [
