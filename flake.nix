@@ -145,12 +145,10 @@
 
           goDev = pkgs.mkShell {
             shellHook = ''
-              echo -n "dlv "; dlv --version
-              echo -n "go "; go --version
-              echo -n "golangic-lint "; golangic-lint --version
-              echo -n "golangci-lint-langserver "; golangci-lint-langserver --version
-              echo -n "go "; go --version
-              echo -n "make "; make --version
+              echo -n "dlv "; dlv version | awk '/Version/{print $2}'
+              go version
+              echo -n "golangci-lint "; golangci-lint --version
+              make --version | head -n 1
             '';
             nativeBuildInputs = with pkgs; [
               delve
