@@ -45,6 +45,7 @@ let
         readAloud = "_ddc62400-f22d-4dd3-8b4a-05837de53c2e_-browser-action";
         uBlockOrigin = "ublock0_raymondhill_net-browser-action";
         vimium = "_d7742d87-e61d-4b78-b8a1-b469842139fa_-browser-action";
+        zotero = "zotero_chnm_gmu_edu-browser-action";
         developerButton = "developer-button";
       };
     in {
@@ -73,6 +74,7 @@ let
           refined-github
           ublock-origin
           vimium
+          zotero-connector
         ] ++ (if stdenv.isDarwin then [] else [ pkgs.nur.repos.rycee.firefox-addons.pwas-for-firefox ]));
         search = {
           default = "ddg";
@@ -169,6 +171,7 @@ let
             "firefox-view-button"
             "unified-extensions-button"
             browserActions.bitwarden
+            browserActions.zotero
           ];	
           "browser.uiCustomization.state" = {
             "placements" = {
