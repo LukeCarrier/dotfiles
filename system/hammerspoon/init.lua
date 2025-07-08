@@ -1,12 +1,11 @@
-MenuBarSpaces = hs.loadSpoon("MenuBarSpaces")
-MenuBarSpaces:start()
-
 -- Warp mouse between left and right edges to displays above and below.
 -- Required for PaperWM.
 WarpMouse = hs.loadSpoon("WarpMouse")
 WarpMouse:start()
 
 PaperWM = hs.loadSpoon("PaperWM")
+-- PaperWM.space_names = {1, 2, 3, 4, 5, 6, 7, 8, 9}
+PaperWM.default_app_space = {}
 PaperWM.swipe_fingers = 3
 PaperWM:bindHotkeys({
     focus_left  = {{"alt"}, "h"},
@@ -14,10 +13,10 @@ PaperWM:bindHotkeys({
     focus_up    = {{"alt"}, "k"},
     focus_right = {{"alt"}, "l"},
 
-    swap_left  = {{"alt", "shift"}, "h"},
-    swap_down  = {{"alt", "shift"}, "j"},
-    swap_up    = {{"alt", "shift"}, "k"},
-    swap_right = {{"alt", "shift"}, "l"},
+    move_left  = {{"alt", "shift"}, "h"},
+    move_down  = {{"alt", "shift"}, "j"},
+    move_up    = {{"alt", "shift"}, "k"},
+    move_right = {{"alt", "shift"}, "l"},
 
     -- center_window        = {{"alt", "cmd"}, "c"},
     -- full_width           = {{"alt", "cmd"}, "f"},
@@ -31,26 +30,17 @@ PaperWM:bindHotkeys({
 
     -- toggle_floating = {{"alt", "cmd", "shift"}, "escape"},
 
-    switch_space_l = {{"alt"}, "j"},
-    switch_space_r = {{"alt"}, "k"},
-    switch_space_1 = {{"alt"}, "1"},
-    switch_space_2 = {{"alt"}, "2"},
-    switch_space_3 = {{"alt"}, "3"},
-    switch_space_4 = {{"alt"}, "4"},
-    switch_space_5 = {{"alt"}, "5"},
-    switch_space_6 = {{"alt"}, "6"},
-    switch_space_7 = {{"alt"}, "7"},
-    switch_space_8 = {{"alt"}, "8"},
-    switch_space_9 = {{"alt"}, "9"},
+    next_screen          = {{"alt"}, "n"},
+    space_to_next_screen = {{"alt", "shift"}, "n"},
 
-    move_window_1 = {{"alt", "shift"}, "1"},
-    move_window_2 = {{"alt", "shift"}, "2"},
-    move_window_3 = {{"alt", "shift"}, "3"},
-    move_window_4 = {{"alt", "shift"}, "4"},
-    move_window_5 = {{"alt", "shift"}, "5"},
-    move_window_6 = {{"alt", "shift"}, "6"},
-    move_window_7 = {{"alt", "shift"}, "7"},
-    move_window_8 = {{"alt", "shift"}, "8"},
-    move_window_9 = {{"alt", "shift"}, "9"}
+    focus_space_1 = {{"alt"}, "1"},
+    focus_space_2 = {{"alt"}, "2"},
+    focus_space_3 = {{"alt"}, "3"},
+    focus_space_4 = {{"alt"}, "4"},
+    focus_space_5 = {{"alt"}, "5"},
+    focus_space_6 = {{"alt"}, "6"},
+    focus_space_7 = {{"alt"}, "7"},
+    focus_space_8 = {{"alt"}, "8"},
+    focus_space_9 = {{"alt"}, "9"},
 })
 PaperWM:start()
