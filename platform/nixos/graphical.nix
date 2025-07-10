@@ -1,9 +1,13 @@
 { lib, pkgs, ... }:
 {
   environment.systemPackages = with pkgs; [
+    # System management
+    home-manager
+    wirelesstools
+
+    # Graphical sessions
     gnome-keyring
     gnome-software
-    home-manager
   ];
 
   boot = {

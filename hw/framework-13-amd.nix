@@ -11,6 +11,10 @@ let
     fi
     echo "$auth" >"$AUTH_PATH"
   '';
+  resetWifi = pkgs.writeShellScriptBin "fw13-reset-wifi" ''
+    modprobe -r mt7921e
+    modprobe mt7921e
+  '';
 in
 {
   boot = {
@@ -25,6 +29,17 @@ in
   services.acpid = {
     enable = true;
     lidEventCommands = ''${lidFprint}/bin/fw13-amd-lid-fprint'';
+  };
+
+  systemd.services.fw13-post-resume-reset-wifi = {
+    description = "Local system resume actions";
+    after = [ "suspend.target" "hibernate.target" ];
+    wantedBy = [ "suspend.target" "hibernate.target" ];
+
+    serviceConfig = {
+      Type = "simple";
+      ExecStart = "${resetWifi}/bin/fw13-reset-wifi";
+    };
   };
 
   services.fwupd = {

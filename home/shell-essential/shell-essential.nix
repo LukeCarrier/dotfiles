@@ -2,14 +2,22 @@
 {
   home.packages =
     with pkgs; [
+      # Hardware introspection
+      lshw
+      pciutils
+      usbutils
+
+      # System management
       btop
-      dotfiles-meta
       freshfetch
+      pv
+      watchexec
+
+      # Development tools
+      dotfiles-meta
       gh
       jq
-      pv
       ripgrep
-      watchexec
     ]
     ++ (if pkgs.stdenv.isLinux then [ pkgs.psmisc ] else []);
 
