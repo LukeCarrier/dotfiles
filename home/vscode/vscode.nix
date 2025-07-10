@@ -44,6 +44,7 @@
           io-github-oops418.nix-env-picker
           jjk.jjk
           kdl-org.kdl
+          ms-vscode-remote.remote-containers
           ms-vsliveshare.vsliveshare
         ]);
       globalUserSettings = {

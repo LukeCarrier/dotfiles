@@ -18,6 +18,7 @@
       "vscode"
       "vscode-extension-github-copilot"
       "vscode-extension-github-copilot-chat"
+      "vscode-extension-ms-vscode-remote-remote-containers"
       "vscode-extension-ms-vsliveshare-vsliveshare"
     ];
   
