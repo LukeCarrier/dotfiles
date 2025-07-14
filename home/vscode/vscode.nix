@@ -22,6 +22,7 @@
     let
       globalExtensions =
         (with pkgs.open-vsx; [
+          arcanis.vscode-zipfs
           arrterian.nix-env-selector
           bierner.markdown-mermaid
           bmalehorn.vscode-fish
