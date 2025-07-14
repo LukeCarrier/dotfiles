@@ -17,6 +17,7 @@
       "vault"
       "vscode-extension-github-copilot"
       "vscode-extension-github-copilot-chat"
+      "vscode-extension-ms-vscode-remote-remote-containers"
     ];
 
   # FIXME: should we be keeping all of this cruft in a devShell?
