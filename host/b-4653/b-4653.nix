@@ -14,6 +14,7 @@
   system.primaryUser = "luke.carrier";
 
   homebrew.casks = [
+    "cursor"
     "visual-studio-code@insiders"
   ];
 }
