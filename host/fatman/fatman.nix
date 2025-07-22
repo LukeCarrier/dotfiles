@@ -12,4 +12,11 @@
     description = "Luke Carrier";
   };
   system.primaryUser = "lukecarrier";
+
+  homebrew.casks = [
+    "messenger"
+    "signal"
+    "telegram"
+    "whatsapp"
+  ];
 }
