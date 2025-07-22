@@ -278,12 +278,12 @@
             sops-nix.darwinModules.sops
             ./host/b-4653/b-4653.nix
             ./employer/emed/darwin.nix
-            ./system/hammerspoon/hammerspoon.nix
-            ./system/1password/1password.nix
-            ./system/finicky/darwin.nix
-            ./system/jetbrains-toolbox/darwin.nix
-            ./home/vscode/darwin.nix
-            ./system/logseq/darwin.nix
+            ./component/hammerspoon/hammerspoon.nix
+            ./component/1password/1password.nix
+            ./component/finicky/darwin.nix
+            ./component/jetbrains-toolbox/darwin.nix
+            ./component/vscode/darwin.nix
+            ./component/logseq/darwin.nix
           ];
         };
 
@@ -297,8 +297,8 @@
             ./hw/macbook.nix
             ./platform/darwin/common.nix
             ./host/fatman/fatman.nix
-            ./system/hammerspoon/hammerspoon.nix
-            ./system/logseq/darwin.nix
+            ./component/hammerspoon/hammerspoon.nix
+            ./component/logseq/darwin.nix
           ];
         };
       };
@@ -337,8 +337,8 @@
             ./platform/nixos/secure-boot.nix
             ./platform/nixos/graphical.nix
             ./platform/nixos/containers.nix
-            ./system/gnome-network-displays/gnome-network-displays.nix
-            ./system/valent/valent.nix
+            ./component/gnome-network-displays/gnome-network-displays.nix
+            ./component/valent/valent.nix
           ];
           specialArgs = {
             desktopConfig.background = desktopBackground;
@@ -360,36 +360,36 @@
             ./user/b-4653/luke.carrier.nix
             ./employer/emed/emed.nix
             sops-nix.homeManagerModules.sops
-            ./home/shell-essential/shell-essential.nix
-            ./home/homebrew/homebrew.nix
-            ./home/fonts/fonts.nix
-            ./home/readline/readline.nix
-            ./home/bash/bash.nix
-            ./home/fish/fish.nix
-            ./home/fish/default.nix
-            ./home/zsh/zsh.nix
-            ./home/direnv/direnv.nix
-            ./home/firefox/firefox.nix
-            ./system/hammerspoon/home.nix
-            ./system/1password/home.nix
-            ./home/openssh/openssh.nix
-            ./home/atuin/atuin.nix
-            ./home/starship/starship.nix
-            ./home/tmux/tmux.nix
-            ./home/helix/helix.nix
-            ./home/vscode/vscode.nix
-            ./home/vim/vim.nix
-            ./home/gnupg/gnupg.nix
-            ./home/git/git.nix
-            ./home/jj/jj.nix
-            ./home/zoxide/zoxide.nix
-            # ./home/espanso/espanso.nix
-            ./home/alacritty/alacritty.nix
-            ./home/wezterm/wezterm.nix
-            ./home/aws/aws.nix
-            ./home/kubernetes-client/kubernetes-client.nix
-            ./home/lima/lima.nix
-            ./home/rust/cargo.nix
+            ./component/shell-essential/shell-essential.nix
+            ./component/homebrew/homebrew.nix
+            ./component/fonts/fonts.nix
+            ./component/readline/readline.nix
+            ./component/bash/bash.nix
+            ./component/fish/fish.nix
+            ./component/fish/default.nix
+            ./component/zsh/zsh.nix
+            ./component/direnv/direnv.nix
+            ./component/firefox/firefox.nix
+            ./component/hammerspoon/home.nix
+            ./component/1password/home.nix
+            ./component/openssh/openssh.nix
+            ./component/atuin/atuin.nix
+            ./component/starship/starship.nix
+            ./component/tmux/tmux.nix
+            ./component/helix/helix.nix
+            ./component/vscode/vscode.nix
+            ./component/vim/vim.nix
+            ./component/gnupg/gnupg.nix
+            ./component/git/git.nix
+            ./component/jj/jj.nix
+            ./component/zoxide/zoxide.nix
+            # ./component/espanso/espanso.nix
+            ./component/alacritty/alacritty.nix
+            ./component/wezterm/wezterm.nix
+            ./component/aws/aws.nix
+            ./component/kubernetes-client/kubernetes-client.nix
+            ./component/lima/lima.nix
+            ./component/rust/cargo.nix
           ];
         };
 
@@ -404,17 +404,17 @@
           };
           modules = [
             ./user/android/nix-on-droid.nix
-            ./home/shell-essential/shell-essential.nix
-            # ./home/bash/bash.nix
-            ./home/fish/fish.nix
-            ./home/fish/default.nix
-            ./home/zsh/zsh.nix
-            ./home/direnv/direnv.nix
-            ./system/hammerspoon/home.nix
-            ./home/openssh/openssh.nix
-            ./home/starship/starship.nix
-            ./home/git/git.nix
-            ./home/helix/helix.nix
+            ./component/shell-essential/shell-essential.nix
+            # ./component/bash/bash.nix
+            ./component/fish/fish.nix
+            ./component/fish/default.nix
+            ./component/zsh/zsh.nix
+            ./component/direnv/direnv.nix
+            ./component/hammerspoon/home.nix
+            ./component/openssh/openssh.nix
+            ./component/starship/starship.nix
+            ./component/git/git.nix
+            ./component/helix/helix.nix
           ];
         };
 
@@ -440,46 +440,46 @@
             nix-flatpak.homeManagerModules.nix-flatpak
             sops-nix.homeManagerModules.sops
             ./user/f1xable/lukecarrier.nix
-            ./home/shell-essential/shell-essential.nix
-            ./home/fonts/fonts.nix
-            ./home/readline/readline.nix
-            ./home/kanshi/kanshi.nix
-            ./home/gnome-headless/gnome-headless.nix
-            ./home/wofi/wofi.nix
-            ./home/waybar/waybar.nix
-            ./home/hyprcursor/hyprcursor.nix
-            ./home/swayidle/swayidle.nix
-            ./home/swaylock/swaylock.nix
-            ./home/wpaperd/wpaperd.nix
-            ./home/mako/mako.nix
-            ./home/niri/niri.nix
-            ./home/bash/bash.nix
-            ./home/fish/fish.nix
-            ./home/fish/default.nix
-            ./home/zsh/zsh.nix
-            ./home/direnv/direnv.nix
-            ./home/firefox/firefox.nix
-            # ./system/gnome-network-displays/home.nix
-            ./system/valent/home.nix
-            ./home/bitwarden/bitwarden.nix
-            ./home/openssh/openssh.nix
-            ./home/atuin/atuin.nix
-            ./home/starship/starship.nix
-            ./home/tmux/tmux.nix
-            ./home/coder/coder.nix
-            ./home/helix/helix.nix
-            ./home/vim/vim.nix
-            ./home/vscode/vscode.nix
-            ./home/gnupg/gnupg.nix
-            ./home/git/git.nix
-            ./home/jj/jj.nix
-            ./home/zoxide/zoxide.nix
-            ./home/espanso/espanso.nix
-            ./home/alacritty/alacritty.nix
-            ./home/wezterm/wezterm.nix
-            ./home/rust/cargo.nix
-            ./home/aws/aws.nix
-            ./home/kubernetes-client/kubernetes-client.nix
+            ./component/shell-essential/shell-essential.nix
+            ./component/fonts/fonts.nix
+            ./component/readline/readline.nix
+            ./component/kanshi/kanshi.nix
+            ./component/gnome-headless/gnome-headless.nix
+            ./component/wofi/wofi.nix
+            ./component/waybar/waybar.nix
+            ./component/hyprcursor/hyprcursor.nix
+            ./component/swayidle/swayidle.nix
+            ./component/swaylock/swaylock.nix
+            ./component/wpaperd/wpaperd.nix
+            ./component/mako/mako.nix
+            ./component/niri/niri.nix
+            ./component/bash/bash.nix
+            ./component/fish/fish.nix
+            ./component/fish/default.nix
+            ./component/zsh/zsh.nix
+            ./component/direnv/direnv.nix
+            ./component/firefox/firefox.nix
+            # ./component/gnome-network-displays/home.nix
+            ./component/valent/home.nix
+            ./component/bitwarden/bitwarden.nix
+            ./component/openssh/openssh.nix
+            ./component/atuin/atuin.nix
+            ./component/starship/starship.nix
+            ./component/tmux/tmux.nix
+            ./component/coder/coder.nix
+            ./component/helix/helix.nix
+            ./component/vim/vim.nix
+            ./component/vscode/vscode.nix
+            ./component/gnupg/gnupg.nix
+            ./component/git/git.nix
+            ./component/jj/jj.nix
+            ./component/zoxide/zoxide.nix
+            ./component/espanso/espanso.nix
+            ./component/alacritty/alacritty.nix
+            ./component/wezterm/wezterm.nix
+            ./component/rust/cargo.nix
+            ./component/aws/aws.nix
+            ./component/kubernetes-client/kubernetes-client.nix
           ];
         };
 
@@ -495,35 +495,35 @@
           modules = [
             ./user/fatman/lukecarrier.nix
             sops-nix.homeManagerModules.sops
-            ./home/shell-essential/shell-essential.nix
-            ./home/homebrew/homebrew.nix
-            ./home/fonts/fonts.nix
-            ./home/readline/readline.nix
-            ./home/bash/bash.nix
-            ./home/fish/fish.nix
-            ./home/zsh/zsh.nix
-            ./home/fish/default.nix
-            ./home/direnv/direnv.nix
-            ./home/firefox/firefox.nix
-            ./system/hammerspoon/home.nix
-            ./home/openssh/openssh.nix
-            ./home/atuin/atuin.nix
-            ./home/starship/starship.nix
-            ./home/tmux/tmux.nix
-            ./home/helix/helix.nix
-            ./home/vscode/vscode.nix
-            ./home/vim/vim.nix
-            ./home/gnupg/gnupg.nix
-            ./home/git/git.nix
-            ./home/jj/jj.nix
-            ./home/zoxide/zoxide.nix
-            # ./home/espanso/espanso.nix
-            ./home/alacritty/alacritty.nix
-            ./home/wezterm/wezterm.nix
-            ./home/aws/aws.nix
-            ./home/kubernetes-client/kubernetes-client.nix
-            ./home/lima/lima.nix
-            ./home/rust/cargo.nix
+            ./component/shell-essential/shell-essential.nix
+            ./component/homebrew/homebrew.nix
+            ./component/fonts/fonts.nix
+            ./component/readline/readline.nix
+            ./component/bash/bash.nix
+            ./component/fish/fish.nix
+            ./component/zsh/zsh.nix
+            ./component/fish/default.nix
+            ./component/direnv/direnv.nix
+            ./component/firefox/firefox.nix
+            ./component/hammerspoon/home.nix
+            ./component/openssh/openssh.nix
+            ./component/atuin/atuin.nix
+            ./component/starship/starship.nix
+            ./component/tmux/tmux.nix
+            ./component/helix/helix.nix
+            ./component/vscode/vscode.nix
+            ./component/vim/vim.nix
+            ./component/gnupg/gnupg.nix
+            ./component/git/git.nix
+            ./component/jj/jj.nix
+            ./component/zoxide/zoxide.nix
+            # ./component/espanso/espanso.nix
+            ./component/alacritty/alacritty.nix
+            ./component/wezterm/wezterm.nix
+            ./component/aws/aws.nix
+            ./component/kubernetes-client/kubernetes-client.nix
+            ./component/lima/lima.nix
+            ./component/rust/cargo.nix
           ];
         };
       };
