@@ -297,6 +297,7 @@
             ./hw/macbook.nix
             ./platform/darwin/common.nix
             ./host/fatman/fatman.nix
+            ./component/wifiman/darwin.nix
             ./component/hammerspoon/hammerspoon.nix
             ./component/logseq/darwin.nix
           ];
