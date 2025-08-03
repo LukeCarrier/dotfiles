@@ -13,10 +13,18 @@
   };
   system.primaryUser = "lukecarrier";
 
-  homebrew.casks = [
-    "messenger"
-    "signal"
-    "telegram"
-    "whatsapp"
-  ];
+  homebrew = {
+    brews = [
+      "mas"
+    ];
+    casks = [
+      "messenger"
+      "signal"
+      "telegram"
+      "whatsapp"
+    ];
+    masApps = {
+      Xcode = 497799835;
+    };
+  };
 }
