@@ -135,6 +135,7 @@
               age
               gnumake
               nil
+              nixd
               nix-index
               nixfmt-rfc-style
               ssh-to-age
