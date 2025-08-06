@@ -7,6 +7,13 @@ in {
   home.file."${config.xdg.configHome}/helix/themes/local_tokyonight_storm.toml".source =
     ./.config/helix/themes/local_tokyonight_storm.toml;
 
+  xdg.mimeApps.defaultApplications =
+    let
+      app = "Helix.desktop";
+    in {
+      "text/plain" = app;
+    };
+
   programs.helix = {
     enable = true;
     defaultEditor = true;
