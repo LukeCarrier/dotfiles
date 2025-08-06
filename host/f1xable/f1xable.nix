@@ -2,6 +2,18 @@
 {
   system.stateVersion = "24.05";
 
+  hardware = {
+    graphics = {
+      enable = true;
+      enable32Bit = true;
+    };
+
+    amdgpu.amdvlk = {
+      enable = true;
+      support32Bit.enable = true;
+    };
+  };
+
   networking.hostName = "luke-f1xable";
   networking.domain = "peacehaven.carrier.family";
 
