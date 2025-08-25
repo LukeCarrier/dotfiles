@@ -14,6 +14,8 @@
     };
   };
 
+  programs.gamescope.enable = true;
+
   networking.hostName = "luke-f1xable";
   networking.domain = "peacehaven.carrier.family";
 
