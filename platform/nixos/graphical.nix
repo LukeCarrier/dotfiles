@@ -8,6 +8,9 @@
     # Graphical sessions
     gnome-keyring
     gnome-software
+
+    # Audio
+    wiremix
   ];
 
   boot = {
@@ -117,7 +120,7 @@
 
   services.colord.enable = true;
   services.printing.enable = true;
-  
+
   services.flatpak = {
     enable = true;
     package = pkgs.flatpak;
