@@ -50,6 +50,8 @@
     SuspendState=mem
   '';
 
+  services.udisks2.enable = true;
+
   services.udev.extraRules = ''
     SUBSYSTEM=="misc", KERNEL=="uinput", MODE="0660", GROUP="input"
   '';
