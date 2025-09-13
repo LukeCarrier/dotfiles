@@ -7,19 +7,19 @@
     enableDefaultConfig = false;
 
     matchBlocks."*" = {
-      forwardAgent = "no";
+      forwardAgent = false;
       addKeysToAgent = "no";
-      compression = "no";
+      compression = false;
       serverAliveInterval = 0;
       serverAliveCountMax = 3;
-      hashKnownHosts = "no";
+      hashKnownHosts = false;
       userKnownHostsFile = "~/.ssh/known_hosts";
       controlMaster = "no";
       controlPath = "~/.ssh/master-%r@%n:%p";
-      controlPersist = "no";
+      controlPersist = "false";
     };
   };
 
-  # Use Gnome Keyring (Linux) or a password manager (macOS) instead
+  # Use password manager instead
   services.ssh-agent.enable = false;
 }
