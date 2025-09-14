@@ -1,6 +1,11 @@
 # My dotfiles
 
-Managed with [Home Manager](https://github.com/nix-community/home-manager).
+An opinionated system (NixOS and macOS) and home configuration, managed with:
+
+- [Nix](https://nixos.wiki/wiki/Nix_Ecosystem)
+- [home-manager](https://github.com/nix-community/home-manager)
+- [nix-darwin](https://github.com/nix-darwin/nix-darwin)
+- [sops-nix](https://github.com/Mic92/sops-nix)
 
 ---
 
