@@ -21,13 +21,15 @@
     ];
 
   # FIXME: should we be keeping all of this cruft in a devShell?
-  home.packages =
-    (with pkgs; [
+  home.packages = (
+    with pkgs;
+    [
       saml2aws
       docker-client
       docker-credential-helpers
       vault
 
       docker-cli-tools
-    ]);
+    ]
+  );
 }

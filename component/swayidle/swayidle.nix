@@ -2,8 +2,10 @@
 let
   brightnessctl = "${pkgs.brightnessctl}/bin/brightnessctl";
   systemctl = "${pkgs.systemd}/bin/systemctl";
-  lockCmd = (builtins.head (builtins.filter (e: e.event == "lock") config.services.swayidle.events)).command;
-in {
+  lockCmd =
+    (builtins.head (builtins.filter (e: e.event == "lock") config.services.swayidle.events)).command;
+in
+{
   services.swayidle = {
     enable = true;
 

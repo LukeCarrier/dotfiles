@@ -1,16 +1,17 @@
 { config, pkgs, ... }:
 let
   lldbDapRustcPrimer = "${config.xdg.configHome}/helix/debug/lldb_dap_rustc_primer.py";
-in {
-  home.file."${lldbDapRustcPrimer}".source =
-    ./.config/helix/debug/lldb_dap_rustc_primer.py;
+in
+{
+  home.file."${lldbDapRustcPrimer}".source = ./.config/helix/debug/lldb_dap_rustc_primer.py;
   home.file."${config.xdg.configHome}/helix/themes/local_tokyonight_storm.toml".source =
     ./.config/helix/themes/local_tokyonight_storm.toml;
 
   xdg.mimeApps.defaultApplications =
     let
       app = "Helix.desktop";
-    in {
+    in
+    {
       "text/plain" = app;
     };
 
@@ -27,7 +28,10 @@ in {
       language = [
         {
           name = "rego";
-          language-servers = [ "regal" "regols" ];
+          language-servers = [
+            "regal"
+            "regols"
+          ];
         }
         {
           name = "rust";
@@ -86,9 +90,15 @@ in {
               i = "goto_implementation";
               y = "goto_type_definition";
             };
-            gotoDefinitionSplitCmds = builtins.mapAttrs (key: value:
-              [ "hsplit" "jump_view_up" value]);
-          in gotoDefinitionSplitCmds gotoDefinitionKeys;
+            gotoDefinitionSplitCmds = builtins.mapAttrs (
+              key: value: [
+                "hsplit"
+                "jump_view_up"
+                value
+              ]
+            );
+          in
+          gotoDefinitionSplitCmds gotoDefinitionKeys;
       };
     };
   };

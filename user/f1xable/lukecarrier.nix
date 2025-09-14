@@ -21,7 +21,7 @@
       "vscode-extension-ms-vscode-remote-remote-containers"
       "vscode-extension-ms-vsliveshare-vsliveshare"
     ];
-  
+
   home.packages = with pkgs; [
     docker-cli-tools
     ungoogled-chromium
@@ -50,7 +50,8 @@
     defaultApplications =
       let
         app = "org.gnome.Nautilus";
-      in {
+      in
+      {
         "x-scheme-handler/file" = app;
       };
   };

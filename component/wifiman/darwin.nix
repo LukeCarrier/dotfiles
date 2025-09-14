@@ -1,3 +1,4 @@
-{ ... }: {
+{ ... }:
+{
   homebrew.casks = [ "wifiman" ];
 }

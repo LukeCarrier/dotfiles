@@ -1,9 +1,15 @@
-{ config, desktopConfig, pkgs, ... }:
+{
+  config,
+  desktopConfig,
+  pkgs,
+  ...
+}:
 let
   pidof = "${pkgs.procps}/bin/pidof";
   hyprlock = "${config.programs.hyprlock.package}/bin/hyprlock";
   lockCmd = "${pidof} hyprlock || ${hyprlock}";
-in {
+in
+{
   services.hypridle.settings.general.lock_cmd = lockCmd;
 
   services.swayidle.events = [

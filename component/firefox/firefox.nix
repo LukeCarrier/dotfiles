@@ -1,13 +1,20 @@
 { config, pkgs, ... }:
 let
-  firefoxpwa = pkgs.firefoxpwa.overrideAttrs ({ postInstall ? "", ... }: {
-    postInstall = postInstall + ''
-      ln -s $out/share/firefoxpwa/runtime/firefox $out/share/firefoxpwa/runtime/librewolf
-      ln -s $out/share/firefoxpwa/runtime/firefox-bin $out/share/firefoxpwa/runtime/librewolf-bin
-    '';
-  });
+  firefoxpwa = pkgs.firefoxpwa.overrideAttrs (
+    {
+      postInstall ? "",
+      ...
+    }:
+    {
+      postInstall = postInstall + ''
+        ln -s $out/share/firefoxpwa/runtime/firefox $out/share/firefoxpwa/runtime/librewolf
+        ln -s $out/share/firefoxpwa/runtime/firefox-bin $out/share/firefoxpwa/runtime/librewolf-bin
+      '';
+    }
+  );
   inherit (pkgs) lib stdenv;
- in {
+in
+{
   home.packages = lib.mkIf (!stdenv.isDarwin) [ firefoxpwa ];
 
   # FIXME: pure evaluation mode prevents this:
@@ -18,7 +25,8 @@ let
   xdg.mimeApps.defaultApplications =
     let
       app = "librewolf.desktop";
-    in {
+    in
+    {
       "text/html" = app;
       "x-scheme-handler/about" = app;
       "x-scheme-handler/chrome" = app;
@@ -37,9 +45,9 @@ let
     let
       browserActions = {
         bitwarden = "_446900e4-71c2-419f-a6a7-df9c091e268b_-browser-action";
-        multiAccountContainers = "_testpilot-containers-browser-action";  
+        multiAccountContainers = "_testpilot-containers-browser-action";
         refinedGitHub = "_a4c4eda4-fb84-4a84-b4a1-f7c1cbf2a1ad_-browser-action";
-        iStillDontCareAboutCookies = "idcac-pub_guus_ninja-browser-action";            
+        iStillDontCareAboutCookies = "idcac-pub_guus_ninja-browser-action";
         markDownload = "_1c5e4c6f-5530-49a3-b216-31ce7d744db0_-browser-action";
         progressiveWebAppsForFirefox = "firefoxpwa_filips_si-browser-action";
         readAloud = "_ddc62400-f22d-4dd3-8b4a-05837de53c2e_-browser-action";
@@ -48,10 +56,14 @@ let
         zotero = "zotero_chnm_gmu_edu-browser-action";
         developerButton = "developer-button";
       };
-    in {
+    in
+    {
       enable = true;
- 
-      languagePacks = [ "en-GB" "en-US" ];
+
+      languagePacks = [
+        "en-GB"
+        "en-US"
+      ];
 
       nativeMessagingHosts = lib.mkIf (!stdenv.isDarwin) [ firefoxpwa ];
 
@@ -65,17 +77,21 @@ let
           };
         };
         containersForce = true;
-        extensions.packages = lib.mkDefault (with pkgs.nur.repos.rycee.firefox-addons; [
-          bitwarden
-          multi-account-containers
-          markdownload
-          istilldontcareaboutcookies
-          read-aloud
-          refined-github
-          ublock-origin
-          vimium
-          zotero-connector
-        ] ++ (if stdenv.isDarwin then [] else [ pkgs.nur.repos.rycee.firefox-addons.pwas-for-firefox ]));
+        extensions.packages = lib.mkDefault (
+          with pkgs.nur.repos.rycee.firefox-addons;
+          [
+            bitwarden
+            multi-account-containers
+            markdownload
+            istilldontcareaboutcookies
+            read-aloud
+            refined-github
+            ublock-origin
+            vimium
+            zotero-connector
+          ]
+          ++ (if stdenv.isDarwin then [ ] else [ pkgs.nur.repos.rycee.firefox-addons.pwas-for-firefox ])
+        );
         search = {
           default = "ddg";
           engines = {
@@ -95,17 +111,21 @@ let
                 { template = "https://github.com/search?q={searchTerms}&type=repositories"; }
               ];
             };
-          
+
             "nixpkgs/Options" = {
               definedAliases = [ "no" ];
               urls = [
-                { template = "https://search.nixos.org/options?channel=unstable&from=0&size=50&sort=relevance&type=packages&query={searchTerms}"; }
+                {
+                  template = "https://search.nixos.org/options?channel=unstable&from=0&size=50&sort=relevance&type=packages&query={searchTerms}";
+                }
               ];
             };
             "nixpkgs/Packages" = {
               definedAliases = [ "np" ];
               urls = [
-                { template = "https://search.nixos.org/packages?channel=unstable&from=0&size=50&sort=relevance&type=packages&query={searchTerms}"; }
+                {
+                  template = "https://search.nixos.org/packages?channel=unstable&from=0&size=50&sort=relevance&type=packages&query={searchTerms}";
+                }
               ];
             };
             "home-manager/Options" = {
@@ -114,7 +134,7 @@ let
                 { template = "https://home-manager-options.extranix.com/?query={searchTerms}&release=master"; }
               ];
             };
-        
+
             "Perplexity" = {
               definedAliases = [ "p" ];
               urls = [
@@ -150,15 +170,15 @@ let
               "firefoxpwa_filips_si"
               "bookmark"
             ];
-            "idsInUrlbarPreProton" = [];
+            "idsInUrlbarPreProton" = [ ];
             "version" = 1;
           };
-          "browser.uiCustomization.horizontalTabsBackup" = {};
+          "browser.uiCustomization.horizontalTabsBackup" = { };
           "browser.uiCustomization.horizontalTabstrip" = [
             "tabbrowser-tabs"
             "new-tab-button"
             "alltabs-button"
-          ];	
+          ];
           "browser.uiCustomization.navBarWhenVerticalTabs" = lib.mkDefault [
             "sidebar-button"
             "back-button"
@@ -172,10 +192,10 @@ let
             "unified-extensions-button"
             browserActions.bitwarden
             browserActions.zotero
-          ];	
+          ];
           "browser.uiCustomization.state" = {
             "placements" = {
-              "widget-overflow-fixed-list" = [];
+              "widget-overflow-fixed-list" = [ ];
               "unified-extensions-area" = with browserActions; [
                 multiAccountContainers
                 iStillDontCareAboutCookies
@@ -186,9 +206,10 @@ let
                 uBlockOrigin
                 vimium
               ];
-              "nav-bar" = config.programs.librewolf.profiles.default.settings."browser.uiCustomization.navBarWhenVerticalTabs";
+              "nav-bar" =
+                config.programs.librewolf.profiles.default.settings."browser.uiCustomization.navBarWhenVerticalTabs";
               "toolbar-menubar" = [ "menubar-items" ];
-              "TabsToolbar" = [];
+              "TabsToolbar" = [ ];
               "vertical-tabs" = [ "tabbrowser-tabs" ];
               "PersonalToolbar" = [
                 "import-button"

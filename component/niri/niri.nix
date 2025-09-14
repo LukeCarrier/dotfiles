@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   kanshictl = "${pkgs.kanshi}/bin/kanshictl";
   niri = "${config.programs.niri.package}/bin/niri";
@@ -16,18 +21,22 @@ let
       "$niri" msg action set-workspace-name "$name"
     fi
   '';
-in {
-  home.packages = (with pkgs; [
-    brightnessctl
-    playerctl
+in
+{
+  home.packages = (
+    with pkgs;
+    [
+      brightnessctl
+      playerctl
 
-    wl-clipboard
-    wf-recorder
-    helvum
+      wl-clipboard
+      wf-recorder
+      helvum
 
-    mako
-    libnotify
-  ]);
+      mako
+      libnotify
+    ]
+  );
 
   xdg.portal = {
     enable = true;
@@ -36,7 +45,10 @@ in {
       xdg-desktop-portal-gnome
     ];
     config.niri = {
-      default = [ "gtk" "gnome" ];
+      default = [
+        "gtk"
+        "gnome"
+      ];
       "org.freedesktop.impl.portal.Access" = "gtk";
       "org.freedesktop.impl.portal.Notification" = "gtk";
       "org.freedesktop.impl.portal.Screencast" = "gnome";
@@ -68,13 +80,31 @@ in {
           tap = true;
         };
         warp-mouse-to-focus.enable = true;
-        focus-follows-mouse = {};
+        focus-follows-mouse = { };
       };
       spawn-at-startup = [
-        { command = [ systemctl "--user" "import-environment" "WAYLAND_DISPLAY" "XDG_CURRENT_DESKTOP" ]; }
+        {
+          command = [
+            systemctl
+            "--user"
+            "import-environment"
+            "WAYLAND_DISPLAY"
+            "XDG_CURRENT_DESKTOP"
+          ];
+        }
         { command = [ waybar ]; }
-        { command = [ xwaylandSatellite xwaylandSatelliteDisplay ]; }
-        { command = [ kanshictl "reload" ]; }
+        {
+          command = [
+            xwaylandSatellite
+            xwaylandSatelliteDisplay
+          ];
+        }
+        {
+          command = [
+            kanshictl
+            "reload"
+          ];
+        }
       ];
       environment = {
         XDG_SESSION_DESKTOP = "niri";
@@ -95,29 +125,76 @@ in {
           moveMod = "Shift";
           spaceMod = "Alt";
           terminal = "xdg-terminal";
-        in with config.lib.niri.actions; ({
+        in
+        with config.lib.niri.actions;
+        ({
           # Utilities
           "Print".action = screenshot;
           "${mainMod}+S".action = screenshot;
-          "XF86AudioMute".action = spawn [ "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle" ];
-          "XF86AudioLowerVolume".action = spawn [ "wpctl" "set-volume" "-l" "1.4" "@DEFAULT_AUDIO_SINK@" "2%-" ];
-          "XF86AudioRaiseVolume".action = spawn [ "wpctl" "set-volume" "-l" "1.4" "@DEFAULT_AUDIO_SINK@" "2%+" ];
-          "XF86AudioPrev".action = spawn [ "playerctl" "previous" ];
-          "XF86AudioPlay".action = spawn [ "playerctl" "play-pause" ];
-          "xf86audioNext".action = spawn [ "playerctl" "next" ];
-          "XF86MonBrightnessDown".action = spawn [ "brightnessctl" "set" "2%-" ];
-          "XF86MonBrightnessUp".action = spawn [ "brightnessctl" "set" "+2%" ];
+          "XF86AudioMute".action = spawn [
+            "wpctl"
+            "set-mute"
+            "@DEFAULT_AUDIO_SINK@"
+            "toggle"
+          ];
+          "XF86AudioLowerVolume".action = spawn [
+            "wpctl"
+            "set-volume"
+            "-l"
+            "1.4"
+            "@DEFAULT_AUDIO_SINK@"
+            "2%-"
+          ];
+          "XF86AudioRaiseVolume".action = spawn [
+            "wpctl"
+            "set-volume"
+            "-l"
+            "1.4"
+            "@DEFAULT_AUDIO_SINK@"
+            "2%+"
+          ];
+          "XF86AudioPrev".action = spawn [
+            "playerctl"
+            "previous"
+          ];
+          "XF86AudioPlay".action = spawn [
+            "playerctl"
+            "play-pause"
+          ];
+          "xf86audioNext".action = spawn [
+            "playerctl"
+            "next"
+          ];
+          "XF86MonBrightnessDown".action = spawn [
+            "brightnessctl"
+            "set"
+            "2%-"
+          ];
+          "XF86MonBrightnessUp".action = spawn [
+            "brightnessctl"
+            "set"
+            "+2%"
+          ];
           "XF86AudioMedia".action = spawn [ terminal ];
           # The `EC takes care of this on the Framework 13 AMD:
           # Display key sends Super+L, not XF86Display, for some reason
           # XF86RFKill is done for us
           # Session management
-          "${mainMod}+0".action = spawn [ "loginctl" "lock-session" ];
+          "${mainMod}+0".action = spawn [
+            "loginctl"
+            "lock-session"
+          ];
           # Window/application management
           "${mainMod}+W".action = close-window;
           "${mainMod}+G".action = toggle-column-tabbed-display;
           # Launcher, a la Spotlight
-          "${mainMod}+Space".action = spawn [ "wofi" "--allow-images" "--insensitive" "--show" "drun" ];
+          "${mainMod}+Space".action = spawn [
+            "wofi"
+            "--allow-images"
+            "--insensitive"
+            "--show"
+            "drun"
+          ];
           # Navigate between windows and columns, Vi style
           # Window commands navigate tabs, no need for separate bindings
           "${mainMod}+Tab".action = focus-window-previous;
@@ -147,20 +224,38 @@ in {
           "${mainMod}+${spaceMod}+J".action = focus-workspace-down;
           "${mainMod}+${spaceMod}+K".action = focus-workspace-up;
         })
-        // lib.attrsets.listToAttrs (builtins.concatMap (i: with config.lib.niri.actions; [
-          {
-            name = "${mainMod}+${toString i}";
-            value.action = focus-workspace i;
-          }
-          # FIXME: use the action directly once sodiboo/niri-flake#1018 is fixed.
-          {
-            name = "${mainMod}+${moveMod}+${toString i}";
-            value.action = spawn [ niri "msg" "action" "move-column-to-workspace" (toString i) ];
-          }
-        ]) (lib.range 1 9));
+        // lib.attrsets.listToAttrs (
+          builtins.concatMap (
+            i: with config.lib.niri.actions; [
+              {
+                name = "${mainMod}+${toString i}";
+                value.action = focus-workspace i;
+              }
+              # FIXME: use the action directly once sodiboo/niri-flake#1018 is fixed.
+              {
+                name = "${mainMod}+${moveMod}+${toString i}";
+                value.action = spawn [
+                  niri
+                  "msg"
+                  "action"
+                  "move-column-to-workspace"
+                  (toString i)
+                ];
+              }
+            ]
+          ) (lib.range 1 9)
+        );
       switch-events = with config.lib.niri.actions; {
-        lid-close.action = spawn [ "kanshictl" "switch" "peacehavenDockedClosed" ];
-        lid-open.action = spawn [ "kanshictl" "switch" "peacehavenDockedOpen" ];
+        lid-close.action = spawn [
+          "kanshictl"
+          "switch"
+          "peacehavenDockedClosed"
+        ];
+        lid-open.action = spawn [
+          "kanshictl"
+          "switch"
+          "peacehavenDockedOpen"
+        ];
       };
       prefer-no-csd = true;
       layout = {

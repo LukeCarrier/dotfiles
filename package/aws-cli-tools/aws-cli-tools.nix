@@ -14,17 +14,16 @@ in
 pkgs.symlinkJoin {
   pname = "aws-cli-tools";
   version = "0.1.0";
-  paths =
-    [
-      awsConfigureViewProfile
-      awsEcrAuth
-      awsEksUpdateKubeconfig
-      awsSsoGenProfiles
-    ]
-    ++ (with pkgs; [
-      awscli2
-      gnused
-      jc
-      jq
-    ]);
+  paths = [
+    awsConfigureViewProfile
+    awsEcrAuth
+    awsEksUpdateKubeconfig
+    awsSsoGenProfiles
+  ]
+  ++ (with pkgs; [
+    awscli2
+    gnused
+    jc
+    jq
+  ]);
 }

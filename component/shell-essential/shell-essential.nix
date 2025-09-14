@@ -1,7 +1,8 @@
 { pkgs, ... }:
 {
   home.packages =
-    with pkgs; [
+    with pkgs;
+    [
       # System management
       btop
       freshfetch
@@ -14,13 +15,19 @@
       jq
       ripgrep
     ]
-    ++ (if pkgs.stdenv.isLinux then with pkgs; [
-      # Hardware introspection
-      lshw
-      pciutils
-      usbutils
-      psmisc
-    ] else []);
+    ++ (
+      if pkgs.stdenv.isLinux then
+        with pkgs;
+        [
+          # Hardware introspection
+          lshw
+          pciutils
+          usbutils
+          psmisc
+        ]
+      else
+        [ ]
+    );
 
   home.sessionVariables = {
     DO_NOT_TRACK = "1";

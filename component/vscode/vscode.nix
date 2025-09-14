@@ -1,22 +1,25 @@
 { lib, pkgs, ... }:
 {
   xdg.mimeApps.defaultApplications =
-    let app = "codium-url-handler.desktop";
-  in {
-    "x-scheme-handler/vscode" = app;
-  };
+    let
+      app = "codium-url-handler.desktop";
+    in
+    {
+      "x-scheme-handler/vscode" = app;
+    };
 
   home.file.".vscode-oss/argv.json".text =
     let
       attrs = {
         # Scream at creepy Microsoft telemetry perverts
-      	"enable-crash-reporter" = false;
-      	"crash-reporter-id" = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa";
+        "enable-crash-reporter" = false;
+        "crash-reporter-id" = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa";
 
         # Default to GNOME/Seahorse via libsecret for credential storage on Linux.
         "password-store" = lib.mkIf pkgs.stdenv.isLinux "gnome-libsecret";
       };
-    in builtins.toJSON attrs;
+    in
+    builtins.toJSON attrs;
 
   programs.vscode =
     let
@@ -82,9 +85,11 @@
         "editor.bracketPairColorization.enabled" = true;
         "editor.lineNumbers" = "relative";
         # Fonts
-        "editor.fontFamily" = "'MonaspiceKr NF', 'JetBrains Mono', 'Cascadia Code', Menlo, Monaco, Consolas, 'Courier New', monospace";
+        "editor.fontFamily" =
+          "'MonaspiceKr NF', 'JetBrains Mono', 'Cascadia Code', Menlo, Monaco, Consolas, 'Courier New', monospace";
         "editor.fontSize" = 13;
-        "terminal.integrated.fontFamily" = "'JetBrainsMono Nerd Font', 'JetBrains Mono', 'CaskaydiaCove Nerd Font', 'Cascadia Code PL', 'Cascadia Code', Menlo, Monaco, Consolas, 'Courier New', monospace";
+        "terminal.integrated.fontFamily" =
+          "'JetBrainsMono Nerd Font', 'JetBrains Mono', 'CaskaydiaCove Nerd Font', 'Cascadia Code PL', 'Cascadia Code', Menlo, Monaco, Consolas, 'Courier New', monospace";
         "terminal.integrated.fontSize" = 13;
         "editor.fontLigatures" = true;
         "disableLigatures.mode" = "Cursor";
@@ -203,7 +208,7 @@
         };
         # Editor
         "editor.renderWhitespace" = "all";
-        "editor.rulers" = [80];
+        "editor.rulers" = [ 80 ];
         "editor.wrappingIndent" = "deepIndent";
         "workbench.editor.closeEmptyGroups" = false;
         # Terminal
@@ -253,14 +258,15 @@
         };
         # Rust
         "[rust]" = {
-          "editor.rulers" = [100];
+          "editor.rulers" = [ 100 ];
         };
         # Terraform
         "[terraform]" = {
           "editor.defaultFormatter" = "hashicorp.terraform";
         };
       };
-    in {
+    in
+    {
       enable = true;
       package = (if pkgs.stdenv.isDarwin then pkgs.vscodium else pkgs.vscodium-fhs);
       profiles = {
@@ -268,7 +274,7 @@
           extensions = globalExtensions;
           userSettings = globalUserSettings;
         };
-        # DownTheStack-wealthgraph 
+        # DownTheStack-wealthgraph
         LukeCarrier-denote = {
           extensions =
             globalExtensions
@@ -316,7 +322,7 @@
             ++ (with pkgs.vscode-extensions; [
               vadimcn.vscode-lldb
             ]);
-            userSettings = globalUserSettings;
+          userSettings = globalUserSettings;
         };
       };
     };

@@ -2,7 +2,8 @@
 let
   swaylock = "${pkgs.swaylock}/bin/swaylock";
   lockCmd = "${swaylock} -fF";
-in {
+in
+{
   services.hypridle.settings.general.lock_cmd = lockCmd;
 
   services.swayidle.events = [

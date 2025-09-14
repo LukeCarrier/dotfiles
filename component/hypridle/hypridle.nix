@@ -3,7 +3,8 @@ let
   brightnessctl = "${pkgs.brightnessctl}/bin/brightnessctl";
   loginctl = "${pkgs.systemd}/bin/loginctl";
   systemctl = "${pkgs.systemd}/bin/systemctl";
-in {
+in
+{
   services.hypridle = {
     enable = true;
     settings = {

@@ -2,9 +2,11 @@
 let
   bluemanManager = "${pkgs.blueman}/bin/blueman-manager";
   playerctl = "${pkgs.playerctl}/bin/playerctl";
-  waybarNowPlaying = pkgs.writeShellScriptBin "waybar-now-playing" (builtins.readFile ./waybar-now-playing.sh) + "/bin/waybar-now-playing";
+  waybarNowPlaying =
+    pkgs.writeShellScriptBin "waybar-now-playing" (builtins.readFile ./waybar-now-playing.sh)
+    + "/bin/waybar-now-playing";
 in
-{  
+{
   programs.waybar = {
     enable = true;
     settings = {
@@ -123,8 +125,8 @@ in
           max-length = 100;
           exec = "${waybarNowPlaying} 2>/dev/null";
           on-click = "${playerctl} play-pause";
-      		on-scroll-up = "playerctl position 3+";
-      		on-scroll-down = "playerctl position 3-";
+          on-scroll-up = "playerctl position 3+";
+          on-scroll-down = "playerctl position 3-";
         };
       };
     };

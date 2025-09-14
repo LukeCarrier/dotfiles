@@ -2,7 +2,8 @@
 let
   kanshictl = "${pkgs.kanshi}/bin/kanshictl";
   waybar = "${pkgs.waybar}/bin/waybar";
-in {
+in
+{
   home.packages = with pkgs; [
     brightnessctl
     playerctl
@@ -23,7 +24,10 @@ in {
     extraPortals = [ pkgs.xdg-desktop-portal-hyprland ];
     configPackages = [ pkgs.hyprland ];
     config.hyprland = {
-      default = [ "hyprland" "gtk" ];
+      default = [
+        "hyprland"
+        "gtk"
+      ];
       "org.freedesktop.impl.portal.Settings" = "gtk";
     };
   };
@@ -111,48 +115,47 @@ in {
         "2,monitor:DP-8"
         "3,monitor:DP-7"
       ];
-      bind =
-        [
-          # Utilities
-          ", print, exec, flameshot gui"
-          "$mainMod, s, exec, flameshot gui"
-          # Session management
-          "$mainMod, 0, exec, loginctl lock-session"
-          # Window/application management
-          "$mainMod, w, killactive"
-          "$mainMod, g, togglegroup"
-          # Launcher, a la Spotlight
-          "$mainMod, SPACE, exec, $menu"
-          # Navigate between windows, Vi style
-          "$mainMod, h, movefocus, l"
-          "$mainMod, j, movefocus, d"
-          "$mainMod, k, movefocus, u"
-          "$mainMod, l, movefocus, r"
-          # Move windows, Vi style
-          "$mainMod $moveMod, h, movewindoworgroup, l"
-          "$mainMod $moveMod, j, movewindoworgroup, d"
-          "$mainMod $moveMod, k, movewindoworgroup, u"
-          "$mainMod $moveMod, l, movewindoworgroup, r"
-          # Navigate between grouped windows, Vi style
-          "$mainMod $groupMod, h, changegroupactive, b"
-          "$mainMod $groupMod, j, changegroupactive, f"
-          "$mainMod $groupMod, k, changegroupactive, b"
-          "$mainMod $groupMod, l, changegroupactive, f"
-          # Shift workspace between monitors
-          "$mainMod $moveMod, Tab, movecurrentworkspacetomonitor, +1"
-        ]
-        ++ (builtins.concatLists (
-          builtins.genList (
-            i:
-            let
-              ws = i + 1;
-            in
-            [
-              "$mainMod, code:1${toString i}, workspace, ${toString ws}"
-              "$mainMod $moveMod, code:1${toString i}, movetoworkspace, ${toString ws}"
-            ]
-          ) 9
-        ));
+      bind = [
+        # Utilities
+        ", print, exec, flameshot gui"
+        "$mainMod, s, exec, flameshot gui"
+        # Session management
+        "$mainMod, 0, exec, loginctl lock-session"
+        # Window/application management
+        "$mainMod, w, killactive"
+        "$mainMod, g, togglegroup"
+        # Launcher, a la Spotlight
+        "$mainMod, SPACE, exec, $menu"
+        # Navigate between windows, Vi style
+        "$mainMod, h, movefocus, l"
+        "$mainMod, j, movefocus, d"
+        "$mainMod, k, movefocus, u"
+        "$mainMod, l, movefocus, r"
+        # Move windows, Vi style
+        "$mainMod $moveMod, h, movewindoworgroup, l"
+        "$mainMod $moveMod, j, movewindoworgroup, d"
+        "$mainMod $moveMod, k, movewindoworgroup, u"
+        "$mainMod $moveMod, l, movewindoworgroup, r"
+        # Navigate between grouped windows, Vi style
+        "$mainMod $groupMod, h, changegroupactive, b"
+        "$mainMod $groupMod, j, changegroupactive, f"
+        "$mainMod $groupMod, k, changegroupactive, b"
+        "$mainMod $groupMod, l, changegroupactive, f"
+        # Shift workspace between monitors
+        "$mainMod $moveMod, Tab, movecurrentworkspacetomonitor, +1"
+      ]
+      ++ (builtins.concatLists (
+        builtins.genList (
+          i:
+          let
+            ws = i + 1;
+          in
+          [
+            "$mainMod, code:1${toString i}, workspace, ${toString ws}"
+            "$mainMod $moveMod, code:1${toString i}, movetoworkspace, ${toString ws}"
+          ]
+        ) 9
+      ));
       # Repeat, and bound even when locked
       # Get the key names via xev
       bindel = [

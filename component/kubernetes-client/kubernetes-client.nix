@@ -61,8 +61,9 @@ in
             fi
             echo "Selected $''
         + options.env
-        + ''"
-          }
+        + ''
+          "
+                    }
         ''
       ) selectCmds
     )
@@ -70,17 +71,16 @@ in
   programs.fish.functions = lib.attrsets.mapAttrs' (
     name: options:
     lib.attrsets.nameValuePair "kube-${name}" {
-      body =
-        ''
-          if test -n "$argv[1]"
-            export ${options.env}=${options.valueFish}
-          else
-            export ${options.env}=(${options.optionCmdFish or options.optionCmd})
-          end
-          ${options.setCmd or ""}
-          echo "Selected $''
-        + options.env
-        + ''"'';
+      body = ''
+        if test -n "$argv[1]"
+          export ${options.env}=${options.valueFish}
+        else
+          export ${options.env}=(${options.optionCmdFish or options.optionCmd})
+        end
+        ${options.setCmd or ""}
+        echo "Selected $''
+      + options.env
+      + ''"'';
     }
   ) selectCmds;
   programs.zsh.initContent = config.programs.bash.initExtra;

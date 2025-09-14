@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 {
   # FIXME: implement nix-darwin/nix-darwin#1035
   # networking.extraHosts = ''
@@ -10,12 +15,12 @@
   #   127.0.0.1 localhost.ca.preprod.babylontech.co.uk
   #   127.0.0.1 localhost.sg.preprod.babylontech.co.uk
   # '';
-  
-# Changes require restarting nix-daemon manually
+
+  # Changes require restarting nix-daemon manually
   # sudo launchctl unload /Library/LaunchDaemons/org.nixos.nix-daemon.plist
   # sudo launchctl load -w /Library/LaunchDaemons/org.nixos.nix-daemon.plist
   sops.secrets.nix-github = {
-      sopsFile = ../../secrets/employer-emed.yaml;
+    sopsFile = ../../secrets/employer-emed.yaml;
     format = "yaml";
     key = "nix/github";
     path = "/etc/nix/github.env";
@@ -39,7 +44,8 @@
     ProgramArguments =
       let
         timeout = "${pkgs.coreutils}/bin/timeout";
-      in lib.mkForce [
+      in
+      lib.mkForce [
         "/bin/sh"
         "-c"
         ''

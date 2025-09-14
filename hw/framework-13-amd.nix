@@ -33,8 +33,14 @@ in
 
   systemd.services.fw13-post-resume-reset-wifi = {
     description = "Local system resume actions";
-    after = [ "suspend.target" "hibernate.target" ];
-    wantedBy = [ "suspend.target" "hibernate.target" ];
+    after = [
+      "suspend.target"
+      "hibernate.target"
+    ];
+    wantedBy = [
+      "suspend.target"
+      "hibernate.target"
+    ];
 
     serviceConfig = {
       Type = "simple";

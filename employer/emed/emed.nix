@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   selectMiniplatform = pkgs.writeShellScriptBin "emed-mini-platform" ''
     fzf="${pkgs.fzf}/bin/fzf"
@@ -32,7 +37,7 @@ in
     # Jetbrains IDE wrappers
     "$HOME/.local/bin"
   ];
-  
+
   home.sessionVariables = {
     SSH_AUTH_SOCK = "$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock";
 
@@ -108,10 +113,12 @@ in
   programs.zsh.initContent = config.programs.bash.initExtra;
 
   programs.librewolf.profiles.default =
-    let browserActions = {
-      "1password" = "_d634138d-c276-4fc8-924b-40a0ea21d284_-browser-action";
-    };
-    in {
+    let
+      browserActions = {
+        "1password" = "_d634138d-c276-4fc8-924b-40a0ea21d284_-browser-action";
+      };
+    in
+    {
       containers = {
         eMed = {
           id = 1;
@@ -124,16 +131,19 @@ in
           icon = "briefcase";
         };
       };
-      extensions.packages = lib.mkForce (with pkgs.nur.repos.rycee.firefox-addons; [
-        istilldontcareaboutcookies
-        multi-account-containers
-        markdownload
-        onepassword-password-manager
-        read-aloud
-        refined-github
-        ublock-origin
-        vimium
-      ]);
+      extensions.packages = lib.mkForce (
+        with pkgs.nur.repos.rycee.firefox-addons;
+        [
+          istilldontcareaboutcookies
+          multi-account-containers
+          markdownload
+          onepassword-password-manager
+          read-aloud
+          refined-github
+          ublock-origin
+          vimium
+        ]
+      );
       settings."browser.uiCustomization.navBarWhenVerticalTabs" = lib.mkForce [
         "sidebar-button"
         "back-button"
