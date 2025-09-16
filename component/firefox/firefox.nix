@@ -143,7 +143,7 @@ in
             };
 
             "eMed/Go" = {
-              definedAliases = [ "ego" ];
+              definedAliases = [ "go" ];
               urls = [
                 { template = "https://go.ops.babylontech.co.uk/{searchTerms}"; }
               ];
@@ -236,6 +236,11 @@ in
           "browser.newtabpage.activity-stream.showSearch" = false;
           "browser.shell.checkDefaultBrowser" = false;
           "browser.tabs.groups.enabled" = true;
+
+          "privacy.sanitize.sanitizeOnShutdown" = true;
+          "privacy.clearOnShutdown_v2.browsingHistoryAndDownloads" = true;
+          "privacy.clearOnShutdown_v2.cache" = false;
+          "privacy.clearOnShutdown_v2.cookiesAndStorage" = false;
         };
       };
     };
