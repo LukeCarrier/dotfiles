@@ -297,6 +297,7 @@
           modules = [
             ./hw/macbook.nix
             ./platform/darwin/common.nix
+            sops-nix.darwinModules.sops
             ./host/fatman/fatman.nix
             ./component/wifiman/darwin.nix
             ./component/hammerspoon/hammerspoon.nix

@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, lib, ... }:
 {
   networking = {
     nftables.enable = true;
@@ -14,17 +14,15 @@
 
   sops = {
     secrets.nix-github = {
-      sopsFile = ../../secrets/personal.yaml;
+      sopsFile = lib.mkDefault ../../secrets/personal.yaml;
       format = "yaml";
       key = "nix/github";
     };
 
-    templates."nix-github".content = ''
-      GITHUB_TOKEN=${config.sops.placeholder.nix-github}
+    templates."nix-access-tokens".content = ''
+      access-tokens = "github.com:${config.sops.placeholder.nix-github}"
     '';
   };
-
-  systemd.services.nix-daemon.serviceConfig.EnvironmentFile = config.sops.templates.nix-github.path;
 
   nix = {
     enable = true;
@@ -48,5 +46,9 @@
       "nix-command"
       "flakes"
     ];
+
+    extraOptions = ''
+      !include ${config.sops.templates.nix-access-tokens.path}
+    '';
   };
 }
