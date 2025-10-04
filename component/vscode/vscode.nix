@@ -30,24 +30,23 @@
           bierner.markdown-mermaid
           bmalehorn.vscode-fish
           ciarant.vscode-structurizr
+          coder.coder-remote
           editorconfig.editorconfig
           enkia.tokyo-night
           github.vscode-pull-request-github
           hediet.vscode-drawio
+          io-github-oops418.nix-env-picker
           jasew.vscode-helix-emulation
           jebbs.plantuml
+          jjk.jjk
           johnpapa.vscode-peacock
           jq-syntax-highlighting.jq-syntax-highlighting
         ])
         ++ (with pkgs.vscode-marketplace; [
           be5invis.vscode-icontheme-nomo-dark
-          coder.coder-remote
           coenraads.disableligatures
           github.copilot
           github.copilot-chat
-          io-github-oops418.nix-env-picker
-          jjk.jjk
-          kdl-org.kdl
           ms-vscode-remote.remote-containers
           ms-vsliveshare.vsliveshare
         ]);
