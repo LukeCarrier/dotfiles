@@ -509,7 +509,7 @@
             ./component/fish/default.nix
             ./component/direnv/direnv.nix
             ./component/firefox/firefox.nix
-            ./component/hammerspoon/home.nix
+            ./component/ollama/ollama.nix
             ./component/openssh/openssh.nix
             ./component/atuin/atuin.nix
             ./component/starship/starship.nix
