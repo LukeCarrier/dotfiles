@@ -1,9 +1,4 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
+{ lib, ... }:
 {
   # FIXME: implement nix-darwin/nix-darwin#1035
   # networking.extraHosts = ''
@@ -16,15 +11,7 @@
   #   127.0.0.1 localhost.sg.preprod.babylontech.co.uk
   # '';
 
-  # Changes require restarting nix-daemon manually
-  # sudo launchctl unload /Library/LaunchDaemons/org.nixos.nix-daemon.plist
-  # sudo launchctl load -w /Library/LaunchDaemons/org.nixos.nix-daemon.plist
-  sops.secrets.nix-github = {
-    sopsFile = ../../secrets/employer-emed.yaml;
-    format = "yaml";
-    key = "nix/github";
-    path = "/etc/nix/github.env";
-  };
+  sops.secrets.nix-github.sopsFile = lib.mkOverride 100 ../../secrets/employer-emed.yaml;
 
   nix = {
     enable = true;
@@ -38,31 +25,6 @@
         "nixpkgs-terraform.cachix.org-1:8Sit092rIdAVENA3ZVeH9hzSiqI/jng6JiCrQ1Dmusw="
       ];
     };
-  };
-
-  launchd.daemons.nix-daemon.serviceConfig = {
-    ProgramArguments =
-      let
-        timeout = "${pkgs.coreutils}/bin/timeout";
-      in
-      lib.mkForce [
-        "/bin/sh"
-        "-c"
-        ''
-          set -e
-          /bin/wait4path /nix/store
-          if ${timeout} 30s wait4path ${config.sops.secrets.nix-github.path}; then
-            set +e
-            source ${config.sops.secrets.nix-github.path}
-            set -e
-          fi
-          exec ${lib.getExe' config.nix.package "nix-daemon"}
-        ''
-      ];
-
-    # If something seems wonky, troubleshoot with:
-    #StandardOutPath = lib.mkForce "/tmp/nix-daemon-wrapper-stdout.log";
-    #StandardErrorPath = lib.mkForce "/tmp/nix-daemon-wrapper-stderr.log";
   };
 
   homebrew = {
