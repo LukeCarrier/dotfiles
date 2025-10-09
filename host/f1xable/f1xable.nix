@@ -2,16 +2,9 @@
 {
   system.stateVersion = "24.05";
 
-  hardware = {
-    graphics = {
-      enable = true;
-      enable32Bit = true;
-    };
-
-    amdgpu.amdvlk = {
-      enable = true;
-      support32Bit.enable = true;
-    };
+  hardware.graphics = {
+    enable = true;
+    enable32Bit = true;
   };
 
   programs.gamescope.enable = true;
@@ -47,13 +40,7 @@
 
   virtualisation.libvirtd = {
     enable = true;
-    qemu = {
-      ovmf = {
-        enable = true;
-        packages = [ pkgs.OVMFFull.fd ];
-      };
-      swtpm.enable = true;
-    };
+    qemu.swtpm.enable = true;
   };
   environment.systemPackages = [ pkgs.swtpm ];
 
