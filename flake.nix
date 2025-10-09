@@ -93,10 +93,6 @@
             rust-overlay.overlays.default
             (final: prev: {
               niri = niri.packages.${system}.niri-unstable;
-              waybar = waybar.packages.${system}.waybar.overrideAttrs {
-                # "Did not find version * in the output of the command *"
-                doInstallCheck = false;
-              };
             })
             (final: prev: {
               aws-cli-tools = self.packages.${system}.aws-cli-tools;
@@ -108,12 +104,6 @@
               monaspace-fonts = self.packages.${system}.monaspace-fonts;
               stklos = self.packages.${system}.stklos;
               wezterm = wezterm.packages.${system}.default;
-            })
-            # NixOS/nixpkgs#380227
-            (final: prev: {
-              bitwarden-cli = prev.bitwarden-cli.overrideAttrs {
-                dontCheckForBrokenSymlinks = true;
-              };
             })
           ];
         })
