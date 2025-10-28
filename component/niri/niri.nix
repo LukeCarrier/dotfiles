@@ -129,8 +129,8 @@ in
         with config.lib.niri.actions;
         ({
           # Utilities
-          "Print".action = screenshot;
-          "${mainMod}+S".action = screenshot;
+          "Print".action.screenshot = [ ];
+          "${mainMod}+S".action.screenshot = [ ];
           "XF86AudioMute".action = spawn [
             "wpctl"
             "set-mute"

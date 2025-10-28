@@ -17,10 +17,12 @@
     enable = true;
     lfs.enable = true;
 
-    userName = "Luke Carrier";
-    userEmail = "luke@carrier.family";
+    settings = {
+      user = {
+        name = "Luke Carrier";
+        email = "luke@carrier.family";
+      };
 
-    extraConfig = {
       branch.sort = "-committerdate";
       core.excludesfile = "~/.gitignore";
       init.defaultBranch = "main";
