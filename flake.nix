@@ -49,10 +49,6 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
-    waybar = {
-      url = "github:Alexays/Waybar";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
-    };
     wezterm = {
       url = "github:wez/wezterm/main?dir=nix";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
@@ -75,7 +71,6 @@
       nur,
       rust-overlay,
       sops-nix,
-      waybar,
       wezterm,
       self,
       ...
