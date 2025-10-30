@@ -2,6 +2,11 @@
   description = "Luke Carrier's dotfiles";
 
   inputs = {
+    claude-code = {
+      url = "github:sadjow/claude-code-nix";
+      inputs.flake-utils.follows = "flake-utils";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
     code-insiders = {
       url = "github:iosmanthus/code-insiders-flake";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
@@ -62,6 +67,7 @@
 
   outputs =
     {
+      claude-code,
       code-insiders,
       dagger,
       darwin,
@@ -87,6 +93,7 @@
         (import pkgs {
           inherit system;
           overlays = [
+            claude-code.overlays.default
             code-insiders.overlays.default
             dagger.overlays.default
             niri.overlays.niri
