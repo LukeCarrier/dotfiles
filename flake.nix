@@ -104,6 +104,7 @@
               eww-niri-workspaces = self.packages.${system}.eww-niri-workspaces;
               kubernetes-client-tools = self.packages.${system}.kubernetes-client-tools;
               monaspace-fonts = self.packages.${system}.monaspace-fonts;
+              spec-kit = self.packages.${system}.spec-kit;
               stklos = self.packages.${system}.stklos;
               wezterm = wezterm.packages.${system}.default;
             })

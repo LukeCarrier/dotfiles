@@ -33,6 +33,8 @@
       };
   };
 
+  spec-kit = pkgs.callPackage ./spec-kit { };
+
   stklos = pkgs.callPackage ./stklos {
     stklos =
       let

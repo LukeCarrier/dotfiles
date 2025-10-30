@@ -18,6 +18,7 @@
     ../../../../component/firefox/firefox.nix
     ../../../../component/container-use/container-use.nix
     ../../../../component/ollama/ollama.nix
+    ../../../../component/spec-kit/spec-kit.nix
     ../../../../component/openssh/openssh.nix
     ../../../../component/atuin/atuin.nix
     ../../../../component/starship/starship.nix
