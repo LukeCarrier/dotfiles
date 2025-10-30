@@ -10,6 +10,10 @@
       url = "github:lnl7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
+    dagger = {
+      url = "github:dagger/nix";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
     flake-utils.url = "github:numtide/flake-utils";
     home-manager = {
       url = "github:nix-community/home-manager/master";
@@ -59,6 +63,7 @@
   outputs =
     {
       code-insiders,
+      dagger,
       darwin,
       flake-utils,
       home-manager,
@@ -83,6 +88,7 @@
           inherit system;
           overlays = [
             code-insiders.overlays.default
+            dagger.overlays.default
             niri.overlays.niri
             nix-vscode-extensions.overlays.default
             nur.overlays.default

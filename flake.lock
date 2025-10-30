@@ -35,6 +35,26 @@
         "type": "github"
       }
     },
+    "dagger": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs-unstable"
+        ]
+      },
+      "locked": {
+        "lastModified": 1761251311,
+        "narHash": "sha256-bhmVbrrNdMPBgvfVuBJjMOJB8wzTaCApeBu+fX0ANqU=",
+        "owner": "dagger",
+        "repo": "nix",
+        "rev": "1b1e579d59431a7c1ddf18fd425083be4a56ba35",
+        "type": "github"
+      },
+      "original": {
+        "owner": "dagger",
+        "repo": "nix",
+        "type": "github"
+      }
+    },
     "darwin": {
       "inputs": {
         "nixpkgs": [
@@ -635,6 +655,7 @@
     "root": {
       "inputs": {
         "code-insiders": "code-insiders",
+        "dagger": "dagger",
         "darwin": "darwin",
         "flake-utils": "flake-utils",
         "home-manager": "home-manager",
