@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, ... }:
 let
   lldbDapRustcPrimer = "${config.xdg.configHome}/helix/debug/lldb_dap_rustc_primer.py";
 in

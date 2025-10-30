@@ -1,5 +1,25 @@
-{ pkgs, ... }:
 {
+  pkgs,
+  inputs,
+  ...
+}:
+{
+  imports = [
+    ./hardware-configuration.nix
+    inputs.nixos-hardware.nixosModules.framework-13-7040-amd
+    inputs.nix-flatpak.nixosModules.nix-flatpak
+    inputs.sops-nix.nixosModules.sops
+    ../../hw/framework-13-amd.nix
+    ../../platform/nixos/common.nix
+    ../../platform/nixos/region/en-gb.nix
+    inputs.lanzaboote.nixosModules.lanzaboote
+    ../../platform/nixos/secure-boot.nix
+    ../../platform/nixos/graphical.nix
+    ../../platform/nixos/containers.nix
+    ../../component/gnome-network-displays/gnome-network-displays.nix
+    ../../component/valent/valent.nix
+  ];
+
   system.stateVersion = "24.05";
 
   hardware.graphics = {

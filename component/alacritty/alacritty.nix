@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, ... }:
 {
   home.file = {
     "${config.xdg.configHome}/alacritty/themes/tokyo-night-storm.toml".source =

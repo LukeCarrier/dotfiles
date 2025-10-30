@@ -1,5 +1,4 @@
 {
-  pkgs,
   rustPlatform,
   fetchFromGitHub,
   ewwNiriWorkspaces,

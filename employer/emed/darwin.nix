@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ lib, ... }:
 {
   # FIXME: implement nix-darwin/nix-darwin#1035
   # networking.extraHosts = ''

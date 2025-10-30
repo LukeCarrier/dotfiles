@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ ... }:
 {
   programs.zsh.enable = true;
   programs.zsh.initContent = ''
