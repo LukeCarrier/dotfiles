@@ -18,6 +18,7 @@
     lanzaboote = {
       url = "github:nix-community/lanzaboote/master";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
+      inputs.rust-overlay.follows = "rust-overlay";
     };
     niri = {
       url = "github:sodiboo/niri-flake";
