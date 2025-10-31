@@ -7,6 +7,7 @@
   imports = [
     inputs.sops-nix.homeManagerModules.sops
     ../../../../component/shell-essential/shell-essential.nix
+    ../../../../component/bitwarden/bitwarden.nix
     ../../../../component/homebrew/homebrew.nix
     ../../../../component/fonts/fonts.nix
     ../../../../component/readline/readline.nix
