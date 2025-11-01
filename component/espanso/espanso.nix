@@ -1,6 +1,7 @@
 { pkgs, ... }:
 let
-  os = pkgs.lib.lists.last (pkgs.lib.strings.splitString "-" pkgs.system);
+  inherit (pkgs) stdenv;
+  os = pkgs.lib.lists.last (pkgs.lib.strings.splitString "-" stdenv.hostPlatform.system);
   package = {
     darwin = pkgs.espanso;
     linux = pkgs.espanso-wayland;
