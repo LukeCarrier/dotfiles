@@ -19,6 +19,7 @@
     ../../../../component/firefox/firefox.nix
     ../../../../component/container-use/container-use.nix
     ../../../../component/ollama/ollama.nix
+    ../../../../component/opencode/opencode.nix
     ../../../../component/spec-kit/spec-kit.nix
     ../../../../component/claude-code/claude-code.nix
     ../../../../component/openssh/openssh.nix
