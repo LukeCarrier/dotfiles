@@ -11,7 +11,7 @@
     liberation_ttf
     mplus-outline-fonts.githubRelease
     noto-fonts
-    noto-fonts-emoji
+    noto-fonts-color-emoji
     proggyfonts
   ];
 }
