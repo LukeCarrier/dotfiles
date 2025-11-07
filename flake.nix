@@ -110,6 +110,7 @@
               dotfiles-meta = self.packages.${system}.dotfiles-meta;
               eww-niri-workspaces = self.packages.${system}.eww-niri-workspaces;
               kubernetes-client-tools = self.packages.${system}.kubernetes-client-tools;
+              mcp-remote = self.packages.${system}.mcp-remote;
               monaspace-fonts = self.packages.${system}.monaspace-fonts;
               rift = self.packages.${system}.rift;
               spec-kit = self.packages.${system}.spec-kit;

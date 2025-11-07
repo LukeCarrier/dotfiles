@@ -21,6 +21,8 @@
 
   kubernetes-client-tools = pkgs.callPackage ./kubernetes-client-tools { };
 
+  mcp-remote = pkgs.callPackage ./mcp-remote { };
+
   monaspace-fonts = pkgs.callPackage ./monaspace-fonts {
     monaspace-fonts =
       let
