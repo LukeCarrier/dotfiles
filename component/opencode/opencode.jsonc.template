@@ -1,0 +1,106 @@
+// Test with:
+// export OPENCODE_CONFIG_DIR=(pwd)/component/opencode
+// export OPENCODE_CONFIG=$OPENCODE_CONFIG_DIR/opencode.jsonc.template
+{
+  "$schema": "https://opencode.ai/config.json",
+
+  "plugin": ["opencode-gemini-auth"],
+
+  "keybinds": {
+    // Enter newlines by default, require modifier for submit
+    "input_submit": "shift+enter",
+    "input_newline": "enter",
+  },
+
+  "mcp": {
+    "atlassian": {
+      "type": "local",
+      "command": ["mcp-remote", "https://mcp.atlassian.com/v1/sse"],
+    },
+
+    "container-use": {
+      "type": "local",
+      "command": ["container-use", "stdio"],
+    },
+
+    // sst/opencode#988
+    // "github": {
+    //   "enabled": false,
+    //   "type": "remote",
+    //   "url": "https://api.githubcopilot.com/mcp/",
+    // },
+    // geelen/mcp-remote#116
+    // "github": {
+    //   "type": "local",
+    //   "command": ["mcp-remote", "https://api.githubcopilot.com/mcp/"],
+    // },
+    "github": {
+      "type": "local",
+      "command": ["github-mcp-server", "stdio"],
+      "environment": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "@GITHUB_PERSONAL_ACCESS_TOKEN@",
+      },
+    },
+  },
+
+  "tools": {
+    "*": false,
+  },
+
+  "agent": {
+    // Primary
+    "plan": {
+      "tools": {
+        "todoread": true,
+        "todowrite": true,
+
+        "webfetch": true,
+
+        "glob": true,
+        "grep": true,
+        "list": true,
+        "read": true,
+      },
+      "permission": {
+        "bash": "deny",
+        "edit": "deny",
+        "webfetch": "ask",
+      },
+    },
+    "build": {
+      "tools": {
+        "todoread": true,
+        "todowrite": true,
+
+        "webfetch": true,
+
+        "glob": true,
+        "grep": true,
+        "list": true,
+        "read": true,
+
+        "edit": true,
+        "patch": true,
+        "write": true,
+
+        "bash": true,
+      },
+      "permission": {
+        "bash": "ask",
+        "edit": "ask",
+        "webfetch": "ask",
+      },
+    },
+
+    // Subagents
+    "general": {
+      "permission": {
+        "bash": "deny",
+        "edit": "deny",
+        "webfetch": "deny",
+      },
+    },
+  },
+
+  "instructions": ["AGENT.md", "CLAUDE.md", ".cursor/rules/*.md"],
+}
