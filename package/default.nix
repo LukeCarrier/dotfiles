@@ -1,14 +1,17 @@
 { pkgs }:
+let
+  inherit (pkgs) callPackage;
+in
 {
-  aws-cli-tools = pkgs.callPackage ./aws-cli-tools { };
+  aws-cli-tools = callPackage ./aws-cli-tools { };
 
-  bw-cli-tools = pkgs.callPackage ./bw-cli-tools { };
+  bw-cli-tools = callPackage ./bw-cli-tools { };
 
-  docker-cli-tools = pkgs.callPackage ./docker-cli-tools { };
+  docker-cli-tools = callPackage ./docker-cli-tools { };
 
-  dotfiles-meta = pkgs.callPackage ./dotfiles-meta { };
+  dotfiles-meta = callPackage ./dotfiles-meta { };
 
-  eww-niri-workspaces = pkgs.callPackage ./eww-niri-workspaces {
+  eww-niri-workspaces = callPackage ./eww-niri-workspaces {
     ewwNiriWorkspaces = rec {
       owner = "LukeCarrier";
       # FIXME: there are currently no tags available :-(
@@ -19,11 +22,11 @@
     };
   };
 
-  kubernetes-client-tools = pkgs.callPackage ./kubernetes-client-tools { };
+  kubernetes-client-tools = callPackage ./kubernetes-client-tools { };
 
-  mcp-remote = pkgs.callPackage ./mcp-remote { };
+  mcp-remote = callPackage ./mcp-remote { };
 
-  monaspace-fonts = pkgs.callPackage ./monaspace-fonts {
+  monaspace-fonts = callPackage ./monaspace-fonts {
     monaspace-fonts =
       let
         version = "1.101";
@@ -35,11 +38,11 @@
       };
   };
 
-  rift = pkgs.callPackage ./rift { };
+  rift = callPackage ./rift { };
 
-  spec-kit = pkgs.callPackage ./spec-kit { };
+  spec-kit = callPackage ./spec-kit { };
 
-  stklos = pkgs.callPackage ./stklos {
+  stklos = callPackage ./stklos {
     stklos =
       let
         version = "2.10";
