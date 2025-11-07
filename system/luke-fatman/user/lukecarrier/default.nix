@@ -17,6 +17,7 @@
     ../../../../component/fish/default.nix
     ../../../../component/direnv/direnv.nix
     ../../../../component/firefox/firefox.nix
+    ../../../../component/rift/rift.nix
     ../../../../component/container-use/container-use.nix
     ../../../../component/ollama/ollama.nix
     ../../../../component/opencode/opencode.nix

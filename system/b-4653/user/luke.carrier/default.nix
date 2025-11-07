@@ -18,7 +18,7 @@
     ../../../../component/zsh/zsh.nix
     ../../../../component/direnv/direnv.nix
     ../../../../component/firefox/firefox.nix
-    ../../../../component/hammerspoon/home.nix
+    ../../../../component/rift/rift.nix
     ../../../../component/1password/home.nix
     ../../../../component/openssh/openssh.nix
     ../../../../component/atuin/atuin.nix
