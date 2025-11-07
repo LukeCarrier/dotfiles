@@ -60,8 +60,6 @@
     with pkgs;
     [
       saml2aws
-      docker-client
-      docker-credential-helpers
       vault
 
       docker-cli-tools

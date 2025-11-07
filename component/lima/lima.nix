@@ -1,6 +1,10 @@
 { pkgs, ... }:
 {
-  home.packages = with pkgs; [ lima ];
+  home.packages = with pkgs; [
+    docker-client
+    docker-credential-helpers
+    lima
+  ];
 
   home.file.".lima/docker-amd64/lima.yaml".source = ./.lima/docker-amd64/lima.yaml;
   home.file.".lima/docker-amd64-rosetta/lima.yaml".source = ./.lima/docker-amd64-rosetta/lima.yaml;
