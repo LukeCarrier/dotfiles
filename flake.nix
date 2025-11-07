@@ -104,17 +104,19 @@
               niri = niri.packages.${system}.niri-unstable;
             })
             (final: prev: {
-              aws-cli-tools = self.packages.${system}.aws-cli-tools;
-              bw-cli-tools = self.packages.${system}.bw-cli-tools;
-              docker-cli-tools = self.packages.${system}.docker-cli-tools;
-              dotfiles-meta = self.packages.${system}.dotfiles-meta;
-              eww-niri-workspaces = self.packages.${system}.eww-niri-workspaces;
-              kubernetes-client-tools = self.packages.${system}.kubernetes-client-tools;
-              mcp-remote = self.packages.${system}.mcp-remote;
-              monaspace-fonts = self.packages.${system}.monaspace-fonts;
-              rift = self.packages.${system}.rift;
-              spec-kit = self.packages.${system}.spec-kit;
-              stklos = self.packages.${system}.stklos;
+              inherit (self.packages.${system})
+                aws-cli-tools
+                bw-cli-tools
+                docker-cli-tools
+                dotfiles-meta
+                eww-niri-workspaces
+                kubernetes-client-tools
+                mcp-remote
+                monaspace-fonts
+                rift
+                spec-kit
+                stklos
+                ;
               wezterm = wezterm.packages.${system}.default;
             })
           ];
