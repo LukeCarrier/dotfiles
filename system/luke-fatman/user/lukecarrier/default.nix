@@ -1,6 +1,8 @@
 {
+  config,
   lib,
   inputs,
+  pkgs,
   ...
 }:
 {
@@ -60,4 +62,10 @@
       "vscode-extension-ms-vscode-remote-remote-containers"
       "vscode-extension-ms-vsliveshare-vsliveshare"
     ];
+
+  home.packages = with pkgs; [
+    docker-cli-tools
+  ];
+
+  sops.age.keyFile = "${config.home.homeDirectory}/Code/LukeCarrier/dotfiles/.sops/keys";
 }
