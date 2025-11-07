@@ -4,38 +4,9 @@
   stdenv,
 }:
 let
-  inherit (pkgs) fetchFromGitHub npmHooks pnpm;
-  inherit (stdenv) mkDerivation;
-  buildPnpmPackage =
-    pkg:
-    mkDerivation {
-      inherit (pkg)
-        pname
-        version
-        src
-        meta
-        ;
-
-      nativeBuildInputs =
-        (with pkgs; [
-          nodejs
-          npmHooks.npmInstallHook
-          pnpm.configHook
-          typescript
-        ])
-        ++ (pkg.nativeBuildInputs or [ ]);
-
-      pnpmDeps = pnpm.fetchDeps {
-        inherit (pkg) pname version src;
-        fetcherVersion = pkg.pnpmDepsFetcherVersion;
-        hash = pkg.pnpmDepsHash;
-      };
-      dontNpmPrune = true;
-
-      postBuild = ''
-        pnpm run ${pkg.pnpmBuildScript}
-      '';
-    };
+  inherit (pkgs) fetchFromGitHub;
+  nodeLib = import ../../lib/node.nix { inherit pkgs stdenv; };
+  inherit (nodeLib) buildPnpmPackage;
 in
 buildPnpmPackage rec {
   pname = "mcp-remote";
