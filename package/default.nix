@@ -33,6 +33,8 @@
       };
   };
 
+  rift = pkgs.callPackage ./rift { };
+
   spec-kit = pkgs.callPackage ./spec-kit { };
 
   stklos = pkgs.callPackage ./stklos {
