@@ -19,4 +19,10 @@ in
     package = package.${os};
     configs.default.search_shortcut = "CTRL+SPACE";
   };
+
+  home.file = {
+    ".config/espanso/match/base.yml".source = ./match/base.yml;
+    ".config/espanso/match/packages/github-urls/package.yml".source =
+      ./match/packages/github-urls/package.yml;
+  };
 }

@@ -1,0 +1,51 @@
+matches:
+  - trigger: :ghi
+    replace: "{{value}}"
+    vars:
+      - name: form
+        type: form
+        params:
+          layout: Toggle [[input]]
+      - name: value
+        type: shell
+        params:
+          cmd: |
+            input='{{form.input}}'
+            if [[ $input == https://github.com/* ]]; then
+              input=${input#https://github.com/}
+              org=${input%%/*}
+              remainder=${input#*/}
+              repo=${remainder%%/*}
+              num=${remainder##*/}
+              echo "${org}/${repo}#${num}"
+            else
+              org=${input%%/*}
+              remainder=${input#*/}
+              repo=${remainder%%#*}
+              num=${remainder##*#}
+              echo "https://github.com/${org}/${repo}/issue/${num}"
+            fi
+
+  - trigger: :ghr
+    replace: "{{ value }}"
+    vars:
+      - name: form
+        type: form
+        params:
+          layout: Toggle [[input]]
+      - name: value
+        type: shell
+        params:
+          cmd: |
+            input='{{form.input}}'
+            if [[ $input == https://github.com/* ]]; then
+              input=${input#https://github.com/}
+              org=${input%%/*}
+              repo=${input#*/}
+              repo=${repo%%/*}
+              echo "${org}/${repo}"
+            else
+              org=${input%%/*}
+              repo=${input#*/}
+              echo "https://github.com/${org}/${repo}"
+            fi
