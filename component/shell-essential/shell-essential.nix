@@ -14,6 +14,7 @@
       gh
       jq
       ripgrep
+      tree
     ]
     ++ (
       if pkgs.stdenv.isLinux then
