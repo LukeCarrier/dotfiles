@@ -8,3 +8,4 @@
 - If you are not confident you know something, research early.
 - Be consise in responses. I will ask for clarification when necessary.
 - Refrain from "add 1 to i" style comments.
+- Leave source control operations to me.
