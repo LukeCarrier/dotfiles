@@ -78,10 +78,6 @@
     nautilus
   ];
 
-  home.sessionVariables = {
-    SSH_AUTH_SOCK = config.home.sessionVariables.BITWARDEN_SSH_AUTH_SOCK;
-  };
-
   sops.age.keyFile = "${config.home.homeDirectory}/Code/LukeCarrier/dotfiles/.sops/keys";
 
   sops.secrets.aws-config = {
