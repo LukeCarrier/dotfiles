@@ -2,8 +2,8 @@
 description: Container Use
 mode: primary
 temperature: 0.1
-# tools:
-#   "*": ask
+tools:
+  "*": true
 permissions:
   bash: deny
   edit: deny
