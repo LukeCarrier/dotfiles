@@ -69,21 +69,7 @@
     },
     "build": {
       "tools": {
-        "todoread": true,
-        "todowrite": true,
-
-        "webfetch": true,
-
-        "glob": true,
-        "grep": true,
-        "list": true,
-        "read": true,
-
-        "edit": true,
-        "patch": true,
-        "write": true,
-
-        "bash": true,
+        "*": true,
       },
       "permission": {
         "bash": "ask",
