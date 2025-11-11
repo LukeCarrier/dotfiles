@@ -20,6 +20,7 @@
     ../../../../component/direnv/direnv.nix
     ../../../../component/firefox/firefox.nix
     ../../../../component/rift/rift.nix
+    ../../../../component/dragonfly/dragonfly.nix
     ../../../../component/container-use/container-use.nix
     ../../../../component/ollama/ollama.nix
     ../../../../component/opencode/opencode.nix
@@ -50,18 +51,28 @@
   home.username = "lukecarrier";
   home.homeDirectory = "/Users/lukecarrier";
 
-  nixpkgs.config.allowUnfreePredicate =
-    pkg:
-    builtins.elem (lib.getName pkg) [
-      "claude-code"
-      "code"
-      "terraform"
-      "vscode"
-      "vscode-extension-github-copilot"
-      "vscode-extension-github-copilot-chat"
-      "vscode-extension-ms-vscode-remote-remote-containers"
-      "vscode-extension-ms-vsliveshare-vsliveshare"
-    ];
+  nixpkgs.config = {
+    allowBroken = true;
+    # XXX: what the fuck is wrong with this!??!??!??!?!
+    allowBrokenPredicate =
+      pkg:
+      builtins.elem (lib.getName pkg) [
+        "python3.13-pynput-1.8.1"
+      ];
+
+    allowUnfreePredicate =
+      pkg:
+      builtins.elem (lib.getName pkg) [
+        "claude-code"
+        "code"
+        "terraform"
+        "vscode"
+        "vscode-extension-github-copilot"
+        "vscode-extension-github-copilot-chat"
+        "vscode-extension-ms-vscode-remote-remote-containers"
+        "vscode-extension-ms-vsliveshare-vsliveshare"
+      ];
+  };
 
   home.packages = with pkgs; [
     docker-cli-tools

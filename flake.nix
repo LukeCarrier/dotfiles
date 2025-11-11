@@ -117,6 +117,12 @@
                 spec-kit
                 stklos
                 ;
+python313Packages = prev.python313Packages // {
+              pyobjc-framework-Quartz = (import ./package/python-modules/pyobjc/Quartz.nix { inherit (prev) lib pkgs; pythonPkgs = prev.python313Packages; });
+              pyobjc-framework-CoreText = (import ./package/python-modules/pyobjc/CoreText.nix { inherit (prev) lib pkgs; pythonPkgs = final.python313Packages; });
+              pyobjc-framework-ApplicationServices = (import ./package/python-modules/pyobjc/ApplicationServices.nix { inherit (prev) lib pkgs; pythonPkgs = final.python313Packages; });
+              py-applescript = (import ./package/python-modules/py-applescript.nix { pkgs = prev; pythonPkgs = final.python313Packages; });
+            };
               wezterm = wezterm.packages.${system}.default;
             })
           ];

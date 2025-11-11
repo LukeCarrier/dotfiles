@@ -1,0 +1,17 @@
+diff --git a/src/include/fst/bi-table.h b/src/include/fst/bi-table.h
+index 1234567..abcdefg 100644
+--- a/src/include/fst/bi-table.h
++++ b/src/include/fst/bi-table.h
+@@ -317,9 +317,9 @@ class VectorHashBiTable {
+       fp2id_.rehash(table.fp2id_.bucket_count());
+     }
+
+-    VectorHashBiTable(const VectorHashBiTable &table)
+-      : selector_(table.s_),
+-        fp_(table.fp_),
++    VectorHashBiTable(const VectorHashBiTable &table)
++      : selector_(table.selector_),
++        fp_(table.fp_),
+         h_(table.h_),
+         id2entry_(table.id2entry_),
+         fp2id_(table.fp2id_),
