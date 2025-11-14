@@ -53,6 +53,8 @@
 
   nixpkgs.config = {
     allowBroken = true;
+    allowUnsupportedSystem = true;
+
     # XXX: what the fuck is wrong with this!??!??!??!?!
     allowBrokenPredicate =
       pkg:

@@ -10,7 +10,6 @@ let
       mkdir -p $out/bin
     '';
   };
-  # XXX: move to packages
   pynput = pkgs.python313Packages.pynput.overrideAttrs (oldAttrs: {
     propagatedBuildInputs =
       oldAttrs.propagatedBuildInputs
@@ -19,10 +18,44 @@ let
         pyobjc-framework-Quartz
       ]);
   });
+  # Create a patched version of the specific openfst used by kaldi-active-grammar
+  # This is the "old-openfst" from fork.nix with the kag-unstable version
+  openfst-kag-patched = pkgs.openfst.overrideAttrs (old: {
+    version = "kag-unstable-2022-05-06";
+
+    src = pkgs.fetchFromGitHub {
+      owner = "kkm000";
+      repo = "openfst";
+      rev = "0bca6e76d24647427356dc242b0adbf3b5f1a8d9";
+      sha256 = "1802rr14a03zl1wa5a0x1fa412kcvbgprgkadfj5s6s3agnn11rx";
+    };
+
+    buildInputs = old.buildInputs or [ ] ++ [ pkgs.zlib ];
+
+    patches = (old.patches or [ ]) ++ [ ../../package/kaldi/openfst-bi-table-fix.patch ];
+  });
+
+  # Override kaldi-active-grammar to use patched fork
+  kaldi-active-grammar = pkgs.python313Packages.kaldi-active-grammar.overridePythonAttrs (old: {
+    buildInputs = map (
+      input:
+      if (input.pname or "") == "kaldi" then
+        (input.overrideAttrs (kaldiOld: {
+          buildInputs = map (
+            kaldiInput: if (kaldiInput.pname or "") == "openfst" then openfst-kag-patched else kaldiInput
+          ) (kaldiOld.buildInputs or [ ]);
+        }))
+      else
+        input
+    ) (old.buildInputs or [ ]);
+
+    meta = old.meta // {
+      platforms = lib.platforms.unix;
+    };
+  });
   dragonfly =
     (pkgs.python313Packages.dragonfly.override {
-      inherit pynput;
-      # Unavailable outside of Linux
+      inherit pynput kaldi-active-grammar;
       xdotool = if stdenv.hostPlatform.isLinux then pkgs.xdotool else dummy;
       wmctrl = if stdenv.hostPlatform.isLinux then pkgs.wmctrl else dummy;
       xorg.xprop = if stdenv.hostPlatform.isLinux then pkgs.xorg.xprop else dummy;
@@ -85,10 +118,39 @@ let
         flag
     ) oldAttrs.cmakeFlags;
   });
+
+  # Package for make-it-work.py grammar script
+  dragonfly-grammar = pkgs.python313Packages.buildPythonApplication {
+    pname = "dragonfly-grammar";
+    version = "0.1.0";
+
+    src = ./grammar;
+
+    format = "other";
+
+    propagatedBuildInputs = [
+      dragonfly
+      kaldi
+      kaldi-active-grammar
+    ];
+
+    dontBuild = true;
+
+    installPhase = ''
+      mkdir -p "$out/bin"
+
+      cp make-it-work.py "$out/bin/dragonfly-grammar"
+      chmod +x "$out/bin/dragonfly-grammar"
+    '';
+
+    meta = with lib; {
+      description = "Dragonfly grammar for voice control";
+      platforms = platforms.unix;
+    };
+  };
 in
 {
   home.packages = [
-    dragonfly
-    kaldi
+    dragonfly-grammar
   ];
 }

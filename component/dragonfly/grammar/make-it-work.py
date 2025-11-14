@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+#
 from dragonfly import Function, Grammar, Key, MappingRule, Mouse, Text, get_engine
 from dragonfly.engines.backend_kaldi.dictation import UserDictation as Dictation
 
