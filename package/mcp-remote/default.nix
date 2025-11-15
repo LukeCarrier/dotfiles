@@ -16,7 +16,7 @@ buildPnpmPackage rec {
     owner = "geelen";
     repo = "mcp-remote";
     rev = "v${version}";
-    sha256 = "sha256-EQuiz/lygmynJjBrcAkX5MTrqYKWpD4OP4mvWZfO87s=";
+    hash = "sha256-EQuiz/lygmynJjBrcAkX5MTrqYKWpD4OP4mvWZfO87s=";
   };
 
   pnpmDepsFetcherVersion = 1;

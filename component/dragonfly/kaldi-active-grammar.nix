@@ -26,46 +26,28 @@ buildPythonPackage rec {
     owner = "daanzu";
     repo = "kaldi-active-grammar";
     rev = "v${version}";
-    sha256 = "0lilk6yjzcy31avy2z36bl9lr60gzwhmyqwqn8akq11qc3mbffsk";
+    hash = "sha256-Uzu36mA4BDwVsphjXyH/D5hME11mfOG3CsOzL72ZNFI=";
   };
 
   KALDI_BRANCH = "foo";
   KALDIAG_SETUP_RAW = "1";
 
-  patches = [
-    (
-      fetchFromGitHub {
+  patches =
+    let
+      pr = fetchFromGitHub {
         owner = "NixOS";
         repo = "nixpkgs";
         rev = "b3d51a0365f6695e7dd5cdf3e180604530ed33b4";
-        sha256 = "sha256-4vhDuZ7OZaZmKKrnDpxLZZpGIJvAeMtK6FKLJYUtAdw=";
-      }
-      + "/pkgs/development/python-modules/kaldi-active-grammar/0001-stub.patch"
-    )
-    (
-      fetchFromGitHub {
-        owner = "NixOS";
-        repo = "nixpkgs";
-        rev = "b3d51a0365f6695e7dd5cdf3e180604530ed33b4";
-        sha256 = "sha256-4vhDuZ7OZaZmKKrnDpxLZZpGIJvAeMtK6FKLJYUtAdw=";
-      }
-      + "/pkgs/development/python-modules/kaldi-active-grammar/0002-exec-path.patch"
-    )
-    (replaceVars
-      (
-        fetchFromGitHub {
-          owner = "NixOS";
-          repo = "nixpkgs";
-          rev = "b3d51a0365f6695e7dd5cdf3e180604530ed33b4";
-          sha256 = "sha256-4vhDuZ7OZaZmKKrnDpxLZZpGIJvAeMtK6FKLJYUtAdw=";
-        }
-        + "/pkgs/development/python-modules/kaldi-active-grammar/0003-ffi-path.patch"
-      )
-      {
+        hash = "sha256-Uzu36mA4BDwVsphjXyH/D5hME11mfOG3CsOzL72ZNFI=";
+      };
+    in
+    [
+      (pr + "/pkgs/development/python-modules/kaldi-active-grammar/0001-stub.patch")
+      (pr + "/pkgs/development/python-modules/kaldi-active-grammar/0002-exec-path.patch")
+      (replaceVars (pr + "/pkgs/development/python-modules/kaldi-active-grammar/0003-ffi-path.patch") {
         kaldiFork = "${kaldi}/lib";
-      }
-    )
-  ];
+      })
+    ];
 
   preBuild = ''
     cd ..

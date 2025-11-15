@@ -27,7 +27,7 @@ let
       owner = "kkm000";
       repo = "openfst";
       rev = "0bca6e76d24647427356dc242b0adbf3b5f1a8d9";
-      sha256 = "1802rr14a03zl1wa5a0x1fa412kcvbgprgkadfj5s6s3agnn11rx";
+      hash = "sha256-PYdg7VNDG12ka2q+fN/abIpAlAsdqKJ4oH8ARULOAqA=";
     };
 
     buildInputs = old.buildInputs or [ ] ++ [ pkgs.zlib ];

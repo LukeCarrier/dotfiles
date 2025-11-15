@@ -22,7 +22,7 @@ let
       owner = "kkm000";
       repo = "openfst";
       rev = "0bca6e76d24647427356dc242b0adbf3b5f1a8d9";
-      sha256 = "1802rr14a03zl1wa5a0x1fa412kcvbgprgkadfj5s6s3agnn11rx";
+      hash = "";
     };
     buildInputs = [ zlib ];
     # PRESERVE patches from the input openfst
@@ -40,7 +40,7 @@ stdenv.mkDerivation rec {
     owner = "daanzu";
     repo = "kaldi-fork-active-grammar";
     rev = version;
-    sha256 = "+kT2xJRwDj/ECv/v/J1FpsINWOK8XkP9ZvZ9moFRl70=";
+    hash = "sha256-+kT2xJRwDj/ECv/v/J1FpsINWOK8XkP9ZvZ9moFRl70=";
   };
 
   patches = [
@@ -49,7 +49,7 @@ stdenv.mkDerivation rec {
         owner = "NixOS";
         repo = "nixpkgs";
         rev = "b3d51a0365f6695e7dd5cdf3e180604530ed33b4";
-        sha256 = "sha256-4vhDuZ7OZaZmKKrnDpxLZZpGIJvAeMtK6FKLJYUtAdw=";
+        hash = "";
       }
       + "/pkgs/development/python-modules/kaldi-active-grammar/0004-fork-cmake.patch"
     )
@@ -58,7 +58,7 @@ stdenv.mkDerivation rec {
         owner = "NixOS";
         repo = "nixpkgs";
         rev = "b3d51a0365f6695e7dd5cdf3e180604530ed33b4";
-        sha256 = "sha256-4vhDuZ7OZaZmKKrnDpxLZZpGIJvAeMtK6FKLJYUtAdw=";
+        hash = "";
       }
       + "/pkgs/development/python-modules/kaldi-active-grammar/0006-fork-configure.patch"
     )
