@@ -84,7 +84,7 @@ let
         pythonRuntimeDepsCheck = false;
       });
 
-  # Package for make-it-work.py grammar script
+  # Package for dragonfly grammar
   dragonfly-grammar = pkgs.python313Packages.buildPythonApplication {
     pname = "dragonfly-grammar";
     version = "0.1.0";
@@ -103,10 +103,17 @@ let
     dontBuild = true;
 
     installPhase = ''
-      mkdir -p "$out/bin"
+            mkdir -p "$out/${pkgs.python313Packages.python.sitePackages}/dragonfly_grammar"
+            cp __init__.py __main__.py "$out/${pkgs.python313Packages.python.sitePackages}/dragonfly_grammar/"
 
-      cp make-it-work.py "$out/bin/dragonfly-grammar"
-      chmod +x "$out/bin/dragonfly-grammar"
+            mkdir -p "$out/bin"
+            cat > "$out/bin/dragonfly-grammar" << 'EOF'
+      #!${pkgs.python313Packages.python.interpreter}
+      import runpy
+      import sys
+      sys.exit(runpy.run_module('dragonfly_grammar', run_name='__main__'))
+      EOF
+            chmod +x "$out/bin/dragonfly-grammar"
     '';
 
     meta = with lib; {
