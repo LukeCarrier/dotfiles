@@ -8,7 +8,6 @@
     ../../platform/darwin/common.nix
     inputs.sops-nix.darwinModules.sops
     ../../component/wifiman/darwin.nix
-    ../../component/hammerspoon/hammerspoon.nix
     ../../component/logseq/darwin.nix
   ];
 

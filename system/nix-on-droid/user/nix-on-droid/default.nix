@@ -11,7 +11,6 @@
     ../../../../component/fish/default.nix
     ../../../../component/zsh/zsh.nix
     ../../../../component/direnv/direnv.nix
-    ../../../../component/hammerspoon/home.nix
     ../../../../component/openssh/openssh.nix
     ../../../../component/starship/starship.nix
     ../../../../component/git/git.nix

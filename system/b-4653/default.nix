@@ -8,7 +8,6 @@
     ../../platform/darwin/common.nix
     inputs.sops-nix.darwinModules.sops
     ../../employer/emed/darwin.nix
-    ../../component/hammerspoon/hammerspoon.nix
     ../../component/1password/1password.nix
     ../../component/finicky/darwin.nix
     ../../component/jetbrains-toolbox/darwin.nix
