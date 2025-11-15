@@ -147,10 +147,21 @@ stdenv.mkDerivation rec {
     find . -type f -name "*.o" -print0 | xargs -0 rm -f
     mkdir -p $out/{bin,lib}
     cp lib/* $out/lib/
+  ''
+  + lib.optionalString stdenv.hostPlatform.isLinux ''
     patchelf \
       --set-rpath "${lib.makeLibraryPath buildInputs}:$out/lib" \
       $out/lib/*
-  '';
+  ''
+  + lib.optionalString stdenv.hostPlatform.isDarwin ''
+    # On macOS, use install_name_tool instead of patchelf
+    for f in $out/lib/*.dylib; do
+      install_name_tool -id $f $f
+      install_name_tool -add_rpath ${lib.makeLibraryPath buildInputs} $f || true
+      install_name_tool -add_rpath $out/lib $f || true
+    done
+  ''
+  + '''';
 
   meta = with lib; {
     description = "Speech Recognition Toolkit";

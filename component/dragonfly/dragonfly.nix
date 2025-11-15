@@ -89,6 +89,8 @@ let
     propagatedBuildInputs = [
       dragonfly
       kaldi-active-grammar
+      pkgs.python313Packages.sounddevice
+      pkgs.python313Packages.webrtcvad
     ];
 
     dontBuild = true;
