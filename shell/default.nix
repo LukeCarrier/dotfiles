@@ -13,6 +13,36 @@ let
       preferLocalBuild = true;
       allowSubstitutes = false;
     } versionScript;
+
+  mkNodeDevShell =
+    name: nodejs:
+    let
+      toolVersions = mkToolVersions name ''
+        printf "bun %s\n" "$(${pkgs.bun}/bin/bun --version 2>&1 | head -n 1)"
+        printf "node %s\n" "$(${nodejs}/bin/node --version 2>&1 | head -n 1)"
+        printf "pnpm %s\n" "$(${
+          pkgs.pnpm.override { inherit nodejs; }
+        }/bin/pnpm --version 2>&1 | head -n 1)"
+        printf "typescript-language-server %s\n" "$(${
+          pkgs.typescript-language-server.override { inherit nodejs; }
+        }/bin/typescript-language-server --version 2>&1 | head -n 1)"
+        printf "yarn %s\n" "$(${
+          pkgs.yarn.override { inherit nodejs; }
+        }/bin/yarn --version 2>&1 | head -n 1)"
+      '';
+    in
+    pkgs.mkShell {
+      shellHook = ''
+        cat ${toolVersions}
+      '';
+      nativeBuildInputs = [
+        pkgs.bun
+        nodejs
+        (pkgs.pnpm.override { inherit nodejs; })
+        (pkgs.typescript-language-server.override { inherit nodejs; })
+        (pkgs.yarn.override { inherit nodejs; })
+      ];
+    };
 in
 {
   default =
@@ -69,28 +99,8 @@ in
       ];
     };
 
-  nodeDev =
-    let
-      toolVersions = mkToolVersions "nodeDev" ''
-        printf "bun %s" "$(${pkgs.bun}/bin/bun --version 2>&1 | head -n 1)"
-        printf "node %s" "$(${pkgs.nodejs}/bin/node --version 2>&1 | head -n 1)"
-        printf "pnpm %s" "$(${pkgs.pnpm}/bin/pnpm --version 2>&1 | head -n 1)"
-        printf "typescript-language-server %s" "$(${pkgs.typescript-language-server}/bin/typescript-language-server --version 2>&1 | head -n 1)"
-        printf "yarn %s" "$(${pkgs.yarn}/bin/yarn --version 2>&1 | head -n 1)"
-      '';
-    in
-    pkgs.mkShell {
-      shellHook = ''
-        cat ${toolVersions}
-      '';
-      nativeBuildInputs = with pkgs; [
-        bun
-        nodejs
-        pnpm
-        typescript-language-server
-        yarn
-      ];
-    };
+  node22Dev = mkNodeDevShell "node22Dev" pkgs.nodejs;
+  node24Dev = mkNodeDevShell "node24Dev" pkgs.nodejs_24;
 
   kotlinDev =
     let
