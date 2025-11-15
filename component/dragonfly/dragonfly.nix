@@ -18,10 +18,10 @@ let
         pyobjc-framework-Quartz
       ]);
   });
-  # Create a patched version of the specific openfst used by kaldi-active-grammar
-  # This is the "old-openfst" from fork.nix with the kag-unstable version
+
+  # Create a patched version of openfst with the C++ fixes
   openfst-kag-patched = pkgs.openfst.overrideAttrs (old: {
-    version = "kag-unstable-2022-05-06";
+    version = "kag-unstable-2022-05-06-patched";
 
     src = pkgs.fetchFromGitHub {
       owner = "kkm000";
@@ -32,27 +32,16 @@ let
 
     buildInputs = old.buildInputs or [ ] ++ [ pkgs.zlib ];
 
-    patches = (old.patches or [ ]) ++ [ ../../package/kaldi/openfst-bi-table-fix.patch ];
+    patches = (old.patches or [ ]) ++ [
+      ./openfst-fixes.patch
+    ];
   });
 
-  # Override kaldi-active-grammar to use patched fork
-  kaldi-active-grammar = pkgs.python313Packages.kaldi-active-grammar.overridePythonAttrs (old: {
-    buildInputs = map (
-      input:
-      if (input.pname or "") == "kaldi" then
-        (input.overrideAttrs (kaldiOld: {
-          buildInputs = map (
-            kaldiInput: if (kaldiInput.pname or "") == "openfst" then openfst-kag-patched else kaldiInput
-          ) (kaldiOld.buildInputs or [ ]);
-        }))
-      else
-        input
-    ) (old.buildInputs or [ ]);
+  # Use our custom kaldi-active-grammar package that uses patched openfst
+  kaldi-active-grammar = pkgs.python313Packages.callPackage ./kaldi-active-grammar.nix {
+    openfst = openfst-kag-patched;
+  };
 
-    meta = old.meta // {
-      platforms = lib.platforms.unix;
-    };
-  });
   dragonfly =
     (pkgs.python313Packages.dragonfly.override {
       inherit pynput kaldi-active-grammar;
@@ -88,37 +77,6 @@ let
         pythonRuntimeDepsCheck = false;
       });
 
-  # Create a patched version of openfst by copying the original and applying our fix
-  # This is a regular derivation (not a FOD) so we can use postPatch
-  openfst-patched = stdenv.mkDerivation {
-    name = "openfst-patched";
-    src = pkgs.kaldi.passthru.sources.openfst;
-
-    dontBuild = true;
-    dontConfigure = true;
-
-    postPatch = ''
-      # Fix bi-table.h copy constructor bug where it references table.s_ instead of table.selector_
-      sed -i 's/table\.s_/table.selector_/g' src/include/fst/bi-table.h
-    '';
-
-    installPhase = ''
-      cp -r . $out
-    '';
-  };
-
-  # Override kaldi to use the patched openfst source
-  kaldi = pkgs.kaldi.overrideAttrs (oldAttrs: {
-    # Update cmakeFlags to use the patched openfst
-    cmakeFlags = builtins.map (
-      flag:
-      if lib.hasPrefix "-DFETCHCONTENT_SOURCE_DIR_OPENFST" flag then
-        "-DFETCHCONTENT_SOURCE_DIR_OPENFST:PATH=${openfst-patched}"
-      else
-        flag
-    ) oldAttrs.cmakeFlags;
-  });
-
   # Package for make-it-work.py grammar script
   dragonfly-grammar = pkgs.python313Packages.buildPythonApplication {
     pname = "dragonfly-grammar";
@@ -130,7 +88,6 @@ let
 
     propagatedBuildInputs = [
       dragonfly
-      kaldi
       kaldi-active-grammar
     ];
 
