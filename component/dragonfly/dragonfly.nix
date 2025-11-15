@@ -42,6 +42,13 @@ let
     openfst = openfst-kag-patched;
   };
 
+  # Patch webrtcvad to use importlib.metadata instead of deprecated pkg_resources
+  webrtcvad = pkgs.python313Packages.webrtcvad.overrideAttrs (old: {
+    patches = (old.patches or [ ]) ++ [
+      ./webrtcvad-no-pkg-resources.patch
+    ];
+  });
+
   dragonfly =
     (pkgs.python313Packages.dragonfly.override {
       inherit pynput kaldi-active-grammar;
@@ -90,7 +97,7 @@ let
       dragonfly
       kaldi-active-grammar
       pkgs.python313Packages.sounddevice
-      pkgs.python313Packages.webrtcvad
+      webrtcvad
     ];
 
     dontBuild = true;
