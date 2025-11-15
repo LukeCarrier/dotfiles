@@ -1,5 +1,6 @@
 [settings]
 animate = true
+default_disable = true
 
 focus_follows_mouse = true
 mouse_follows_focus = true
