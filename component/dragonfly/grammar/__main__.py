@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
-#
+
+import logging
+
 from dragonfly import Function, Grammar, Key, MappingRule, Mouse, Text, get_engine
 from dragonfly.engines.backend_kaldi.dictation import UserDictation as Dictation
+
+logging.basicConfig(level=logging.DEBUG)
 
 engine = get_engine(
     "kaldi",
@@ -29,6 +33,8 @@ engine = get_engine(
 
 engine.add_word_list_to_user_dictation(["kaldi"])
 engine.add_word_dict_to_user_dictation({"open F S T": "openFST"})
+
+engine.connect()
 
 
 class TestUserDictationRule(MappingRule):
