@@ -33,6 +33,9 @@ vertical = 12
 
 [settings.ui.menu_bar]
 enabled = true
+mode = "active"
+display_style = "label"
+active_label = "name"
 
 [settings.ui.stack_line]
 enabled = false
