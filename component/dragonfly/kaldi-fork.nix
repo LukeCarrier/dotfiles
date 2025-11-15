@@ -11,6 +11,7 @@
   openblas,
   zlib,
   gfortran,
+  darwin,
 }:
 
 let
@@ -48,7 +49,7 @@ stdenv.mkDerivation rec {
         owner = "NixOS";
         repo = "nixpkgs";
         rev = "b3d51a0365f6695e7dd5cdf3e180604530ed33b4";
-        sha256 = "sha256-xEviJY/WPd78G0LY44TO1w6wTPU4l3LL/wCM+8M+YBw=";
+        sha256 = "sha256-4vhDuZ7OZaZmKKrnDpxLZZpGIJvAeMtK6FKLJYUtAdw=";
       }
       + "/pkgs/development/python-modules/kaldi-active-grammar/0004-fork-cmake.patch"
     )
@@ -57,7 +58,7 @@ stdenv.mkDerivation rec {
         owner = "NixOS";
         repo = "nixpkgs";
         rev = "b3d51a0365f6695e7dd5cdf3e180604530ed33b4";
-        sha256 = "sha256-xEviJY/WPd78G0LY44TO1w6wTPU4l3LL/wCM+8M+YBw=";
+        sha256 = "sha256-4vhDuZ7OZaZmKKrnDpxLZZpGIJvAeMtK6FKLJYUtAdw=";
       }
       + "/pkgs/development/python-modules/kaldi-active-grammar/0006-fork-configure.patch"
     )
@@ -75,6 +76,9 @@ stdenv.mkDerivation rec {
     pkg-config
     python
     gfortran
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isDarwin [
+    darwin.DarwinTools
   ];
 
   buildFlags = [
@@ -85,24 +89,56 @@ stdenv.mkDerivation rec {
     "lmbin"
   ];
 
-  postPatch = ''
+  preConfigure = ''
     patchShebangs src
+  ''
+  + lib.optionalString stdenv.hostPlatform.isDarwin ''
+    # On macOS with Accelerate, LAPACK symbols don't have LAPACK_ prefix
     substituteInPlace src/matrix/cblas-wrappers.h \
-      --replace stptri_ LAPACK_stptri \
-      --replace dtptri_ LAPACK_dtptri \
-      --replace sgetrf_ LAPACK_sgetrf \
-      --replace dgetrf_ LAPACK_dgetrf \
-      --replace sgetri_ LAPACK_sgetri \
-      --replace dgetri_ LAPACK_dgetri \
-      --replace sgesvd_ LAPACK_sgesvd \
-      --replace dgesvd_ LAPACK_dgesvd \
-      --replace ssptri_ LAPACK_ssptri \
-      --replace dsptri_ LAPACK_dsptri \
-      --replace ssptrf_ LAPACK_ssptrf \
-      --replace dsptrf_ LAPACK_dsptrf
+      --replace-warn LAPACK_stptri stptri_ \
+      --replace-warn LAPACK_dtptri dtptri_ \
+      --replace-warn LAPACK_sgetrf sgetrf_ \
+      --replace-warn LAPACK_dgetrf dgetrf_ \
+      --replace-warn LAPACK_sgetri sgetri_ \
+      --replace-warn LAPACK_dgetri dgetri_ \
+      --replace-warn LAPACK_sgesvd sgesvd_ \
+      --replace-warn LAPACK_dgesvd dgesvd_ \
+      --replace-warn LAPACK_ssptri ssptri_ \
+      --replace-warn LAPACK_dsptri dsptri_ \
+      --replace-warn LAPACK_ssptrf ssptrf_ \
+      --replace-warn LAPACK_dsptrf dsptrf_
+  ''
+  + lib.optionalString (stdenv.hostPlatform.isDarwin && stdenv.hostPlatform.isAarch64) ''
+    # Remove SSE flags for ARM64 on macOS
+    substituteInPlace src/makefiles/darwin.mk \
+      --replace-fail '-msse -msse2' ' '
   '';
 
   configurePhase = ''
+    patchShebangs src
+  ''
+  + lib.optionalString stdenv.hostPlatform.isDarwin ''
+    # On macOS with Accelerate, LAPACK symbols don't have LAPACK_ prefix
+    substituteInPlace src/matrix/cblas-wrappers.h \
+      --replace-warn LAPACK_stptri stptri_ \
+      --replace-warn LAPACK_dtptri dtptri_ \
+      --replace-warn LAPACK_sgetrf sgetrf_ \
+      --replace-warn LAPACK_dgetrf dgetrf_ \
+      --replace-warn LAPACK_sgetri sgetri_ \
+      --replace-warn LAPACK_dgetri dgetri_ \
+      --replace-warn LAPACK_sgesvd sgesvd_ \
+      --replace-warn LAPACK_dgesvd dgesvd_ \
+      --replace-warn LAPACK_ssptri ssptri_ \
+      --replace-warn LAPACK_dsptri dsptri_ \
+      --replace-warn LAPACK_ssptrf ssptrf_ \
+      --replace-warn LAPACK_dsptrf dsptrf_
+  ''
+  + lib.optionalString (stdenv.hostPlatform.isDarwin && stdenv.hostPlatform.isAarch64) ''
+    # Remove SSE flags for ARM64 on macOS
+    substituteInPlace src/makefiles/darwin.mk \
+      --replace-fail '-msse -msse2' ' '
+  ''
+  + ''
     cd src
     ./configure --shared --fst-root="${old-openfst}" --use-cuda=no --openblas-root="${openblas}" --mathlib=OPENBLAS
   '';

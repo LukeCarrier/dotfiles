@@ -38,7 +38,7 @@ buildPythonPackage rec {
         owner = "NixOS";
         repo = "nixpkgs";
         rev = "b3d51a0365f6695e7dd5cdf3e180604530ed33b4";
-        sha256 = "sha256-xEviJY/WPd78G0LY44TO1w6wTPU4l3LL/wCM+8M+YBw=";
+        sha256 = "sha256-4vhDuZ7OZaZmKKrnDpxLZZpGIJvAeMtK6FKLJYUtAdw=";
       }
       + "/pkgs/development/python-modules/kaldi-active-grammar/0001-stub.patch"
     )
@@ -47,7 +47,7 @@ buildPythonPackage rec {
         owner = "NixOS";
         repo = "nixpkgs";
         rev = "b3d51a0365f6695e7dd5cdf3e180604530ed33b4";
-        sha256 = "sha256-xEviJY/WPd78G0LY44TO1w6wTPU4l3LL/wCM+8M+YBw=";
+        sha256 = "sha256-4vhDuZ7OZaZmKKrnDpxLZZpGIJvAeMtK6FKLJYUtAdw=";
       }
       + "/pkgs/development/python-modules/kaldi-active-grammar/0002-exec-path.patch"
     )
@@ -57,7 +57,7 @@ buildPythonPackage rec {
           owner = "NixOS";
           repo = "nixpkgs";
           rev = "b3d51a0365f6695e7dd5cdf3e180604530ed33b4";
-          sha256 = "sha256-xEviJY/WPd78G0LY44TO1w6wTPU4l3LL/wCM+8M+YBw=";
+          sha256 = "sha256-4vhDuZ7OZaZmKKrnDpxLZZpGIJvAeMtK6FKLJYUtAdw=";
         }
         + "/pkgs/development/python-modules/kaldi-active-grammar/0003-ffi-path.patch"
       )
