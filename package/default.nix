@@ -38,14 +38,7 @@ in
       };
   };
 
-  
-
   rift = callPackage ./rift { };
-
-  python313Packages = import ./python-modules {
-    inherit pkgs;
-    pythonPkgs = pkgs.python313Packages;
-  };
 
   spec-kit = callPackage ./spec-kit { };
 
@@ -60,6 +53,4 @@ in
         hash = "sha256-bb8DRfkgSP7GEzrW5V1x0L47d21YF0sIftCPfEsuoEE=";
       };
   };
-
-
 }

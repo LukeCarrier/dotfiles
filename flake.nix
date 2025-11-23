@@ -88,11 +88,16 @@
       ...
     }:
     let
-      pkgsForSystem = (
+      desktopBackground = "~/Pictures/Wallpaper/Monochromatic mountains.jpg";
+      pkgsForSystem =
         { pkgs, system }:
-        (import pkgs {
-          inherit system;
-          overlays = [
+        let
+          basePkgs = import pkgs { inherit system; };
+          legacyPackages = import ./package/legacy-packages.nix { pkgs = basePkgs; };
+        in
+        {
+          inherit legacyPackages;
+          pkgs = basePkgs.appendOverlays [
             claude-code.overlays.default
             code-insiders.overlays.default
             dagger.overlays.default
@@ -117,31 +122,30 @@
                 spec-kit
                 stklos
                 ;
-python313Packages = prev.python313Packages // {
-              pyobjc-framework-Quartz = (import ./package/python-modules/pyobjc/Quartz.nix { inherit (prev) lib pkgs; pythonPkgs = prev.python313Packages; });
-              pyobjc-framework-CoreText = (import ./package/python-modules/pyobjc/CoreText.nix { inherit (prev) lib pkgs; pythonPkgs = final.python313Packages; });
-              pyobjc-framework-ApplicationServices = (import ./package/python-modules/pyobjc/ApplicationServices.nix { inherit (prev) lib pkgs; pythonPkgs = final.python313Packages; });
-              py-applescript = (import ./package/python-modules/py-applescript.nix { pkgs = prev; pythonPkgs = final.python313Packages; });
-            };
+              python313Packages = prev.python313Packages // legacyPackages.python313Packages;
               wezterm = wezterm.packages.${system}.default;
             })
           ];
-        })
-      );
-      desktopBackground = "~/Pictures/Wallpaper/Monochromatic mountains.jpg";
+        };
     in
     flake-utils.lib.eachDefaultSystem (
       system:
       let
-        pkgs = pkgsForSystem {
-          pkgs = nixpkgs-unstable;
-          system = system;
-        };
+        inherit
+          (pkgsForSystem {
+            pkgs = nixpkgs-unstable;
+            inherit system;
+          })
+          pkgs
+          legacyPackages
+          ;
       in
       {
         devShells = import ./shell { inherit pkgs; };
 
         packages = import ./package { inherit pkgs; };
+
+        inherit legacyPackages;
       }
     )
     // (import ./system {
