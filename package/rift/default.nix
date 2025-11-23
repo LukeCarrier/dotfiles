@@ -17,7 +17,7 @@ rustPlatform.buildRustPackage rec {
   cargoHash = "sha256-A0huWauj3Ltnw39jFft6pyYUVcNK+lu89ZlVQl/aRZg=";
 
   # acsandmann/rift#11
-  doCheck = true;
+  doCheck = false;
 
   meta = with lib; {
     description = "A tiling window manager for macOS";
