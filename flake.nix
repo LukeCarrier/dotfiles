@@ -108,6 +108,26 @@
             (final: prev: {
               niri = niri.packages.${system}.niri-unstable;
             })
+            # https://github.com/NixOS/nixpkgs/pull/463322
+            (final: prev: {
+              ollama = prev.ollama.overrideAttrs (oldAttrs: {
+                npmDeps = prev.fetchNpmDeps {
+                  src = "${oldAttrs.src}/app/ui/app";
+                  hash = "sha256-VokHB501c8GJVqPcBEN+x3lOR161e4VCPg1ggbNJCP0=";
+                };
+                npmRoot = "app/ui/app";
+                nativeBuildInputs = oldAttrs.nativeBuildInputs ++ [
+                  prev.nodejs
+                  prev.npmHooks.npmConfigHook
+                ];
+                preBuild = ''
+                  pushd app/ui/app
+                  npm run build
+                  popd
+                ''
+                + (oldAttrs.preBuild or "");
+              });
+            })
             (final: prev: {
               inherit (self.packages.${system})
                 aws-cli-tools
