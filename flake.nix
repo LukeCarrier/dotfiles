@@ -137,6 +137,7 @@
                 kubernetes-client-tools
                 mcp-remote
                 monaspace-fonts
+                opencode
                 rift
                 spec-kit
                 stklos
