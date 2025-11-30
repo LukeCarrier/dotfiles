@@ -29,6 +29,10 @@
       inputs.nixpkgs.follows = "nixpkgs-unstable";
       inputs.rust-overlay.follows = "rust-overlay";
     };
+    opencode = {
+      url = "github:sst/opencode/dev";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
     niri = {
       url = "github:sodiboo/niri-flake";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
@@ -80,6 +84,7 @@
       nix-vscode-extensions,
       nixpkgs-unstable,
       nur,
+      opencode,
       rust-overlay,
       sops-nix,
       wezterm,
@@ -106,6 +111,7 @@
             rust-overlay.overlays.default
             (final: prev: {
               niri = niri.packages.${system}.niri-unstable;
+              opencode = opencode.packages.${system}.default;
             })
             # https://github.com/NixOS/nixpkgs/pull/463322
             (final: prev: {
@@ -137,7 +143,6 @@
                 kubernetes-client-tools
                 mcp-remote
                 monaspace-fonts
-                opencode
                 rift
                 spec-kit
                 stklos

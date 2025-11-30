@@ -38,8 +38,6 @@ in
       };
   };
 
-  opencode = callPackage ./opencode { };
-
   rift = callPackage ./rift { };
 
   spec-kit = callPackage ./spec-kit { };
