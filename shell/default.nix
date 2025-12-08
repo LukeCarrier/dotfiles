@@ -1,5 +1,6 @@
 { pkgs }:
 let
+  inherit (pkgs) stdenv;
   mkToolVersions =
     name: commands:
     let
@@ -14,6 +15,18 @@ let
       allowSubstitutes = false;
     } versionScript;
 
+  mkCorepack =
+    nodejs:
+    stdenv.mkDerivation {
+      pname = "corepack";
+      version = "${nodejs.version}";
+      buildInputs = [ nodejs ];
+      phases = [ "installPhase" ];
+      installPhase = ''
+        mkdir -p $out/bin
+        corepack enable --install-directory=$out/bin
+      '';
+    };
   mkNodeDevShell =
     name: nodejs:
     let
@@ -38,6 +51,7 @@ let
       nativeBuildInputs = [
         pkgs.bun
         nodejs
+        (mkCorepack nodejs)
         (pkgs.pnpm.override { inherit nodejs; })
         (pkgs.typescript-language-server.override { inherit nodejs; })
         (pkgs.yarn.override { inherit nodejs; })
