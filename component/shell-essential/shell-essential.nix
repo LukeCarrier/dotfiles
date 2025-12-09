@@ -7,6 +7,7 @@
       btop
       freshfetch
       pv
+      unixtools.watch
       watchexec
 
       # Development tools
