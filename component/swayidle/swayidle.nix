@@ -2,19 +2,13 @@
 let
   brightnessctl = "${pkgs.brightnessctl}/bin/brightnessctl";
   systemctl = "${pkgs.systemd}/bin/systemctl";
-  lockCmd =
-    (builtins.head (builtins.filter (e: e.event == "lock") config.services.swayidle.events)).command;
+  lockCmd = config.services.swayidle.events.lock;
 in
 {
   services.swayidle = {
     enable = true;
 
-    events = [
-      {
-        event = "before-sleep";
-        command = lockCmd;
-      }
-    ];
+    events.before-sleep = lockCmd;
 
     timeouts = [
       {

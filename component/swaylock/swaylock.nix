@@ -6,12 +6,9 @@ in
 {
   services.hypridle.settings.general.lock_cmd = lockCmd;
 
-  services.swayidle.events = [
-    {
-      event = "lock";
-      command = lockCmd;
-    }
-  ];
+  services.swayidle.events = {
+    lock = lockCmd;
+  };
 
   programs.swaylock = {
     enable = true;
