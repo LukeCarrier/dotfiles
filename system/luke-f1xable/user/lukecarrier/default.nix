@@ -53,10 +53,12 @@
     ../../../../component/kubernetes-client/kubernetes-client.nix
   ];
 
-  home.stateVersion = "24.05";
+  home = {
+    stateVersion = "24.05";
 
-  home.username = "lukecarrier";
-  home.homeDirectory = "/home/lukecarrier";
+    username = "lukecarrier";
+    homeDirectory = "/home/lukecarrier";
+  };
 
   nixpkgs.config.allowUnfreePredicate =
     pkg:
