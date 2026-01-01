@@ -6,6 +6,7 @@
   imports = [
     ../../hw/macbook.nix
     ../../platform/darwin/common.nix
+    ../../platform/darwin/linux-builder.nix
     inputs.sops-nix.darwinModules.sops
     ../../component/wifiman/darwin.nix
     ../../component/logseq/darwin.nix
