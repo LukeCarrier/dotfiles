@@ -4,7 +4,7 @@ set -eu -o pipefail
 
 profile_name="$1"
 expr="$(printf '.["profile %s"]' "$profile_name")"
-profile="$(jc --ini <"$HOME/.aws/config" | jq "$expr")"
+profile="$(jc --ini <"${AWS_CONFIG_FILE:-$HOME/.aws/config}" | jq "$expr")"
 if [[ "$profile" == "null" ]]; then
   echo "Unable to match profile"
   exit 1
