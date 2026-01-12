@@ -98,8 +98,13 @@ in
             bing.metaData.hidden = true;
             ebay.metaData.hidden = true;
             google.metaData.hidden = true;
+            "policy-DuckDuckGo Lite".metaData.hidden = true;
+            policy-MetaGer.metaData.hidden = true;
+            policy-Mojeek.metaData.hidden = true;
+            "policy-SearXNG - searx.be".metaData.hidden = true;
+            policy-StartPage.metaData.hidden = true;
 
-            "GitHub" = {
+            GitHub = {
               definedAliases = [ "gh" ];
               urls = [
                 { template = "https://github.com/{searchTerms}"; }
@@ -135,7 +140,7 @@ in
               ];
             };
 
-            "Perplexity" = {
+            Perplexity = {
               definedAliases = [ "p" ];
               urls = [
                 { template = "https://www.perplexity.ai/search?focus=internet&q={searchTerms}"; }
