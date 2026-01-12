@@ -53,12 +53,13 @@ in
         (with pkgs; [
           nodejs
           npmHooks.npmInstallHook
-          pnpm.configHook
+          pnpm
+          pnpmConfigHook
           typescript
         ])
         ++ (pkg.nativeBuildInputs or [ ]);
 
-      pnpmDeps = pkgs.pnpm.fetchDeps {
+      pnpmDeps = pkgs.fetchPnpmDeps {
         inherit (pkg) pname version src;
         fetcherVersion = pkg.pnpmDepsFetcherVersion;
         hash = pkg.pnpmDepsHash;
