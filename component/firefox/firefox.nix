@@ -15,7 +15,7 @@ let
   inherit (pkgs) lib stdenv;
 in
 {
-  home.packages = lib.mkIf (!stdenv.isDarwin) [ firefoxpwa ];
+  home.packages = (if !stdenv.isDarwin then [ firefoxpwa ] else [ ]) ++ [ pkgs.mozlz4a ];
 
   # FIXME: pure evaluation mode prevents this:
   # home.file.".librewolf/native-messaging-hosts".source = "${config.home.homeDirectory}/.mozilla/native-messaging-hosts";
