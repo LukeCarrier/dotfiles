@@ -1,4 +1,4 @@
-{ pkgs }:
+{ lib, pkgs }:
 let
   inherit (pkgs) stdenv;
   mkToolVersions =
@@ -61,28 +61,40 @@ in
 {
   default =
     let
+      inherit (lib) getExe getExe';
+      inherit (pkgs)
+        age
+        gnumake
+        nil
+        nixd
+        nix-index
+        nixfmt
+        ssh-to-age
+        sops
+        treefmt
+        ;
       toolVersions = mkToolVersions "default" ''
-        printf "age %s\n" "$(${pkgs.age}/bin/age --version 2>&1 | head -n 1)"
-        ${pkgs.gnumake}/bin/make --version | head -n 1
-        ${pkgs.nil}/bin/nil --version 2>&1 | head -n 1
-        ${pkgs.nixd}/bin/nixd --version 2>&1 | head -n 1
-        ${pkgs.nix-index}/bin/nix-locate --version 2>&1 | head -n 1
-        ${pkgs.nixfmt-rfc-style}/bin/nixfmt --version 2>&1 | head -n 1
-        ${pkgs.sops}/bin/sops --version 2>&1 | head -n 1
-        ${pkgs.treefmt}/bin/treefmt --version 2>&1 | head -n 1
+        printf "age %s\n" "$(${getExe age} --version 2>&1 | head -n 1)"
+        ${getExe gnumake} --version | head -n 1
+        ${getExe nil} --version 2>&1 | head -n 1
+        ${getExe nixd} --version 2>&1 | head -n 1
+        ${getExe' nix-index "nix-locate"} --version 2>&1 | head -n 1
+        ${getExe nixfmt} --version 2>&1 | head -n 1
+        ${getExe sops} --version 2>&1 | head -n 1
+        ${getExe treefmt} --version 2>&1 | head -n 1
       '';
     in
     pkgs.mkShell {
       shellHook = ''
         cat ${toolVersions}
       '';
-      nativeBuildInputs = with pkgs; [
+      nativeBuildInputs = [
         age
         gnumake
         nil
         nixd
         nix-index
-        nixfmt-rfc-style
+        nixfmt
         ssh-to-age
         sops
         treefmt
