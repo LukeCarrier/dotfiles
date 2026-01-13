@@ -80,12 +80,6 @@ in
     path = "${config.home.homeDirectory}/.yarnrc.yml";
   };
 
-  sops.secrets.pip-extra-index-urls-babylon = {
-    sopsFile = ../../secrets/employer-emed.yaml;
-    format = "yaml";
-    key = "pip/extra_index_urls/babylon";
-  };
-
   sops.secrets.emed-mini-platforms = {
     sopsFile = ../../secrets/employer-emed.yaml;
     format = "yaml";
@@ -97,15 +91,11 @@ in
     emed-mini-platform() {
       eval "$(${selectMiniplatform}/bin/emed-mini-platform)"
     }
-
-    export PIP_EXTRA_INDEX_URL_BABYLON="$(cat "${config.sops.secrets.pip-extra-index-urls-babylon.path}")"
   '';
   programs.fish.functions.emed-mini-platform = ''
     ${selectMiniplatform}/bin/emed-mini-platform | source
   '';
-  programs.fish.shellInit = ''
-    export PIP_EXTRA_INDEX_URL_BABYLON="$(cat "${config.sops.secrets.pip-extra-index-urls-babylon.path}")"
-  '';
+  programs.fish.shellInit = "";
   programs.zsh.initContent = config.programs.bash.initExtra;
 
   programs.librewolf.profiles.default =
