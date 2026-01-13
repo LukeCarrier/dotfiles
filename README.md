@@ -68,3 +68,16 @@ make host home
 ```
 
 Note that Android and macOS have their own dedicated host targets (`host-android` and `host-darwin` respectively).
+
+## Rotating credentials
+
+### Checking GitHub personal access tokens
+
+```shell
+export GH_TOKEN=(gh auth token)
+curl -L \
+    -H "Accept: application/vnd.github+json" \
+    -H "X-GitHub-Api-Version: 2022-11-28" \
+    -H "Authorization: Bearer $GH_TOKEN" \
+    https://api.github.com/rate_limit
+```
