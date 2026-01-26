@@ -42,5 +42,6 @@ in
   home.file = {
     ".config/opencode/AGENTS.md".source = ./AGENTS.md;
     ".config/opencode/agent/container-use.md".source = ./agent/container-use.md;
+    ".config/opencode/agent/explore.md".source = ./agent/explore.md;
   };
 }
