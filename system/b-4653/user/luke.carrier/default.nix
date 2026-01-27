@@ -1,4 +1,5 @@
 {
+  config,
   lib,
   pkgs,
   inputs,
@@ -64,18 +65,96 @@ in
   # FIXME: should we be keeping all of this cruft in a devShell?
   home.packages = with pkgs; [ docker-cli-tools ];
 
-  sops.secrets.opencode-github-token.sopsFile = pkgs.lib.mkForce ../../../../secrets/employer-emed.yaml;
+  sops.secrets = {
+    opencode-github-token.sopsFile = pkgs.lib.mkForce ../../../../secrets/employer-emed.yaml;
+
+    coralogix-uk-nonprod-api-key = {
+      sopsFile = pkgs.lib.mkDefault ../../../../secrets/employer-emed.yaml;
+      format = "yaml";
+      key = "coralogix/uk-nonprod";
+    };
+    coralogix-uk-prod-api-key = {
+      sopsFile = pkgs.lib.mkDefault ../../../../secrets/employer-emed.yaml;
+      format = "yaml";
+      key = "coralogix/uk-prod";
+    };
+    coralogix-us-nonprod-api-key = {
+      sopsFile = pkgs.lib.mkDefault ../../../../secrets/employer-emed.yaml;
+      format = "yaml";
+      key = "coralogix/us-nonprod";
+    };
+    coralogix-us-prod-api-key = {
+      sopsFile = pkgs.lib.mkDefault ../../../../secrets/employer-emed.yaml;
+      format = "yaml";
+      key = "coralogix/us-prod";
+    };
+  };
 
   opencode.mcpConfigurations = {
     container-use = {
       type = "local";
-      command = [ "${getExe' pkgs.container-use "container-use"}" "stdio" ];
+      command = [
+        "${getExe' pkgs.container-use "container-use"}"
+        "stdio"
+      ];
     };
     github = {
       type = "local";
-      command = [ "${getExe pkgs.github-mcp-server}" "stdio" ];
+      command = [
+        "${getExe pkgs.github-mcp-server}"
+        "stdio"
+      ];
       env.GITHUB_PERSONAL_ACCESS_TOKEN = "@TOKEN@";
       secrets."@TOKEN@" = config.sops.placeholder.opencode-github-token;
+    };
+
+    coralogix-uk-nonprod = {
+      type = "local";
+      command = [
+        "mcp-remote"
+        "https://api.eu2.coralogix.com/mgmt/api/v1/mcp"
+        "--header"
+        "Authorization: Bearer @CORALOGIX_UK_NONPROD_API_KEY@"
+      ];
+      secrets = {
+        "@CORALOGIX_UK_NONPROD_API_KEY@" = config.sops.placeholder.coralogix-uk-nonprod-api-key;
+      };
+    };
+    coralogix-uk-prod = {
+      type = "local";
+      command = [
+        "mcp-remote"
+        "https://api.eu2.coralogix.com/mgmt/api/v1/mcp"
+        "--header"
+        "Authorization: Bearer @CORALOGIX_UK_PROD_API_KEY@"
+      ];
+      secrets = {
+        "@CORALOGIX_UK_PROD_API_KEY@" = config.sops.placeholder.coralogix-uk-prod-api-key;
+      };
+    };
+    coralogix-us-nonprod = {
+      type = "local";
+      command = [
+        "mcp-remote"
+        "https://api.us1.coralogix.com/mgmt/api/v1/mcp"
+        "--header"
+        "Authorization: Bearer @CORALOGIX_US_NONPROD_API_KEY@"
+      ];
+      secrets = {
+        "@CORALOGIX_US_NONPROD_API_KEY@" = config.sops.placeholder.coralogix-us-nonprod-api-key;
+      };
+    };
+    coralogix-us-prod = {
+      type = "local";
+      command = [
+        "mcp-remote"
+        "https://api.us1.coralogix.com/mgmt/api/v1/mcp"
+        "--header"
+        "Authorization: Bearer @CORALOGIX_US_PROD_API_KEY@"
+      ];
+      secrets = {
+        "@CORALOGIX_US_PROD_API_KEY@" = config.sops.placeholder.coralogix-us-prod-api-key;
+      };
     };
   };
 }
