@@ -12,26 +12,12 @@ let
   };
 in
 {
-  # Environment variables for differnt LLM providers:
-  # - AWS Bedrock
-  #   - ZED_AWS_ACCESS_KEY_ID
-  #   - ZED_AWS_SECRET_ACCESS_KEY
-  #   - ZED_AWS_REGION
-  #   - ZED_AWS_PROFILE
-  # - Anthropic
-  #   - ANTHROPIC_API_KEY
-  # - OpenAI
   programs.zed-editor = {
     enable = true;
     package = if stdenv.hostPlatform.isDarwin then dummy else pkgs.zed-editor;
 
     extensions = [
       "tokyo-night"
-
-      "mcp-server-github"
-      "mcp-server-grafana"
-      "mcp-server-slack"
-      "pollinations-mcp"
     ];
 
     userSettings = {
