@@ -1,4 +1,16 @@
-{ ... }:
+{ pkgs, ... }:
+let
+  inherit (pkgs) stdenv;
+  dummy = stdenv.mkDerivation {
+    pname = "dummy";
+    version = "0";
+
+    phases = [ "installPhase" ];
+    installPhase = ''
+      mkdir -p $out/bin
+    '';
+  };
+in
 {
   # Environment variables for differnt LLM providers:
   # - AWS Bedrock
@@ -11,6 +23,7 @@
   # - OpenAI
   programs.zed-editor = {
     enable = true;
+    package = if stdenv.hostPlatform.isDarwin then dummy else pkgs.zed-editor;
 
     extensions = [
       "tokyo-night"

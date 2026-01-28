@@ -34,6 +34,7 @@
     ../../../../component/helix/helix.nix
     ../../../../component/vscode/vscode.nix
     ../../../../component/vim/vim.nix
+    ../../../../component/zed/zed.nix
     ../../../../component/gnupg/gnupg.nix
     ../../../../component/git/git.nix
     ../../../../component/jj/jj.nix
