@@ -10,6 +10,7 @@
     inputs.sops-nix.darwinModules.sops
     ../../component/wifiman/darwin.nix
     ../../component/logseq/darwin.nix
+    ../../component/opencode/darwin.nix
     ../../component/zed/darwin.nix
   ];
 

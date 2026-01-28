@@ -15,6 +15,7 @@
     ../../component/jetbrains-toolbox/darwin.nix
     ../../component/vscode/darwin.nix
     ../../component/logseq/darwin.nix
+    ../../component/opencode/darwin.nix
     ../../component/zed/darwin.nix
   ];
 
