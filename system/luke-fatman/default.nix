@@ -32,6 +32,7 @@
       "mas"
     ];
     casks = [
+      "handy"
       "messenger"
       "signal"
       "telegram"
