@@ -1,0 +1,4 @@
+# OpenCode (if run with default config path overridden)
+/node_modules/
+/package.json
+/bun.lock
