@@ -4,8 +4,6 @@
     linux-builder = {
       enable = true;
 
-      config.nix.settings.sandbox = false;
-
       ephemeral = true;
       maxJobs = 4;
       supportedFeatures = [ "kvm" "benchmark" "big-parallel" "nixos-test" ];
