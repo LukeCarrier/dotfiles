@@ -82,4 +82,18 @@
   ];
 
   sops.age.keyFile = "${config.home.homeDirectory}/Code/LukeCarrier/dotfiles/.sops/keys";
+
+  opencode.mcpConfigurations = {
+    github = {
+      type = "local";
+      command = [ "${pkgs.github-mcp-server}/bin/github-mcp-server" "stdio" ];
+      url = null;
+      env = {
+        GITHUB_PERSONAL_ACCESS_TOKEN = "@TOKEN@";
+      };
+      secrets = {
+        "@TOKEN@" = config.sops.placeholder.opencode-github-token;
+      };
+    };
+  };
 }

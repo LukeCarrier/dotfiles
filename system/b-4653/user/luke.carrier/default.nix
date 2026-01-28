@@ -62,4 +62,18 @@
   home.packages = with pkgs; [ docker-cli-tools ];
 
   sops.secrets.opencode-github-token.sopsFile = pkgs.lib.mkForce ../../../../secrets/employer-emed.yaml;
+
+  opencode.mcpConfigurations = {
+    github = {
+      type = "local";
+      command = [ "${pkgs.github-mcp-server}/bin/github-mcp-server" "stdio" ];
+      url = null;
+      env = {
+        GITHUB_PERSONAL_ACCESS_TOKEN = "@TOKEN@";
+      };
+      secrets = {
+        "@TOKEN@" = config.sops.placeholder.opencode-github-token;
+      };
+    };
+  };
 }
