@@ -4,7 +4,9 @@
 {
   "$schema": "https://opencode.ai/config.json",
 
-  "plugin": ["opencode-gemini-auth"],
+  "plugin": [
+    "opencode-gemini-auth@1.3.8"
+  ],
 
   "keybinds": {
     // Enter newlines by default, require modifier for submit
