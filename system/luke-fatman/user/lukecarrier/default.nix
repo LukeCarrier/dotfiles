@@ -21,7 +21,6 @@
     ../../../../component/direnv/direnv.nix
     ../../../../component/firefox/firefox.nix
     ../../../../component/rift/rift.nix
-    # ../../../../component/dragonfly/dragonfly.nix
     ../../../../component/container-use/container-use.nix
     ../../../../component/ollama/ollama.nix
     ../../../../component/opencode/opencode.nix
