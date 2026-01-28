@@ -111,8 +111,13 @@ in
 
     home.file = {
       ".config/opencode/AGENTS.md".source = ./AGENTS.md;
+      ".config/opencode/agent/adrian.md".source = ./agent/adrian.md;
       ".config/opencode/agent/container-use.md".source = ./agent/container-use.md;
       ".config/opencode/agent/explore.md".source = ./agent/explore.md;
+      ".config/opencode/commands/adr.implement.md".source = ./commands/adr.implement.md;
+      ".config/opencode/commands/adr.plan.md".source = ./commands/adr.plan.md;
+      ".config/opencode/commands/adr.specify.md".source = ./commands/adr.specify.md;
+      ".config/opencode/commands/adr.tasks.md".source = ./commands/adr.tasks.md;
     };
   };
 }
