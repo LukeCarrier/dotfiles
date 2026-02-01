@@ -4,6 +4,9 @@
   inputs,
   ...
 }:
+let
+  inherit (lib) getExe getExe';
+in
 {
   imports = [
     inputs.sops-nix.homeManagerModules.sops
@@ -64,16 +67,15 @@
   sops.secrets.opencode-github-token.sopsFile = pkgs.lib.mkForce ../../../../secrets/employer-emed.yaml;
 
   opencode.mcpConfigurations = {
+    container-use = {
+      type = "local";
+      command = [ "${getExe' pkgs.container-use "container-use"}" "stdio" ];
+    };
     github = {
       type = "local";
-      command = [ "${pkgs.github-mcp-server}/bin/github-mcp-server" "stdio" ];
-      url = null;
-      env = {
-        GITHUB_PERSONAL_ACCESS_TOKEN = "@TOKEN@";
-      };
-      secrets = {
-        "@TOKEN@" = config.sops.placeholder.opencode-github-token;
-      };
+      command = [ "${getExe pkgs.github-mcp-server}" "stdio" ];
+      env.GITHUB_PERSONAL_ACCESS_TOKEN = "@TOKEN@";
+      secrets."@TOKEN@" = config.sops.placeholder.opencode-github-token;
     };
   };
 }

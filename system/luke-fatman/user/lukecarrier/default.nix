@@ -5,6 +5,9 @@
   pkgs,
   ...
 }:
+let
+  inherit (lib) getExe getExe' getName;
+in
 {
   imports = [
     inputs.sops-nix.homeManagerModules.sops
@@ -59,13 +62,13 @@
     # XXX: what the fuck is wrong with this!??!??!??!?!
     allowBrokenPredicate =
       pkg:
-      builtins.elem (lib.getName pkg) [
+      builtins.elem (getName pkg) [
         "python3.13-pynput-1.8.1"
       ];
 
     allowUnfreePredicate =
       pkg:
-      builtins.elem (lib.getName pkg) [
+      builtins.elem (getName pkg) [
         "claude-code"
         "code"
         "terraform"
@@ -84,16 +87,15 @@
   sops.age.keyFile = "${config.home.homeDirectory}/Code/LukeCarrier/dotfiles/.sops/keys";
 
   opencode.mcpConfigurations = {
+    container-use = {
+      type = "local";
+      command = [ "${getExe' pkgs.container-use "container-use"}" "stdio" ];
+    };
     github = {
       type = "local";
-      command = [ "${pkgs.github-mcp-server}/bin/github-mcp-server" "stdio" ];
-      url = null;
-      env = {
-        GITHUB_PERSONAL_ACCESS_TOKEN = "@TOKEN@";
-      };
-      secrets = {
-        "@TOKEN@" = config.sops.placeholder.opencode-github-token;
-      };
+      command = [ "${getExe pkgs.github-mcp-server}" "stdio" ];
+      env.GITHUB_PERSONAL_ACCESS_TOKEN = "@TOKEN@";
+      secrets."@TOKEN@" = config.sops.placeholder.opencode-github-token;
     };
   };
 }
