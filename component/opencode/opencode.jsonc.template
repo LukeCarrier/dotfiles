@@ -7,9 +7,9 @@
   "plugin": [
     "@tarquinen/opencode-dcp@2.0.0",
     "opencode-smart-title@1.0.3",
-    "opencode-anthropic-auth@0.0.13",
-    "opencode-antigravity-auth@1.3.2",
-    //"opencode-gemini-auth@1.4.3",
+    "opencode-anthropic-auth@*",
+    "opencode-antigravity-auth@*",
+    //"opencode-gemini-auth@*",
   ],
 
   "keybinds": {
