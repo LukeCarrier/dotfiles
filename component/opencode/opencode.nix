@@ -23,27 +23,27 @@ let
     let
       placeholders = builtins.attrNames mcpDef.secrets;
       replacements = map (p: mcpDef.secrets.${p}) placeholders;
-      
+
       substituteString = text:
         if placeholders != [] then
           builtins.replaceStrings placeholders replacements text
         else
           text;
-      
+
       baseMcp = {
         inherit (mcpDef) type;
       };
-      
+
       mcpWithUrl = if mcpDef.url != null then
         baseMcp // { url = mcpDef.url; }
       else
         baseMcp;
-      
+
       mcpWithCommand = if mcpDef.command != [] then
         mcpWithUrl // { command = map substituteString mcpDef.command; }
       else
         mcpWithUrl;
-      
+
       mcpWithEnv = if mcpDef.env != {} then
         mcpWithCommand // { environment = lib.mapAttrs (name: value: substituteString value) mcpDef.env; }
       else
