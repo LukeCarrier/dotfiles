@@ -14,6 +14,7 @@ subtask: false
 1. Focus on one task at a time. Complete it fully before moving to the next.
 2. Regularly check that the implementation matches the specification.
 3. Write tests that validate the specification requirements, not just the code.
+4. Check completed tasks off in `tasks.md` to indicate progress.
 
 ### After implementation
 
