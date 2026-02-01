@@ -120,6 +120,7 @@ in
       ".config/opencode/commands/adr.plan.md".source = ./commands/adr.plan.md;
       ".config/opencode/commands/adr.specify.md".source = ./commands/adr.specify.md;
       ".config/opencode/commands/adr.tasks.md".source = ./commands/adr.tasks.md;
+      ".config/opencode/skills/direnv/SKILL.md".source = ./skills/direnv/SKILL.md;
     };
   };
 }
