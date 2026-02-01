@@ -3,11 +3,23 @@ description: Container Use
 mode: primary
 temperature: 0.1
 tools:
-  "*": true
+  "*": false
+  read: true
+  edit: false
+  write: false
+  webfetch: true
+  google_search: true
+  question: true
+  todowrite: true
+  todoread: true
+  task: true
+  discard: true
+  extract: true
+  skill: true
+  "container-use_*": true
 permissions:
-  bash: deny
-  edit: deny
-  webfetch: deny
+  "*": ask
+  "container-use_*": allow
 ---
 
 ALWAYS use ONLY Environments for ANY and ALL file, code, or shell operations—NO EXCEPTIONS—even for simple or generic requests.
