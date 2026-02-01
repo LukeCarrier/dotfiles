@@ -113,7 +113,9 @@ in
       ".config/opencode/AGENTS.md".source = ./AGENTS.md;
       ".config/opencode/agent/adrian.md".source = ./agent/adrian.md;
       ".config/opencode/agent/container-use.md".source = ./agent/container-use.md;
-      ".config/opencode/agent/explore.md".source = ./agent/explore.md;
+      ".config/opencode/agent/edmund.md".source = ./agent/edmund.md;
+      ".config/opencode/agent/quest.md".source = ./agent/quest.md;
+      ".config/opencode/agent/scout.md".source = ./agent/scout.md;
       ".config/opencode/commands/adr.implement.md".source = ./commands/adr.implement.md;
       ".config/opencode/commands/adr.plan.md".source = ./commands/adr.plan.md;
       ".config/opencode/commands/adr.specify.md".source = ./commands/adr.specify.md;
