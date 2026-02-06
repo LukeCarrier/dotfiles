@@ -89,11 +89,11 @@ in
   opencode.mcpConfigurations = {
     container-use = {
       type = "local";
-      command = [ "${getExe' pkgs.container-use "container-use"}" "stdio" ];
+      command = [ (getExe' pkgs.container-use "container-use") "stdio" ];
     };
     github = {
       type = "local";
-      command = [ "${getExe pkgs.github-mcp-server}" "stdio" ];
+      command = [ (getExe pkgs.github-mcp-server) "stdio" ];
       env.GITHUB_PERSONAL_ACCESS_TOKEN = "@TOKEN@";
       secrets."@TOKEN@" = config.sops.placeholder.opencode-github-token;
     };
