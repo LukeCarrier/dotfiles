@@ -14,7 +14,7 @@
 
   "keybinds": {
     // Enter newlines by default, require modifier for submit
-    "input_submit": "shift+enter",
+    "input_submit": "ctrl+enter",
     "input_newline": "enter",
   },
 
