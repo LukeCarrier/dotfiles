@@ -22,6 +22,8 @@ in
     };
   };
 
+  excalidraw-mcp-app = callPackage ./excalidraw-mcp-app { };
+
   kubernetes-client-tools = callPackage ./kubernetes-client-tools { };
 
   mcp-remote = callPackage ./mcp-remote { };

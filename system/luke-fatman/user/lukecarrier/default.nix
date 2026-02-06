@@ -84,6 +84,10 @@ in
       type = "local";
       command = [ (getExe' pkgs.container-use "container-use") "stdio" ];
     };
+    excalidraw = {
+      type = "local";
+      command = [ (getExe' pkgs.excalidraw-mcp-app "excalidraw-mcp-app") "--stdio" ];
+    };
     github = {
       type = "local";
       command = [ (getExe pkgs.github-mcp-server) "stdio" ];
