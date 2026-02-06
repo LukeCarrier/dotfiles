@@ -116,6 +116,7 @@ in
       ".config/opencode/agent/edmund.md".source = ./agent/edmund.md;
       ".config/opencode/agent/quest.md".source = ./agent/quest.md;
       ".config/opencode/agent/scout.md".source = ./agent/scout.md;
+      ".config/opencode/antigravity.json".source = ./antigravity.json;
       ".config/opencode/commands/adr.implement.md".source = ./commands/adr.implement.md;
       ".config/opencode/commands/adr.plan.md".source = ./commands/adr.plan.md;
       ".config/opencode/commands/adr.reflect.md".source = ./commands/adr.reflect.md;
