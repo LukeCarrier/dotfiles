@@ -59,13 +59,6 @@ in
     allowBroken = true;
     allowUnsupportedSystem = true;
 
-    # XXX: what the fuck is wrong with this!??!??!??!?!
-    allowBrokenPredicate =
-      pkg:
-      builtins.elem (getName pkg) [
-        "python3.13-pynput-1.8.1"
-      ];
-
     allowUnfreePredicate =
       pkg:
       builtins.elem (getName pkg) [
