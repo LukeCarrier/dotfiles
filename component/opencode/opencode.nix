@@ -112,8 +112,8 @@ in
     home.file = {
       ".config/opencode/AGENTS.md".source = ./AGENTS.md;
       ".config/opencode/agent/adrian.md".source = ./agent/adrian.md;
-      ".config/opencode/agent/container-use.md".source = ./agent/container-use.md;
       ".config/opencode/agent/edmund.md".source = ./agent/edmund.md;
+      ".config/opencode/agent/litterbox.md".source = ./agent/litterbox.md;
       ".config/opencode/agent/quest.md".source = ./agent/quest.md;
       ".config/opencode/agent/scout.md".source = ./agent/scout.md;
       ".config/opencode/antigravity.json".source = ./antigravity.json;
