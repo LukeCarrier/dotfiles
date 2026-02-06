@@ -113,23 +113,13 @@
               niri = niri.packages.${system}.niri-unstable;
               opencode = opencode.packages.${system}.default;
             })
-            (final: prev: {
-              inherit (self.packages.${system})
-                aws-cli-tools
-                bw-cli-tools
-                docker-cli-tools
-                dotfiles-meta
-                eww-niri-workspaces
-                kubernetes-client-tools
-                mcp-remote
-                monaspace-fonts
-                rift
-                spec-kit
-                stklos
-                ;
-              python313Packages = prev.python313Packages // legacyPackages.python313Packages;
-              wezterm = wezterm.packages.${system}.default;
-            })
+            (final: prev:
+              self.packages.${system}
+              // {
+                python313Packages = prev.python313Packages // legacyPackages.python313Packages;
+                wezterm = wezterm.packages.${system}.default;
+              }
+            )
           ];
         };
     in
