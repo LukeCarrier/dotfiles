@@ -1,5 +1,6 @@
 ---
 description: Explorer
+color: "#b4cf66"
 mode: primary
 temperature: 0.1
 tools:

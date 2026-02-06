@@ -1,5 +1,6 @@
 ---
 description: Security Analyst
+color: "#f50000"
 mode: subagent
 model: github-copilot/claude-sonnet-4.5
 temperature: 0.1
