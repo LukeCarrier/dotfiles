@@ -10,6 +10,9 @@ let
   awsSsoGenProfiles = pkgs.writeShellScriptBin "aws-sso-gen-profiles" (
     builtins.readFile ./aws-sso-gen-profiles
   );
+  awsWithSsoProfile = pkgs.writeShellScriptBin "aws-with-sso-profile" (
+    builtins.readFile ./aws-with-sso-profile
+  );
 in
 pkgs.symlinkJoin {
   pname = "aws-cli-tools";
@@ -19,6 +22,7 @@ pkgs.symlinkJoin {
     awsEcrAuth
     awsEksUpdateKubeconfig
     awsSsoGenProfiles
+    awsWithSsoProfile
   ]
   ++ (with pkgs; [
     awscli2

@@ -1,0 +1,20 @@
+# Usage: aws-with-sso-profile <profile> [command...]
+# Exports AWS SSO credentials as environment variables and runs a command in that context.
+
+set -eu -o pipefail
+
+creds="$(aws configure export-credentials || {
+  echo "Failed to export credentials" >&2
+  exit 1
+})"
+access_key=$(echo "$creds" | jq -r '.AccessKeyId')
+secret_key=$(echo "$creds" | jq -r '.SecretAccessKey')
+expiration=$(echo "$creds" | jq -r '.Expiration')
+
+echo "Exporting AWS SSO credentials for $AWS_PROFILE (expires: $expiration)" >&2
+if [[ -z "$access_key" || "$access_key" == "null" ]]; then
+  echo "Failed to parse AccessKeyId from credentials" >&2
+  exit 1
+fi
+
+env AWS_ACCESS_KEY_ID="$access_key" AWS_SECRET_ACCESS_KEY="$secret_key" AWS_PROFILE="$AWS_PROFILE" "$@"
