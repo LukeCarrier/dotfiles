@@ -6,7 +6,6 @@
 
   "plugin": [
     "@tarquinen/opencode-dcp@2.0.0",
-    "opencode-smart-title@1.0.3",
     "opencode-anthropic-auth@*",
     "opencode-antigravity-auth@*",
     //"opencode-gemini-auth@*",
