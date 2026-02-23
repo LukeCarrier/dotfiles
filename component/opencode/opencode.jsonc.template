@@ -6,6 +6,7 @@
 
   "plugin": [
     "@tarquinen/opencode-dcp@2.0.0",
+    "@throwparty/opencode-plugin-session-title@*",
     "@zhafron/opencode-kiro-auth",
     "opencode-anthropic-auth@*",
     "opencode-antigravity-auth@*",
