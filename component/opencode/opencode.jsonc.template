@@ -5,12 +5,12 @@
   "$schema": "https://opencode.ai/config.json",
 
   "plugin": [
-    "@tarquinen/opencode-dcp@2.0.0",
-    "@throwparty/opencode-plugin-session-title@*",
-    "@zhafron/opencode-kiro-auth",
-    "opencode-anthropic-auth@*",
-    "opencode-antigravity-auth@*",
-    //"opencode-gemini-auth@*",
+    "@tarquinen/opencode-dcp@2.1.7",
+    "@throwparty/opencode-plugin-session-title@0.2.0",
+    "@zhafron/opencode-kiro-auth@1.6.5",
+    "opencode-anthropic-auth@0.0.13",
+    "opencode-antigravity-auth@1.6.0",
+    //"opencode-gemini-auth@1.4.2",
   ],
 
   "keybinds": {
