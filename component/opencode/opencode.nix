@@ -106,27 +106,6 @@ in
           format = "yaml";
           key = "opencode/github";
         };
-
-        coralogix-uk-nonprod-api-key = {
-          sopsFile = pkgs.lib.mkDefault ../../secrets/employer-emed.yaml;
-          format = "yaml";
-          key = "coralogix/uk-nonprod";
-        };
-        coralogix-uk-prod-api-key = {
-          sopsFile = pkgs.lib.mkDefault ../../secrets/employer-emed.yaml;
-          format = "yaml";
-          key = "coralogix/uk-prod";
-        };
-        coralogix-us-nonprod-api-key = {
-          sopsFile = pkgs.lib.mkDefault ../../secrets/employer-emed.yaml;
-          format = "yaml";
-          key = "coralogix/us-nonprod";
-        };
-        coralogix-us-prod-api-key = {
-          sopsFile = pkgs.lib.mkDefault ../../secrets/employer-emed.yaml;
-          format = "yaml";
-          key = "coralogix/us-prod";
-        };
       };
 
       templates."opencode.jsonc" = {
