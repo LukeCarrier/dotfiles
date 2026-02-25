@@ -40,6 +40,16 @@ in
       };
   };
 
+  ocu = callPackage ./ocu {
+    ocu = rec {
+      owner = "jsribeiro";
+      rev = "v0.2.2";
+      version = "0.2.2";
+      hash = "sha256-NaYgZeoPYmaTG7mBg+aVLlEzAPjHL8xXPZoqcA2/gLc=";
+      cargoHash = "sha256-W5SWxG6wVgDoBPPT0mKj1HNUR9pRXzVm65yM7N49kU0=";
+    };
+  };
+
   rift = callPackage ./rift { };
 
   spec-kit = callPackage ./spec-kit { };
