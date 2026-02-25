@@ -1,4 +1,4 @@
-.PHONY: gc gc-aggressive home host host-android host-darwin
+.PHONY: gc gc-aggressive home home-darwin host host-android host-darwin
 
 PRESERVE_GENERATIONS := +2
 HOSTNAME := $(shell echo $(shell hostname) | cut -d. -f1 | tr '[:upper:]' '[:lower:]')
@@ -13,6 +13,10 @@ gc-aggressive:
 
 home:
 	nix run home-manager -- switch -b hmbak --flake "$(FLAKE)#$(USER)@$(HOSTNAME)" --show-trace
+
+home-darwin: home
+	@tail -n 20 $HOME/Library/Logs/SopsNix/stderr 2>/dev/null || true
+	@tail -n 20 $HOME/Library/Logs/SopsNix/stdout 2>/dev/null || true
 
 host:
 	sudo nixos-rebuild switch --upgrade --flake "$(FLAKE)#$(HOSTNAME)" --show-trace
