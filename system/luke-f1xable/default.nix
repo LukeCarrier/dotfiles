@@ -52,8 +52,6 @@
     ];
   };
 
-  programs.adb.enable = true;
-
   services.udev.extraRules = ''
     SUBSYSTEM=="power_supply", ENV{POWER_SUPPLY_ONLINE}=="1", RUN+="${pkgs.bash}/bin/bash -c 'echo 80 >/sys/class/power_supply/BAT?/charge_control_end_threshold'"
   '';
@@ -62,7 +60,11 @@
     enable = true;
     qemu.swtpm.enable = true;
   };
-  environment.systemPackages = [ pkgs.swtpm ];
+
+  environment.systemPackages = with pkgs; [
+    android-tools
+    swtpm
+  ];
 
   users.users.lukecarrier = {
     isNormalUser = true;
