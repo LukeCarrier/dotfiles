@@ -57,12 +57,12 @@ in
   stklos = callPackage ./stklos {
     stklos =
       let
-        version = "2.10";
+        version = "26.0";
       in
       {
         inherit version;
         url = "https://stklos.net/download/stklos-${version}.tar.gz";
-        hash = "sha256-bb8DRfkgSP7GEzrW5V1x0L47d21YF0sIftCPfEsuoEE=";
+        hash = "sha256-YSTQDELOKUbRgExW7D4hclr6RYOWR1FtT7zHbf5MEow=";
       };
   };
 }
