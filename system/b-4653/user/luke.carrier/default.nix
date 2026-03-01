@@ -40,6 +40,7 @@ in
     ../../../../component/jj/jj.nix
     ../../../../component/zoxide/zoxide.nix
     ../../../../component/espanso/espanso.nix
+    ../../../../component/ghostty/ghostty.nix
     ../../../../component/wezterm/wezterm.nix
     ../../../../component/aws/aws.nix
     ../../../../component/kubernetes-client/kubernetes-client.nix
