@@ -82,6 +82,7 @@ in
         warp-mouse-to-focus.enable = true;
         focus-follows-mouse = { };
       };
+      clipboard.disable-primary = true;
       spawn-at-startup = [
         {
           command = [
