@@ -204,8 +204,8 @@ in
           "${mainMod}+L".action = focus-column-right;
           # Move windows, Vi style
           "${mainMod}+${moveMod}+H".action = move-column-left;
-          "${mainMod}+${moveMod}+J".action = move-window-down;
-          "${mainMod}+${moveMod}+K".action = move-window-up;
+          "${mainMod}+${moveMod}+J".action = move-window-down-or-to-workspace-down;
+          "${mainMod}+${moveMod}+K".action = move-window-up-or-to-workspace-up;
           "${mainMod}+${moveMod}+L".action = move-column-right;
           # Group windows
           "${mainMod}+${moveMod}+BracketLeft".action = consume-or-expel-window-left;
