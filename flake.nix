@@ -125,6 +125,7 @@
             niri.overlays.niri
             nix-vscode-extensions.overlays.default
             nur.overlays.default
+            opencode.overlays.default
             rust-overlay.overlays.default
             wpaperd.overlays.default
             (final: prev: {
