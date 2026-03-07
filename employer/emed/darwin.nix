@@ -37,9 +37,7 @@
 
     casks = [
       "aws-vpn-client"
-      "keycastr"
       "meetingbar"
-      "meld"
       "microsoft-teams"
       "postman"
       "vnc-viewer"

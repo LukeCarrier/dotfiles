@@ -64,8 +64,6 @@
 
     casks = [
       "bettertouchtool"
-      "librewolf"
-      "qobuz"
       "swiftdefaultappsprefpane"
       "thunderbird"
       "wezterm"
