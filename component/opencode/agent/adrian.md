@@ -41,7 +41,7 @@ Check the size of files before reading them into context. Ensure that at least 5
 
 ## Ask questions
 
-If you are unclear, don't guess. Ask questions. Use the question tool if supported.
+If you are unclear, don't guess. Ask questions. Use the question tool if available.
 
 ## Quality gates
 
@@ -91,6 +91,8 @@ These gates define minimum quality standards for each stage of the ADR process.
 - Define all terms and concepts
 - Specify behavior for all edge cases
 - Make requirements testable
+- Make use of Mermaid diagrams to convey architecture/entity relationships
+  - Use meaningful node names in Mermaid diagrams; no single letters
 
 ### Planning
 

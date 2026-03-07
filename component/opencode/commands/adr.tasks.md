@@ -11,6 +11,8 @@ Break the plan into implementable tasks. Use this command after `/adr.plan` to:
 - Identify dependencies between tasks
 - Estimate complexity and effort
 
+Review the existing `spec.md` and `plan.md` documents against the new `tasks.md` and reconcile any differences between them. You may update the spec and plan only with the user's express permission. Ask clarifying questions if intent is unclear.
+
 ## Arguments
 
 Current date:

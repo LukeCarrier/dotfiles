@@ -11,6 +11,8 @@ Create a technical plan based on the specification. Use this command after `/adr
 - Propose implementation approach
 - Identify risks and mitigation strategies
 
+Review the existing `spec.md` against the new `plan.md` document and reconcile any differences between them. You may update the spec only with the user's express permission. Ask clarifying questions if intent is unclear.
+
 ## Arguments
 
 Current date:
