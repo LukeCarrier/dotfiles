@@ -28,11 +28,26 @@
       };
     };
 
-    luke-fatman = darwin.lib.darwinSystem {
+    luke-c0nstruct = darwin.lib.darwinSystem rec {
+      system = "x86_64-darwin";
+      pkgs =
+        (pkgsForSystem {
+          inherit system;
+          pkgs = nixpkgs-unstable;
+        }).pkgs;
+      modules = [ ./luke-c0nstruct ];
+      specialArgs = {
+        inputs = {
+          inherit sops-nix;
+        };
+      };
+    };
+
+    luke-fatman = darwin.lib.darwinSystem rec {
       system = "aarch64-darwin";
       pkgs =
         (pkgsForSystem {
-          system = "aarch64-darwin";
+          inherit system;
           pkgs = nixpkgs-unstable;
         }).pkgs;
       modules = [ ./luke-fatman ];
@@ -142,6 +157,22 @@
         };
       };
       modules = [ ./luke-f1xable/user/lukecarrier ];
+    };
+
+    "lukecarrier@luke-c0nstruct" = home-manager.lib.homeManagerConfiguration {
+      pkgs =
+        (pkgsForSystem {
+          system = "x86_64-darwin";
+          pkgs = nixpkgs-unstable;
+        }).pkgs;
+      extraSpecialArgs = {
+        gitConfig.user.signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
+        jjConfig.signing.key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
+        inputs = {
+          inherit sops-nix;
+        };
+      };
+      modules = [ ./luke-c0nstruct/user/lukecarrier ];
     };
 
     "lukecarrier@luke-fatman" = home-manager.lib.homeManagerConfiguration {
