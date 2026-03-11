@@ -5,6 +5,7 @@ keys:
   - &fatman age1tsypj2vpuy6dnlx3le2225l39knhm43xzsxqm57wdwh29t5vj3vq70h0c7
   - &employer_emed age14ddy9t7d0dnlmrumefw45ft9jqvzwz6l9d2th8hfd738xhjluckskuhe7p
   - &employer_emed_b-4653 age1jklllmcjlj8ln8jfrdmp2scg2q93tkk3msnsc5jxcjsamwp5vdgshwr7my
+  - &curs3d age1l49uxlvy64jhqhfc2r7ur4qy8erh62nqg24rafqpznx9t9ee9c6qzwn4de
 recipients:
   - &emed
     - *employer_emed
@@ -12,6 +13,7 @@ recipients:
   - &personal
     - *me
     - *c0nstruct
+    - *curs3d
     - *f1xable
     - *fatman
 creation_rules:

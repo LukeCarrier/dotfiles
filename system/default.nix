@@ -74,6 +74,33 @@
   };
 
   nixosConfigurations = {
+    luke-curs3d = nixpkgs-unstable.lib.nixosSystem rec {
+      system = "x86_64-linux";
+      pkgs =
+        (pkgsForSystem {
+          inherit system;
+          pkgs = nixpkgs-unstable;
+          config.allowUnfreePredicate = pkg:
+            builtins.elem (nixpkgs-unstable.lib.getName pkg) [
+              "nvidia-x11"
+              "nvidia-settings"
+              "nvidia-persistenced"
+            ];
+        }).pkgs;
+      modules = [ ./luke-curs3d ];
+      specialArgs = {
+        desktopConfig.background = desktopBackground;
+        inputs = {
+          inherit
+            nixos-hardware
+            nix-flatpak
+            sops-nix
+            lanzaboote
+            ;
+        };
+      };
+    };
+
     luke-f1xable = nixpkgs-unstable.lib.nixosSystem {
       system = "x86_64-linux";
       pkgs =
@@ -125,6 +152,38 @@
         inputs = { };
       };
       modules = [ ./nix-on-droid/user/nix-on-droid ];
+    };
+
+    "lukecarrier@luke-curs3d" = home-manager.lib.homeManagerConfiguration {
+      pkgs =
+        (pkgsForSystem {
+          system = "x86_64-linux";
+          pkgs = nixpkgs-unstable;
+        }).pkgs;
+      extraSpecialArgs = {
+        desktopConfig = {
+          background = desktopBackground;
+          pointerCursor =
+            let
+              pkgs =
+                (pkgsForSystem {
+                  system = "x86_64-linux";
+                  pkgs = nixpkgs-unstable;
+                }).pkgs;
+            in
+            {
+              package = pkgs.bibata-cursors;
+              name = "Bibata-Modern-Classic";
+              size = 32;
+            };
+        };
+        gitConfig.user.signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
+        jjConfig.signing.key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
+        inputs = {
+          inherit niri nix-flatpak sops-nix;
+        };
+      };
+      modules = [ ./luke-curs3d/user/lukecarrier ];
     };
 
     "lukecarrier@luke-f1xable" = home-manager.lib.homeManagerConfiguration {
