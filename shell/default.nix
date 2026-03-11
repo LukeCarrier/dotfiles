@@ -64,7 +64,9 @@ in
       inherit (lib) getExe getExe';
       inherit (pkgs)
         age
+        git
         gnumake
+        jujutsu
         nil
         nixd
         nix-index
@@ -75,6 +77,8 @@ in
         ;
       toolVersions = mkToolVersions "default" ''
         printf "age %s\n" "$(${getExe age} --version 2>&1 | head -n 1)"
+        ${getExe git} --version
+        ${getExe jujutsu} --version
         ${getExe gnumake} --version | head -n 1
         ${getExe nil} --version 2>&1 | head -n 1
         ${getExe nixd} --version 2>&1 | head -n 1
@@ -90,7 +94,9 @@ in
       '';
       nativeBuildInputs = [
         age
+        git
         gnumake
+        jujutsu
         nil
         nixd
         nix-index
