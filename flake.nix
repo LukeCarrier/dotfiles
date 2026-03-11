@@ -94,9 +94,9 @@
     let
       desktopBackground = "~/Pictures/Wallpaper/Monochromatic mountains.jpg";
       pkgsForSystem =
-        { pkgs, system }:
+        { pkgs, system, config ? {} }:
         let
-          basePkgs = import pkgs { inherit system; };
+          basePkgs = import pkgs { inherit config system; };
           legacyPackages = import ./package/legacy-packages.nix { pkgs = basePkgs; };
         in
         {
