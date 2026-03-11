@@ -1,8 +1,7 @@
 ---
 description: Architecture Decision Records
 color: "#146152"
-mode: subagent
-model: google/gemini-2.5-flash
+mode: primary
 temperature: 0.1
 tools:
   "*": true
