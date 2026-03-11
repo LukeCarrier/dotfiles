@@ -5,9 +5,11 @@ mode: primary
 temperature: 0.1
 tools:
   "*": true
-permissions:
+permission:
   bash: deny
-  edit: allow
+  edit:
+    "*": ask
+    "adrs/*": allow
   webfetch: allow
 ---
 

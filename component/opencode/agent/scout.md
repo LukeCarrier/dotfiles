@@ -6,7 +6,7 @@ model: github-copilot/claude-sonnet-4.5
 temperature: 0.1
 tools:
   "*": true
-permissions:
+permission:
   bash: allow
   edit: allow
   webfetch: allow

@@ -5,7 +5,7 @@ mode: primary
 temperature: 0.1
 tools:
   "*": true
-permissions:
+permission:
   bash: deny
   edit: deny
   webfetch: deny
