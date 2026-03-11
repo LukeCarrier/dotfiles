@@ -45,10 +45,10 @@
     loader.timeout = 3;
   };
 
-  systemd.sleep.extraConfig = ''
-    HibernateDelaySec=30m
-    SuspendState=mem
-  '';
+  systemd.sleep.settings.Sleep = {
+    HibernateDelaySec = "30m";
+    SuspendState = "mem";
+  };
 
   services.udisks2.enable = true;
 
