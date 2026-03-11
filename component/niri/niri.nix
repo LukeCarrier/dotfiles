@@ -31,7 +31,7 @@ in
 
       wl-clipboard
       wf-recorder
-      helvum
+      crosspipe
 
       mako
       libnotify

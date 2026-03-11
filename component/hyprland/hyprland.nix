@@ -12,7 +12,7 @@ in
     grim
     wl-clipboard
     wf-recorder
-    helvum
+    crosspipe
 
     libnotify
 

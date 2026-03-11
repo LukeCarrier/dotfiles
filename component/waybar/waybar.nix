@@ -83,7 +83,7 @@ in
           };
         };
         wireplumber = {
-          on-click = "helvum";
+          on-click = "crosspipe";
           format = "🔉 {volume}%";
           format-muted = "🔇";
         };
