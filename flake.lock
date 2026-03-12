@@ -673,7 +673,8 @@
         "opencode": "opencode",
         "rust-overlay": "rust-overlay",
         "sops-nix": "sops-nix",
-        "wezterm": "wezterm"
+        "wezterm": "wezterm",
+        "wpaperd": "wpaperd"
       }
     },
     "rust-overlay": {
@@ -783,6 +784,21 @@
         "type": "github"
       }
     },
+    "systems_3": {
+      "locked": {
+        "lastModified": 1689347949,
+        "narHash": "sha256-12tWmuL2zgBgZkdoB6qXZsgJEH9LR3oUgpaQq2RbI80=",
+        "owner": "nix-systems",
+        "repo": "default-linux",
+        "rev": "31732fcf5e8fea42e59c2488ad31a0e651500f68",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default-linux",
+        "type": "github"
+      }
+    },
     "wezterm": {
       "inputs": {
         "flake-utils": "flake-utils_2",
@@ -809,6 +825,31 @@
         "owner": "wez",
         "ref": "main",
         "repo": "wezterm",
+        "type": "github"
+      }
+    },
+    "wpaperd": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs-unstable"
+        ],
+        "rust-overlay": [
+          "rust-overlay"
+        ],
+        "systems": "systems_3"
+      },
+      "locked": {
+        "lastModified": 1773348815,
+        "narHash": "sha256-fJNbzPeA/FhLO35T5A5JvvwlBhuhc+jMZCMI/YkSKWI=",
+        "owner": "LukeCarrier",
+        "repo": "wpaperd",
+        "rev": "58e77c0df8b27826ac18c2cae3a5207dd8248e46",
+        "type": "github"
+      },
+      "original": {
+        "owner": "LukeCarrier",
+        "ref": "claude/fix-wpaperd-libegl-bug-VUKhg",
+        "repo": "wpaperd",
         "type": "github"
       }
     },

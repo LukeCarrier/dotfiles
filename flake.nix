@@ -66,6 +66,11 @@
       url = "github:wez/wezterm/main?dir=nix";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
+    wpaperd = {
+      url = "github:LukeCarrier/wpaperd/claude/fix-wpaperd-libegl-bug-VUKhg";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+      inputs.rust-overlay.follows = "rust-overlay";
+    };
   };
 
   outputs =
@@ -88,13 +93,18 @@
       rust-overlay,
       sops-nix,
       wezterm,
+      wpaperd,
       self,
       ...
     }:
     let
       desktopBackground = "~/Pictures/Wallpaper/Monochromatic mountains.jpg";
       pkgsForSystem =
-        { pkgs, system, config ? {} }:
+        {
+          pkgs,
+          system,
+          config ? { },
+        }:
         let
           basePkgs = import pkgs { inherit config system; };
           legacyPackages = import ./package/legacy-packages.nix { pkgs = basePkgs; };
@@ -109,11 +119,13 @@
             nix-vscode-extensions.overlays.default
             nur.overlays.default
             rust-overlay.overlays.default
+            wpaperd.overlays.default
             (final: prev: {
               niri = niri.packages.${system}.niri-unstable;
               opencode = opencode.packages.${system}.default;
             })
-            (final: prev:
+            (
+              final: prev:
               self.packages.${system}
               // {
                 python313Packages = prev.python313Packages // legacyPackages.python313Packages;
@@ -134,10 +146,16 @@
           pkgs
           legacyPackages
           ;
-        lib = import ./lib/node.nix { inherit pkgs; inherit (pkgs) stdenv; };
+        lib = import ./lib/node.nix {
+          inherit pkgs;
+          inherit (pkgs) stdenv;
+        };
       in
       {
-        devShells = import ./shell { lib = pkgs.lib // lib; inherit pkgs; };
+        devShells = import ./shell {
+          lib = pkgs.lib // lib;
+          inherit pkgs;
+        };
 
         packages = import ./package { inherit pkgs; };
 
