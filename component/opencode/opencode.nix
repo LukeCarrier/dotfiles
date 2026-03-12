@@ -8,7 +8,6 @@ let
   userFacingPkgs = with pkgs; [
     container-use
     mcp-remote
-    ocu
   ];
   wrapperPkgs = with pkgs; [
     emcee
