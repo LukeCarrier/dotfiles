@@ -27,6 +27,7 @@ in
       theme = "TokyoNight Storm";
 
       keybind = [
+        "clear"
         "ctrl+shift+,=reload_config"
         "performable:copy=copy_to_clipboard:mixed"
         "paste=paste_from_clipboard"
