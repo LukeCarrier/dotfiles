@@ -20,7 +20,7 @@ buildPnpmPackage rec {
   };
 
   pnpmDepsFetcherVersion = 1;
-  pnpmDepsHash = "sha256-RLElbVkKwFo2XQur8l0zSriMUHEm3TGsW+74IVnSPa8=";
+  pnpmDepsHash = "sha256-XRXgiy8c2GpX1Paf3rkbw3g5/khfDxyHZ4uV47QUezE=";
 
   pnpmBuildScript = "build";
 
