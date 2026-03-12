@@ -260,5 +260,36 @@
         },
       },
     },
+
+    "ollama": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Ollama",
+      "options": {
+        "baseURL": "http://localhost:11434/v1",
+      },
+      "models": {
+        "devstral-small-2:24b": {
+          "name": "devstral-small-2:24b",
+        },
+        "glm-4.7-flash:q4_K_M": {
+          "name": "glm-4.7-flash:q4_K_M",
+        },
+        "gpt-oss:20b": {
+          "name": "gpt-oss:20b",
+          "tools": true,
+          "reasoning": true,
+          "options": {
+            "num_ctx": 131072,
+            "repeat_penalty": 1.15,
+            "temperature": 0.2,
+            "top_k": 40,
+            "top_p": 0.9,
+          },
+        },
+        "qwen3-coder-next:q4_K_M": {
+          "name": "qwen3-coder-next:q4_K_M",
+        },
+      },
+    },
   },
 }
