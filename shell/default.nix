@@ -1,6 +1,7 @@
 { lib, pkgs }:
 let
   inherit (pkgs) stdenv;
+  inherit (lib) getExe getExe';
   mkToolVersions =
     name: commands:
     let
@@ -104,6 +105,77 @@ in
         ssh-to-age
         sops
         treefmt
+      ];
+    };
+
+  cuda =
+    let
+      inherit (stdenv) cc;
+      inherit (pkgs)
+        git
+        gitRepo
+        gnupg
+        autoconf
+        curl
+        procps
+        gnumake
+        util-linux
+        m4
+        gperf
+        unzip
+        cudatoolkit
+        libGLU
+        libGL
+        freeglut
+        zlib
+        ncurses5
+        binutils
+        ;
+      inherit (pkgs.linuxPackages) nvidia_x11;
+      inherit (pkgs.xorg)
+        libXi
+        libXmu
+        libXext
+        libX11
+        libXv
+        libXrandr
+        ;
+      toolVersions = mkToolVersions "cuda";
+    in
+    pkgs.mkShell {
+      shellHook = ''
+        export CUDA_PATH="${cudatoolkit}"
+        export LD_LIBRARY_PATH="${nvidia_x11}/lib:${ncurses5}/lib"
+        export EXTRA_LDFLAGS="-L/lib -L${nvidia_x11}/lib"
+        export EXTRA_CCFLAGS="-I/usr/include"
+      '';
+      buildInputs = [
+        cc
+        git
+        gitRepo
+        gnupg
+        autoconf
+        curl
+        procps
+        gnumake
+        util-linux
+        m4
+        gperf
+        unzip
+        cudatoolkit
+        nvidia_x11
+        libGLU
+        libGL
+        freeglut
+        zlib
+        libXi
+        libXmu
+        libXext
+        libX11
+        libXv
+        libXrandr
+        ncurses5
+        binutils
       ];
     };
 

@@ -59,11 +59,25 @@
     homeDirectory = "/home/lukecarrier";
   };
 
-  nixpkgs.config.allowUnfreePredicate =
-    pkg:
-    builtins.elem (lib.getName pkg) [
-      "terraform"
-    ];
+  nixpkgs.config = {
+    allowUnfreePredicate =
+      pkg:
+      builtins.elem (lib.getName pkg) [
+        "terraform"
+        "cuda_cccl"
+        "cuda_cudart"
+        "cuda_merged"
+        "cuda_nvcc"
+        "cuda_nvrtc"
+        "cudnn"
+        "libcublas"
+        "libcufft"
+        "libcurand"
+        "libcusparse"
+        "libnvjitlink"
+      ];
+    cudaSupport = true;
+  };
 
   home.packages = with pkgs; [
     docker-cli-tools

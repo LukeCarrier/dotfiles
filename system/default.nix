@@ -83,6 +83,7 @@
           config = {
             allowUnfreePredicate = pkg:
               builtins.elem (nixpkgs-unstable.lib.getName pkg) [
+                "cuda-merged"
                 "nvidia-x11"
                 "nvidia-settings"
                 "nvidia-persistenced"
