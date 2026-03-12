@@ -95,7 +95,7 @@ in
   };
 
   config = {
-    home.packages = [ opencode ] ++ userFacingPkgs;
+    home.packages = [ opencode pkgs.opencode-desktop ] ++ userFacingPkgs;
 
     sops = {
       # Example: to add a new MCP credential, define it here and reference via
