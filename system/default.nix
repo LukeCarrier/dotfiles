@@ -80,12 +80,15 @@
         (pkgsForSystem {
           inherit system;
           pkgs = nixpkgs-unstable;
-          config.allowUnfreePredicate = pkg:
-            builtins.elem (nixpkgs-unstable.lib.getName pkg) [
-              "nvidia-x11"
-              "nvidia-settings"
-              "nvidia-persistenced"
-            ];
+          config = {
+            allowUnfreePredicate = pkg:
+              builtins.elem (nixpkgs-unstable.lib.getName pkg) [
+                "nvidia-x11"
+                "nvidia-settings"
+                "nvidia-persistenced"
+              ];
+            cudaSupport = true;
+          };
         }).pkgs;
       modules = [ ./luke-curs3d ];
       specialArgs = {
@@ -159,6 +162,7 @@
         (pkgsForSystem {
           system = "x86_64-linux";
           pkgs = nixpkgs-unstable;
+          config.cudaSupport = true;
         }).pkgs;
       extraSpecialArgs = {
         desktopConfig = {
