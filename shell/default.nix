@@ -31,18 +31,16 @@ let
   mkNodeDevShell =
     name: nodejs:
     let
+      inherit (pkgs) bun;
+      pnpm = pkgs.pnpm.override { inherit nodejs; };
+      typescript-language-server = pkgs.typescript-language-server.override { inherit nodejs; };
+      yarn = pkgs.yarn.override { inherit nodejs; };
       toolVersions = mkToolVersions name ''
-        printf "bun %s\n" "$(${pkgs.bun}/bin/bun --version 2>&1 | head -n 1)"
-        printf "node %s\n" "$(${nodejs}/bin/node --version 2>&1 | head -n 1)"
-        printf "pnpm %s\n" "$(${
-          pkgs.pnpm.override { inherit nodejs; }
-        }/bin/pnpm --version 2>&1 | head -n 1)"
-        printf "typescript-language-server %s\n" "$(${
-          pkgs.typescript-language-server.override { inherit nodejs; }
-        }/bin/typescript-language-server --version 2>&1 | head -n 1)"
-        printf "yarn %s\n" "$(${
-          pkgs.yarn.override { inherit nodejs; }
-        }/bin/yarn --version 2>&1 | head -n 1)"
+        printf "bun %s\n" "$(${getExe bun} --version 2>&1 | head -n 1)"
+        printf "node %s\n" "$(${getExe nodejs} --version 2>&1 | head -n 1)"
+        printf "pnpm %s\n" "$(${getExe pnpm} --version 2>&1 | head -n 1)"
+        printf "typescript-language-server %s\n" "$(${getExe typescript-language-server} --version 2>&1 | head -n 1)"
+        printf "yarn %s\n" "$(${getExe yarn} --version 2>&1 | head -n 1)"
       '';
     in
     pkgs.mkShell {
@@ -50,12 +48,12 @@ let
         cat ${toolVersions}
       '';
       nativeBuildInputs = [
-        pkgs.bun
+        bun
         nodejs
         (mkCorepack nodejs)
-        (pkgs.pnpm.override { inherit nodejs; })
-        (pkgs.typescript-language-server.override { inherit nodejs; })
-        (pkgs.yarn.override { inherit nodejs; })
+        pnpm
+        typescript-language-server
+        yarn
       ];
     };
 in
@@ -181,19 +179,27 @@ in
 
   goDev =
     let
+      inherit (pkgs)
+        delve
+        go
+        golangci-lint
+        golangci-lint-langserver
+        gopls
+        gnumake
+        ;
       toolVersions = mkToolVersions "goDev" ''
-        ${pkgs.delve}/bin/dlv version 2>&1 | head -n 1
-        ${pkgs.go}/bin/go version
-        ${pkgs.golangci-lint}/bin/golangci-lint --version 2>&1 | head -n 1
-        ${pkgs.gopls}/bin/gopls version 2>&1 | head -n 1
-        ${pkgs.gnumake}/bin/make --version | head -n 1
+        ${delve}/bin/dlv version 2>&1 | head -n 1
+        ${go}/bin/go version
+        ${golangci-lint}/bin/golangci-lint --version 2>&1 | head -n 1
+        ${gopls}/bin/gopls version 2>&1 | head -n 1
+        ${gnumake}/bin/make --version | head -n 1
       '';
     in
     pkgs.mkShell {
       shellHook = ''
         cat ${toolVersions}
       '';
-      nativeBuildInputs = with pkgs; [
+      nativeBuildInputs = [
         delve
         gnumake
         go
@@ -224,33 +230,43 @@ in
 
   pythonDev =
     let
+      inherit (pkgs) python314;
+      inherit (pkgs.python314Packages)
+        jedi-language-server
+        python-lsp-server
+        ruff
+        ;
       toolVersions = mkToolVersions "pythonDev" ''
-        ${pkgs.python314}/bin/python --version
-        ${pkgs.python312Packages.ruff}/bin/ruff --version 2>&1 | head -n 1
+        ${getExe python314} --version
+        ${getExe ruff} --version 2>&1 | head -n 1
       '';
     in
     pkgs.mkShell {
       shellHook = ''
         cat ${toolVersions}
       '';
-      packages =
-        (with pkgs; [
-          python314
-        ])
-        ++ (with pkgs.python312Packages; [
-          jedi-language-server
-          python-lsp-server
-          ruff
-        ]);
+      packages = [
+        python314
+        jedi-language-server
+        python-lsp-server
+        ruff
+      ];
     };
 
   rustDev =
     let
-      toolVersions = mkToolVersions "rustDev" ''
-        ${pkgs.rust-bin.stable.latest.default}/bin/cargo --version
-        ${pkgs.rust-bin.stable.latest.default}/bin/rustc --version
-        ${pkgs.lldb_19}/bin/lldb --version | head -n 1
-        ${pkgs.rust-analyzer}/bin/rust-analyzer --version 2>&1 | head -n 1
+      inherit (pkgs.rust-bin.stable.latest) default;
+      inherit (pkgs)
+        lldb_19
+        pkg-config
+        rust-analyzer
+        ;
+
+    toolVersions = mkToolVersions "rustDev" ''
+        ${getExe' default "cargo"} --version
+        ${getExe' default "rustc"} --version
+        ${getExe lldb_19} --version | head -n 1
+        ${getExe rust-analyzer} --version 2>&1 | head -n 1
       '';
     in
     pkgs.mkShell {
@@ -258,10 +274,10 @@ in
         cat ${toolVersions}
       '';
       nativeBuildInputs = with pkgs; [
+        default
         lldb_19
         pkg-config
         rust-analyzer
-        rust-bin.stable.latest.default
       ];
     };
 }
