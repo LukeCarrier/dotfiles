@@ -38,8 +38,11 @@
       finegrained = false;
     };
     open = true;
+    nvidiaPersistenced = true;
     nvidiaSettings = true;
   };
+
+  services.xserver.videoDrivers = [ "nvidia" ];
 
   programs.gamescope.enable = true;
 
