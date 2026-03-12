@@ -1,0 +1,3 @@
+FROM glm-4.7-flash:q4_K_M
+PARAMETER num_ctx 131072
+PARAMETER num_gpu 12
