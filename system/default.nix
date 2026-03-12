@@ -81,7 +81,8 @@
           inherit system;
           pkgs = nixpkgs-unstable;
           config = {
-            allowUnfreePredicate = pkg:
+            allowUnfreePredicate =
+              pkg:
               builtins.elem (nixpkgs-unstable.lib.getName pkg) [
                 "cuda-merged"
                 "nvidia-x11"
@@ -184,6 +185,25 @@
         };
         gitConfig.user.signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
         jjConfig.signing.key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
+        kanshiConfig = [
+          {
+            output.criteria = "Samsung Electric Company U32J59x HTPK702789";
+            output.mode = "3840x2160@60Hz";
+            output.adaptiveSync = false;
+            output.scale = 1.25;
+            output.transform = null;
+          }
+          {
+            profile.name = "peacehavenDockedClosed";
+            profile.outputs = [
+              {
+                criteria = "Samsung Electric Company U32J59x HTPK702789";
+                status = "enable";
+                position = "0,0";
+              }
+            ];
+          }
+        ];
         inputs = {
           inherit niri nix-flatpak sops-nix;
         };
@@ -216,6 +236,137 @@
         };
         gitConfig.user.signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
         jjConfig.signing.key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
+        kanshiConfig = [
+          {
+            output.criteria = "eDP-1";
+            output.mode = "2880x1920@120Hz";
+            output.adaptiveSync = true;
+            output.scale = 1.25;
+            output.transform = null;
+          }
+          {
+            output.criteria = "Anker Innovations Limited CosmosLaser4k 0x00000001";
+            output.mode = "3840x2160@60Hz";
+            output.adaptiveSync = false;
+            output.scale = 1.5;
+            output.transform = null;
+          }
+          {
+            output.criteria = "Samsung Electric Company U32J59x HTPK702789";
+            output.mode = "3840x2160@60Hz";
+            output.adaptiveSync = false;
+            output.scale = 1.25;
+            output.transform = null;
+          }
+          {
+            output.criteria = "Samsung Electric Company U32J59x HTPK602008";
+            output.mode = "3840x2160@30Hz";
+            output.adaptiveSync = false;
+            output.scale = 1.25;
+            output.transform = null;
+          }
+          {
+            output.criteria = "Ancor Communications Inc ASUS VS247 C8LMTF177755";
+            output.mode = "1920x1080@60Hz";
+            output.adaptiveSync = false;
+            output.scale = 1.0;
+            output.transform = null;
+          }
+          {
+            profile.name = "mobile";
+            profile.outputs = [
+              {
+                criteria = "eDP-1";
+                status = "enable";
+                position = "0,0";
+              }
+            ];
+          }
+          {
+            profile.name = "peacehavenLounge";
+            profile.outputs = [
+              {
+                criteria = "eDP-1";
+                status = "enable";
+                position = "0,0";
+              }
+              {
+                criteria = "Anker Innovations Limited CosmosLaser4k 0x00000001";
+                status = "enable";
+                position = "0,3600";
+              }
+            ];
+          }
+          {
+            profile.name = "peacehavenDockedClosed";
+            profile.outputs = [
+              {
+                criteria = "eDP-1";
+                status = "disable";
+              }
+              {
+                criteria = "Samsung Electric Company U32J59x HTPK702789";
+                status = "enable";
+                position = "0,0";
+              }
+              {
+                criteria = "Samsung Electric Company U32J59x HTPK602008";
+                status = "enable";
+                position = "3072,0";
+              }
+            ];
+          }
+          {
+            profile.name = "peacehavenDockedOpen";
+            profile.outputs = [
+              {
+                criteria = "Samsung Electric Company U32J59x HTPK702789";
+                status = "enable";
+                position = "0,0";
+              }
+              {
+                criteria = "Samsung Electric Company U32J59x HTPK602008";
+                status = "enable";
+                position = "3072,0";
+              }
+              {
+                criteria = "eDP-1";
+                status = "enable";
+                position = "4224,1728";
+              }
+            ];
+          }
+          {
+            profile.name = "peacehavenSidecar";
+            profile.outputs = [
+              {
+                criteria = "Samsung Electric Company U32J59x HTPK602008";
+                status = "enable";
+                position = "0,0";
+              }
+              {
+                criteria = "eDP-1";
+                status = "enable";
+                position = "768,1728";
+              }
+            ];
+          }
+          {
+            profile.name = "peacehavenMichaelDocked";
+            profile.outputs = [
+              {
+                criteria = "Ancor Communications Inc ASUS VS247 C8LMTF177755";
+                status = "enable";
+                position = "0,0";
+              }
+              {
+                criteria = "eDP-1";
+                status = "enable";
+                position = "1920,540";
+              }
+            ];
+          }
+        ];
         inputs = {
           inherit niri nix-flatpak sops-nix;
         };
