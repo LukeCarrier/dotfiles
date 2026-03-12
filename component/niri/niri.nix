@@ -284,6 +284,9 @@ in
       ];
       window-rules = [
         {
+          open-floating = false;
+          open-fullscreen = false;
+          # open-maximized-to-edges = false;
           clip-to-geometry = true;
           draw-border-with-background = false;
           geometry-corner-radius = {
@@ -292,6 +295,16 @@ in
             bottom-left = 8.0;
             bottom-right = 8.0;
           };
+        }
+        # Splash screens
+        {
+          matches = [
+            {
+              at-startup = true;
+              is-floating = true;
+            }
+          ];
+          open-focused = false;
         }
         # Messaging clients
         {
@@ -303,14 +316,14 @@ in
             { app-id = "^Slack$"; }
             { title = "^WhatsApp Web$"; }
           ];
-          block-out-from = "screencast";
+          block-out-from = "screen-capture";
         }
         # Password managers
         {
           matches = [
             { app-id = "^Bitwarden$"; }
           ];
-          block-out-from = "screencast";
+          block-out-from = "screen-capture";
         }
         # PiP overlays
         {
@@ -318,6 +331,22 @@ in
             { title = "^Picture-in-Picture$"; }
           ];
           open-floating = true;
+        }
+        # Cast targets
+        {
+          matches = [
+            {
+              is-window-cast-target = true;
+            }
+          ];
+          # focus-ring = {
+          #   active-color = "#f38ba8";
+          #   inactive-color = "#7d0d2d";
+          # };
+          # tab-indicator = {
+          #   active-color = "#f38ba8";
+          #   inactive-color = "#7d0d2d";
+          # };
         }
       ];
     };
