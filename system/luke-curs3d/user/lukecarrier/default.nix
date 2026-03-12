@@ -29,6 +29,8 @@
     ../../../../component/zsh/zsh.nix
     ../../../../component/direnv/direnv.nix
     ../../../../component/firefox/firefox.nix
+    ../../../../component/ollama/ollama.nix
+    ../../../../component/opencode/opencode.nix
     # ../../../../component/gnome-network-displays/home.nix
     ../../../../component/valent/home.nix
     ../../../../component/bitwarden/bitwarden.nix
@@ -65,9 +67,9 @@
 
   home.packages = with pkgs; [
     docker-cli-tools
-    ungoogled-chromium
     monaspace-fonts
     nautilus
+    ungoogled-chromium
   ];
 
   sops.age.keyFile = "${config.home.homeDirectory}/Code/LukeCarrier/dotfiles/.sops/keys";
