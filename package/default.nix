@@ -26,6 +26,8 @@ in
 
   grafana-mcp = callPackage ./grafana-mcp { };
 
+  handy = callPackage ./handy { };
+
   kubernetes-client-tools = callPackage ./kubernetes-client-tools { };
 
   mcp-remote = callPackage ./mcp-remote { };

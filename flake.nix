@@ -123,6 +123,7 @@
             (final: prev: {
               niri = niri.packages.${system}.niri-unstable;
               opencode = opencode.packages.${system}.default;
+              # opencode-desktop = opencode.packages.${system}.desktop;
             })
             (
               final: prev:
