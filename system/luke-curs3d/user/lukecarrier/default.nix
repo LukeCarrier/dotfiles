@@ -81,6 +81,7 @@
 
   home.packages = with pkgs; [
     docker-cli-tools
+    handy
     monaspace-fonts
     nautilus
     ungoogled-chromium
