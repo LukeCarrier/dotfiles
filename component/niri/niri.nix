@@ -286,6 +286,7 @@ in
         {
           open-floating = false;
           open-fullscreen = false;
+          open-maximized = false;
           # open-maximized-to-edges = false;
           clip-to-geometry = true;
           draw-border-with-background = false;
