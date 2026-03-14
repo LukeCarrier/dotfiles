@@ -7,6 +7,8 @@
 
       OLLAMA_DEBUG = "1";
 
+      OLLAMA_NOPRUNE = "1";
+
       OLLAMA_GPU_MEMORY_FRACTION = "0.8";
       OLLAMA_SWAP_SPACE = "16GB";
 
