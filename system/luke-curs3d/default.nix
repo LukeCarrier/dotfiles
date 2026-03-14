@@ -16,6 +16,7 @@
     ../../platform/nixos/secure-boot.nix
     ../../platform/nixos/cuda.nix
     ../../platform/nixos/graphical.nix
+    ../../component/librepods/nixos.nix
     ../../component/niri/nvidia.nix
     ../../platform/nixos/containers.nix
     ../../component/gnome-network-displays/gnome-network-displays.nix
