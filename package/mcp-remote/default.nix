@@ -4,7 +4,7 @@
   stdenv,
 }:
 let
-  inherit (pkgs) fetchFromGitHub;
+  inherit (pkgs) fetchFromGitHub stdenv;
   nodeLib = import ../../lib/node.nix { inherit pkgs stdenv; };
   inherit (nodeLib) buildPnpmPackage;
 in
@@ -20,7 +20,10 @@ buildPnpmPackage rec {
   };
 
   pnpmDepsFetcherVersion = 1;
-  pnpmDepsHash = "sha256-XRXgiy8c2GpX1Paf3rkbw3g5/khfDxyHZ4uV47QUezE=";
+  pnpmDepsHash =
+    if stdenv.hostPlatform.isDarwin
+    then "sha256-RLElbVkKwFo2XQur8l0zSriMUHEm3TGsW+74IVnSPa8="
+    else "sha256-XRXgiy8c2GpX1Paf3rkbw3g5/khfDxyHZ4uV47QUezE=";
 
   pnpmBuildScript = "build";
 
