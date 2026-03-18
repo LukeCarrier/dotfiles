@@ -59,6 +59,11 @@ in
     type = lib.types.attrsOf (
       lib.types.submodule {
         options = {
+          enabled = lib.mkOption {
+            type = lib.types.bool;
+            description = "Whether the MCP server is enabled by default at the start of new sessions.";
+            default = true;
+          };
           type = lib.mkOption {
             type = lib.types.enum [
               "local"
@@ -94,7 +99,11 @@ in
   };
 
   config = {
-    home.packages = [ opencode pkgs.opencode-desktop ] ++ userFacingPkgs;
+    home.packages = [
+      opencode
+      pkgs.opencode-desktop
+    ]
+    ++ userFacingPkgs;
 
     sops = {
       # Example: to add a new MCP credential, define it here and reference via

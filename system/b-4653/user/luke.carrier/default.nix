@@ -108,30 +108,14 @@ in
   };
 
   opencode.mcpConfigurations = {
-    github = {
-      type = "local";
-      command = [
-        (getExe pkgs.github-mcp-server)
-        "stdio"
-      ];
-      env.GITHUB_PERSONAL_ACCESS_TOKEN = "@TOKEN@";
-      secrets."@TOKEN@" = config.sops.placeholder.opencode-github-token;
-    };
-
-    grafana-cloud = {
-      type = "local";
-      command = [ (getExe pkgs.mcp-grafana) ];
-      env = {
-        GRAFANA_URL = "@URL@";
-        GRAFANA_SERVICE_ACCOUNT_TOKEN = "@SERVICE_ACCOUNT_TOKEN@";
-      };
-      secrets = {
-        "@URL@" = config.sops.placeholder.grafana-cloud-url;
-        "@SERVICE_ACCOUNT_TOKEN@" = config.sops.placeholder.grafana-cloud-service-account-token;
-      };
+    atlassian = {
+      enabled = false;
+      type = "remote";
+      url = "https://mcp.atlassian.com/v1/mcp";
     };
 
     coralogix-uk-nonprod = {
+      enabled = false;
       type = "local";
       command = [
         "mcp-remote"
@@ -144,6 +128,7 @@ in
       };
     };
     coralogix-uk-prod = {
+      enabled = false;
       type = "local";
       command = [
         "mcp-remote"
@@ -156,6 +141,7 @@ in
       };
     };
     coralogix-us-nonprod = {
+      enabled = false;
       type = "local";
       command = [
         "mcp-remote"
@@ -168,6 +154,7 @@ in
       };
     };
     coralogix-us-prod = {
+      enabled = false;
       type = "local";
       command = [
         "mcp-remote"
@@ -178,6 +165,37 @@ in
       secrets = {
         "@CORALOGIX_US_PROD_API_KEY@" = config.sops.placeholder.coralogix-us-prod-api-key;
       };
+    };
+
+    github = {
+      enabled = false;
+      type = "local";
+      command = [
+        (getExe pkgs.github-mcp-server)
+        "stdio"
+      ];
+      env.GITHUB_PERSONAL_ACCESS_TOKEN = "@TOKEN@";
+      secrets."@TOKEN@" = config.sops.placeholder.opencode-github-token;
+    };
+
+    grafana-cloud = {
+      enabled = false;
+      type = "local";
+      command = [ (getExe pkgs.mcp-grafana) ];
+      env = {
+        GRAFANA_URL = "@URL@";
+        GRAFANA_SERVICE_ACCOUNT_TOKEN = "@SERVICE_ACCOUNT_TOKEN@";
+      };
+      secrets = {
+        "@URL@" = config.sops.placeholder.grafana-cloud-url;
+        "@SERVICE_ACCOUNT_TOKEN@" = config.sops.placeholder.grafana-cloud-service-account-token;
+      };
+    };
+
+    slack = {
+      enabled = false;
+      type = "remote";
+      url = "https://mcp.slack.com/mcp";
     };
   };
 }
