@@ -45,6 +45,10 @@
       url = "github:NixOS/nixos-hardware/master";
     };
     nix-flatpak.url = "github:gmodena/nix-flatpak/main";
+    nix-rosetta-builder = {
+      url = "github:cpick/nix-rosetta-builder";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
     nix-vscode-extensions = {
       url = "github:LukeCarrier/nix-vscode-extensions/unpack-phase";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
@@ -86,6 +90,7 @@
       nixos-hardware,
       nix-flatpak,
       nix-on-droid,
+      nix-rosetta-builder,
       nix-vscode-extensions,
       nixpkgs-unstable,
       nur,
@@ -171,6 +176,7 @@
         niri
         nix-flatpak
         nix-on-droid
+        nix-rosetta-builder
         nixos-hardware
         nixpkgs-unstable
         sops-nix

@@ -5,6 +5,7 @@
   niri,
   nix-flatpak,
   nix-on-droid,
+  nix-rosetta-builder,
   nixos-hardware,
   nixpkgs-unstable,
   sops-nix,
@@ -50,7 +51,10 @@
           inherit system;
           pkgs = nixpkgs-unstable;
         }).pkgs;
-      modules = [ ./luke-fatman ];
+      modules = [
+        ./luke-fatman
+        nix-rosetta-builder.darwinModules.default
+      ];
       specialArgs = {
         inputs = {
           inherit sops-nix;
