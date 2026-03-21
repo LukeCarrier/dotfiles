@@ -30,7 +30,7 @@
       inputs.rust-overlay.follows = "rust-overlay";
     };
     opencode = {
-      url = "github:sst/opencode/dev";
+      url = "github:anomalyco/opencode/v1.2.27";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     niri = {
