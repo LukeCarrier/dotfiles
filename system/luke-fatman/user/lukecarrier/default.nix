@@ -7,6 +7,8 @@
 }:
 let
   inherit (lib) getExe getExe' getName;
+  username = "lukecarrier";
+  homeDirectory = "/Users/${username}";
 in
 {
   imports = [
@@ -52,7 +54,7 @@ in
   home.stateVersion = "24.05";
 
   home.username = "lukecarrier";
-  home.homeDirectory = "/Users/lukecarrier";
+  home.homeDirectory = homeDirectory;
 
   nixpkgs.config = {
     allowBroken = true;
@@ -75,6 +77,12 @@ in
   home.packages = with pkgs; [
     docker-cli-tools
   ];
+
+  # Must be formatted exactly as follows or NVIDIA Sync will complain
+  # that ~/.ssh/config is not writable
+  programs.ssh.extraOptionOverrides = {
+    Include = "\"${homeDirectory}/Library/Application Support/NVIDIA/Sync/config/ssh_config\"";
+  };
 
   sops.age.keyFile = "${config.home.homeDirectory}/Code/LukeCarrier/dotfiles/.sops/keys";
 

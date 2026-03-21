@@ -7,6 +7,8 @@
 }:
 let
   inherit (lib) getExe getExe';
+  username = "luke.carrier";
+  homeDirectory = "/Users/${username}";
 in
 {
   imports = [
@@ -50,7 +52,7 @@ in
   home.stateVersion = "24.05";
 
   home.username = "luke.carrier";
-  home.homeDirectory = "/Users/luke.carrier";
+  home.homeDirectory = homeDirectory;
 
   nixpkgs.config.allowUnfreePredicate =
     pkg:
@@ -64,6 +66,12 @@ in
 
   # FIXME: should we be keeping all of this cruft in a devShell?
   home.packages = with pkgs; [ docker-cli-tools ];
+
+  # Must be formatted exactly as follows or NVIDIA Sync will complain
+  # that ~/.ssh/config is not writable
+  programs.ssh.extraOptionOverrides = {
+    Include = "\"${homeDirectory}/Library/Application Support/NVIDIA/Sync/config/ssh_config\"";
+  };
 
   sops.secrets = {
     opencode-github-token.sopsFile = pkgs.lib.mkForce ../../../../secrets/employer-emed.yaml;
