@@ -108,13 +108,6 @@ in
   };
 
   opencode.mcpConfigurations = {
-    container-use = {
-      type = "local";
-      command = [
-        "${getExe' pkgs.container-use "container-use"}"
-        "stdio"
-      ];
-    };
     github = {
       type = "local";
       command = [
