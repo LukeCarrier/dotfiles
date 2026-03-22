@@ -104,5 +104,9 @@ in
       env.GITHUB_PERSONAL_ACCESS_TOKEN = "@TOKEN@";
       secrets."@TOKEN@" = config.sops.placeholder.opencode-github-token;
     };
+    playwright = {
+      type = "local";
+      command = [ (lib.getExe pkgs.playwright-mcp) ];
+    };
   };
 }
