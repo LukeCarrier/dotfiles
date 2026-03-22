@@ -87,10 +87,6 @@ in
   sops.age.keyFile = "${config.home.homeDirectory}/Code/LukeCarrier/dotfiles/.sops/keys";
 
   opencode.mcpConfigurations = {
-    container-use = {
-      type = "local";
-      command = [ (getExe' pkgs.container-use "container-use") "stdio" ];
-    };
     excalidraw = {
       type = "local";
       command = [ (getExe' pkgs.excalidraw-mcp-app "excalidraw-mcp-app") "--stdio" ];

@@ -6,7 +6,6 @@
 }:
 let
   userFacingPkgs = with pkgs; [
-    container-use
     mcp-remote
   ];
   wrapperPkgs = with pkgs; [
