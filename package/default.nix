@@ -24,6 +24,9 @@ in
 
   excalidraw-mcp-app = callPackage ./excalidraw-mcp-app { };
 
+  ghidra-mcp = callPackage ./ghidra-mcp { };
+  ghidra-mcp-plugin = (callPackage ./ghidra-mcp { }).ghidraPlugin;
+
   grafana-mcp = callPackage ./grafana-mcp { };
 
   handy = callPackage ./handy { };
