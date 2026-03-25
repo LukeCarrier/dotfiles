@@ -70,6 +70,8 @@
 
   "instructions": ["AGENT.md", "CLAUDE.md", ".cursor/rules/*.md"],
 
+  "small_model": "openai/codex-mini",
+
   "provider": {
     "google": {
       "models": {
