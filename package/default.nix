@@ -9,6 +9,8 @@ in
 
   docker-cli-tools = callPackage ./docker-cli-tools { };
 
+  github-cli-tools = callPackage ./github-cli-tools { };
+
   dotfiles-meta = callPackage ./dotfiles-meta { };
 
   eww-niri-workspaces = callPackage ./eww-niri-workspaces {

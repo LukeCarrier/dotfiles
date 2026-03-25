@@ -134,6 +134,7 @@
               final: prev:
               self.packages.${system}
               // {
+                github-cli-tools = self.packages.${system}.github-cli-tools;
                 python313Packages = prev.python313Packages // legacyPackages.python313Packages;
                 wezterm = wezterm.packages.${system}.default;
               }
