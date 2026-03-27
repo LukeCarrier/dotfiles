@@ -4,38 +4,46 @@ agent: adrian
 subtask: false
 ---
 
-Create a technical plan based on the specification. Use this command after `/adr.specify` to:
+Turn the approved specification into an actionable plan. Only start after `spec.md` is measurable and internally consistent.
 
-- Declare architecture and stack
-- Define constraints and standards
-- Propose implementation approach
-- Identify risks and mitigation strategies
+## Preparation
 
-Review the existing `spec.md` against the new `plan.md` document and reconcile any differences between them. You may update the spec only with the user's express permission. Ask clarifying questions if intent is unclear.
+1. Capture the current date for the ADR directory:
 
-## Arguments
+   ```
+   !date +"%Y-%m-%d"
+   ```
 
-Current date:
+2. Feature name:
 
-```
-!date +"%Y-%m-%d"
-```
+   ```
+   $1
+   ```
 
-Feature name:
+3. Read the latest `spec.md` and previous ADRs touching the same systems. Note any terminology or contract you must keep.
 
-```
-$1
-```
+## Process
+
+1. Trace every requirement from the spec into the plan. If a requirement cannot be mapped to architecture, stop and clarify the spec.
+2. Describe the architecture in concrete terms: components, data stores, workflows, and interfaces. Stick to the vocabulary used in the spec.
+3. Resolve contradictions. Example: if you plan to prune infrastructure in a region, you must also run template and apply steps there. If the design requires skipping template/apply for empty regions, explain why pruning is disabled there as well.
+4. Call out environment and region behavior. Specify what runs where, what inputs are needed, and what triggers each workflow.
+5. Detail the testing strategy. When GitHub/GitLab workflows cannot be tested directly, extract the matrix or pruning logic into scripts (e.g., shell or Python) and describe how to cover them with BATS or unit tests. A plan without a repeatable verification path is invalid.
+6. Identify risks, mitigations, rollout strategy, and monitoring/rollback steps. Be explicit about failure detection.
+7. Keep the language plain. Focus on what will be built, why, and how it will be tested.
+
+If you discover new requirements, either update the spec (with approval) or document the open question and block the plan.
 
 ## Output
 
-A technical plan that includes:
+Write `adrs/$currentDate-$featureName/plan.md` that includes:
 
-- Architecture overview
-- Technology stack justification
-- Component breakdown
-- Data flow diagrams
-- Testing strategy
-- Deployment considerations
+- Architecture overview tied back to each spec requirement
+- Technology choices with short justifications
+- Component breakdowns and sequencing
+- Data flow diagrams or text descriptions covering normal and failure paths
+- Environment/region deployment rules, including pruning vs. template/apply behavior
+- Testing strategy (tools, scripts, CI steps, local validation)
+- Risk list with mitigations, monitoring, and rollback actions
 
-Persisted to**: `adrs/$currentDate-$featureName/plan.md`
+Ensure the YAML frontmatter is present and `status` reflects readiness. End by confirming the plan stays aligned with the spec; if not, list the required spec updates.

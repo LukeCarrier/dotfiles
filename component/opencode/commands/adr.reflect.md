@@ -4,46 +4,37 @@ agent: adrian
 subtask: false
 ---
 
-Reflect on a completed ADR cycle to capture learnings and improve future iterations. Use this command after `/adr.implement` completes to:
+Use `/adr.reflect` once `/adr.implement` finishes so you can codify what happened and tighten the process for next time.
 
-- Review what worked well and what caused friction
-- Identify patterns and recurring issues
-- Propose updates to agent instructions, skills, or workflows
-- Synthesize learnings across multiple ADRs
+## Preparation
 
-## Arguments
+1. Current date:
 
-Current date:
+   ```
+   !date +"%Y-%m-%d"
+   ```
 
-```
-!date +"%Y-%m-%d"
-```
+2. Feature name:
 
-Feature name:
+   ```
+   $1
+   ```
 
-```
-$1
-```
+3. Gather `spec.md`, `plan.md`, `tasks.md`, commit history, and any runbooks or incident notes.
 
 ## Process
 
-1. **Review the cycle** - Examine spec.md, plan.md, tasks.md, and implementation
-2. **Identify learnings** - What was effective? What caused delays or confusion?
-3. **Capture insights** - Document in `adrs/.meta/YYYY-MM-DD-retrospective.md`
-4. **Propose improvements** - Updates to adrian.md, new skills, workflow changes
-5. **Update status** - Set ADR status to `implemented` in frontmatter
-6. **Update index** - Refresh `adrs/.meta/index.md` with current status
+1. **Review the cycle** — Compare the shipped implementation to each ADR artifact. Note mismatches, missing tests, or contradictions (e.g., pruning behavior vs. template/apply rules).
+2. **Document evidence** — Capture real metrics, test outcomes, and rollout notes. Avoid vague statements.
+3. **Record learnings** — Write a retrospective at `adrs/.meta/$currentDate-$featureName-retrospective.md` covering what worked, what failed, and concrete actions.
+4. **Propose improvements** — Call out updates needed in `agent/adrian.md`, command templates, skills, or repository structure (such as extracting workflow-matrix logic into scripts for testing).
+5. **Update statuses** — Set each ADR artifact `status` to `implemented` (or another accurate state) and refresh `adrs/.meta/index.md`.
+6. **Request approvals** — Present any instruction or workflow changes to the user before editing agent docs.
 
 ## Output
 
-A retrospective document that includes:
+- `adrs/$currentDate-$featureName/retro.md` summarizing the learnings and linking to the retrospective in `.meta`
+- `adrs/.meta/$currentDate-$featureName-retrospective.md` using the standard template
+- Recommendations for instruction or tooling updates with clear owners
 
-- What worked well
-- What didn't work
-- Proposed improvements to the ADR process
-- Patterns observed across multiple cycles
-- Proposed updates to agent instructions (requires user approval)
-
-Persisted to: `adrs/$currentDate-$featureName/retro.md`
-
-Additionally, read and update `AGENTS.md` with any significant changes implemented by this ADR.
+Keep the tone plain and actionable. The goal is to prevent future ambiguity by teaching the next agent exactly what to repeat or avoid.

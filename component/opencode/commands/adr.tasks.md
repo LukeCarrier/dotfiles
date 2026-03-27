@@ -4,35 +4,44 @@ agent: adrian
 subtask: false
 ---
 
-Break the plan into implementable tasks. Use this command after `/adr.plan` to:
+Translate the plan into work that can be scheduled immediately. Only run after `plan.md` is complete and aligned with the spec.
 
-- Create small, reviewable units of work
-- Define clear acceptance criteria for each task
-- Identify dependencies between tasks
-- Estimate complexity and effort
+## Preparation
 
-Review the existing `spec.md` and `plan.md` documents against the new `tasks.md` and reconcile any differences between them. You may update the spec and plan only with the user's express permission. Ask clarifying questions if intent is unclear.
+1. Current date:
 
-## Arguments
+   ```
+   !date +"%Y-%m-%d"
+   ```
 
-Current date:
+2. Feature name:
 
-```
-!date +"%Y-%m-%d"
-```
+   ```
+   $1
+   ```
 
-Feature name:
+3. Read `spec.md` and `plan.md`. Note section headings for cross-references.
 
-```
-$1
-```
+## Process
+
+1. Break the plan into tasks sized for 1–3 days of work. Combine steps only if they share the same code path and validation.
+2. For each task, record:
+   - Summary
+   - Relevant spec/plan sections (use headings or anchors)
+   - Acceptance criteria tied to observable behavior
+   - Required tests (unit, integration, workflow script/BATS, etc.)
+   - Dependencies and rollout/rollback notes
+3. Highlight ownership or skill requirements when relevant (e.g., Terraform, workflow authoring).
+4. Keep language direct and free of filler. State who does what and how success is measured.
+5. If the plan has contradictions or missing information, stop and update the earlier documents instead of inventing new behavior.
 
 ## Output
 
-A task list where each task:
-- Is independently implementable
-- Has clear success criteria
-- Includes test requirements
-- References relevant specification sections
+Write `adrs/$currentDate-$featureName/tasks.md` including:
 
-Persisted to: `adrs/$currentDate-$featureName/tasks.md`
+- An ordered list or table of tasks that covers every planned change
+- Acceptance criteria and test expectations for each task
+- Dependencies, sequencing, and any environment-specific handling
+- Checkboxes or fields for implementers to mark progress
+
+Ensure the YAML frontmatter is present and `status` reflects readiness for implementation. The final task list should make it obvious how to implement, test, and roll back the feature without referring back to conversations.
