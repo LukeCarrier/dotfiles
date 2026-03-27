@@ -1,0 +1,101 @@
+#!/usr/bin/env bash
+# Render one of our charts the same way the kubernetes-deploy job does.
+aws_account_id="000000000000"
+cloud_manifest="cloud.yaml"
+environment="development"
+git_ref="HEAD"
+git_sha=""
+helm_chart=""
+cluster_name="local"
+name=""
+registry="804670868283.dkr.ecr.eu-west-2.amazonaws.com"
+image_tag=""
+region="eu-west-2"
+workflow_run_id=0
+print_usage() {
+  printf "%s: [options] --helm-chart ../chart\n\n" "$0" >&2
+  echo "Options:" >&2
+  echo "  -a/--aws-account-id 000000000000"
+  echo "  -c/--cloud-manifest cloud.yaml"
+  echo "  -e/--environment development"
+  echo "  -G/--git-ref HEAD"
+  echo "  -g/--git-sha 00000000000000000000000000000000"
+  echo "  -k/--cluster-name eks-blue"
+  echo "  -n/--name my-app"
+  echo "  -R/--registry 804670868283.dkr.ecr.eu-west-2.amazonaws.com"
+  echo "  -t/--image-tag latest"
+  echo "  -r/--region eu-west-2"
+  echo "  -w/--workflow-run-id 0"
+  exit 1
+}
+parse_args() {
+  while true; do
+    case "${1:-}" in
+      -a|--aws-account-id ) aws_account_id="$2" ; shift 2 ;;
+      -c|--cloud-manifest ) cloud_manifest="$2" ; shift 2 ;;
+      -e|--environment    ) environment="$2"    ; shift 2 ;;
+      -G|--git-ref        ) git_ref="$2"        ; shift 2 ;;
+      -g|--git-sha        ) git_sha="$2"        ; shift 2 ;;
+      -h|--helm-chart     ) helm_chart="$2"     ; shift 2 ;;
+      -k|--cluster-name   ) cluster_name="$2"   ; shift 2 ;;
+      -n|--name           ) name="$2"           ; shift 2 ;;
+      -R|--registry       ) registry="$2"       ; shift 2 ;;
+      -t|--image-tag      ) image_tag="$2"      ; shift 2 ;;
+      -r|--region         ) region="$2"         ; shift 2 ;;
+      -w|--workflow-run-id) workflow_run_id="$2"; shift 2 ;;
+      *                   ) break                         ;;
+    esac
+  done
+  local manifest_dir
+  manifest_dir="$(cd "$(dirname "$cloud_manifest")" && pwd -P)"
+  if [[ -z "$cloud_manifest" ]] || [[ ! -f "$cloud_manifest" ]]; then
+    printf "%s: Cloud manifest path required" "$0" >&2
+    print_usage
+  fi
+  if [[ -z "$helm_chart" ]] || [[ ! -d "$helm_chart" ]]; then
+    printf "%s: Helm chart path required" "$0" >&2
+    print_usage
+  fi
+  if [[ -z "$git_sha" ]]; then
+    git_sha="$(cd "$manifest_dir" && git rev-parse HEAD)"
+  fi
+  if [[ -z "$name" ]]; then
+    name="$(basename "$manifest_dir")"
+  fi
+}
+main() {
+  project=$(yq e ".projectName" "$cloud_manifest")
+  num_apps=$(yq e '.applications | length' "$cloud_manifest")
+  params=()
+  for (( i=0; i<num_apps; i++ )); do
+    dockerfile=$(yq e ".applications[$i].image.dockerfile" "$cloud_manifest")
+    if [[ "$dockerfile" != "null" ]]; then
+      app=$(yq e ".applications[$i].name" "$cloud_manifest")
+      params+=(
+        "--set" "applications[$i].image.repository=$registry/$project-$app"
+        "--set" "applications[$i].image.tag=$image_tag"
+      )
+    fi
+    envDir=$(yq e ".applications[$i].envDir" "$cloud_manifest")
+    if [[ $envDir != "null" && -f "$envDir/.env.$environment" ]]; then
+      envFileContent=$(base64 -w0 "$envDir/.env.$environment")
+      env_file="/tmp/envfile_$i.b64"
+      echo "$envFileContent" >"$env_file"
+      params+=("--set-file" "applications[$i].envFile=$env_file")
+    fi
+    params+=("--set" "applications[$i].env.AWS_REGION=$region")
+  done
+  helm template "$name" "$helm_chart" \
+    --validate \
+    -f "$cloud_manifest" \
+    --set "metadata.clusterName=$cluster_name" \
+    --set "metadata.accountID=$aws_account_id" \
+    --set "metadata.region=$region" \
+    --set "metadata.environment=$environment" \
+    --set "metadata.gitSha=$git_sha" \
+    --set "metadata.workflowID=$workflow_run_id" \
+    --set "metadata.versionGitTag=$git_ref" \
+    "${params[@]}"
+}
+parse_args "$@"
+main

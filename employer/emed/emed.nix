@@ -31,8 +31,51 @@ let
     printf '%s --region %s\n' "$awsEksUpdateKubeconfig" "$aws_region"
     printf 'kubectl config use-context %s' "$aws_profile--$cluster"
   '';
+  emedHelmTemplate = pkgs.writeShellApplication {
+    name = "emed-helm-template";
+    runtimeInputs = with pkgs; [
+      coreutils
+      findutils
+      git
+      gnused
+      gawk
+      kubernetes-helm
+      yq-go
+    ];
+    text = builtins.readFile ./bin/emed-helm-template;
+  };
+  emedPcDeploy = pkgs.writeShellApplication {
+    name = "emed-pc-deploy";
+    runtimeInputs = with pkgs; [
+      coreutils
+      docker-client
+      findutils
+      gawk
+      gnugrep
+      gnused
+      util-linux
+      vault
+      yq-go
+    ];
+    text = builtins.readFile ./bin/emed-pc-deploy;
+  };
+  emedShipcatKubeContext = pkgs.writeShellApplication {
+    name = "emed-shipcat-kube-context";
+    runtimeInputs = with pkgs; [
+      fzf
+      teleport
+      yq-go
+    ];
+    text = builtins.readFile ./bin/emed-shipcat-kube-context;
+  };
 in
 {
+  home.packages = [
+    emedHelmTemplate
+    emedPcDeploy
+    emedShipcatKubeContext
+  ];
+
   home.sessionPath = [
     "$HOME/Code/emed-labs/engineer-toolbox/bin"
     "$HOME/Code/emed-labs/nix/bin"

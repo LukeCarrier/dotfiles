@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+# Enable a Kubernetes context defined by manifests' shipcat.conf.
+
+main() {
+  local context="$1"
+  local contexts
+  contexts="$(yq eval '.clusters | with_entries(select(.value.teleport != null) | .key |= (. | parent | .value.regions[0]) | .value |= .teleport)' "$SHIPCAT_MANIFEST_DIR/shipcat.conf")"
+  if [[ -z "$context" ]]; then
+    local context_names
+    context_names="$(echo "$contexts" | yq eval -r '. | keys[]')"
+    context="$(echo "$context_names" | fzf)"
+  fi
+  local teleport
+  teleport="$(echo "$contexts" | yq eval ".[\"$context\"]")"
+  echo "Activating Shipcat Kubernetes context $context"
+  exec tsh login --auth=github "--proxy=$teleport:443"
+}
+
+main "$@"

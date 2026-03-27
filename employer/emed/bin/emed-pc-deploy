@@ -1,0 +1,231 @@
+#!/usr/bin/env bash
+# Emulate a PC2 build agent locally using Docker, sourcing the appropriate
+# pc-deploy image version per the pipeline configuration.
+#
+# Usage: emed-pc-deploy [options]
+#
+# Switches:
+#   I/O:
+#     -i, --interactive             Run the container interactively
+#     -t, --tty                     Allocate a pseudo-TTY
+#   Terraform plugin cache:
+#     -c, --plugin-cache-volume     Name of the Docker volume to mount for
+#                                   Terraform's plugin cache
+#     -C, --no-plugin-cache         Do not mount a plugin cache volume
+#     -e, --clear-plugin-cache      Clear the plugin cache volume
+#   Common options:
+#     -p, --pc-deploy               Docker image to use for pc-deploy; defaults
+#                                   to the version used in the CD pipeline
+#     -r, --root-dir                Root directory to bind mount; suggest the
+#                                   monorepo root
+#   Terragrunt-specific:
+#     -R, --clear-terragrunt-cache  Clear the Terragrunt cache
+#   Resources to make available:
+#     -a, --aws                     Make AWS credentials available via ~/.aws
+#                                   directory and AWS_* environment variables
+#     -s, --ssh                     Make ~/.ssh directory available
+#     -S, --ssh-agent               Make agent available via SSH_AUTH_SOCK
+#     -V, --vault                   Make VAULT_ADDR and VAULT_TOKEN available
+
+PC_DEPLOY_REGISTRY="830214760947.dkr.ecr.eu-west-2.amazonaws.com/pc-deploy"
+DOCKER_SSH_AUTH_SOCK="/run/host-services/ssh-auth.sock"
+
+interactive=0
+tty=0
+plugin_cache_volume=pc-deploy-terraform-plugin-cache
+clear_plugin_cache=0
+pc_deploy=
+root_dir=
+clear_terragrunt_cache=0
+aws=0
+ssh=0
+ssh_agent=0
+vault=0
+while true; do
+  case "$1" in
+    -i|--interactive           ) interactive=1           ; shift   ;;
+    -t|--tty                   ) tty=1                   ; shift   ;;
+    -c|--plugin-cache-volume   ) plugin_cache_volume=$2  ; shift 2 ;;
+    -C|--no-plugin-cache       ) plugin_cache_volume=""  ; shift   ;;
+    -e|--clear-plugin-cache    ) clear_plugin_cache=1    ; shift   ;;
+    -p|--pc-deploy             ) pc_deploy="$2"          ; shift 2 ;;
+    -r|--root-dir              ) root_dir="$2"           ; shift 2 ;;
+    -R|--clear-terragrunt-cache) clear_terragrunt_cache=1; shift   ;;
+    -a|--aws                   ) aws=1                   ; shift   ;;
+    -s|--ssh                   ) ssh=1                   ; shift   ;;
+    -S|--ssh-agent             ) ssh_agent=1             ; shift   ;;
+    -V|--vault                 ) vault=1                 ; shift   ;;
+    *                          )                           break   ;;
+  esac
+done
+
+set -eu -o pipefail
+
+find_in_parent_dirs() {
+  local filename="$1"
+  local dir="$2"
+
+  while [[ -n "$dir" ]]; do
+    if [[ -f "$dir/$filename" ]]; then
+      echo "$dir/$filename"
+      return
+    fi
+    dir="$(dirname "$dir")"
+  done
+  exit 1
+}
+
+# Bash < 4.4 thinks this is uninitialised
+console_args=( )
+if (( interactive == 1 )); then
+  console_args+=( --interactive )
+fi
+if (( tty == 1 )); then
+  console_args+=( --tty )
+fi
+
+plugin_cache_args=( )
+if [[ -n $plugin_cache_volume ]]; then
+  plugin_cache_args+=( --mount "type=volume,src=$plugin_cache_volume,dst=/opt/terraform_plugin_cache" )
+  if docker volume inspect "$plugin_cache_volume" >/dev/null 2>&1; then
+    plugin_cache_exists=1
+  else
+    plugin_cache_exists=0
+  fi
+  if (( plugin_cache_exists == 1 )) && (( clear_plugin_cache == 1 )); then
+    docker volume rm "$plugin_cache_volume"
+  fi
+  if (( plugin_cache_exists == 0 )) || (( clear_plugin_cache == 1 )); then
+    docker volume create "$plugin_cache_volume"
+  fi
+fi
+
+echo "(i) using ssh-agent socket $SSH_AUTH_SOCK" >&2
+
+module_dir="$(pwd)"
+region_dir="$(dirname "$(find_in_parent_dirs terragrunt.hcl "$(dirname "$module_dir")")")"
+if [[ -n "${root_dir-}" ]]; then
+  root_dir="$(cd "$root_dir" && pwd -P)"
+else
+  # Default to the directory containing the parent terragrunt.hcl
+  # FIXME: this is inadequate in cases where the Terragrunt configuration
+  #        contains includes for files further up the directory tree
+  root_dir="$region_dir"
+  echo "(i) mounting root directory $root_dir per location of regional terragrunt.hcl" >&2
+fi
+
+module_from_root="${module_dir#"$root_dir"/}"
+
+if [[ -z "${pc_deploy-}" ]]; then
+  pc_deploy="$PC_DEPLOY_REGISTRY:$(yq -r .stages[0].parameters.PC_DEPLOY_VERSION "$region_dir/azure-pipelines-cd.yml")"
+  echo "(i) using pc-deploy $pc_deploy per CD workflow" >&2
+fi
+
+pc_deploy_local="$pc_deploy-local"
+if docker image inspect "$pc_deploy_local" &>/dev/null; then
+  echo "(i) using existing layer $pc_deploy_local" >&2
+else
+  uid="$(id -u)"
+  gid="$(id -g)"
+  echo "(i) creating new layer $pc_deploy_local with app user uid $uid and group gid $gid" >&2
+  docker container run \
+    --name pc-deploy-local \
+    --user "root:root" \
+    --entrypoint bash \
+    "$pc_deploy" \
+    -c "usermod -u \"$uid\" app && groupdel dialout && groupmod -g \"$gid\" app && chown -R app:app /opt/terraform_plugin_cache"
+  docker container commit pc-deploy-local "$pc_deploy_local"
+  docker container rm pc-deploy-local
+fi
+
+aws_args=( )
+if (( aws == 1 )); then
+  aws_temp_dir="$(TMPDIR=/tmp/emed mktemp -d)"
+  echo "(i) resolving any symlinks in AWS in temporary tree $aws_temp_dir" >&2
+  cleanup_aws_temp() {
+    echo "(i) removing temporary tree $aws_temp_dir" >&2
+    if [[ -n "$aws_temp_dir" && -d "$aws_temp_dir" ]]; then
+      rm -rf "$aws_temp_dir"
+    fi
+  }
+  trap cleanup_aws_temp EXIT
+
+  (
+    cd "$HOME/.aws" || exit 1
+    while IFS= read -r -d '' src; do
+      if [[ "$src" == "." ]]; then
+        echo "(d) skipping $src" >&2
+        continue
+      fi
+
+      dest="$aws_temp_dir/.aws/${src#./}"
+      echo "(d) preparing to copy $src -> $dest" >&2
+      mkdir -p "$(dirname "$dest")"
+      if [[ -L "$src" ]]; then
+        target="$(realpath "$src")"
+        echo "(d) $src is a link to $target" >&2
+        if [[ -d "$target" ]]; then
+          echo "(d) $target is a directory, copying recursively" >&2
+          cp -r "$target" "$dest"
+        else
+          echo "(d) $target is a file, copying" >&2
+          cp "$target" "$dest"
+        fi
+      elif [[ -d "$src" ]]; then
+        echo "(d) $src is a directory, copying recursively" >&2
+        cp -r "$src" "$dest"
+      else
+        echo "(d) $src is a file, copying" >&2
+        cp "$src" "$dest"
+      fi
+    done < <(find . '(' -type f -o -type l -o -type d ')' -print0 | sort -z)
+  )
+
+  aws_args=(
+    "--env" "AWS_PROFILE"
+    "--env" "AWS_ACCESS_KEY_ID" "--env" "AWS_SECRET_ACCESS_KEY"
+    "--env" "AWS_SESSION_TOKEN"
+    "--env" "AWS_REGION" "--env" "AWS_DEFAULT_REGION"
+    "--mount" "type=bind,src=$aws_temp_dir/.aws,dst=/home/app/.aws"
+  )
+fi
+
+ssh_args=( )
+if (( ssh == 1 )); then
+  ssh_args+=( "--mount" "type=bind,src=$HOME/.ssh,dst=/home/app/.ssh" )
+fi
+if (( ssh_agent == 1 )); then
+  ssh_args+=(
+    "--mount" "type=bind,src=$DOCKER_SSH_AUTH_SOCK,dst=$DOCKER_SSH_AUTH_SOCK" \
+    "--env" "SSH_AUTH_SOCK=$DOCKER_SSH_AUTH_SOCK"
+  )
+fi
+
+vault_args=( )
+vault_addr="$(yq -r .stages[0].parameters.vault_addr "$region_dir/azure-pipelines-cd.yml")"
+if (( vault == 1 )) && [[ -n "${vault_addr-}" ]]; then
+  vault_token="$(VAULT_ADDR="$vault_addr" vault print token)"
+  vault_args=( "--env" "VAULT_ADDR=$vault_addr" "--env" "VAULT_TOKEN=$vault_token" )
+fi
+
+if (( clear_terragrunt_cache == 1 )); then
+  echo "(i) removing $module_dir/.terragrunt-cache" >&2
+  rm -rf "$module_dir/.terragrunt-cache"
+fi
+
+docker container run \
+  --rm \
+  ${console_args+${console_args[@]}} \
+  --userns host \
+  --user "$(id -u):$(id -g)" \
+  --env LOCAL_RUN \
+  --workdir "/app/$module_from_root" \
+  --mount "type=bind,src=$root_dir,dst=/app" \
+  --entrypoint bash \
+  ${plugin_cache_args+${plugin_cache_args[@]}} \
+  ${aws_args+"${aws_args[@]}"} \
+  ${ssh_args+"${ssh_args[@]}"} \
+  ${vault_args+"${vault_args[@]}"} \
+  "$pc_deploy_local" \
+  -c \
+  "$@"
