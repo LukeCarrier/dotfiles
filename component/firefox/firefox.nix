@@ -242,8 +242,8 @@ in
           "browser.shell.checkDefaultBrowser" = false;
           "browser.tabs.groups.enabled" = true;
 
-          "privacy.sanitize.sanitizeOnShutdown" = true;
-          "privacy.clearOnShutdown_v2.browsingHistoryAndDownloads" = true;
+          "privacy.sanitize.sanitizeOnShutdown" = false;
+          "privacy.clearOnShutdown_v2.browsingHistoryAndDownloads" = false;
           "privacy.clearOnShutdown_v2.cache" = false;
           "privacy.clearOnShutdown_v2.cookiesAndStorage" = false;
         };
