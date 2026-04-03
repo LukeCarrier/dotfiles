@@ -44,7 +44,6 @@
     nvidiaSettings = true;
   };
 
-
   boot.kernelParams = [ "nvidia.NVreg_EnablePCIeGen3=1" ];
 
   services.xserver.videoDrivers = [ "nvidia" ];
