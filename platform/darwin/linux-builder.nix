@@ -1,4 +1,4 @@
-{ ... }:
+{ lib, ... }:
 {
   nix-rosetta-builder = {
     enable = true;
@@ -8,13 +8,17 @@
 
   nix = {
     distributedBuilds = true;
-    buildMachines =
-      lib.mkAfter (map (machine:
-        if machine.hostName == "rosetta-builder"
-        then machine // { maxJobs = 1; }
-        else machine
-      ) config.nix.buildMachines);
-
+    buildMachines = lib.mkForce [
+      {
+        hostName = "rosetta-builder";
+        system = "aarch64-linux";
+        maxJobs = 1;
+        supportedFeatures = [
+          "nix-command"
+          "flakes"
+        ];
+      }
+    ];
     settings.trusted-users = [ "@admin" ];
   };
 }
