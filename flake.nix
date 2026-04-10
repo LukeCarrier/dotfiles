@@ -129,6 +129,7 @@
               niri = niri.packages.${system}.niri-unstable;
               opencode = opencode.packages.${system}.default;
               # opencode-desktop = opencode.packages.${system}.desktop;
+              goose-cli = final.callPackage ./package/goose-cli { };
             })
             (
               final: prev:
