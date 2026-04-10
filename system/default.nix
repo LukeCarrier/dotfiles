@@ -6,6 +6,7 @@
   nix-flatpak,
   nix-on-droid,
   nix-rosetta-builder,
+  nix-std,
   nixos-hardware,
   nixpkgs-unstable,
   sops-nix,

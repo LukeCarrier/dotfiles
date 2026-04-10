@@ -49,6 +49,7 @@
       url = "github:cpick/nix-rosetta-builder";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
+    nix-std.url = "github:chessai/nix-std";
     nix-vscode-extensions = {
       url = "github:LukeCarrier/nix-vscode-extensions/unpack-phase";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
@@ -91,6 +92,7 @@
       nix-flatpak,
       nix-on-droid,
       nix-rosetta-builder,
+      nix-std,
       nix-vscode-extensions,
       nixpkgs-unstable,
       nur,
@@ -179,6 +181,7 @@
         nix-flatpak
         nix-on-droid
         nix-rosetta-builder
+        nix-std
         nixos-hardware
         nixpkgs-unstable
         sops-nix
