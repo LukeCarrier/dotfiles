@@ -66,16 +66,15 @@ in
 
   sops.age.keyFile = "${config.home.homeDirectory}/Code/LukeCarrier/dotfiles/.sops/keys";
 
-  opencode.mcpConfigurations = {
+  programs.mcp.servers = {
     excalidraw = {
-      type = "local";
-      command = [ (getExe' pkgs.excalidraw-mcp-app "excalidraw-mcp-app") "--stdio" ];
+      command = getExe' pkgs.excalidraw-mcp-app "excalidraw-mcp-app";
+      args = [ "--stdio" ];
     };
     github = {
-      type = "local";
-      command = [ (getExe pkgs.github-mcp-server) "stdio" ];
+      command = getExe pkgs.github-mcp-server;
+      args = [ "stdio" ];
       env.GITHUB_PERSONAL_ACCESS_TOKEN = "@TOKEN@";
-      secrets."@TOKEN@" = config.sops.placeholder.opencode-github-token;
     };
   };
 }

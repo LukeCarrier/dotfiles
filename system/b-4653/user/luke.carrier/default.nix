@@ -107,94 +107,59 @@ in
     };
   };
 
-  opencode.mcpConfigurations = {
+  programs.mcp.servers = {
     atlassian = {
-      enabled = false;
-      type = "remote";
       url = "https://mcp.atlassian.com/v1/mcp";
     };
 
     coralogix-uk-nonprod = {
-      enabled = false;
-      type = "local";
-      command = [
-        "mcp-remote"
+      command = "mcp-remote";
+      args = [
         "https://api.eu2.coralogix.com/mgmt/api/v1/mcp"
         "--header"
         "Authorization: Bearer @CORALOGIX_UK_NONPROD_API_KEY@"
       ];
-      secrets = {
-        "@CORALOGIX_UK_NONPROD_API_KEY@" = config.sops.placeholder.coralogix-uk-nonprod-api-key;
-      };
     };
     coralogix-uk-prod = {
-      enabled = false;
-      type = "local";
-      command = [
-        "mcp-remote"
+      command = "mcp-remote";
+      args = [
         "https://api.eu2.coralogix.com/mgmt/api/v1/mcp"
         "--header"
         "Authorization: Bearer @CORALOGIX_UK_PROD_API_KEY@"
       ];
-      secrets = {
-        "@CORALOGIX_UK_PROD_API_KEY@" = config.sops.placeholder.coralogix-uk-prod-api-key;
-      };
     };
     coralogix-us-nonprod = {
-      enabled = false;
-      type = "local";
-      command = [
-        "mcp-remote"
+      command = "mcp-remote";
+      args = [
         "https://api.us1.coralogix.com/mgmt/api/v1/mcp"
         "--header"
         "Authorization: Bearer @CORALOGIX_US_NONPROD_API_KEY@"
       ];
-      secrets = {
-        "@CORALOGIX_US_NONPROD_API_KEY@" = config.sops.placeholder.coralogix-us-nonprod-api-key;
-      };
     };
     coralogix-us-prod = {
-      enabled = false;
-      type = "local";
-      command = [
-        "mcp-remote"
+      command = "mcp-remote";
+      args = [
         "https://api.us1.coralogix.com/mgmt/api/v1/mcp"
         "--header"
         "Authorization: Bearer @CORALOGIX_US_PROD_API_KEY@"
       ];
-      secrets = {
-        "@CORALOGIX_US_PROD_API_KEY@" = config.sops.placeholder.coralogix-us-prod-api-key;
-      };
     };
 
     github = {
-      enabled = false;
-      type = "local";
-      command = [
-        (getExe pkgs.github-mcp-server)
-        "stdio"
-      ];
+      command = getExe pkgs.github-mcp-server;
+      args = [ "stdio" ];
       env.GITHUB_PERSONAL_ACCESS_TOKEN = "@TOKEN@";
-      secrets."@TOKEN@" = config.sops.placeholder.opencode-github-token;
     };
 
     grafana-cloud = {
-      enabled = false;
-      type = "local";
-      command = [ (getExe pkgs.mcp-grafana) ];
+      command = getExe pkgs.mcp-grafana;
       env = {
         GRAFANA_URL = "@URL@";
         GRAFANA_SERVICE_ACCOUNT_TOKEN = "@SERVICE_ACCOUNT_TOKEN@";
       };
-      secrets = {
-        "@URL@" = config.sops.placeholder.grafana-cloud-url;
-        "@SERVICE_ACCOUNT_TOKEN@" = config.sops.placeholder.grafana-cloud-service-account-token;
-      };
     };
 
     slack = {
-      enabled = false;
-      type = "remote";
       url = "https://mcp.slack.com/mcp";
     };
   };
