@@ -13,7 +13,6 @@ let
     }
   );
   inherit (pkgs) lib stdenv;
-  manageSearchProfileState = false;
 in
 {
   home.packages = (if !stdenv.isDarwin then [ firefoxpwa ] else [ ]) ++ [ pkgs.mozlz4a ];
@@ -93,75 +92,70 @@ in
           ]
           ++ (if stdenv.isDarwin then [ ] else [ pkgs.nur.repos.rycee.firefox-addons.pwas-for-firefox ])
         );
-        search =
-          if manageSearchProfileState then
-            {
-              default = "ddg";
-              engines = {
-                bing.metaData.hidden = true;
-                ebay.metaData.hidden = true;
-                google.metaData.hidden = true;
-                "policy-DuckDuckGo Lite".metaData.hidden = true;
-                policy-MetaGer.metaData.hidden = true;
-                policy-Mojeek.metaData.hidden = true;
-                "policy-SearXNG - searx.be".metaData.hidden = true;
-                policy-StartPage.metaData.hidden = true;
+        search = {
+          force = true;
+          default = "ddg";
+          engines = {
+            bing.metaData.hidden = true;
+            ebay.metaData.hidden = true;
+            google.metaData.hidden = true;
+            "policy-DuckDuckGo Lite".metaData.hidden = true;
+            policy-MetaGer.metaData.hidden = true;
+            policy-Mojeek.metaData.hidden = true;
+            "policy-SearXNG - searx.be".metaData.hidden = true;
+            policy-StartPage.metaData.hidden = true;
 
-                GitHub = {
-                  definedAliases = [ "gh" ];
-                  urls = [
-                    { template = "https://github.com/{searchTerms}"; }
-                  ];
-                };
-                "GitHub/Search" = {
-                  definedAliases = [ "ghs" ];
-                  urls = [
-                    { template = "https://github.com/search?q={searchTerms}&type=repositories"; }
-                  ];
-                };
-
-                "nixpkgs/Options" = {
-                  definedAliases = [ "no" ];
-                  urls = [
-                    {
-                      template = "https://search.nixos.org/options?channel=unstable&from=0&size=50&sort=relevance&type=packages&query={searchTerms}";
-                    }
-                  ];
-                };
-                "nixpkgs/Packages" = {
-                  definedAliases = [ "np" ];
-                  urls = [
-                    {
-                      template = "https://search.nixos.org/packages?channel=unstable&from=0&size=50&sort=relevance&type=packages&query={searchTerms}";
-                    }
-                  ];
-                };
-                "home-manager/Options" = {
-                  definedAliases = [ "hmo" ];
-                  urls = [
-                    { template = "https://home-manager-options.extranix.com/?query={searchTerms}&release=master"; }
-                  ];
-                };
-
-                Perplexity = {
-                  definedAliases = [ "p" ];
-                  urls = [
-                    { template = "https://www.perplexity.ai/search?focus=internet&q={searchTerms}"; }
-                  ];
-                };
-
-                "eMed/Go" = {
-                  definedAliases = [ "go" ];
-                  urls = [
-                    { template = "https://api.eu-west-2.emed.health/go-url/{searchTerms}"; }
-                  ];
-                };
-              };
-            }
-          else
-            {
-              enable = false;
+            GitHub = {
+              definedAliases = [ "gh" ];
+              urls = [
+                { template = "https://github.com/{searchTerms}"; }
+              ];
             };
+            "GitHub/Search" = {
+              definedAliases = [ "ghs" ];
+              urls = [
+                { template = "https://github.com/search?q={searchTerms}&type=repositories"; }
+              ];
+            };
+
+            "nixpkgs/Options" = {
+              definedAliases = [ "no" ];
+              urls = [
+                {
+                  template = "https://search.nixos.org/options?channel=unstable&from=0&size=50&sort=relevance&type=packages&query={searchTerms}";
+                }
+              ];
+            };
+            "nixpkgs/Packages" = {
+              definedAliases = [ "np" ];
+              urls = [
+                {
+                  template = "https://search.nixos.org/packages?channel=unstable&from=0&size=50&sort=relevance&type=packages&query={searchTerms}";
+                }
+              ];
+            };
+            "home-manager/Options" = {
+              definedAliases = [ "hmo" ];
+              urls = [
+                { template = "https://home-manager-options.extranix.com/?query={searchTerms}&release=master"; }
+              ];
+            };
+
+            Perplexity = {
+              definedAliases = [ "p" ];
+              urls = [
+                { template = "https://www.perplexity.ai/search?focus=internet&q={searchTerms}"; }
+              ];
+            };
+
+            "eMed/Go" = {
+              definedAliases = [ "go" ];
+              urls = [
+                { template = "https://api.eu-west-2.emed.health/go-url/{searchTerms}"; }
+              ];
+            };
+          };
+        };
         settings = {
           "extensions.autoDisableScopes" = 0;
 
