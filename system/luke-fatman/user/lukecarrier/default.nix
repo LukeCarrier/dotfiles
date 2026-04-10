@@ -27,6 +27,7 @@ in
     ../../../../component/firefox/firefox.nix
     ../../../../component/rift/rift.nix
     ../../../../component/ollama/ollama.nix
+    ../../../../component/goose/goose.nix
     ../../../../component/opencode/opencode.nix
     ../../../../component/claude-code/claude-code.nix
     ../../../../component/openssh/openssh.nix
