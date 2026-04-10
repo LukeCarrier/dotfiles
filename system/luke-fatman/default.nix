@@ -6,6 +6,7 @@
   imports = [
     ../../hw/macbook.nix
     ../../platform/darwin/common.nix
+    inputs.nix-rosetta-builder.darwinModules.default
     ../../platform/darwin/linux-builder.nix
     inputs.sops-nix.darwinModules.sops
     ../../component/bitwarden/darwin.nix

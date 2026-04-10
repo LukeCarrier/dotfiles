@@ -53,11 +53,10 @@
         }).pkgs;
       modules = [
         ./luke-fatman
-        nix-rosetta-builder.darwinModules.default
       ];
       specialArgs = {
         inputs = {
-          inherit sops-nix;
+          inherit nix-rosetta-builder sops-nix;
         };
       };
     };
