@@ -6,6 +6,3 @@
 
 # Employer configuration
 /employer-*/
-
-# Vendored stuff, until jujutsu supports submodules
-/vendor/

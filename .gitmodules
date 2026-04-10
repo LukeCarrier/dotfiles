@@ -1,0 +1,3 @@
+[submodule "SpaceName.spoon"]
+	path = vendor/SpaceName.spoon
+	url = https://github.com/ekalinin/SpaceName.git
