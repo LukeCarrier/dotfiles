@@ -249,6 +249,8 @@ in
           "privacy.clearOnShutdown_v2.browsingHistoryAndDownloads" = false;
           "privacy.clearOnShutdown_v2.cache" = false;
           "privacy.clearOnShutdown_v2.cookiesAndStorage" = false;
+
+          "privacy.resistFingerprinting.exemptedDomains" = [ "claude.ai" ];
         };
       };
     };
