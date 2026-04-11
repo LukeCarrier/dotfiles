@@ -237,6 +237,8 @@ in
 
           "browser.ml.enable" = true;
 
+          "browser.startup.page" = 3;
+
           "browser.newtabpage.activity-stream.feeds.section.topstories" = false;
           "browser.newtabpage.activity-stream.feeds.topsites" = false;
           "browser.newtabpage.activity-stream.showSearch" = false;
