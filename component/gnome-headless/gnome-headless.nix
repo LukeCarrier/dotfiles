@@ -1,4 +1,4 @@
-{ desktopConfig, pkgs, ... }:
+{ config, desktopConfig, pkgs, ... }:
 {
   home.packages = with pkgs; [
     libsecret
@@ -50,6 +50,7 @@
       package = pkgs.colloid-gtk-theme;
       name = "Colloid-Dark";
     };
+    gtk4.theme = config.gtk.theme;
     cursorTheme = {
       package = pkgs.bibata-cursors;
       name = "Bibata-Modern-Classic";
