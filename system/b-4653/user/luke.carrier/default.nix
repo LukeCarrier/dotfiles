@@ -33,7 +33,6 @@ in
     ../../../../component/starship/starship.nix
     ../../../../component/tmux/tmux.nix
     ../../../../component/helix/helix.nix
-    ../../../../component/vscode/vscode.nix
     ../../../../component/zed/zed.nix
     ../../../../component/vim/vim.nix
     ../../../../component/gnupg/gnupg.nix
@@ -42,7 +41,6 @@ in
     ../../../../component/zoxide/zoxide.nix
     ../../../../component/espanso/espanso.nix
     ../../../../component/ghostty/ghostty.nix
-    ../../../../component/wezterm/wezterm.nix
     ../../../../component/aws/aws.nix
     ../../../../component/kubernetes-client/kubernetes-client.nix
     ../../../../component/lima/lima.nix

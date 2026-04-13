@@ -45,7 +45,6 @@ in
     ../../../../component/espanso/espanso.nix
     ../../../../component/alacritty/alacritty.nix
     ../../../../component/ghostty/ghostty.nix
-    ../../../../component/wezterm/wezterm.nix
     ../../../../component/aws/aws.nix
     ../../../../component/kubernetes-client/kubernetes-client.nix
     ../../../../component/lima/lima.nix
