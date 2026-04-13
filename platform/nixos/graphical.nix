@@ -79,6 +79,11 @@
     };
   };
 
+  powerManagement = {
+    enable = true;
+    cpuFreqGovernor = "ondemand";
+  };
+
   hardware.bluetooth = {
     enable = true;
     powerOnBoot = true;
