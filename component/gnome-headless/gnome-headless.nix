@@ -32,7 +32,10 @@
       extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
     };
 
-    userDirs.enable = true;
+    userDirs = {
+      enable = true;
+      setSessionVariables = true;
+    };
   };
 
   home.pointerCursor = {
