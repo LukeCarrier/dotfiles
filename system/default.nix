@@ -198,7 +198,14 @@
             output.transform = null;
           }
           {
-            profile.name = "peacehavenDockedClosed";
+            output.criteria = "Samsung Electric Company U32J59x HTPK602008";
+            output.mode = "3840x2160@60Hz";
+            output.adaptiveSync = false;
+            output.scale = 1.25;
+            output.transform = null;
+          }
+          {
+            profile.name = "peacehavenLeftOnly";
             profile.outputs = [
               {
                 criteria = "Samsung Electric Company U32J59x HTPK702789";
@@ -207,7 +214,31 @@
               }
             ];
           }
-        ];
+          {
+            profile.name = "peacehavenRightOnly";
+            profile.outputs = [
+              {
+                criteria = "Samsung Electric Company U32J59x HTPK602008";
+                status = "enable";
+                position = "0,0";
+              }
+            ];
+          }
+          {
+            profile.name = "peacehavenAll";
+            profile.outputs = [
+              {
+                criteria = "Samsung Electric Company U32J59x HTPK602008";
+                status = "enable";
+                position = "3072,0";
+              }
+              {
+                criteria = "Samsung Electric Company U32J59x HTPK702789";
+                status = "enable";
+                position = "0,0";
+              }
+            ];
+          }        ];
         inputs = {
           inherit niri nix-flatpak sops-nix;
         };
