@@ -12,17 +12,17 @@ gc-aggressive:
 	sudo nix-env -p /nix/var/nix/profiles/system --delete-generations $(PRESERVE_GENERATIONS)
 
 home:
-	nix run home-manager -- switch -b hmbak --flake "$(FLAKE)?submodules=1#$(USER)@$(HOSTNAME)" --show-trace
+	nix run home-manager -- switch -b hmbak --flake "$(FLAKE)#$(USER)@$(HOSTNAME)" --show-trace
 
 home-darwin: home
 	@tail -n 20 $HOME/Library/Logs/SopsNix/stderr 2>/dev/null || true
 	@tail -n 20 $HOME/Library/Logs/SopsNix/stdout 2>/dev/null || true
 
 host:
-	sudo nixos-rebuild switch --upgrade --flake "$(FLAKE)?submodules=1#$(HOSTNAME)" --show-trace
+	sudo nixos-rebuild switch --upgrade --flake "$(FLAKE)#$(HOSTNAME)" --show-trace
 
 host-android:
-	nix-on-droid switch --flake "$(FLAKE)?submodules=1" --show-trace
+	nix-on-droid switch --flake "$(FLAKE)" --show-trace
 
 host-darwin:
-	sudo nix run nix-darwin -- switch --flake "$(FLAKE)?submodules=1#$(HOSTNAME)" --show-trace
+	sudo nix run nix-darwin -- switch --flake "$(FLAKE)#$(HOSTNAME)" --show-trace
