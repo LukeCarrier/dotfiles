@@ -30,6 +30,7 @@
     ../../../../component/direnv/direnv.nix
     ../../../../component/firefox/firefox.nix
     ../../../../component/ollama/ollama.nix
+    ../../../../component/goose/goose.nix
     ../../../../component/opencode/opencode.nix
     # ../../../../component/gnome-network-displays/home.nix
     ../../../../component/valent/home.nix
