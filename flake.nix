@@ -72,7 +72,7 @@
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     wpaperd = {
-      url = "github:LukeCarrier/wpaperd/claude/fix-wpaperd-libegl-bug-VUKhg";
+      url = "github:LukeCarrier/wpaperd/nvidia-current-surface-tracking";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
       inputs.rust-overlay.follows = "rust-overlay";
     };

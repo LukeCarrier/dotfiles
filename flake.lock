@@ -876,16 +876,16 @@
         "systems": "systems_3"
       },
       "locked": {
-        "lastModified": 1773348815,
-        "narHash": "sha256-fJNbzPeA/FhLO35T5A5JvvwlBhuhc+jMZCMI/YkSKWI=",
+        "lastModified": 1776119539,
+        "narHash": "sha256-0HJKg2AJRnm5V56hh+tQDQ0V1BT4iupX1SomuqbZbgE=",
         "owner": "LukeCarrier",
         "repo": "wpaperd",
-        "rev": "58e77c0df8b27826ac18c2cae3a5207dd8248e46",
+        "rev": "299070085f0cb0de87dae56add138d0cbc2e4e63",
         "type": "github"
       },
       "original": {
         "owner": "LukeCarrier",
-        "ref": "claude/fix-wpaperd-libegl-bug-VUKhg",
+        "ref": "nvidia-current-surface-tracking",
         "repo": "wpaperd",
         "type": "github"
       }
