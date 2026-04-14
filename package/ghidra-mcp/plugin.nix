@@ -31,10 +31,9 @@ stdenv.mkDerivation rec {
 
   # Configure Maven to use Ghidra JARs from the Nix store
   postPatch = ''
-    # Update pom.xml to match the Ghidra version from nixpkgs
-    substituteInPlace pom.xml \
-      --replace-fail '<ghidra.version>12.1</ghidra.version>' \
-                     '<ghidra.version>${ghidra.version}</ghidra.version>'
+    # Update pom.xml to match the Ghidra version from nixpkgs. Upstream bumps
+    # the pinned version regularly, so match whatever it is rather than a literal.
+    sed -i -E 's|<ghidra.version>[^<]*</ghidra.version>|<ghidra.version>${ghidra.version}</ghidra.version>|' pom.xml
   '';
 
   buildPhase = ''
@@ -63,7 +62,10 @@ stdenv.mkDerivation rec {
       Graph \
       Emulation \
       PDB \
-      FunctionID; do
+      FunctionID \
+      Debugger-api \
+      Framework-TraceModeling \
+      Debugger-rmi-trace; do
 
       # Find the JAR in Ghidra installation
       jarPath=$(find $GHIDRA_INSTALL_DIR/Ghidra -name "$jar.jar" | head -1)

@@ -26,7 +26,8 @@ python3Packages.buildPythonApplication rec {
 
   # The bridge talks to Ghidra over stdlib http.client; `requests` is only
   # needed by the unshipped subsystems (fun-doc, tests).
-  dependencies = with python3Packages; [ mcp ];
+  # Upstream pins mcp>=1.28.1,<2.0.0; nixpkgs' `mcp` is now 2.x.
+  dependencies = with python3Packages; [ mcp_1 ];
 
   # Note: The Ghidra plugin (Java component) is not built by this package.
   # Users need to build and install the plugin separately using Maven and Ghidra.
