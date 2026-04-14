@@ -1,7 +1,7 @@
 ---
 status: draft
 created: 2026-01-21
-updated: 2026-08-22
+updated: 2026-10-31
 author: Luke Carrier
 ---
 
@@ -20,8 +20,7 @@ Create an ADR specification in TOON format. This is the first stage of the ADR p
 1. If the description is anything but fully settled, run the `align` skill to reach a shared understanding before writing.
 2. Check whether an existing ADR already covers this topic — if so, tell the user and stop.
 3. Write a specification file at `adrs/<YYYY-MM-DD>-<feature-slug>/spec.toon` with the TOON schema below.
-4. Validate the TOON structure against the schema: `toon --decode adrs/<YYYY-MM-DD>-<feature-slug>/spec.toon | check-jsonschema --schemafile ${FIXTURES_DIR}/spec.schema.json /dev/stdin`. Fix any validation errors.
-5. Run `bash ${FIXTURES_DIR}/adr.build.sh adrs/<YYYY-MM-DD>-<feature-slug>` to generate `spec.md`.
+4. Run `bash ${FIXTURES_DIR}/adr.build.sh adrs/<YYYY-MM-DD>-<feature-slug>`. It validates `spec.toon` against `${FIXTURES_DIR}/spec.schema.json` and writes `spec.md`. Fix anything it reports and run it again. Never invoke `toon` or `check-jsonschema` yourself: neither is on `PATH`, and the script already embeds both.
 
 ## TOON Schema
 
