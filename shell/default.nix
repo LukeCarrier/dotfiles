@@ -149,6 +149,9 @@ in
       toolVersions = mkToolVersions "default" toolVersionsCmds;
     in
     pkgs.mkShell {
+      # Back up files Home Manager would clobber instead of failing activation.
+      HOME_MANAGER_BACKUP_EXT = "hmbak";
+
       shellHook = ''
         cat ${toolVersions}
       '';
