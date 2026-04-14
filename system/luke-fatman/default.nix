@@ -9,6 +9,7 @@
     inputs.nix-rosetta-builder.darwinModules.default
     ../../platform/darwin/linux-builder.nix
     inputs.sops-nix.darwinModules.sops
+    ../../employer/throwparty/darwin.nix
     ../../component/bitwarden/darwin.nix
     ../../component/handy/darwin.nix
     ../../component/wifiman/darwin.nix
@@ -20,7 +21,7 @@
 
   system.stateVersion = 5;
 
-  sops.defaultSopsFile = ../../secrets/personal.yaml;
+  sops.defaultSopsFile = ../../secrets/employer-throwparty.yaml;
 
   networking = {
     computerName = "luke-fatman";
@@ -34,12 +35,6 @@
   system.primaryUser = "lukecarrier";
 
   homebrew = {
-    casks = [
-      "messenger"
-      "signal"
-      "telegram"
-      "whatsapp"
-    ];
     masApps = {
       Xcode = 497799835;
     };

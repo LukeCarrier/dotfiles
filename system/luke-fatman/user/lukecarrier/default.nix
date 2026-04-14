@@ -14,6 +14,7 @@ in
 {
   imports = [
     inputs.sops-nix.homeManagerModules.sops
+    ../../../../employer/throwparty/throwparty.nix
     ../../../../platform/darwin/home.nix
     ../../../../component/shell-essential/shell-essential.nix
     ../../../../component/bitwarden/bitwarden.nix
@@ -59,7 +60,7 @@ in
     homeDirectory = homeDirectory;
   };
 
-  sops.defaultSopsFile = ../../../../secrets/personal.yaml;
+  sops.defaultSopsFile = ../../../../secrets/employer-throwparty.yaml;
 
   nixpkgs.config = {
     allowBroken = true;
@@ -85,12 +86,6 @@ in
     crane
     skopeo
   ];
-
-  # Must be formatted exactly as follows or NVIDIA Sync will complain
-  # that ~/.ssh/config is not writable
-  programs.ssh.extraOptionOverrides = {
-    Include = "\"${homeDirectory}/Library/Application Support/NVIDIA/Sync/config/ssh_config\"";
-  };
 
   sops.age.keyFile = "${config.home.homeDirectory}/Code/LukeCarrier/dotfiles/.sops/keys";
 
