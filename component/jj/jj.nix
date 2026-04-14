@@ -7,6 +7,7 @@
   home.packages = with pkgs; [
     jujutsu
     tuicr
+    jj-pre-push
   ];
 
   programs = {
