@@ -16,10 +16,12 @@ Work the tree in **rounds**. A question is **in the light** when every decision 
 Each round, ask everything **in the light** at once. Number each question and give your recommended answer:
 
 ```
-❓ **Q1 — <title>**: <body; may span paragraphs and offer choices>
+❓ **Q<N> — <title>**: <body; may span paragraphs and offer choices>
 
 ➡️ <your recommended answer>
 ```
+
+**Numbering is monotonic for the whole session.** Questions share one counter that only ever increases. A second round continues the sequence — it starts at Q5 if the first round used Q1 through Q4 — and never restarts at Q1. Reusing a number makes "answer Q3" ambiguous, so a repeated number is a defect, not a style choice. If you are resuming after a long gap, read back through the conversation to find the highest number used rather than starting fresh.
 
 Then wait for answers. Do not ask a question that depends on another still open in this round — it's in shadow until that one is answered, so it belongs to a later round.
 
