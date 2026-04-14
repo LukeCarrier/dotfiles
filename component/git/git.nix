@@ -75,6 +75,9 @@
       # Editors and IDEs
       ".idea/"
       ".zed/"
+
+      # Agent tooling
+      "**/.claude/settings.local.json"
     ];
   };
 }
