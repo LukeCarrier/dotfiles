@@ -6,12 +6,13 @@
 let
   inherit (pkgs)
     fetchFromGitHub
-    fetchPnpmDeps
     makeWrapper
     nodejs
     pnpm
     pnpmConfigHook
     ;
+
+  fetchPnpmDeps = import ../../lib/fetch-pnpm-deps.nix { inherit pkgs; };
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "toon-cli";

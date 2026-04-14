@@ -4,7 +4,9 @@
   stdenv,
 }:
 let
-  inherit (pkgs) fetchPnpmDeps makeWrapper nodejs pnpm pnpmConfigHook;
+  inherit (pkgs) makeWrapper nodejs pnpm pnpmConfigHook;
+
+  fetchPnpmDeps = import ../../lib/fetch-pnpm-deps.nix { inherit pkgs; };
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "wireloom-cli";

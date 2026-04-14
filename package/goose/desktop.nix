@@ -8,7 +8,9 @@
 }:
 let
   inherit (lib) getExe optionalString;
-  inherit (pkgs) electron fetchPnpmDeps makeDesktopItem;
+  inherit (pkgs) electron makeDesktopItem;
+
+  fetchPnpmDeps = import ../../lib/fetch-pnpm-deps.nix { inherit pkgs; };
   version = "1.50.1";
 
   rawSrc = fetchFromGitHub {
