@@ -56,11 +56,21 @@ stdenv.mkDerivation (finalAttrs: {
 
   ELECTRON_SKIP_BINARY_DOWNLOAD = "1";
 
+  # Electron Forge signs the .app itself after flipping fuses. Nixpkgs' fixup
+  # hooks would undo that: `strip` invalidates the signature, and the sigtool
+  # re-signer replaces the bundle's signature with a bare binary signature
+  # ("code has no resources but signature indicates they must be present").
+  # Either way arm64 macOS SIGKILLs the app on launch.
+  dontStrip = true;
+  darwinDontCodeSign = true;
+
   buildPhase = ''
     runHook preBuild
     pushd ui
 
-    # Disable ad-hoc Darwin re-signing: codesign is unavailable in the Nix sandbox
+    # @electron/fuses would ad-hoc re-sign the app after flipping fuses, but it
+    # does so from the `packageAfterCopy` hook — before packager rewrites
+    # Info.plist — so that signature never validates. Sign once in postFixup.
     substituteInPlace desktop/forge.config.ts \
       --replace-fail \
         "new FusesPlugin({" \
@@ -73,11 +83,14 @@ stdenv.mkDerivation (finalAttrs: {
       node_modules/@electron/packager/dist/packager.js \
       --replace-fail "await this.getElectronZipPath(downloadOpts)" "'$(pwd)/electron.zip'"
 
-    # Create electron zip from our electron distribution
+    # Create electron zip from our electron distribution. `-y` is essential:
+    # without it zip dereferences the frameworks' `Versions/Current` symlinks,
+    # which leaves codesign unable to tell app from framework ("bundle format
+    # is ambiguous") and no valid signature can be produced.
     cp -r ${electron.dist} electron-dist
     chmod -R u+w electron-dist
     pushd electron-dist
-    zip -0Xqr ../electron.zip .
+    zip -0Xqry ../electron.zip .
     popd
     rm -r electron-dist
 
@@ -110,12 +123,18 @@ stdenv.mkDerivation (finalAttrs: {
     mv out/Goose-* $out/share/goose-desktop
 
     ${optionalString stdenv.hostPlatform.isDarwin ''
-      # Expose the .app under $out/Applications so Home Manager's macOS app
-      # linker (mac-app-util) — which scans each package's Applications/ dir —
-      # picks it up into ~/Applications/Home Manager Apps. Glob rather than
-      # hard-code the bundle name so a productName change can't silently drop it.
-      mkdir -p $out/Applications
+      # The packaged app resolves its backend from
+      # Contents/Resources/bin/goose (findGooseBinaryPath); without it startup
+      # fails with "Goose binary not found in any of the possible paths".
       for app in $out/share/goose-desktop/*.app; do
+        mkdir -p "$app/Contents/Resources/bin"
+        cp ${getExe goose-cli} "$app/Contents/Resources/bin/goose"
+
+        # Expose the .app under $out/Applications so Home Manager's macOS app
+        # linker (mac-app-util) — which scans each package's Applications/ dir —
+        # picks it up into ~/Applications/Home Manager Apps. Glob rather than
+        # hard-code the bundle name so a productName change can't silently drop it.
+        mkdir -p $out/Applications
         ln -s "$app" "$out/Applications/$(basename "$app")"
       done
     ''}
@@ -152,6 +171,19 @@ stdenv.mkDerivation (finalAttrs: {
     ''}
 
     runHook postInstall
+  '';
+
+  # arm64 macOS SIGKILLs a bundle whose signature doesn't validate, and flipping
+  # fuses invalidates the signature shipped in electron's dist. Sign here rather
+  # than in forge: its `packageAfterCopy` hook runs before packager rewrites
+  # Info.plist, so its signature never validates. postFixup also runs after
+  # patchShebangs, which rewrites scripts inside the bundle.
+  postFixup = optionalString stdenv.hostPlatform.isDarwin ''
+    for app in $out/share/goose-desktop/*.app; do
+      /usr/bin/codesign --force --deep --sign - \
+        --preserve-metadata=entitlements,requirements,flags,runtime \
+        "$app"
+    done
   '';
 
   desktopItems = [
