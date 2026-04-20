@@ -17,6 +17,7 @@ pkgs.symlinkJoin {
   ++ (with pkgs; [
     findutils
     gh
+    gh-dash
     jq
     yq-go
   ]);

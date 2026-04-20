@@ -257,6 +257,134 @@ nix run home-manager -- switch --flake .#<user>@<hostname>
 }
 ```
 
+### Collapsing Single-Value Attrsets
+
+When an attribute set has exactly one value, collapse it using dotted key notation instead of a nested block. This is a standard Nix idiom equivalent to writing the full attrset, but more concise.
+
+**Collapsed (preferred):**
+```nix
+home.file = {
+  ".config/goose/adrs/recipes/housekeeping.sh".source = ./adrs/recipes/housekeeping.sh;
+  ".config/goose/adrs/recipes/recipe.yaml".source = ./adrs/recipes/recipe.yaml;
+};
+```
+
+**Equivalent verbose form (avoid):**
+```nix
+home.file = {
+  ".config/goose/adrs/recipes/housekeeping.sh" = {
+    source = ./adrs/recipes/housekeeping.sh;
+  };
+  ".config/goose/adrs/recipes/recipe.yaml" = {
+    source = ./adrs/recipes/recipe.yaml;
+  };
+};
+```
+
+This applies to any attribute set with a single key — `home.file`, `services.*.extraConfig`, `environment.etc.*`, etc. When a set grows beyond one key, switch to the nested block form.
+
+### Platform-Specific Conditionals
+
+Components frequently need different behaviour on macOS (Darwin) versus Linux (NixOS). The repository uses several established patterns for this:
+
+**`lib.mkIf` for conditional module attributes:**
+```nix
+home.packages = lib.mkIf pkgs.stdenv.isDarwin [ pkgs.some-darwin-only-package ];
+```
+
+**`if` expressions for value selection:**
+```nix
+package = if stdenv.hostPlatform.isDarwin then pkgs.ghostty-bin else pkgs.ghostty;
+```
+
+**Platform-conditional socket paths and service names:**
+```nix
+socketPath =
+  if stdenv.isDarwin then
+    "Library/Containers/com.bitwarden.desktop/Data/.bitwarden-ssh-agent.sock"
+  else
+    ".bitwarden/ssh-agent.sock";
+```
+
+Use `stdenv.isDarwin` / `stdenv.isLinux` for boolean checks. Use `stdenv.hostPlatform.isDarwin` when the value is used in a conditional expression that selects between two concrete values. Prefer `lib.mkIf` when enabling or disabling entire attribute sets.
+
+**`darwin.nix` files for macOS-only Homebrew installs:**
+Components on macOS may include a `darwin.nix` file that runs in the `nix-darwin` context and installs Homebrew casks or MAS apps. These are referenced from the host's `platform/darwin/common.nix` or host-specific config.
+
+**`home.nix` files for cross-platform home-manager modules:**
+Components may include a `home.nix` file for home-manager options that apply on both macOS and Linux, keeping them separate from the main NixOS-specific module.
+
+See `component/1password/`, `component/bitwarden/`, `component/ghostty/`, and `component/opencode/` for examples of these patterns in practice.
+
+### Component File Structure
+
+Components follow a consistent file layout depending on their platform requirements:
+
+**Single-module components (most common):**
+```
+component/ghostty/ghostty.nix
+```
+
+**Components with macOS Homebrew installs:**
+```
+component/goose/
+  goose.nix       # home-manager module (nixos + darwin)
+  darwin.nix      # nix-darwin module (Homebrew casks only)
+```
+
+**Components with Linux-specific and home-manager modules:**
+```
+component/1password/
+  1password.nix   # homebrew casks (darwin.nix in this case)
+  home.nix        # home-manager module (cross-platform)
+```
+
+**Components with shared Nix logic:**
+```
+component/fish/
+  default.nix     # shared configuration (used by nixos + darwin)
+  fish.nix        # fish-specific module
+```
+
+The `default.nix` entry point is used when a component needs to share logic between NixOS and macOS contexts. Individual `<component>.nix` files are the default entry point for self-contained modules.
+
+See `component/fish/`, `component/1password/`, and `component/bitwarden/` for examples.
+
+### Nix Idioms
+
+**`inherit (pkgs)` for common imports:**
+When a component needs both `lib` and `stdenv` from `pkgs`, use `inherit` rather than listing them separately:
+```nix
+{ pkgs, ... }:
+let
+  inherit (pkgs) lib stdenv;
+in
+{
+  settings = if stdenv.isDarwin then { } else { };
+}
+```
+
+**`pkgs.lib.mkDefault` for SOPS file paths:**
+When a SOPS secret's source file may differ between hosts but a sensible default exists, use `mkDefault` so host-level config can override it:
+```nix
+sopsFile = pkgs.lib.mkDefault ../../secrets/personal.yaml;
+```
+
+See `component/goose/goose.nix` and `component/opencode/opencode.nix` for examples.
+
+**SOPS secret declarations use camelCase keys matching the YAML:**
+```nix
+sops = {
+  secrets."goose-openai-api-key" = {
+    sopsFile = ../../secrets/personal.yaml;
+    format = "yaml";
+    key = "goose/openai-api-key";
+  };
+};
+```
+
+The hyphenated secret name becomes the SOPS placeholder reference (e.g., `config.sops.placeholder.goose-openai-api-key`), while the `key` field maps to the nested path in the encrypted YAML.
+
 ### File Naming
 
 - **Nix files**: Lowercase, hyphen-separated (`hyprland.nix`)

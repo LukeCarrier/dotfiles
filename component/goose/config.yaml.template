@@ -1,3 +1,8 @@
+GOOSE_TELEMETRY_ENABLED: false
+
+GOOSE_PROVIDER: custom_peacehaven_llama-swap_openai
+GOOSE_MODEL: qwen-qwen3.6-35b-a3b
+
 extensions:
   chatrecall:
     enabled: false
@@ -124,5 +129,4 @@ extensions:
     display_name: Analyze
     bundled: true
     available_tools: []
-    @MCP_CONFIG_YAML@
-GOOSE_TELEMETRY_ENABLED: false
+@MCP_CONFIG_YAML@

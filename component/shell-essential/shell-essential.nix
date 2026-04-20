@@ -13,7 +13,6 @@
 
       # Development tools
       dotfiles-meta
-      gh
       jq
       ripgrep
       tree

@@ -70,17 +70,19 @@ let
   };
 in
 {
-  home.packages = [
-    emedHelmTemplate
-    emedPcDeploy
-    emedShipcatKubeContext
-  ];
+  home.packages =
+    [
+      emedHelmTemplate
+      emedPcDeploy
+      emedShipcatKubeContext
+    ]
+    ++ (with pkgs; [
+      github-cli-tools
+    ]);
 
   home.sessionPath = [
     "$HOME/Code/emed-labs/engineer-toolbox/bin"
     "$HOME/Code/emed-labs/nix/bin"
-    # Jetbrains IDE wrappers
-    "$HOME/.local/bin"
   ];
 
   home.sessionVariables = {

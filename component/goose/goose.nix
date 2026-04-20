@@ -87,4 +87,34 @@ in
       path = "${config.home.homeDirectory}/.config/goose/config.yaml";
     };
   };
+
+  home.file = {
+    ".config/goose/adversary.md".source = ./adversary.md;
+
+    ".config/goose/custom_providers/custom_peacehaven_llama-swap_anthropic.json".source =
+      ./custom_providers/custom_peacehaven_llama-swap_anthropic.json;
+    ".config/goose/custom_providers/custom_peacehaven_llama-swap_openai.json".source =
+      ./custom_providers/custom_peacehaven_llama-swap_openai.json;
+
+    ".config/goose/recipes/adr.yaml".source = ./recipes/adr.yaml;
+    ".config/goose/recipes/adr/housekeeping.sh".source = ./recipes/adr/housekeeping.sh;
+    ".config/goose/recipes/adr/housekeeping.yaml".source =
+      ./recipes/adr/housekeeping.yaml;
+    ".config/goose/recipes/adr/implement.yaml".source =
+      ./recipes/adr/implement.yaml;
+    ".config/goose/recipes/adr/plan.yaml".source = ./recipes/adr/plan.yaml;
+    ".config/goose/recipes/adr/quest.yaml".source = ./recipes/adr/quest.yaml;
+    ".config/goose/recipes/adr/reflect.yaml".source =
+      ./recipes/adr/reflect.yaml;
+    ".config/goose/recipes/adr/specify.yaml".source =
+      ./recipes/adr/specify.yaml;
+    ".config/goose/recipes/adr/tasks.yaml".source = ./recipes/adr/tasks.yaml;
+
+    # FIXME: migrate other agent definitions
+    # ".config/goose/recipes/adrian.yaml".source = ./recipes/adrian.yaml;
+    # ".config/goose/recipes/edmund.yaml".source = ./recipes/edmund.yaml;
+    # ".config/goose/recipes/litterbox.yaml".source = ./recipes/litterbox.yaml;
+    # ".config/goose/recipes/quest.yaml".source = ./recipes/quest.yaml;
+    # ".config/goose/recipes/scout.yaml".source = ./recipes/scout.yaml;
+  };
 }

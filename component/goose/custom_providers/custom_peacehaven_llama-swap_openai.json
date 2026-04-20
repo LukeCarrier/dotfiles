@@ -1,0 +1,28 @@
+{
+  "name": "custom_peacehaven_llama-swap_openai",
+  "engine": "openai",
+  "display_name": "Peacehaven llama-swap (OpenAI)",
+  "description": "Peacehaven llama-swap deployment",
+  "api_key_env": "",
+  "base_url": "https://llama-swap.peacehaven.carrier.family/v1",
+  "models": [
+    {
+      "name": "default",
+      "context_limit": 128000,
+      "input_token_cost": null,
+      "output_token_cost": null,
+      "currency": null,
+      "supports_cache_control": null
+    }
+  ],
+  "headers": {},
+  "timeout_seconds": null,
+  "supports_streaming": false,
+  "requires_auth": false,
+  "catalog_provider_id": null,
+  "base_path": null,
+  "env_vars": null,
+  "dynamic_models": null,
+  "skip_canonical_filtering": false,
+  "fast_model": null
+}
