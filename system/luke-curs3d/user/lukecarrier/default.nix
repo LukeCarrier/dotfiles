@@ -81,7 +81,9 @@
   };
 
   home.packages = with pkgs; [
+    crane
     docker-cli-tools
+    skopeo
     handy
     monaspace-fonts
     nautilus

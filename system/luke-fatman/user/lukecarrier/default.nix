@@ -75,7 +75,9 @@ in
   };
 
   home.packages = with pkgs; [
+    crane
     docker-cli-tools
+    skopeo
   ];
 
   # Must be formatted exactly as follows or NVIDIA Sync will complain

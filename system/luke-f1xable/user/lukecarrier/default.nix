@@ -73,7 +73,9 @@
     ];
 
   home.packages = with pkgs; [
+    crane
     docker-cli-tools
+    skopeo
     ungoogled-chromium
     monaspace-fonts
     stklos

@@ -63,8 +63,11 @@ in
       "vscode-extension-ms-vscode-remote-remote-containers"
     ];
 
-  # FIXME: should we be keeping all of this cruft in a devShell?
-  home.packages = with pkgs; [ docker-cli-tools ];
+  home.packages = with pkgs; [
+    crane
+    docker-cli-tools
+    skopeo
+  ];
 
   # Must be formatted exactly as follows or NVIDIA Sync will complain
   # that ~/.ssh/config is not writable

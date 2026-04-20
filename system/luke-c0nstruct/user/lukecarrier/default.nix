@@ -61,7 +61,9 @@ in
   };
 
   home.packages = with pkgs; [
+    crane
     docker-cli-tools
+    skopeo
   ];
 
   sops.age.keyFile = "${config.home.homeDirectory}/Code/LukeCarrier/dotfiles/.sops/keys";
