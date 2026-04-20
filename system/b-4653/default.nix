@@ -33,7 +33,6 @@
 
   homebrew.casks = [
     "cursor"
-    "visual-studio-code@insiders"
   ];
 
   sops.secrets.nix-github.sopsFile = pkgs.lib.mkForce ../../secrets/employer-emed.yaml;

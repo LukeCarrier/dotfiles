@@ -66,7 +66,6 @@
       "bettertouchtool"
       "swiftdefaultappsprefpane"
       "thunderbird"
-      "wezterm"
     ];
   };
 }

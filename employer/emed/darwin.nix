@@ -38,9 +38,7 @@
     casks = [
       "aws-vpn-client"
       "meetingbar"
-      "microsoft-teams"
       "postman"
-      "vnc-viewer"
 
       # Installed via the MDM
       # "slack"
