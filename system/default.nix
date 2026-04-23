@@ -295,7 +295,7 @@
           }
           {
             output.criteria = "Samsung Electric Company U32J59x HTPK602008";
-            output.mode = "3840x2160@30Hz";
+            output.mode = "3840x2160@60Hz";
             output.adaptiveSync = false;
             output.scale = 1.25;
             output.transform = null;
