@@ -33,10 +33,6 @@
       inputs.nixpkgs.follows = "nixpkgs-unstable";
       inputs.rust-overlay.follows = "rust-overlay";
     };
-    opencode = {
-      url = "github:anomalyco/opencode/v1.2.27";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
-    };
     niri = {
       url = "github:sodiboo/niri-flake";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
@@ -61,6 +57,10 @@
     nixpkgs-unstable.url = "github:NixOS/nixpkgs";
     nur = {
       url = "github:nix-community/NUR";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
+    opencode = {
+      url = "github:anomalyco/opencode/dev";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     rust-overlay = {
