@@ -24,7 +24,6 @@ in
     ../../../../component/direnv/direnv.nix
     ../../../../component/firefox/firefox.nix
     #../../../../component/rift/rift.nix
-    ../../../../component/opencode/opencode.nix
     ../../../../component/openssh/openssh.nix
     ../../../../component/atuin/atuin.nix
     ../../../../component/starship/starship.nix
