@@ -34,7 +34,6 @@ in
     ../../../../component/starship/starship.nix
     ../../../../component/tmux/tmux.nix
     ../../../../component/helix/helix.nix
-    ../../../../component/vscode/vscode.nix
     ../../../../component/vim/vim.nix
     ../../../../component/zed/zed.nix
     ../../../../component/ghidra/ghidra.nix
