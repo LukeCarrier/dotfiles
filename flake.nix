@@ -20,6 +20,10 @@
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     flake-utils.url = "github:numtide/flake-utils";
+    handy = {
+      url = "github:cjpais/handy";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
     home-manager = {
       url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
@@ -85,6 +89,7 @@
       dagger,
       darwin,
       flake-utils,
+      handy,
       home-manager,
       lanzaboote,
       niri,
@@ -129,6 +134,7 @@
             rust-overlay.overlays.default
             wpaperd.overlays.default
             (final: prev: {
+              handy = handy.packages.${system}.handy;
               niri = niri.packages.${system}.niri-unstable;
               opencode = opencode.packages.${system}.default;
               # opencode-desktop = opencode.packages.${system}.desktop;
