@@ -134,14 +134,14 @@
             rust-overlay.overlays.default
             wpaperd.overlays.default
             (final: prev: {
+              direnv = prev.direnv.overrideAttrs (_old: {
+                doCheck = false;
+              });
+              goose-cli = final.callPackage ./package/goose-cli { };
               handy = handy.packages.${system}.handy;
               niri = niri.packages.${system}.niri-unstable;
               opencode = opencode.packages.${system}.default;
               # opencode-desktop = opencode.packages.${system}.desktop;
-              goose-cli = final.callPackage ./package/goose-cli { };
-              direnv = prev.direnv.overrideAttrs (_old: {
-                doCheck = false;
-              });
             })
             (
               final: prev:
