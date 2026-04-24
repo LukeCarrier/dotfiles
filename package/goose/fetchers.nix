@@ -1,5 +1,3 @@
-# not a stable interface, do not reference outside the goose-cli package but make a
-# copy if you need
 {
   lib,
   stdenv,

@@ -4,17 +4,17 @@ description: "Architecture Decision Record planning cycle with specification, pl
 
 sub_recipes:
   - name: "adr_specify"
-    path: "./adr/specify.yaml"
+    path: "adr/specify.yaml"
   - name: "adr_plan"
-    path: "./adr/plan.yaml"
+    path: "adr/plan.yaml"
   - name: "adr_tasks"
-    path: "./adr/tasks.yaml"
+    path: "adr/tasks.yaml"
   - name: "adr_implement"
-    path: "./adr/implement.yaml"
+    path: "adr/implement.yaml"
   - name: "adr_reflect"
-    path: "./adr/reflect.yaml"
+    path: "adr/reflect.yaml"
   - name: "adr_housekeeping"
-    path: "./adr/housekeeping.yaml"
+    path: "adr/housekeeping.yaml"
 
 extensions:
   - type: builtin

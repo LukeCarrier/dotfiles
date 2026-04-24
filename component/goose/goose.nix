@@ -7,7 +7,6 @@
 let
   mcpLib = import ../../lib/mcp.nix { inherit lib; };
   substitute = mcpLib.substitute config lib;
-
   buildGooseMcpConfig =
     _: serverDef:
     let
@@ -32,9 +31,7 @@ let
     }
     // lib.optionalAttrs isRemote { inherit url; }
     // lib.optionalAttrs (env != { }) { inherit env; };
-
   gooseMcpServers = lib.mapAttrs buildGooseMcpConfig config.programs.mcp.servers;
-
   mcpConfigYaml =
     if gooseMcpServers == { } then
       ""
@@ -64,13 +61,35 @@ let
           )
         ) gooseMcpServers
       );
+
+  adrRecipes = ./recipes/adr;
+  replaceRecipePaths = content:
+    lib.strings.replaceStrings
+      [
+        "adr/specify.yaml"
+        "adr/plan.yaml"
+        "adr/tasks.yaml"
+        "adr/implement.yaml"
+        "adr/reflect.yaml"
+        "adr/housekeeping.yaml"
+      ]
+      [
+        "${adrRecipes}/specify.yaml"
+        "${adrRecipes}/plan.yaml"
+        "${adrRecipes}/tasks.yaml"
+        "${adrRecipes}/implement.yaml"
+        "${adrRecipes}/reflect.yaml"
+        "${adrRecipes}/housekeeping.yaml"
+      ]
+      content;
+
+  adrYaml = pkgs.writeTextFile {
+    name = "adr.yaml";
+    text = replaceRecipePaths (builtins.readFile ./recipes/adr.yaml);
+  };
+
 in
 {
-  home.packages = with pkgs; [
-    claude-agent-acp
-    goose-cli
-  ];
-
   sops = {
     secrets = {
       opencode-github-token = {
@@ -79,7 +98,6 @@ in
         key = "opencode/github";
       };
     };
-
     templates."goose-config.yaml" = {
       content = builtins.replaceStrings [ "@MCP_CONFIG_YAML@" ] [ mcpConfigYaml ] (
         builtins.readFile ./config.yaml.template
@@ -88,33 +106,42 @@ in
     };
   };
 
-  home.file = {
-    ".config/goose/adversary.md".source = ./adversary.md;
+  home = {
+    packages = with pkgs; [
+      claude-agent-acp
+      goose-cli
+    ];
 
-    ".config/goose/custom_providers/custom_peacehaven_llama-swap_anthropic.json".source =
-      ./custom_providers/custom_peacehaven_llama-swap_anthropic.json;
-    ".config/goose/custom_providers/custom_peacehaven_llama-swap_openai.json".source =
-      ./custom_providers/custom_peacehaven_llama-swap_openai.json;
+    file = {
+      ".config/goose/adversary.md".source = ./adversary.md;
 
-    ".config/goose/recipes/adr.yaml".source = ./recipes/adr.yaml;
-    ".config/goose/recipes/adr/housekeeping.sh".source = ./recipes/adr/housekeeping.sh;
-    ".config/goose/recipes/adr/housekeeping.yaml".source =
-      ./recipes/adr/housekeeping.yaml;
-    ".config/goose/recipes/adr/implement.yaml".source =
-      ./recipes/adr/implement.yaml;
-    ".config/goose/recipes/adr/plan.yaml".source = ./recipes/adr/plan.yaml;
-    ".config/goose/recipes/adr/quest.yaml".source = ./recipes/adr/quest.yaml;
-    ".config/goose/recipes/adr/reflect.yaml".source =
-      ./recipes/adr/reflect.yaml;
-    ".config/goose/recipes/adr/specify.yaml".source =
-      ./recipes/adr/specify.yaml;
-    ".config/goose/recipes/adr/tasks.yaml".source = ./recipes/adr/tasks.yaml;
+      ".config/goose/custom_providers/custom_peacehaven_llama-swap_anthropic.json".source =
+        ./custom_providers/custom_peacehaven_llama-swap_anthropic.json;
+      ".config/goose/custom_providers/custom_peacehaven_llama-swap_openai.json".source =
+        ./custom_providers/custom_peacehaven_llama-swap_openai.json;
 
-    # FIXME: migrate other agent definitions
-    # ".config/goose/recipes/adrian.yaml".source = ./recipes/adrian.yaml;
-    # ".config/goose/recipes/edmund.yaml".source = ./recipes/edmund.yaml;
-    # ".config/goose/recipes/litterbox.yaml".source = ./recipes/litterbox.yaml;
-    # ".config/goose/recipes/quest.yaml".source = ./recipes/quest.yaml;
-    # ".config/goose/recipes/scout.yaml".source = ./recipes/scout.yaml;
+      ".config/goose/recipes/adr.yaml".source = adrYaml;
+      ".config/goose/recipes/adr/housekeeping.sh".source =
+        ./recipes/adr/housekeeping.sh;
+      ".config/goose/recipes/adr/housekeeping.yaml".source =
+        ./recipes/adr/housekeeping.yaml;
+      ".config/goose/recipes/adr/implement.yaml".source =
+        ./recipes/adr/implement.yaml;
+      ".config/goose/recipes/adr/plan.yaml".source =
+        ./recipes/adr/plan.yaml;
+      ".config/goose/recipes/adr/quest.yaml".source = ./recipes/adr/quest.yaml;
+      ".config/goose/recipes/adr/reflect.yaml".source =
+        ./recipes/adr/reflect.yaml;
+      ".config/goose/recipes/adr/specify.yaml".source =
+        ./recipes/adr/specify.yaml;
+      ".config/goose/recipes/adr/tasks.yaml".source = ./recipes/adr/tasks.yaml;
+
+      # FIXME: migrate other agent definitions
+      # ".config/goose/recipes/adrian.yaml".source = ./recipes/adrian.yaml;
+      # ".config/goose/recipes/edmund.yaml".source = ./recipes/edmund.yaml;
+      # ".config/goose/recipes/litterbox.yaml".source = ./recipes/litterbox.yaml;
+      # ".config/goose/recipes/quest.yaml".source = ./recipes/quest.yaml;
+      # ".config/goose/recipes/scout.yaml".source = ./recipes/scout.yaml;
+    };
   };
 }

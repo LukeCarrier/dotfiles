@@ -2,6 +2,7 @@
 let
   inherit (pkgs) stdenv;
   inherit (lib) getExe getExe';
+
   mkToolVersions =
     name: commands:
     let
@@ -28,6 +29,7 @@ let
         corepack enable --install-directory=$out/bin
       '';
     };
+
   mkNodeDevShell =
     name: nodejs:
     let
@@ -54,6 +56,32 @@ let
         pnpm
         typescript-language-server
         yarn
+      ];
+    };
+
+  mkRubyDevShell =
+    name: ruby:
+    let
+      inherit (pkgs)
+        bundler
+        curl
+        libyaml
+        ;
+      toolVersions = mkToolVersions name ''
+        ${getExe bundler} --version
+        ${getExe ruby} --version
+      '';
+    in
+    pkgs.mkShell {
+      shellHook = ''
+        export LD_LIBRARY_PATH=${curl.out}/lib:$LD_LIBRARY_PATH
+        cat ${toolVersions}
+      '';
+      nativeBuildInputs = [
+        bundler
+        curl
+        libyaml
+        ruby
       ];
     };
 in
@@ -188,11 +216,11 @@ in
         gnumake
         ;
       toolVersions = mkToolVersions "goDev" ''
-        ${delve}/bin/dlv version 2>&1 | head -n 1
-        ${go}/bin/go version
-        ${golangci-lint}/bin/golangci-lint --version 2>&1 | head -n 1
-        ${gopls}/bin/gopls version 2>&1 | head -n 1
-        ${gnumake}/bin/make --version | head -n 1
+        ${getExe delve} version 2>&1 | head -n 1
+        ${getExe go} version
+        ${getExe golangci-lint} --version 2>&1 | head -n 1
+        ${getExe gopls} version 2>&1 | head -n 1
+        ${getExe gnumake} --version | head -n 1
       '';
     in
     pkgs.mkShell {
@@ -214,15 +242,20 @@ in
 
   kotlinDev =
     let
+      inherit (pkgs)
+        kotlin
+        kotlin-language-server
+        ;
       toolVersions = mkToolVersions "kotlinDev" ''
-        ${pkgs.kotlin}/bin/kotlin -version 2>&1
+        ${getExe kotlin} -version 2>&1
+        ${getExe kotlin-language-server} --version
       '';
     in
     pkgs.mkShell {
       shellHook = ''
         cat ${toolVersions}
       '';
-      nativeBuildInputs = with pkgs; [
+      nativeBuildInputs = [
         kotlin
         kotlin-language-server
       ];
@@ -253,6 +286,10 @@ in
       ];
     };
 
+  ruby33Dev = mkRubyDevShell "ruby33Dev" pkgs.ruby_3_3;
+  ruby34Dev = mkRubyDevShell "ruby33Dev" pkgs.ruby;
+  ruby40Dev = mkRubyDevShell "ruby33Dev" pkgs.ruby_4_0;
+
   rustDev =
     let
       inherit (pkgs.rust-bin.stable.latest) default;
@@ -260,6 +297,7 @@ in
         lldb_19
         pkg-config
         rust-analyzer
+        rustup
         ;
 
     toolVersions = mkToolVersions "rustDev" ''
@@ -267,6 +305,7 @@ in
         ${getExe' default "rustc"} --version
         ${getExe lldb_19} --version | head -n 1
         ${getExe rust-analyzer} --version 2>&1 | head -n 1
+        ${getExe rustup} --version 2>&1 | head -n 1
       '';
     in
     pkgs.mkShell {
@@ -278,6 +317,7 @@ in
         lldb_19
         pkg-config
         rust-analyzer
+        rustup
       ];
     };
 }

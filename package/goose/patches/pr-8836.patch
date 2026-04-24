@@ -1,0 +1,75 @@
+From bcc2955009e09f5fa05c2228e386b347d08c2c60 Mon Sep 17 00:00:00 2001
+From: Michael Neale <michael.neale@gmail.com>
+Date: Fri, 24 Apr 2026 15:09:59 -0700
+Subject: [PATCH] fix: drop -i flag from login shell PATH resolution to prevent
+ SIGTTOU
+
+The resolve_login_shell_path() function spawns a shell with -l -i -c to
+recover the user's PATH. The -i (interactive) flag causes zsh to call
+tcsetpgrp(), stealing the foreground process group from the parent goose
+process. When rustyline later calls tcsetattr to enter raw mode, goose
+is in a background process group and receives SIGTTOU, suspending the
+CLI immediately after the banner prints.
+
+Since commit b7aea3dc9 ('warm shell PATH lookup during session init'),
+this shell is spawned eagerly at startup rather than lazily on first
+shell command, making the race condition much more likely to trigger.
+
+The -l (login) flag alone is sufficient to source .zprofile/.bash_profile
+where PATH modifications are typically configured.
+
+Signed-off-by: Michael Neale <michael.neale@gmail.com>
+---
+ crates/goose-mcp/src/subprocess.rs                     |  7 ++++++-
+ .../src/agents/platform_extensions/developer/shell.rs  | 10 ++++++++--
+ 2 files changed, 14 insertions(+), 3 deletions(-)
+
+diff --git a/crates/goose-mcp/src/subprocess.rs b/crates/goose-mcp/src/subprocess.rs
+index f2bd9a850f60..6ae37fbc5294 100644
+--- a/crates/goose-mcp/src/subprocess.rs
++++ b/crates/goose-mcp/src/subprocess.rs
+@@ -56,8 +56,13 @@ fn resolve_login_shell_path() -> Option<String> {
+             }
+         });
+
++    // NOTE: We intentionally do NOT pass `-i` (interactive) here. An interactive
++    // shell can call tcsetpgrp() to claim the foreground process group of the
++    // controlling terminal, which steals it from the parent goose process and
++    // causes SIGTTOU when goose later tries to enter raw mode.
++    // `-l` (login) is sufficient to source profile files where PATH is set.
+     std::process::Command::new(&shell)
+-        .args(["-l", "-i", "-c", "echo $PATH"])
++        .args(["-l", "-c", "echo $PATH"])
+         .stdin(Stdio::null())
+         .stderr(Stdio::null())
+         .output()
+diff --git a/crates/goose/src/agents/platform_extensions/developer/shell.rs b/crates/goose/src/agents/platform_extensions/developer/shell.rs
+index 49ac6f111259..936236c33959 100644
+--- a/crates/goose/src/agents/platform_extensions/developer/shell.rs
++++ b/crates/goose/src/agents/platform_extensions/developer/shell.rs
+@@ -168,9 +168,15 @@ pub struct ShellOutput {
+ fn resolve_login_shell_path() -> Option<String> {
+     let shell = unix_shell();
+
++    // NOTE: We intentionally do NOT pass `-i` (interactive) here. An interactive
++    // shell can call tcsetpgrp() to claim the foreground process group of the
++    // controlling terminal, which steals it from the parent goose process. When
++    // goose later tries to enter raw mode (via rustyline), it is now in a
++    // background process group and receives SIGTTOU, causing it to suspend.
++    // `-l` (login) is sufficient to source profile files where PATH is set.
+     let mut child = if is_flatpak() {
+         flatpak_spawn_process()
+-            .args([&shell, "-l", "-i", "-c", "echo $PATH"])
++            .args([&shell, "-l", "-c", "echo $PATH"])
+             .stdin(Stdio::null())
+             .stdout(Stdio::piped())
+             .stderr(Stdio::null())
+@@ -178,7 +184,7 @@ fn resolve_login_shell_path() -> Option<String> {
+             .ok()?
+     } else {
+         std::process::Command::new(&shell)
+-            .args(["-l", "-i", "-c", "echo $PATH"])
++            .args(["-l", "-c", "echo $PATH"])
+             .stdin(Stdio::null())
+             .stdout(Stdio::piped())
+             .stderr(Stdio::null())

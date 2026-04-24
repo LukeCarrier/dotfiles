@@ -29,6 +29,8 @@ in
   ghidra-mcp = callPackage ./ghidra-mcp { };
   ghidra-mcp-plugin = (callPackage ./ghidra-mcp { }).ghidraPlugin;
 
+  goose-cli = callPackage ./goose/goose.nix { gooseBin = "goose"; };
+
   grafana-mcp = callPackage ./grafana-mcp { };
 
   kubernetes-client-tools = callPackage ./kubernetes-client-tools { };

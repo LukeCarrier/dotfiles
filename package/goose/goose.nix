@@ -1,4 +1,6 @@
 {
+  gooseBin,
+
   lib,
   stdenv,
   callPackage,
@@ -50,20 +52,22 @@ let
 in
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "goose-cli";
-  version = "1.28.0";
+  version = "1.32.0";
 
   src = fetchFromGitHub {
-    owner = "block";
+    owner = "aaif-goose";
     repo = "goose";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-/1TtsnNiLoTkvyeFR282qSpo+Jt3pvFxduJ7lyzsTXI=";
+    hash = "sha256-n0u98JY10klMqvPALNxifnHQJWqaTBfKEIZrWfZAVSY=";
   };
 
-  cargoHash = "sha256-bhnbSjGqyWbQd5PjZ116JH91vjVy6R/+iBlNKL6debg=";
+  patches = [ ./patches/pr-8836.patch ];
+
+  cargoHash = "sha256-lHxDu6nu1u7CE6xrowhjB1KM/2///whmKltCywdj+SA=";
 
   cargoBuildFlags = [
     "--bin"
-    "goose"
+    gooseBin
   ];
 
   nativeBuildInputs = [
@@ -164,7 +168,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   meta = {
     description = "The open source agent framework for automating the web and your computer";
-    homepage = "https://github.com/block/goose";
+    homepage = "https://github.com/aaif-goose/goose";
     license = lib.licenses.asl20;
     mainProgram = "goose";
     maintainers = with lib.maintainers; [
