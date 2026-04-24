@@ -139,14 +139,6 @@
               opencode = opencode.packages.${system}.default;
               # opencode-desktop = opencode.packages.${system}.desktop;
               goose-cli = final.callPackage ./package/goose-cli { };
-              # https://github.com/NixOS/nixpkgs/pull/480923#issuecomment-3804604919
-              librewolf-unwrapped = prev.librewolf-unwrapped.overrideAttrs (old: {
-                configureFlags = (old.configureFlags or [ ]) ++ [
-                  "--disable-debug"
-                  "--disable-debug-symbols"
-                ];
-                separateDebugInfo = false;
-              });
               direnv = prev.direnv.overrideAttrs (_old: {
                 doCheck = false;
               });
