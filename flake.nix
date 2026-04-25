@@ -54,7 +54,7 @@
       url = "github:LukeCarrier/nix-vscode-extensions/unpack-phase";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
-    nixpkgs-unstable.url = "github:NixOS/nixpkgs";
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs?rev=01fbdeef22b76df85ea168fbfe1bfd9e63681b30";
     nur = {
       url = "github:nix-community/NUR";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
