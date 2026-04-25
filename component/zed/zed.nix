@@ -21,6 +21,26 @@ in
     ];
 
     userSettings = {
+      # Open projects in new windows
+      cli_default_open_behavior = "new_window";
+
+      # Window layout
+      project_panel.dock = "left";
+      outline_panel.dock = "left";
+      collaboration_panel.dock = "left";
+      git_panel."dock" = "left";
+      agent = {
+        dock = "right";
+        enabled = true;
+        use_modifier_to_send = true;
+        enable_feedback = false;
+      };
+      agent_servers = {
+        goose = {
+          type = "registry";
+        };
+      };
+
       # Keybindings
       vim_mode = true;
       helix_mode = true;
@@ -31,10 +51,10 @@ in
         light = "Ayu Light";
         dark = "Tokyo Night";
       };
-      icon_theme = "Material Icon Theme";
 
       # Fonts
       ui_font_size = 16;
+      ui_font_weight = 500;
       agent_ui_font_size = 14;
       buffer_font_size = 14;
       ui_font_family = "IBM Plex Sans";
@@ -48,29 +68,6 @@ in
       show_edit_predictions = true;
       edit_predictions = {
         mode = "subtle";
-      };
-
-      # Zed Agent
-      agent = {
-        enabled = true;
-        use_modifier_to_send = true;
-        enable_feedback = false;
-        default_model = {
-          provider = "zed.dev";
-          model = "claude-sonnet-4-5";
-        };
-        default_profile = "write";
-        profiles = {};
-        always_allow_tool_actions = false;
-      };
-
-      # Other agents
-      agent_servers = {
-        OpenCode = {
-          type = "custom";
-          command = "opencode";
-          args = [ "acp" ];
-        };
       };
 
       # Collaboration
