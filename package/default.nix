@@ -2,7 +2,7 @@
 let
   inherit (pkgs) callPackage;
 in
-{
+rec {
   aws-cli-tools = callPackage ./aws-cli-tools { };
 
   bw-cli-tools = callPackage ./bw-cli-tools { };
@@ -29,7 +29,9 @@ in
   ghidra-mcp = callPackage ./ghidra-mcp { };
   ghidra-mcp-plugin = (callPackage ./ghidra-mcp { }).ghidraPlugin;
 
+  goose-server = callPackage ./goose/goose.nix { gooseBin = "goosed"; };
   goose-cli = callPackage ./goose/goose.nix { gooseBin = "goose"; };
+  goose-desktop = callPackage ./goose/desktop.nix { inherit goose-server; };
 
   grafana-mcp = callPackage ./grafana-mcp { };
 

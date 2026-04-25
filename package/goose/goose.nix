@@ -96,7 +96,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
   '';
 
   postFixup = ''
-    wrapProgram $out/bin/goose \
+    wrapProgram $out/bin/${gooseBin} \
       --prefix PATH : ${
         lib.makeBinPath (
           [
@@ -170,7 +170,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     description = "The open source agent framework for automating the web and your computer";
     homepage = "https://github.com/aaif-goose/goose";
     license = lib.licenses.asl20;
-    mainProgram = "goose";
+    mainProgram = gooseBin;
     maintainers = with lib.maintainers; [
       cloudripper
       thardin
