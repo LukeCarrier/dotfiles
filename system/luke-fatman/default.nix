@@ -31,9 +31,6 @@
   system.primaryUser = "lukecarrier";
 
   homebrew = {
-    brews = [
-      "mas"
-    ];
     casks = [
       "handy"
       "messenger"

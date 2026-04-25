@@ -64,6 +64,7 @@
 
     casks = [
       "bettertouchtool"
+      "mas"
       "swiftdefaultappsprefpane"
       "thunderbird"
     ];

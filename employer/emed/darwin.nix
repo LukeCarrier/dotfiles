@@ -32,7 +32,6 @@
   homebrew = {
     brews = [
       "gh"
-      "mas"
     ];
 
     casks = [
