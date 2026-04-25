@@ -33,6 +33,7 @@
     # ../../../../component/gnome-network-displays/home.nix
     ../../../../component/valent/home.nix
     ../../../../component/bitwarden/bitwarden.nix
+    ../../../../component/handy/nixos-home.nix
     ../../../../component/openssh/openssh.nix
     ../../../../component/atuin/atuin.nix
     ../../../../component/starship/starship.nix
@@ -82,7 +83,6 @@
     crane
     docker-cli-tools
     skopeo
-    handy
     monaspace-fonts
     nautilus
     ungoogled-chromium

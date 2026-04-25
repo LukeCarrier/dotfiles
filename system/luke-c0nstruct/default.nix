@@ -9,6 +9,7 @@
     #../../platform/darwin/linux-builder.nix
     inputs.sops-nix.darwinModules.sops
     ../../component/bitwarden/darwin.nix
+    ../../component/handy/darwin.nix
     #../../component/wifiman/darwin.nix
     #../../component/logseq/darwin.nix
     #../../component/espanso/darwin.nix
@@ -30,9 +31,6 @@
   system.primaryUser = "lukecarrier";
 
   homebrew = {
-    casks = [
-      "handy"
-    ];
     masApps = {
       #Xcode = 497799835;
     };
