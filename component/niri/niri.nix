@@ -130,6 +130,7 @@ in
         with config.lib.niri.actions;
         {
           # Utilities
+          "${mainMod}+Escape".action = toggle-keyboard-shortcuts-inhibit;
           "Print".action.screenshot = [ ];
           "${mainMod}+S".action.screenshot = [ ];
           "XF86AudioMute".action = spawn [
