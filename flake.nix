@@ -137,7 +137,10 @@
               direnv = prev.direnv.overrideAttrs (_old: {
                 doCheck = false;
               });
-              handy = handy.packages.${system}.handy;
+              handy = handy.packages.${system}.handy.overrideAttrs (old: {
+                buildInputs = old.buildInputs ++ [ basePkgs.wtype ];
+                patches = old.patches ++ [ ./package/handy/pr-1337.patch ];
+              });
               niri = niri.packages.${system}.niri-unstable;
               opencode = opencode.packages.${system}.default;
               # opencode-desktop = opencode.packages.${system}.desktop;
