@@ -93,6 +93,7 @@ in
         age
         git
         gnumake
+        hydra-check
         jujutsu
         nil
         nixd
@@ -107,6 +108,7 @@ in
         ${getExe git} --version
         ${getExe jujutsu} --version
         ${getExe gnumake} --version | head -n 1
+        ${getExe hydra-check} --version
         ${getExe nil} --version 2>&1 | head -n 1
         ${getExe nixd} --version 2>&1 | head -n 1
         ${getExe' nix-index "nix-locate"} --version 2>&1 | head -n 1
@@ -123,6 +125,7 @@ in
         age
         git
         gnumake
+        hydra-check
         jujutsu
         nil
         nixd
