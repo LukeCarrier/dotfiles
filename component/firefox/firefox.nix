@@ -71,7 +71,7 @@ in
         isDefault = true;
         containers = {
           Personal = {
-            id = 0;
+            id = 1;
             color = "orange";
             icon = "fingerprint";
           };
