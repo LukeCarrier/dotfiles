@@ -1,7 +1,7 @@
 From bb72d237a43c61f1c899fa70a7d9c11f20a05e7b Mon Sep 17 00:00:00 2001
 From: Luke Carrier <luke@carrier.family>
 Date: Sun, 26 Apr 2026 20:32:28 +0100
-Subject: [PATCH] fix(wayland): tolerate Enigo failing to initialise
+Subject: [PATCH 1/2] fix(wayland): tolerate Enigo failing to initialise
 
 Enigo is used as a fallback, but prior to this change, if it failed to
 initialise paste() would never invoke the primary paste method. Instead
@@ -259,3 +259,75 @@ index 57972cb02..8c0a22e72 100644
      }
 
      // After pasting, optionally copy to clipboard based on settings
+
+From 862c3d8f2284a56e586f24bbbbd4694d5aa008f3 Mon Sep 17 00:00:00 2001
+From: Luke Carrier <luke@carrier.family>
+Date: Mon, 27 Apr 2026 10:36:49 +0100
+Subject: [PATCH 2/2] fix(wayland): enable Enigo's wayland feature
+
+---
+ flake.nix            |  1 +
+ src-tauri/Cargo.lock | 17 +++++++++++++++++
+ src-tauri/Cargo.toml |  2 +-
+ 3 files changed, 19 insertions(+), 1 deletion(-)
+
+diff --git a/flake.nix b/flake.nix
+index 52f69b521..1f1e990c3 100644
+--- a/flake.nix
++++ b/flake.nix
+@@ -41,6 +41,7 @@
+         onnxruntime
+         libayatana-appindicator
+         libevdev
++        libxkbcommon
+         libxtst
+         gtk-layer-shell
+         openssl
+diff --git a/src-tauri/Cargo.lock b/src-tauri/Cargo.lock
+index 77c2e74ef..16aa84a8f 100644
+--- a/src-tauri/Cargo.lock
++++ b/src-tauri/Cargo.lock
+@@ -1533,6 +1533,10 @@ dependencies = [
+  "objc2",
+  "objc2-app-kit",
+  "objc2-foundation",
++ "tempfile",
++ "wayland-client",
++ "wayland-protocols-misc",
++ "wayland-protocols-wlr",
+  "windows 0.61.3",
+  "x11rb",
+  "xkbcommon",
+@@ -7551,6 +7555,19 @@ dependencies = [
+  "wayland-scanner",
+ ]
+
++[[package]]
++name = "wayland-protocols-misc"
++version = "0.3.10"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "791c58fdeec5406aa37169dd815327d1e47f334219b523444bc26d70ceb4c34e"
++dependencies = [
++ "bitflags 2.11.0",
++ "wayland-backend",
++ "wayland-client",
++ "wayland-protocols",
++ "wayland-scanner",
++]
++
+ [[package]]
+ name = "wayland-protocols-wlr"
+ version = "0.3.10"
+diff --git a/src-tauri/Cargo.toml b/src-tauri/Cargo.toml
+index 46773382a..dc1d04e14 100644
+--- a/src-tauri/Cargo.toml
++++ b/src-tauri/Cargo.toml
+@@ -56,7 +56,7 @@ log = "0.4.25"
+ env_filter = "0.1.0"
+ tokio = "1.43.0"
+ vad-rs = { git = "https://github.com/cjpais/vad-rs", default-features = false }
+-enigo = "0.6.1"
++enigo = { version = "0.6.1", features = ["wayland"] }
+ rodio = { git = "https://github.com/cjpais/rodio.git" }
+ reqwest = { version = "0.12", features = ["json", "stream"] }
+ futures-util = "0.3"
