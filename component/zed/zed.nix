@@ -42,9 +42,18 @@ in
         enable_feedback = false;
       };
       agent_servers = {
-        goose = {
-          type = "registry";
-        };
+        claude-acp.type = "registry";
+        cline.type = "registry";
+        codex-acp.type = "registry";
+        crow-cli.type = "registry";
+        cursor.type = "registry";
+        deepagents.type = "registry";
+        gemini.type = "registry";
+        github-copilot-cli.type = "registry";
+        goose.type = "registry";
+        kilo.type = "registry";
+        pi-acp.type = "registry";
+        stakpak.type = "registry";
       };
 
       # Keybindings
