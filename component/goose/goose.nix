@@ -137,6 +137,8 @@ in
         ./recipes/adr/specify.yaml;
       ".config/goose/recipes/adr/tasks.yaml".source = ./recipes/adr/tasks.yaml;
 
+      ".agents/skills/direnv/SKILL.md".source = ./skills/direnv/SKILL.md;
+
       # FIXME: migrate other agent definitions
       # ".config/goose/recipes/adrian.yaml".source = ./recipes/adrian.yaml;
       # ".config/goose/recipes/edmund.yaml".source = ./recipes/edmund.yaml;
