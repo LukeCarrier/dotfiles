@@ -110,6 +110,7 @@ in
     packages = with pkgs; [
       claude-agent-acp
       goose-cli
+      goose-desktop
     ];
 
     file = {

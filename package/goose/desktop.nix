@@ -8,8 +8,8 @@
 }:
 let
   pnpm2nix = pkgs.callPackage ./pnpm2nix.nix {};
-  inherit (lib) getExe makeBinPath;
-  inherit (pkgs) electron;
+  inherit (lib) getExe makeBinPath optionalString;
+  inherit (pkgs) electron makeDesktopItem;
 
   version = "1.32.0";
   src = fetchFromGitHub {
@@ -27,8 +27,10 @@ pnpm2nix.mkPnpmPackage {
   src = uiSrc;
 
   extraNativeBuildInputs = with pkgs; [
-    makeWrapper
     zip
+
+    copyDesktopItems
+    makeWrapper
   ];
 
   workspace = uiSrc;
@@ -60,16 +62,32 @@ pnpm2nix.mkPnpmPackage {
     node ../node_modules/@electron-forge/cli/dist/electron-forge.js package
     mkdir out/share
     mv out/Goose-* out/share/goose-desktop
-
-    makeWrapper ${getExe electron} "out/bin/goose-desktop" \
-      --add-flags "$out/share/goose-desktop/resources/app.asar" \
-      --set-default ELECTRON_FORCE_IS_PACKAGED 1 \
-      --set-default GOOSED_BINARY ${getExe goose-server}
-  '';
+  ''
+    + optionalString stdenv.hostPlatform.isLinux ''
+      makeWrapper ${getExe electron} "out/bin/goose-desktop" \
+        --add-flags "$out/share/goose-desktop/resources/app.asar" \
+        --set-default ELECTRON_FORCE_IS_PACKAGED 1 \
+        --set-default GOOSED_BINARY ${getExe goose-server}
+      install -Dm644  src/images/icon.svg "out/share/icons/hicolor/scalable/apps/goose.svg";
+    '';
 
   distDirIsOut = true;
   distDir = "out";
 
   nodejs = pkgs.nodejs;
   pnpm = pkgs.pnpm;
+
+  desktopItems = [
+    (makeDesktopItem {
+      name = "Goose";
+      desktopName = "Goose";
+      exec = "goose-desktop %U";
+      terminal = false;
+      icon = "goose";
+      startupWMClass = "goose";
+      comment = "";
+      mimeTypes = [ "x-scheme-handler/goose" ];
+      categories = [ "Development" ];
+    })
+  ];
 }
