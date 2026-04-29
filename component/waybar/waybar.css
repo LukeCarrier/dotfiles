@@ -1,102 +1,112 @@
+/*
+ * Troubleshoot with:
+ * GTK_DEBUG=interactive waybar --style component/waybar/waybar.css
+ */
+
 @define-color default-fg #2d3e4e;
 @define-color invert-fg #ffffff;
 @define-color alert #eb4d4b;
 
 * {
-  border: none;
-  border-radius: 2px;
-  color: @default-fg;
-  font-family: "Poppins", "Font Awesome 6 Free";
-  font-size: 12px;
+    border: none;
+    border-radius: 2px;
+    color: @default-fg;
+    font-family: "Poppins", "Font Awesome 6 Free";
+    font-size: 12px;
 }
 
 window#waybar {
-  border-bottom: 0;
+    background-color: transparent;
 }
-window#waybar, window#waybar * {
-  background-color: transparent;
-}
+
 button {
-  border: none;
-  border-radius: 0;
+    border: none;
+    border-radius: 0;
 }
 button:hover {
-  background: inherit;
+    background: inherit;
 }
 
 .modules-left > widget > .module,
 .modules-center > widget > .module,
 .modules-right > widget > .module {
-  min-width: 0;
-  margin: 4px 12px;
+    min-width: 0;
+    margin: 4px 12px;
 }
 
 .modules-left > widget:first-child > .module,
 .modules-right > widget:last-child > .module {
-  margin: 4px;
+    margin: 4px;
 }
 
 #workspaces button {
-  padding: 0 5px;
-  background-color: transparent;
-  color: @default-fg;
+    padding: 0 5px;
+    background-color: transparent;
+    color: @default-fg;
 }
 #workspaces button.active {
-  box-shadow: none;
-  background: @default-fg;
+    box-shadow: none;
+    background: @default-fg;
 }
 #workspaces button.active label {
-  color: @invert-fg;
+    color: @invert-fg;
 }
 #workspaces button.urgent {
-  background: @alert;
+    background: @alert;
 }
-#window, #workspaces {
-  padding-left: 2px;
-  padding-right: 2px;
+#window,
+#workspaces {
+    padding-left: 2px;
+    padding-right: 2px;
 }
 
-#battery.charging, #battery.plugged {
-  color: #2196f3;
+#battery.charging,
+#battery.plugged {
+    color: #2196f3;
 }
 @keyframes blink {
-  to {
-    color: #e53935;
-  }
+    to {
+        color: #e53935;
+    }
 }
 #battery.warning {
-  color: #ff7f50;
+    color: #ff7f50;
 }
 #battery.critical:not(.charging) {
-  color: @default-fg;
-  animation-name: blink;
-  animation-duration: 0.5s;
-  animation-timing-function: steps(12);
-  animation-iteration-count: infinite;
-  animation-direction: alternate;
+    color: @default-fg;
+    animation-name: blink;
+    animation-duration: 0.5s;
+    animation-timing-function: steps(12);
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
 }
 
 #wireplumber.muted {
-  color: #e53935;
+    color: #e53935;
 }
 
 #tray {
 }
 #tray > .passive {
-  -gtk-icon-effect: dim;
+    -gtk-icon-effect: dim;
 }
 #tray > .needs-attention {
-  -gtk-icon-effect: highlight;
-  background: @alert;
+    -gtk-icon-effect: highlight;
+    background: @alert;
+}
+#tray menu {
+    border-radius: 8px;
+    background-color: black;
+    color: white;
 }
 
 #privacy-item {
-  padding: 0 5px;
+    padding: 0 5px;
 }
 #privacy-item.screenshare {
-  color: #cf5700;
+    color: #cf5700;
 }
 
 #privacy-item.audio-in {
-  color: #1ca000;
+    color: #1ca000;
 }
