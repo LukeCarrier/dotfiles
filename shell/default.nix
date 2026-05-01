@@ -95,6 +95,7 @@ in
         gnumake
         hydra-check
         jujutsu
+        nh
         nil
         nixd
         nix-index
@@ -107,6 +108,7 @@ in
         printf "age %s\n" "$(${getExe age} --version 2>&1 | head -n 1)"
         ${getExe git} --version
         ${getExe jujutsu} --version
+        ${getExe nh} --version
         ${getExe gnumake} --version | head -n 1
         ${getExe hydra-check} --version
         ${getExe nil} --version 2>&1 | head -n 1
@@ -127,6 +129,7 @@ in
         gnumake
         hydra-check
         jujutsu
+        nh
         nil
         nixd
         nix-index
