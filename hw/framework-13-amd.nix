@@ -1,5 +1,6 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
 let
+  inherit (lib) getExe;
   lidFprint = pkgs.writeShellScriptBin "fw13-amd-lid-fprint" ''
     AUTH_PATH="/sys/bus/usb/devices/1-4:1.0/authorized"
     LID_PATH="/proc/acpi/button/lid/LID0/state"
@@ -28,7 +29,7 @@ in
 
   services.acpid = {
     enable = true;
-    lidEventCommands = ''${lidFprint}/bin/fw13-amd-lid-fprint'';
+    lidEventCommands = ''${getExe lidFprint}'';
   };
 
   systemd.services.fw13-post-resume-reset-wifi = {
@@ -44,7 +45,7 @@ in
 
     serviceConfig = {
       Type = "simple";
-      ExecStart = "${resetWifi}/bin/fw13-reset-wifi";
+      ExecStart = "${getExe resetWifi}";
     };
   };
 

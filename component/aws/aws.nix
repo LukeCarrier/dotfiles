@@ -1,7 +1,9 @@
-{ config, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 let
+  inherit (lib) getExe';
+  awsConfigureViewProfile = getExe' pkgs.aws-cli-tools "aws-configure-view-profile";
   selectProfileCmd = ''
-    aws configure list-profiles | fzf --preview '${pkgs.aws-cli-tools}/bin/aws-configure-view-profile {}' --prompt "AWS profile (currently $AWS_PROFILE)"
+    aws configure list-profiles | fzf --preview '${awsConfigureViewProfile} {}' --prompt "AWS profile (currently $AWS_PROFILE)"
   '';
 in
 {

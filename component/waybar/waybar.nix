@@ -1,10 +1,10 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
 let
-  bluemanManager = "${pkgs.blueman}/bin/blueman-manager";
-  playerctl = "${pkgs.playerctl}/bin/playerctl";
+  inherit (lib) getExe getExe';
+  bluemanManager = getExe' pkgs.blueman "blueman-manager";
+  playerctl = getExe pkgs.playerctl;
   waybarNowPlaying =
-    pkgs.writeShellScriptBin "waybar-now-playing" (builtins.readFile ./waybar-now-playing.sh)
-    + "/bin/waybar-now-playing";
+    getExe (pkgs.writeShellScriptBin "waybar-now-playing" (builtins.readFile ./waybar-now-playing.sh));
 in
 {
   programs.waybar = {

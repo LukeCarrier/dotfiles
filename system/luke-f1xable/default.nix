@@ -1,8 +1,12 @@
 {
+  lib,
   pkgs,
   inputs,
   ...
 }:
+let
+  inherit (lib) getExe;
+in
 {
   imports = [
     ./hardware-configuration.nix
@@ -55,7 +59,7 @@
   };
 
   services.udev.extraRules = ''
-    SUBSYSTEM=="power_supply", ENV{POWER_SUPPLY_ONLINE}=="1", RUN+="${pkgs.bash}/bin/bash -c 'echo 80 >/sys/class/power_supply/BAT?/charge_control_end_threshold'"
+    SUBSYSTEM=="power_supply", ENV{POWER_SUPPLY_ONLINE}=="1", RUN+="${getExe pkgs.bash} -c 'echo 80 >/sys/class/power_supply/BAT?/charge_control_end_threshold'"
   '';
 
   virtualisation.libvirtd = {

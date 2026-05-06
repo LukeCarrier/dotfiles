@@ -7,7 +7,9 @@
   makeWrapper,
   ghidra,
 }:
-
+let
+  inherit (lib) getExe';
+in
 stdenv.mkDerivation rec {
   pname = "ghidra-mcp-plugin";
   version = "4.3.0";
@@ -62,10 +64,10 @@ stdenv.mkDerivation rec {
       Emulation \
       PDB \
       FunctionID; do
-      
+
       # Find the JAR in Ghidra installation
       jarPath=$(find $GHIDRA_INSTALL_DIR/Ghidra -name "$jar.jar" | head -1)
-      
+
       if [ -n "$jarPath" ]; then
         echo "Installing $jar.jar from $jarPath"
         mvn install:install-file \
@@ -103,7 +105,7 @@ stdenv.mkDerivation rec {
     # Also extract it for convenience
     mkdir -p $out/share/ghidra-mcp-plugin
     cd $out/share/ghidra-mcp-plugin
-    ${jdk21}/bin/jar xf $out/lib/ghidra/Extensions/GhidraMCP-${version}.zip
+    ${getExe' jdk21 "jar"} xf $out/lib/ghidra/Extensions/GhidraMCP-${version}.zip
 
     # Create a helper script to show installation instructions
     mkdir -p $out/bin

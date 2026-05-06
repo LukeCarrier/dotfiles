@@ -5,8 +5,9 @@
   ...
 }:
 let
-  pidof = "${pkgs.procps}/bin/pidof";
-  hyprlock = "${config.programs.hyprlock.package}/bin/hyprlock";
+  inherit (lib) getExe getExe';
+  pidof = getExe pkgs.procps "pidof";
+  hyprlock = getExe config.programs.hyprlock.package;
   lockCmd = "${pidof} hyprlock || ${hyprlock}";
 in
 {

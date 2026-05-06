@@ -1,7 +1,8 @@
-{ config, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 let
-  brightnessctl = "${pkgs.brightnessctl}/bin/brightnessctl";
-  systemctl = "${pkgs.systemd}/bin/systemctl";
+  inherit (lib) getExe getExe';
+  brightnessctl = "${getExe pkgs.brightnessctl}";
+  systemctl = "${getExe' pkgs.systemd "systemctl"}";
   lockCmd = config.services.swayidle.events.lock;
 in
 {

@@ -1,7 +1,8 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
 let
-  kanshictl = "${pkgs.kanshi}/bin/kanshictl";
-  waybar = "${pkgs.waybar}/bin/waybar";
+  inherit (lib) getExe getExe';
+  kanshictl = getExe' pkgs.kanshi "kanshictl";
+  waybar = getExe pkgs.waybar;
 in
 {
   home.packages = with pkgs; [

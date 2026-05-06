@@ -1,8 +1,9 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
 let
-  brightnessctl = "${pkgs.brightnessctl}/bin/brightnessctl";
-  loginctl = "${pkgs.systemd}/bin/loginctl";
-  systemctl = "${pkgs.systemd}/bin/systemctl";
+  inherit (lib) getExe;
+  brightnessctl = getExe pkgs.brightnessctl;
+  loginctl = getExe pkgs.systemd;
+  systemctl = getExe pkgs.systemd;
 in
 {
   services.hypridle = {

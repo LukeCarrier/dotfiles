@@ -5,15 +5,16 @@
   ...
 }:
 let
-  kanshictl = "${pkgs.kanshi}/bin/kanshictl";
-  niri = "${config.programs.niri.package}/bin/niri";
-  systemctl = "${pkgs.systemd}/bin/systemctl";
-  waybar = "${pkgs.waybar}/bin/waybar";
-  xwaylandSatellite = "${pkgs.xwayland-satellite}/bin/xwayland-satellite";
+  inherit (lib) getExe getExe';
+  kanshictl = getExe' pkgs.kanshi "kanshictl";
+  niri = getExe' config.programs.niri.package "niri";
+  systemctl = getExe' pkgs.systemd "systemctl";
+  waybar = getExe pkgs.waybar;
+  xwaylandSatellite = getExe pkgs.xwayland-satellite;
   xwaylandSatelliteDisplay = ":1";
   workspaceRename = pkgs.writeShellScriptBin "niri-workspace-rename" ''
     niri="${niri}"
-    wofi="${pkgs.wofi}/bin/wofi"
+    wofi="${getExe pkgs.wofi}"
     name="$("$wofi" --dmenu --lines 1 </dev/null)"
     if [[ "$name" == "" ]]; then
       "$niri" msg action unset-workspace-name
@@ -237,7 +238,7 @@ in
           # Space management
           "${mainMod}+${spaceMod}+${moveMod}+J".action = move-workspace-down;
           "${mainMod}+${spaceMod}+${moveMod}+K".action = move-workspace-up;
-          "${mainMod}+R".action = spawn [ "${workspaceRename}/bin/niri-workspace-rename" ];
+          "${mainMod}+R".action = spawn [ "${getExe workspaceRename}" ];
           # Space navigation
           "${mainMod}+${spaceMod}+Space".action = toggle-overview;
           "${mainMod}+${spaceMod}+Tab".action = focus-workspace-previous;

@@ -1,6 +1,7 @@
-{ desktopConfig, pkgs, ... }:
+{ desktopConfig, lib, pkgs, ... }:
 let
-  swaylock = "${pkgs.swaylock}/bin/swaylock";
+  inherit (lib) getExe;
+  swaylock = "${getExe pkgs.swaylock}";
   lockCmd = "${swaylock} -fF";
 in
 {

@@ -1,9 +1,10 @@
-{ pkgs }:
+{ lib, pkgs }:
 let
-  basename = "${pkgs.coreutils}/bin/basename";
-  getopt = "${pkgs.getopt}/bin/getopt";
-  kubectl = "${pkgs.kubectl}/bin/kubectl";
-  parallel = "${pkgs.parallel}/bin/parallel";
+  inherit (lib) getExe getExe';
+  basename = "${getExe' pkgs.coreutils "basename"}";
+  getopt = "${getExe pkgs.getopt}";
+  kubectl = "${getExe pkgs.kubectl}";
+  parallel = "${getExe pkgs.parallel}";
   kubectlDrainAll = pkgs.writeShellScriptBin "kubectl-drain-all" ''
     me="$("${basename}" $0)"
     opts="$("${getopt}" -n "$me" -o +l:p: -l label:,parallelism: -- "$@")"

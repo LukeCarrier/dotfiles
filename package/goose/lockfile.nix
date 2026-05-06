@@ -8,7 +8,7 @@
 with lib;
 rec {
 
-  parseLockfile = lockfile: builtins.fromJSON (readFile (runCommand "toJSON" { } "${remarshal}/bin/yaml2json ${lockfile} $out"));
+  parseLockfile = lockfile: builtins.fromJSON (readFile (runCommand "toJSON" { } "${getExe' remarshal "yaml2json"} ${lockfile} $out"));
 
   processLockfile = { registry, lockfile, noDevDependencies }:
     let

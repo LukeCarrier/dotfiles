@@ -1,4 +1,7 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
+let
+  inherit (lib) getExe;
+in
 {
   # Fish isn't POSIX compliant, so making it the user shell is ill advised.
   # Has to tolerate stupid macOS ps.
@@ -19,5 +22,5 @@
     fi
   '';
 
-  programs.tmux.shell = "${pkgs.fish}/bin/fish";
+  programs.tmux.shell = getExe pkgs.fish;
 }

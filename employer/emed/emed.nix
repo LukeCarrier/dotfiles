@@ -5,10 +5,11 @@
   ...
 }:
 let
+  inherit (lib) getExe getExe';
   selectMiniplatform = pkgs.writeShellScriptBin "emed-mini-platform" ''
-    awsEksUpdateKubeconfig="${pkgs.aws-cli-tools}/bin/aws-eks-update-kubeconfig"
-    fzf="${pkgs.fzf}/bin/fzf"
-    yq="${pkgs.yq-go}/bin/yq"
+    awsEksUpdateKubeconfig="${pkgs.aws-cli-tools "aws-eks-update-kubeconfig"}"
+    fzf="${getExe pkgs.fzf}f"
+    yq="${getExe pkgs.yq-go}"
     platforms="$HOME/.config/emed/miniplatforms.yaml"
 
     index="$("$yq" eval -r '. | keys[]' "$platforms" | \
@@ -134,11 +135,11 @@ in
 
   programs.bash.initExtra = ''
     emed-mini-platform() {
-      eval "$(${selectMiniplatform}/bin/emed-mini-platform)"
+      eval "$(${getExe selectMiniplatform})"
     }
   '';
   programs.fish.functions.emed-mini-platform = ''
-    ${selectMiniplatform}/bin/emed-mini-platform | source
+    ${getExe selectMiniplatform} | source
   '';
   programs.fish.shellInit = "";
   programs.zsh.initContent = config.programs.bash.initExtra;
