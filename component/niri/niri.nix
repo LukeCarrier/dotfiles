@@ -57,10 +57,35 @@ in
     };
   };
 
-  # sodiboo/niri-flake#509
-  systemd.user.services.niri-flake-polkit = {
-    after = {
-      "graphical-session.target" = true;
+  systemd.user.services = {
+    # sodiboo/niri-flake#509
+    niri-flake-polkit = {
+      after = {
+        "graphical-session.target" = true;
+      };
+    };
+
+    niri-xwayland-satellite = {
+      Unit.Description = "Xwayland Satellite";
+      Install.WantedBy = [ "graphical-session.target" ];
+      Service = {
+        ExecStart = "${xwaylandSatellite} ${xwaylandSatelliteDisplay}";
+        Restart = "on-failure";
+        RestartSec = "2";
+        Type = "notify";
+      };
+    };
+
+    niri-waybar = {
+      Unit.Description = "Niri Waybar";
+      Install.WantedBy = [ "graphical-session.target" ];
+      Service = {
+        ExecStart = waybar;
+        Restart = "on-failure";
+        RestartSec = "2";
+        Type = "simple";
+        Environment = "DISPLAY=${xwaylandSatelliteDisplay}";
+      };
     };
   };
 
@@ -91,13 +116,6 @@ in
             "import-environment"
             "WAYLAND_DISPLAY"
             "XDG_CURRENT_DESKTOP"
-          ];
-        }
-        { command = [ waybar ]; }
-        {
-          command = [
-            xwaylandSatellite
-            xwaylandSatelliteDisplay
           ];
         }
         {
