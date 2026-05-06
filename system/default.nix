@@ -276,7 +276,7 @@
             output.criteria = "eDP-1";
             output.mode = "2880x1920@120Hz";
             output.adaptiveSync = true;
-            output.scale = 1.25;
+            output.scale = 1.5;
             output.transform = null;
           }
           {
