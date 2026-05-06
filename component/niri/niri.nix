@@ -361,6 +361,6 @@ in
       "niri/window"
     ];
 
-    "niri/workspaces".format = "{index}:{value}";
+    "niri/workspaces".format = "{index} {value}";
   };
 }
