@@ -9,7 +9,6 @@ let
   kanshictl = getExe' pkgs.kanshi "kanshictl";
   niri = getExe' config.programs.niri.package "niri";
   systemctl = getExe' pkgs.systemd "systemctl";
-  waybar = getExe pkgs.waybar;
   xwaylandSatellite = getExe pkgs.xwayland-satellite;
   xwaylandSatelliteDisplay = ":1";
   workspaceRename = pkgs.writeShellScriptBin "niri-workspace-rename" ''
@@ -74,18 +73,6 @@ in
         Restart = "on-failure";
         RestartSec = "2";
         Type = "notify";
-      };
-    };
-
-    niri-waybar = {
-      Unit.Description = "Niri Waybar";
-      Install.WantedBy = [ "graphical-session.target" ];
-      Service = {
-        ExecStart = waybar;
-        Restart = "on-failure";
-        RestartSec = "2";
-        Type = "simple";
-        Environment = "DISPLAY=${xwaylandSatelliteDisplay}";
       };
     };
   };
