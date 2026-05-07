@@ -7,8 +7,24 @@
   "base_url": "https://llama-swap.peacehaven.carrier.family/v1",
   "models": [
     {
-      "name": "default",
-      "context_limit": 128000,
+      "name": "aeon-7-qwen3.6-35b-a3b-heretic-nvfp4",
+      "context_limit": 262144,
+      "input_token_cost": null,
+      "output_token_cost": null,
+      "currency": null,
+      "supports_cache_control": null
+    },
+    {
+      "name": "davidau-glm-4.7-flash-uncensored-heretic-neo-code-imatrix-max-gguf",
+      "context_limit": 262144,
+      "input_token_cost": null,
+      "output_token_cost": null,
+      "currency": null,
+      "supports_cache_control": null
+    },
+    {
+      "name": "google-gemma-4-26b-a4b-it",
+      "context_limit": 262144,
       "input_token_cost": null,
       "output_token_cost": null,
       "currency": null,
