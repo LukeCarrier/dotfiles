@@ -22,7 +22,7 @@ in
       font-family-bold = "MonaspiceKr NF Bold";
       font-family-italic = "MonaspiceKr NF Italic";
       font-family-bold-italic = "MonaspiceKr NF Bold Italic";
-      font-size = 14;
+      font-size = 12;
 
       theme = "TokyoNight Storm";
 
