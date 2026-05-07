@@ -124,7 +124,6 @@ in
         GDK_SCALE = "1.0";
         GDK_DPI_SCALE = "1.0";
         XCURSOR_SIZE = "32";
-        TERM = "wezterm";
       };
       binds =
         let
