@@ -61,7 +61,10 @@ rustPlatform.buildRustPackage (finalAttrs: {
     hash = "sha256-n0u98JY10klMqvPALNxifnHQJWqaTBfKEIZrWfZAVSY=";
   };
 
-  patches = [ ./patches/pr-8836.patch ];
+  patches = [
+    ./patches/pr-8836.patch
+    ./patches/pr-9123.patch
+  ];
 
   cargoHash = "sha256-lHxDu6nu1u7CE6xrowhjB1KM/2///whmKltCywdj+SA=";
 
