@@ -2,6 +2,13 @@
   description = "Luke Carrier's dotfiles";
 
   inputs = {
+    ashell = {
+      url = "github:MalpenZibo/ashell/0.8.0";
+      inputs = {
+        nixpkgs.follows = "nixpkgs-unstable";
+        rust-overlay.follows = "rust-overlay";
+      };
+    };
     claude-code = {
       url = "github:sadjow/claude-code-nix";
       inputs.flake-utils.follows = "flake-utils";
@@ -84,6 +91,7 @@
 
   outputs =
     {
+      ashell,
       claude-code,
       code-insiders,
       dagger,
@@ -134,12 +142,15 @@
             rust-overlay.overlays.default
             wpaperd.overlays.default
             (final: prev: {
+              ashell = ashell.packages.${system}.default.overrideAttrs (old: {
+                patches = (old.patches or []) ++ [ ./package/ashell/pr-740.patch ];
+              });
               direnv = prev.direnv.overrideAttrs (_old: {
                 doCheck = false;
               });
               handy = handy.packages.${system}.handy.overrideAttrs (old: {
-                buildInputs = old.buildInputs ++ [ basePkgs.wtype ];
-                patches = old.patches ++ [ ./package/handy/pr-1337.patch ];
+                buildInputs = (old.buildInputs or []) ++ [ basePkgs.wtype ];
+                patches = (old.patches or []) ++ [ ./package/handy/pr-1337.patch ];
               });
               niri = niri.packages.${system}.niri-unstable;
               opencode = opencode.packages.${system}.default;
