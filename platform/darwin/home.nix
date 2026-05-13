@@ -3,15 +3,23 @@
   nix = {
     enable = true;
     package = pkgs.nix;
-    settings.experimental-features = [ "nix-command" "flakes" ];
+    settings.experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
   };
 
-  targets.darwin.defaults = {
-    "com.apple.dock" = {
-      autohide = true;
-      show-recents = false;
-      recent-apps = [ ];
-      minimize-to-application = true;
+  targets.darwin = {
+    copyApps.enable = true;
+    linkApps.enable = false;
+
+    defaults = {
+      "com.apple.dock" = {
+        autohide = true;
+        show-recents = false;
+        recent-apps = [ ];
+        minimize-to-application = true;
+      };
     };
   };
 
