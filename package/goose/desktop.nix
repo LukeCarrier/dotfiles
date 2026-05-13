@@ -11,12 +11,12 @@ let
   inherit (lib) getExe makeBinPath optionalString;
   inherit (pkgs) electron makeDesktopItem;
 
-  version = "1.32.0";
+  version = "1.34.0";
   src = fetchFromGitHub {
     owner = "aaif-goose";
     repo = "goose";
     tag = "v${version}";
-    sha256 = "sha256-n0u98JY10klMqvPALNxifnHQJWqaTBfKEIZrWfZAVSY=";
+    sha256 = "sha256-Ed85tMysd31aiXnUaymTmtPgh4x4urtyUsDOnh+qMks=";
   };
   uiSrc = "${src}/ui";
   desktopSrc = "${uiSrc}/desktop";
@@ -75,7 +75,7 @@ pnpm2nix.mkPnpmPackage {
   distDir = "out";
 
   nodejs = pkgs.nodejs;
-  pnpm = pkgs.pnpm;
+  pnpm = pkgs.pnpm_10_29_2;
 
   desktopItems = [
     (makeDesktopItem {
