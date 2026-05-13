@@ -44,6 +44,8 @@ rec {
 
   onepassword-tools = callPackage ./onepassword-tools { };
 
+  openwarp = callPackage ./openwarp { };
+
   rift = callPackage ./rift { };
 
   spec-kit = callPackage ./spec-kit { };
