@@ -8,6 +8,7 @@ let
   inherit (lib) getExe getExe';
   kanshictl = getExe' pkgs.kanshi "kanshictl";
   niri = getExe' config.programs.niri.package "niri";
+  niri-float-sticky = getExe pkgs.niri-float-sticky;
   systemctl = getExe' pkgs.systemd "systemctl";
   xwaylandSatellite = getExe pkgs.xwayland-satellite;
   xwaylandSatelliteDisplay = ":1";
@@ -112,6 +113,9 @@ in
             "reload"
           ];
         }
+        {
+          command = [ niri-float-sticky ];
+        }
       ];
       environment = {
         XDG_SESSION_DESKTOP = "niri";
@@ -137,6 +141,11 @@ in
           # Utilities
           "${mainMod}+Escape".action = toggle-keyboard-shortcuts-inhibit;
           "Print".action.screenshot = [ ];
+          "${mainMod}+P".action = spawn [
+            niri-float-sticky
+            "-ipc"
+            "toggle_sticky"
+          ];
           "${mainMod}+S".action.screenshot = [ ];
           "XF86AudioMute".action = spawn [
             "wpctl"

@@ -44,6 +44,13 @@
       url = "github:sodiboo/niri-flake";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
+    niri-float-sticky = {
+      url = "github:probeldev/niri-float-sticky";
+      inputs = {
+        flake-utils.follows = "flake-utils";
+        nixpkgs.follows = "nixpkgs-unstable";
+      };
+    };
     nix-on-droid = {
       url = "github:nix-community/nix-on-droid/release-24.05";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
@@ -101,6 +108,7 @@
       home-manager,
       lanzaboote,
       niri,
+      niri-float-sticky,
       nixos-hardware,
       nix-flatpak,
       nix-on-droid,
@@ -162,6 +170,8 @@
               // {
                 github-cli-tools = self.packages.${system}.github-cli-tools;
                 python313Packages = prev.python313Packages // legacyPackages.python313Packages;
+
+                inherit (niri-float-sticky.packages.${system}) niri-float-sticky;
                 wezterm = wezterm.packages.${system}.default;
               }
             )
