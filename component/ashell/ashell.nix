@@ -36,6 +36,7 @@
           [ "Settings" "Tray" ]
         ];
       };
+      system_info.indicators = [ "Cpu" "Memory" "Temperature" "DownloadSpeed" "UploadSpeed" ];
       workspaces.visibility_mode = "MonitorSpecific";
     };
   };
