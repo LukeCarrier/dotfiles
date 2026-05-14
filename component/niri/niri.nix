@@ -22,6 +22,7 @@ let
       "$niri" msg action set-workspace-name "$name"
     fi
   '';
+  urgent-color = "#ff0000";
 in
 {
   home.packages = (
@@ -289,12 +290,16 @@ in
           enable = true;
           width = 2;
           active.color = "#ffffff";
+          urgent.color = urgent-color;
         };
         shadow.enable = true;
         tab-indicator = {
           hide-when-single-tab = true;
           place-within-column = true;
-          position = "top";
+          position = "left";
+          width = 16.0;
+          corner-radius = 8.0;
+          urgent.color = urgent-color;
         };
       };
       layer-rules = [
