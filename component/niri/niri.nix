@@ -97,6 +97,7 @@ in
         focus-follows-mouse = { };
       };
       clipboard.disable-primary = true;
+      overview.backdrop-color = "#000000";
       spawn-at-startup = [
         {
           command = [

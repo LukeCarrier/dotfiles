@@ -2,6 +2,9 @@
 {
   services.wpaperd = {
     enable = true;
-    settings.any.path = desktopConfig.background;
+    settings.any = {
+      duration = "1h";
+      path = desktopConfig.background;
+    };
   };
 }

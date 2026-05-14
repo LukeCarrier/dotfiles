@@ -1,4 +1,4 @@
-{ desktopConfig, lib, pkgs, ... }:
+{ lib, pkgs, ... }:
 let
   inherit (lib) getExe;
   swaylock = "${getExe pkgs.swaylock}";
@@ -13,8 +13,6 @@ in
 
   programs.swaylock = {
     enable = true;
-    settings = {
-      image = desktopConfig.background;
-    };
+    settings.color = "000000";
   };
 }

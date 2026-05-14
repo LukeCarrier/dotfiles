@@ -126,7 +126,7 @@
       ...
     }:
     let
-      desktopBackground = "~/Pictures/Wallpaper/Monochromatic mountains.jpg";
+      desktopBackground = "~/Pictures/Wallpaper";
       pkgsForSystem =
         {
           pkgs,
