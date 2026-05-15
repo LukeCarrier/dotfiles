@@ -297,6 +297,7 @@ in
           hide-when-single-tab = true;
           place-within-column = true;
           position = "left";
+          gaps-between-tabs = 6.0;
           width = 16.0;
           corner-radius = 8.0;
           urgent.color = urgent-color;
