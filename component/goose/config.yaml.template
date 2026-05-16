@@ -1,6 +1,5 @@
 GOOSE_TELEMETRY_ENABLED: false
 
-GOOSE_MAX_TOKENS: 65536
 GOOSE_PROVIDER: custom_peacehaven_llama-swap_openai
 GOOSE_MODEL: aeon-7-qwen3.6-35b-a3b-heretic-nvfp4
 
