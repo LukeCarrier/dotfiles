@@ -91,6 +91,7 @@ in
       inherit (lib) getExe getExe';
       inherit (pkgs)
         age
+        cntr
         git
         gnumake
         hydra-check
@@ -106,6 +107,7 @@ in
         ;
       toolVersions = mkToolVersions "default" ''
         printf "age %s\n" "$(${getExe age} --version 2>&1 | head -n 1)"
+        ${getExe cntr} --version
         ${getExe git} --version
         ${getExe jujutsu} --version
         ${getExe nh} --version
@@ -125,6 +127,7 @@ in
       '';
       nativeBuildInputs = [
         age
+        cntr
         git
         gnumake
         hydra-check
