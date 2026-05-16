@@ -151,6 +151,7 @@ in
           # Utilities
           "${mainMod}+Escape".action = toggle-keyboard-shortcuts-inhibit;
           "Print".action.screenshot = [ ];
+          "${mainMod}+F".action = toggle-window-floating;
           "${mainMod}+P".action = spawn [
             niri-float-sticky
             "-ipc"
