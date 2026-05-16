@@ -1,0 +1,44 @@
+From 96e3fe66fc57a7574934726c05876c220e675ff8 Mon Sep 17 00:00:00 2001
+From: Luke Carrier <luke@carrier.family>
+Date: Sat, 16 May 2026 17:37:57 +0100
+Subject: [PATCH 2/5] chore(deps): allow builds
+
+---
+ ui/package.json        | 6 ------
+ ui/pnpm-workspace.yaml | 6 ++++++
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/ui/package.json b/ui/package.json
+index 361b903fb..46696b965 100644
+--- a/ui/package.json
++++ b/ui/package.json
+@@ -19,11 +19,5 @@
+       "react": "^19.2.4",
+       "react-dom": "^19.2.4"
+     },
+-    "onlyBuiltDependencies": [
+-      "@modelcontextprotocol/ext-apps",
+-      "electron",
+-      "electron-winstaller",
+-      "esbuild"
+-    ]
+   }
+ }
+diff --git a/ui/pnpm-workspace.yaml b/ui/pnpm-workspace.yaml
+index fe9cb2653..d1d52eec7 100644
+--- a/ui/pnpm-workspace.yaml
++++ b/ui/pnpm-workspace.yaml
+@@ -5,4 +5,10 @@ packages:
+   - 'goose-binary/*'
+   - 'goose2'
+ 
++allowBuilds:
++  '@modelcontextprotocol/ext-apps': true
++  electron: true
++  electron-winstaller: true
++  esbuild: true
++
+ blockExoticSubdeps: false
+-- 
+2.53.0
+

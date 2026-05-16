@@ -1,0 +1,41 @@
+From d447e4f1e448a8cb90f165950a1d56051af4c087 Mon Sep 17 00:00:00 2001
+From: Luke Carrier <luke@carrier.family>
+Date: Sat, 16 May 2026 17:37:57 +0100
+Subject: [PATCH 3/5] chore(deps): relocate overrides
+
+---
+ ui/package.json        | 6 ------
+ ui/pnpm-workspace.yaml | 4 ++++
+ 2 files changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/ui/package.json b/ui/package.json
+index 46696b965..87b09701c 100644
+--- a/ui/package.json
++++ b/ui/package.json
+@@ -13,11 +13,5 @@
+   },
+   "devDependencies": {
+     "@changesets/cli": "^2.27.1"
+-  },
+-  "pnpm": {
+-    "overrides": {
+-      "react": "^19.2.4",
+-      "react-dom": "^19.2.4"
+-    },
+   }
+ }
+diff --git a/ui/pnpm-workspace.yaml b/ui/pnpm-workspace.yaml
+index d1d52eec7..9c1092e7e 100644
+--- a/ui/pnpm-workspace.yaml
++++ b/ui/pnpm-workspace.yaml
+@@ -12,3 +12,7 @@ allowBuilds:
+   esbuild: true
+ 
+ blockExoticSubdeps: false
++
++overrides:
++  react: ^19.2.4
++  react-dom: ^19.2.4
+-- 
+2.53.0
+

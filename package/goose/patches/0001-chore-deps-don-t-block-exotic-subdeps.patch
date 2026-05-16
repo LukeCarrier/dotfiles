@@ -1,0 +1,22 @@
+From 71800d6a262c0f8702ebd6added66152cd6d04fa Mon Sep 17 00:00:00 2001
+From: Luke Carrier <luke@carrier.family>
+Date: Sat, 16 May 2026 17:37:57 +0100
+Subject: [PATCH 1/5] chore(deps): don't block exotic subdeps
+
+---
+ ui/pnpm-workspace.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/ui/pnpm-workspace.yaml b/ui/pnpm-workspace.yaml
+index dac7e3e1c..fe9cb2653 100644
+--- a/ui/pnpm-workspace.yaml
++++ b/ui/pnpm-workspace.yaml
+@@ -4,3 +4,5 @@ packages:
+   - 'desktop'
+   - 'goose-binary/*'
+   - 'goose2'
++
++blockExoticSubdeps: false
+-- 
+2.53.0
+

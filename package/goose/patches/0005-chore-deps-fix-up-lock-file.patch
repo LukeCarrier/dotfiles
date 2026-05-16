@@ -1,0 +1,79 @@
+From 4fa81d249da31fea6c224e2f6547b376b21d7fca Mon Sep 17 00:00:00 2001
+From: Luke Carrier <luke@carrier.family>
+Date: Sat, 16 May 2026 17:37:57 +0100
+Subject: [PATCH 5/5] chore(deps): fix up lock file
+
+---
+ ui/pnpm-lock.yaml | 28 ++++------------------------
+ 1 file changed, 4 insertions(+), 24 deletions(-)
+
+diff --git a/ui/pnpm-lock.yaml b/ui/pnpm-lock.yaml
+index 6d6cb9543..4060b8beb 100644
+--- a/ui/pnpm-lock.yaml
++++ b/ui/pnpm-lock.yaml
+@@ -1204,7 +1204,7 @@ packages:
+     engines: {node: '>=14'}
+ 
+   '@electron/node-gyp@https://codeload.github.com/electron/node-gyp/tar.gz/06b29aafb7708acef8b3669835c8a7857ebc92d2':
+-    resolution: {tarball: https://codeload.github.com/electron/node-gyp/tar.gz/06b29aafb7708acef8b3669835c8a7857ebc92d2}
++    resolution: {gitHosted: true, tarball: https://codeload.github.com/electron/node-gyp/tar.gz/06b29aafb7708acef8b3669835c8a7857ebc92d2}
+     version: 10.2.0-electron.1
+     engines: {node: '>=12.13.0'}
+     hasBin: true
+@@ -3914,6 +3914,7 @@ packages:
+ 
+   '@ungap/structured-clone@1.3.0':
+     resolution: {integrity: sha512-WmoN8qaIAo7WTYWbAZuG8PYEhn5fkz7dZrqTBZ7dtt//lL2Gwms1IcnQ5yHqjDfX8Ft5j4YzDM23f87zBfDe9g==}
++    deprecated: Potential CWE-502 - Update to 1.3.1 or higher
+ 
+   '@upsetjs/venn.js@2.0.0':
+     resolution: {integrity: sha512-WbBhLrooyePuQ1VZxrJjtLvTc4NVfpOyKx0sKqioq9bX1C1m7Jgykkn8gLrtwumBioXIqam8DLxp88Adbue6Hw==}
+@@ -4028,6 +4029,7 @@ packages:
+   '@xmldom/xmldom@0.8.11':
+     resolution: {integrity: sha512-cQzWCtO6C8TQiYl1ruKNn2U6Ao4o4WBBcbL61yJl84x+j5sOWWFU9X7DpND8XZG3daDppSsigMdfAIl2upQBRw==}
+     engines: {node: '>=10.0.0'}
++    deprecated: this version has critical issues, please update to the latest version
+ 
+   '@xtuc/ieee754@1.2.0':
+     resolution: {integrity: sha512-DX8nKgqcGwsc0eJSqYt5lwP4DH5FlHnmuWWBRy7X0NcaGR0ZtuyeESgMwTYVEtxmsNGY+qit4QYT/MIYTOTPeA==}
+@@ -10354,7 +10356,7 @@ snapshots:
+   '@mcp-ui/client@7.1.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+     dependencies:
+       '@modelcontextprotocol/ext-apps': 1.2.2(@modelcontextprotocol/sdk@1.27.1(zod@3.25.76))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(zod@3.25.76)
+-      '@modelcontextprotocol/sdk': 1.27.1(zod@4.3.6)
++      '@modelcontextprotocol/sdk': 1.27.1(zod@3.25.76)
+       react: 19.2.4
+       react-dom: 19.2.4(react@19.2.4)
+       zod: 3.25.76
+@@ -10421,28 +10423,6 @@ snapshots:
+     transitivePeerDependencies:
+       - supports-color
+ 
+-  '@modelcontextprotocol/sdk@1.27.1(zod@4.3.6)':
+-    dependencies:
+-      '@hono/node-server': 1.19.11(hono@4.12.8)
+-      ajv: 8.18.0
+-      ajv-formats: 3.0.1(ajv@8.18.0)
+-      content-type: 1.0.5
+-      cors: 2.8.6
+-      cross-spawn: 7.0.6
+-      eventsource: 3.0.7
+-      eventsource-parser: 3.0.6
+-      express: 5.2.1
+-      express-rate-limit: 8.3.1(express@5.2.1)
+-      hono: 4.12.8
+-      jose: 6.2.2
+-      json-schema-typed: 8.0.2
+-      pkce-challenge: 5.0.1
+-      raw-body: 3.0.2
+-      zod: 4.3.6
+-      zod-to-json-schema: 3.25.1(zod@3.25.76)
+-    transitivePeerDependencies:
+-      - supports-color
+-
+   '@napi-rs/wasm-runtime@1.1.1':
+     dependencies:
+       '@emnapi/core': 1.9.1
+-- 
+2.53.0
+

@@ -1,0 +1,36 @@
+From b372eacc57b1284978a1e6af1198e5fe3dc4cac0 Mon Sep 17 00:00:00 2001
+From: Luke Carrier <luke@carrier.family>
+Date: Sat, 16 May 2026 18:55:30 +0100
+Subject: [PATCH 4/5] chore(deps): use hoisted linker for electron-forge
+
+---
+ ui/.npmrc              | 1 -
+ ui/pnpm-workspace.yaml | 2 ++
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/ui/.npmrc b/ui/.npmrc
+index 8478f8871..41ce34c5f 100644
+--- a/ui/.npmrc
++++ b/ui/.npmrc
+@@ -1,5 +1,4 @@
+ registry=https://registry.npmjs.org/
+ prefer-offline=true
+-node-linker=hoisted
+ supportedArchitectures.os=current,linux,darwin,win32
+ supportedArchitectures.cpu=current,x64,arm64
+diff --git a/ui/pnpm-workspace.yaml b/ui/pnpm-workspace.yaml
+index 9c1092e7e..a5a743b27 100644
+--- a/ui/pnpm-workspace.yaml
++++ b/ui/pnpm-workspace.yaml
+@@ -13,6 +13,8 @@ allowBuilds:
+ 
+ blockExoticSubdeps: false
+ 
++nodeLinker: hoisted
++
+ overrides:
+   react: ^19.2.4
+   react-dom: ^19.2.4
+-- 
+2.53.0
+
