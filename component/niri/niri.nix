@@ -67,6 +67,17 @@ in
       };
     };
 
+    niri-float-sticky = {
+      Unit.Description = "Sticky floating windows for the Niri window manager";
+      Install.WantedBy = [ "graphical-session.target" ];
+      Service = {
+        ExecStart = "${niri-float-sticky} -title '^Picture-in-Picture$' -title '^Meet – '";
+        Restart = "on-failure";
+        RestartSec = "2";
+        Type = "notify";
+      };
+    };
+
     niri-xwayland-satellite = {
       Unit.Description = "Xwayland Satellite";
       Install.WantedBy = [ "graphical-session.target" ];
@@ -114,9 +125,6 @@ in
             kanshictl
             "reload"
           ];
-        }
-        {
-          command = [ niri-float-sticky ];
         }
       ];
       environment = {
@@ -359,6 +367,10 @@ in
         {
           matches = [
             { title = "^Picture-in-Picture$"; }
+            {
+              app-id = "^google-chrome$";
+              title = "^Meet – ";
+            }
           ];
           open-floating = true;
         }
