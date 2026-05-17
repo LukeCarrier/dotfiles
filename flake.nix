@@ -160,6 +160,9 @@
                 buildInputs = (old.buildInputs or []) ++ [ basePkgs.wtype ];
                 patches = (old.patches or []) ++ [ ./package/handy/pr-1337.patch ];
               });
+              librewolf = prev.librewolf.overrideAttrs (old: {
+                patches = (old.patches or []) ++ [ ./package/firefox/fractional-scale.patch ];
+              });
               niri = niri.packages.${system}.niri-unstable;
               opencode = opencode.packages.${system}.default;
               # opencode-desktop = opencode.packages.${system}.desktop;

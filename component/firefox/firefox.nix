@@ -59,6 +59,7 @@ in
     in
     {
       enable = true;
+      package = pkgs.librewolf;
 
       languagePacks = [
         "en-GB"
