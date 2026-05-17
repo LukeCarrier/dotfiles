@@ -1,6 +1,7 @@
 { pkgs }:
 let
   inherit (pkgs) callPackage;
+  obsbot-camera-control = callPackage ./obsbot-camera-control { };
 in
 rec {
   aws-cli-tools = callPackage ./aws-cli-tools { };
@@ -50,6 +51,11 @@ rec {
         hash = "sha256-o5s4XBuwqA4sJ5KhEn5oYttBj4ojekr/LO6Ww9oQRGw=";
       };
   };
+
+  inherit (obsbot-camera-control)
+    obsbot-sdk
+    obsbot-camera-control-cli
+    obsbot-camera-control-gui;
 
   ocu = callPackage ./ocu {
     ocu = rec {

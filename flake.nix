@@ -134,7 +134,20 @@
           config ? { },
         }:
         let
-          basePkgs = import pkgs { inherit config system; };
+          unfreeConfig = {
+            # Add only unfree packages provided by this flake here. All others
+            # belong in individual system and home manager configurations.
+            allowUnfreePredicate =
+              pkg:
+              builtins.elem (basePkgs.lib.getName pkg) [
+                "obsbot-sdk"
+              ];
+            };
+          mergedConfig = pkgs.lib.recursiveUpdate config unfreeConfig;
+          basePkgs = import pkgs {
+            inherit system;
+            config = mergedConfig;
+          };
           legacyPackages = import ./package/legacy-packages.nix { pkgs = basePkgs; };
         in
         {

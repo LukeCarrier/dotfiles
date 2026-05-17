@@ -29,7 +29,6 @@
     ../../../../component/zsh/zsh.nix
     ../../../../component/direnv/direnv.nix
     ../../../../component/firefox/firefox.nix
-    # ../../../../component/gnome-network-displays/home.nix
     ../../../../component/valent/home.nix
     ../../../../component/bitwarden/bitwarden.nix
     ../../../../component/handy/nixos-home.nix
@@ -62,17 +61,22 @@
   };
 
   nixpkgs.config.allowUnfreePredicate =
+    let
+      names = [
+        "claude-code"
+        "code"
+        "obsbot-sdk"
+        "terraform"
+        "vscode"
+        "vscode-extension-github-copilot"
+        "vscode-extension-github-copilot-chat"
+        "vscode-extension-ms-vscode-remote-remote-containers"
+        "vscode-extension-ms-vsliveshare-vsliveshare"
+      ];
+    in
     pkg:
-    builtins.elem (lib.getName pkg) [
-      "claude-code"
-      "code"
-      "terraform"
-      "vscode"
-      "vscode-extension-github-copilot"
-      "vscode-extension-github-copilot-chat"
-      "vscode-extension-ms-vscode-remote-remote-containers"
-      "vscode-extension-ms-vsliveshare-vsliveshare"
-    ];
+      builtins.elem pkg.pname names
+      || builtins.any (n: lib.hasPrefix n (pkg.name or "")) names;
 
   home.packages = with pkgs; [
     crane
@@ -80,6 +84,8 @@
     skopeo
     ungoogled-chromium
     monaspace-fonts
+    obsbot-camera-control-cli
+    obsbot-camera-control-gui
     stklos
     nautilus
   ];
