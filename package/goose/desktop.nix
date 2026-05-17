@@ -63,7 +63,6 @@ stdenv.mkDerivation (finalAttrs: {
     [ pnpm ]
     ++ (with pkgs; [
       nodejs
-      breakpointHook
       pnpmConfigHook
       zip
       copyDesktopItems
