@@ -1,5 +1,9 @@
 # To do
 
+## Clean up /etc/{ securebooot => sbctl } mess
+
+I think f1xable is the only machine still using the old layout.
+
 ## Mako doesn't consistently choose an output for notifications
 
 When the system resumes from suspend and during some output configuration changes, such as docking or undocking the laptop, Mako sometimes chooses the wrong display to draw notifications on.
