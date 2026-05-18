@@ -76,7 +76,6 @@
     crane
     docker-cli-tools
     skopeo
-    ungoogled-chromium
     monaspace-fonts
     obsbot-camera-control-cli
     obsbot-camera-control-gui

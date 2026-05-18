@@ -85,7 +85,6 @@
     skopeo
     monaspace-fonts
     nautilus
-    ungoogled-chromium
   ];
 
   sops.age.keyFile = "${config.home.homeDirectory}/Code/LukeCarrier/dotfiles/.sops/keys";
