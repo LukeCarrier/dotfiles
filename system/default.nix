@@ -1,5 +1,7 @@
 {
+  cyberhaven,
   darwin,
+  falcon-sensor,
   home-manager,
   lanzaboote,
   niri,
@@ -122,12 +124,16 @@
             builtins.elem (nixpkgs-unstable.lib.getName pkg) [
               "1password"
               "1password-cli"
+              "cyberhaven-unwrapped"
+              "falcon-sensor-unwrapped"
             ];
         };
       modules = [ ./luke-dr0ne ];
       specialArgs = {
         inputs = {
           inherit
+            cyberhaven
+            falcon-sensor
             nixos-hardware
             nix-flatpak
             sops-nix

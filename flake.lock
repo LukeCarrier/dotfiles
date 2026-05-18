@@ -153,6 +153,27 @@
         "type": "github"
       }
     },
+    "cyberhaven": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs-unstable"
+        ]
+      },
+      "locked": {
+        "lastModified": 1779294016,
+        "narHash": "sha256-TIBCVzOMYQ0/SWsBmkGvrXkdz/U9Ix5/8vWGXB4z7Rk=",
+        "owner": "LukeCarrier",
+        "repo": "cyberhaven-nix",
+        "rev": "96166f2303a987743e48ec0cff1fe12404dd0d19",
+        "type": "github"
+      },
+      "original": {
+        "owner": "LukeCarrier",
+        "ref": "build-fhs-env",
+        "repo": "cyberhaven-nix",
+        "type": "github"
+      }
+    },
     "dagger": {
       "inputs": {
         "nixpkgs": [
@@ -212,6 +233,27 @@
       "original": {
         "owner": "encoredev",
         "repo": "encore-flake",
+        "type": "github"
+      }
+    },
+    "falcon-sensor": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs-unstable"
+        ]
+      },
+      "locked": {
+        "lastModified": 1779263356,
+        "narHash": "sha256-LLyHEhaiY/0OeuPlp5muyV0UrxlZ7CGAu5Z3+fg15Xw=",
+        "owner": "LukeCarrier",
+        "repo": "falcon-sensor-nixos",
+        "rev": "3a4a88b1cab09b77aec7c52c5029859ab1cd385b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "LukeCarrier",
+        "ref": "leave-nixpkgs-alone",
+        "repo": "falcon-sensor-nixos",
         "type": "github"
       }
     },
@@ -899,8 +941,10 @@
         "ashell": "ashell",
         "claude-code": "claude-code",
         "code-insiders": "code-insiders",
+        "cyberhaven": "cyberhaven",
         "dagger": "dagger",
         "darwin": "darwin",
+        "falcon-sensor": "falcon-sensor",
         "flake-utils": "flake-utils",
         "handy": "handy",
         "home-manager": "home-manager",
