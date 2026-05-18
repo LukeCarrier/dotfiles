@@ -26,7 +26,7 @@ in
     ../../../../component/direnv/direnv.nix
     ../../../../component/firefox/firefox.nix
     ../../../../component/rift/rift.nix
-    ../../../../component/1password/home.nix
+    ../../../../component/1password/1password.nix
     ../../../../component/goose/goose.nix
     ../../../../component/openssh/openssh.nix
     ../../../../component/atuin/atuin.nix

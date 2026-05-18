@@ -9,7 +9,7 @@
     ../../platform/darwin/common.nix
     inputs.sops-nix.darwinModules.sops
     ../../employer/emed/darwin.nix
-    ../../component/1password/1password.nix
+    ../../component/1password/darwin.nix
     ../../component/espanso/darwin.nix
     ../../component/finicky/darwin.nix
     ../../component/logseq/darwin.nix
