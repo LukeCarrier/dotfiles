@@ -18,7 +18,7 @@ pkgs.stdenv.mkDerivation {
     done
   '';
 
-  buildInputs = [ ];
+  nativeBuildInputs = [ pkgs.automake116x pkgs.automake pkgs.autoconf pkgs.m4 ];
 
   configureFlags = [ ];
 
