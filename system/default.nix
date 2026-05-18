@@ -98,7 +98,6 @@
         }).pkgs;
       modules = [ ./luke-curs3d ];
       specialArgs = {
-        desktopConfig.background = desktopBackground;
         inputs = {
           inherit
             nixos-hardware
@@ -107,6 +106,28 @@
             lanzaboote
             ;
         };
+        desktopConfig.background = desktopBackground;
+      };
+    };
+
+    luke-dr0ne = nixpkgs-unstable.lib.nixosSystem {
+      system = "x86_64-linux";
+      pkgs =
+        (pkgsForSystem {
+          system = "x86_64-linux";
+          pkgs = nixpkgs-unstable;
+        }).pkgs;
+      modules = [ ./luke-dr0ne ];
+      specialArgs = {
+        inputs = {
+          inherit
+            nixos-hardware
+            nix-flatpak
+            sops-nix
+            lanzaboote
+            ;
+        };
+        desktopConfig.background = desktopBackground;
       };
     };
 
@@ -119,7 +140,6 @@
         }).pkgs;
       modules = [ ./luke-f1xable ];
       specialArgs = {
-        desktopConfig.background = desktopBackground;
         inputs = {
           inherit
             nixos-hardware
@@ -128,6 +148,7 @@
             lanzaboote
             ;
         };
+        desktopConfig.background = desktopBackground;
       };
     };
   };
@@ -140,11 +161,11 @@
           pkgs = nixpkgs-unstable;
         }).pkgs;
       extraSpecialArgs = {
-        gitConfig.user.signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJnEY8uRHXNidhl/e5+WMDKMDbA551pOE3DN9xWg4NH0 luke.carrier+id_ed25519_2025@emed.com";
-        jjConfig.signing.key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJnEY8uRHXNidhl/e5+WMDKMDbA551pOE3DN9xWg4NH0 luke.carrier+id_ed25519_2025@emed.com";
         inputs = {
           inherit sops-nix;
         };
+        gitConfig.user.signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJnEY8uRHXNidhl/e5+WMDKMDbA551pOE3DN9xWg4NH0 luke.carrier+id_ed25519_2025@emed.com";
+        jjConfig.signing.key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJnEY8uRHXNidhl/e5+WMDKMDbA551pOE3DN9xWg4NH0 luke.carrier+id_ed25519_2025@emed.com";
       };
       modules = [ ./b-4653/user/luke.carrier ];
     };
@@ -156,9 +177,9 @@
           pkgs = nixpkgs-unstable;
         }).pkgs;
       extraSpecialArgs = {
+        inputs = { };
         gitConfig.user.signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
         jjConfig.signing.key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
-        inputs = { };
       };
       modules = [ ./nix-on-droid/user/nix-on-droid ];
     };
@@ -171,6 +192,9 @@
           config.cudaSupport = true;
         }).pkgs;
       extraSpecialArgs = {
+        inputs = {
+          inherit niri nix-flatpak sops-nix;
+        };
         desktopConfig = {
           background = desktopBackground;
           pointerCursor =
@@ -257,11 +281,203 @@
               };
             }
           ];
+      };
+      modules = [ ./luke-curs3d/user/lukecarrier ];
+    };
+
+    "lukecarrier@luke-dr0ne" = home-manager.lib.homeManagerConfiguration {
+      pkgs =
+        (pkgsForSystem {
+          system = "x86_64-linux";
+          pkgs = nixpkgs-unstable;
+        }).pkgs;
+      extraSpecialArgs = {
         inputs = {
           inherit niri nix-flatpak sops-nix;
         };
+        desktopConfig = {
+          background = desktopBackground;
+          pointerCursor =
+            let
+              pkgs =
+                (pkgsForSystem {
+                  system = "x86_64-linux";
+                  pkgs = nixpkgs-unstable;
+                }).pkgs;
+            in
+            {
+              package = pkgs.bibata-cursors;
+              name = "Bibata-Modern-Classic";
+              size = 32;
+            };
+        };
+        gitConfig.user.signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJnEY8uRHXNidhl/e5+WMDKMDbA551pOE3DN9xWg4NH0 luke.carrier+id_ed25519_2025@emed.com";
+        jjConfig.signing.key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJnEY8uRHXNidhl/e5+WMDKMDbA551pOE3DN9xWg4NH0 luke.carrier+id_ed25519_2025@emed.com";
+        kanshiConfig =
+          let
+            exec = "systemctl restart --user ashell.service wpaper.service";
+          in
+          [
+            {
+              output = {
+                criteria = "eDP-1";
+                mode = "3840x2160@60Hz";
+                adaptiveSync = true;
+                scale = 1.75;
+                transform = null;
+              };
+            }
+            {
+              output = {
+                criteria = "Anker Innovations Limited CosmosLaser4k 0x00000001";
+                mode = "3840x2160@60Hz";
+                adaptiveSync = false;
+                scale = 1.5;
+                transform = null;
+              };
+            }
+            {
+              output = {
+                criteria = "Samsung Electric Company U32J59x HTPK702789";
+                mode = "3840x2160@60Hz";
+                adaptiveSync = false;
+                scale = 1.25;
+                transform = null;
+              };
+            }
+            {
+              output = {
+                criteria = "Samsung Electric Company U32J59x HTPK602008";
+                mode = "3840x2160@60Hz";
+                adaptiveSync = false;
+                scale = 1.25;
+                transform = null;
+              };
+            }
+            {
+              output = {
+                criteria = "Ancor Communications Inc ASUS VS247 C8LMTF177755";
+                mode = "1920x1080@60Hz";
+                adaptiveSync = false;
+                scale = 1.0;
+                transform = null;
+              };
+            }
+            {
+              profile = {
+                name = "mobile";
+                outputs = [
+                  {
+                    criteria = "eDP-1";
+                    status = "enable";
+                    position = "0,0";
+                  }
+                ];
+                inherit exec;
+              };
+            }
+            {
+              profile = {
+                name = "peacehavenLounge";
+                outputs = [
+                  {
+                    criteria = "eDP-1";
+                    status = "enable";
+                    position = "0,0";
+                  }
+                  {
+                    criteria = "Anker Innovations Limited CosmosLaser4k 0x00000001";
+                    status = "enable";
+                    position = "0,3600";
+                  }
+                ];
+                inherit exec;
+              };
+            }
+            {
+              profile = {
+                name = "peacehavenDockedClosed";
+                outputs = [
+                  {
+                    criteria = "eDP-1";
+                    status = "disable";
+                  }
+                  {
+                    criteria = "Samsung Electric Company U32J59x HTPK702789";
+                    status = "enable";
+                    position = "0,0";
+                  }
+                  {
+                    criteria = "Samsung Electric Company U32J59x HTPK602008";
+                    status = "enable";
+                    position = "3072,0";
+                  }
+                ];
+                inherit exec;
+              };
+            }
+            {
+              profile = {
+                name = "peacehavenDockedOpen";
+                outputs = [
+                  {
+                    criteria = "Samsung Electric Company U32J59x HTPK702789";
+                    status = "enable";
+                    position = "0,0";
+                  }
+                  {
+                    criteria = "Samsung Electric Company U32J59x HTPK602008";
+                    status = "enable";
+                    position = "3072,0";
+                  }
+                  {
+                    criteria = "eDP-1";
+                    status = "enable";
+                    position = "4224,1728";
+                  }
+                ];
+                inherit exec;
+              };
+            }
+            {
+              profile = {
+                name = "peacehavenSidecar";
+                outputs = [
+                  {
+                    criteria = "Samsung Electric Company U32J59x HTPK602008";
+                    status = "enable";
+                    position = "0,0";
+                  }
+                  {
+                    criteria = "eDP-1";
+                    status = "enable";
+                    position = "768,1728";
+                  }
+                ];
+                inherit exec;
+              };
+            }
+            {
+              profile = {
+                name = "peacehavenMichaelDocked";
+                  outputs = [
+                  {
+                    criteria = "Ancor Communications Inc ASUS VS247 C8LMTF177755";
+                    status = "enable";
+                    position = "0,0";
+                  }
+                  {
+                    criteria = "eDP-1";
+                    status = "enable";
+                    position = "1920,540";
+                  }
+                ];
+                inherit exec;
+              };
+            }
+          ];
       };
-      modules = [ ./luke-curs3d/user/lukecarrier ];
+      modules = [ ./luke-dr0ne/user/lukecarrier ];
     };
 
     "lukecarrier@luke-f1xable" = home-manager.lib.homeManagerConfiguration {
@@ -271,6 +487,9 @@
           pkgs = nixpkgs-unstable;
         }).pkgs;
       extraSpecialArgs = {
+        inputs = {
+          inherit niri nix-flatpak sops-nix;
+        };
         desktopConfig = {
           background = desktopBackground;
           pointerCursor =
@@ -452,9 +671,6 @@
               };
             }
           ];
-        inputs = {
-          inherit niri nix-flatpak sops-nix;
-        };
       };
       modules = [ ./luke-f1xable/user/lukecarrier ];
     };
@@ -466,11 +682,11 @@
           pkgs = nixpkgs-unstable;
         }).pkgs;
       extraSpecialArgs = {
-        gitConfig.user.signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
-        jjConfig.signing.key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
         inputs = {
           inherit sops-nix;
         };
+        gitConfig.user.signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
+        jjConfig.signing.key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
       };
       modules = [ ./luke-c0nstruct/user/lukecarrier ];
     };
@@ -482,11 +698,11 @@
           pkgs = nixpkgs-unstable;
         }).pkgs;
       extraSpecialArgs = {
-        gitConfig.user.signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
-        jjConfig.signing.key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
         inputs = {
           inherit sops-nix;
         };
+        gitConfig.user.signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
+        jjConfig.signing.key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
       };
       modules = [ ./luke-fatman/user/lukecarrier ];
     };

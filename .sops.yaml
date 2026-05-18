@@ -1,6 +1,7 @@
 keys:
   - &me age19ndv83pvgryxmk2ndd3fy49jpx4hra5au3zu0vhw0f24splxnu7sq8mtz6
   - &c0nstruct age1gdca8vzuh8w5tcnlpmzx3gcvd5uev56km6cw3tlkp0amlkuvpgyqty9tj6
+  - &dr0ne age1869fvj6wuzdxv0z7kgy9lwgsx99epga0qyk4f8ls7epaa3a4esnqpvmfhv
   - &f1xable age1u82l2vw5s9upca8l9wukq2r4w2hj6yce8wcm4z5jw9ujccen5cas7svwkx
   - &fatman age1tsypj2vpuy6dnlx3le2225l39knhm43xzsxqm57wdwh29t5vj3vq70h0c7
   - &employer_emed age14ddy9t7d0dnlmrumefw45ft9jqvzwz6l9d2th8hfd738xhjluckskuhe7p
@@ -10,6 +11,7 @@ recipients:
   - &emed
     - *employer_emed
     - *employer_emed_b-4653
+    - *dr0ne
   - &personal
     - *me
     - *c0nstruct

@@ -1,12 +1,11 @@
 {
-  config,
   lib,
   pkgs,
   inputs,
   ...
 }:
 let
-  inherit (lib) getExe getExe';
+  inherit (lib) getExe;
   username = "luke.carrier";
   homeDirectory = "/Users/${username}";
 in
@@ -50,6 +49,7 @@ in
   home.stateVersion = "24.05";
 
   sops.defaultSopsFile = ../../../../secrets/employer-emed.yaml;
+
   home.username = "luke.carrier";
   home.homeDirectory = homeDirectory;
 
@@ -57,7 +57,6 @@ in
     pkg:
     builtins.elem (lib.getName pkg) [
       "onepassword-password-manager"
-      "vault"
       "vscode-extension-github-copilot"
       "vscode-extension-github-copilot-chat"
       "vscode-extension-ms-vscode-remote-remote-containers"
