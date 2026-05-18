@@ -87,7 +87,24 @@ sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
 
 ### NixOS
 
-Don't need to do anything.
+Start OpenSSH server to generate host key for SOPS by appending this to `/etc/nixos/configuration.nix` and running `nixos-rebuild switch`:
+
+```nix
+services.openssh.enable = true;
+```
+
+First apply, before the Nix configuration is in place and direnv is installed:
+
+```console
+nix --extra-experimental-features "nix-command flakes" develop
+```
+
+Then apply:
+
+```console
+NIX_CONFIG="experimental-features = nix-command flakes" make HOSTNAME=luke-dr0ne host
+```
+Subsequent applies don't require special behaviour.
 
 ## Usage
 
