@@ -27,6 +27,7 @@ in
     ../../../../component/direnv/direnv.nix
     ../../../../component/firefox/firefox.nix
     ../../../../component/goose/goose.nix
+    ../../../../component/opencode/opencode.nix
     ../../../../component/claude-code/claude-code.nix
     ../../../../component/openssh/openssh.nix
     ../../../../component/atuin/atuin.nix

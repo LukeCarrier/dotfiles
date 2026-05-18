@@ -30,6 +30,7 @@
     ../../../../component/direnv/direnv.nix
     ../../../../component/firefox/firefox.nix
     ../../../../component/goose/goose.nix
+    ../../../../component/opencode/opencode.nix
     ../../../../component/bitwarden/bitwarden.nix
     ../../../../component/handy/nixos-home.nix
     ../../../../component/openssh/openssh.nix
