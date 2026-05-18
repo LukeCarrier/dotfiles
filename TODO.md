@@ -1,13 +1,5 @@
 # To do
 
-## Trash location support in Files (nautilus)
-
-Fix:
-
-> Oops! Something went wrong.
->
-> "trash" locations are not supported.
-
 ## Mako doesn't consistently choose an output for notifications
 
 When the system resumes from suspend and during some output configuration changes, such as docking or undocking the laptop, Mako sometimes chooses the wrong display to draw notifications on.

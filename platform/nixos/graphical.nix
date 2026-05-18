@@ -126,6 +126,8 @@
   services.colord.enable = true;
   services.printing.enable = true;
 
+  services.gvfs.enable = true;
+
   services.flatpak = {
     enable = true;
     package = pkgs.flatpak;
