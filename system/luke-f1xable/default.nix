@@ -26,6 +26,8 @@ in
 
   system.stateVersion = "24.05";
 
+  sops.defaultSopsFile = ../../secrets/personal.yaml;
+
   hardware.graphics = {
     enable = true;
     enable32Bit = true;

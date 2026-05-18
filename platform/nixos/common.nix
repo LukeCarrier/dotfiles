@@ -14,7 +14,6 @@
 
   sops = {
     secrets.nix-github = {
-      sopsFile = lib.mkDefault ../../secrets/personal.yaml;
       format = "yaml";
       key = "nix/github";
     };

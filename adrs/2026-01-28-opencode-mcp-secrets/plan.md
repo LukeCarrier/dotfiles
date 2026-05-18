@@ -40,14 +40,11 @@ This architecture ensures the number and configuration of MCP servers can vary p
     *   **Changes**:
         *   Will define `sops.secrets` entries for *all* MCP credentials that need dynamic management.
             ```nix
-            sops.secrets.opencode-mcp-github-home-token = {
-              sopsFile = ../../secrets/personal.yaml;
-              key = "opencode/github/home_token";
-            };
-            sops.secrets.opencode-mcp-github-work-token = {
-              sopsFile = ../../secrets/personal.yaml;
-              key = "opencode/github/work_token";
-            };
+            sops.secrets.opencode-mcp-github-home-token.key =
+              "opencode/github/home_token";
+            sops.secrets.opencode-mcp-github-work-token.key =
+              "opencode/github/work_token";
+
             # ... similar for other MCPs and environments
             ```
         *   Will define a new Nix option, `opencode.mcpConfigurations`, to receive the declarative MCP definitions from host-specific modules.

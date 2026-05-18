@@ -49,6 +49,7 @@ in
 
   home.stateVersion = "24.05";
 
+  sops.defaultSopsFile = ../../../../secrets/employer-emed.yaml;
   home.username = "luke.carrier";
   home.homeDirectory = homeDirectory;
 

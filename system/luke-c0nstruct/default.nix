@@ -19,6 +19,8 @@
 
   system.stateVersion = 6;
 
+  sops.defaultSopsFile = ../../secrets/personal.yaml;
+
   networking = {
     computerName = "luke-c0nstruct";
     hostName = "luke-c0nstruct.peacehaven.carrier.family";

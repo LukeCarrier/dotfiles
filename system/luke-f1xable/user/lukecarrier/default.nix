@@ -58,6 +58,8 @@
     homeDirectory = "/home/lukecarrier";
   };
 
+  sops.defaultSopsFile = ../../../../secrets/personal.yaml;
+
   nixpkgs.config.allowUnfreePredicate =
     let
       names = [
@@ -85,7 +87,6 @@
   sops.age.keyFile = "${config.home.homeDirectory}/Code/LukeCarrier/dotfiles/.sops/keys";
 
   sops.secrets.aws-config = {
-    sopsFile = ../../../../secrets/personal.yaml;
     format = "yaml";
     key = "aws/config";
     path = "${config.home.homeDirectory}/.aws/config";

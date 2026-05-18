@@ -6,7 +6,6 @@
 {
   sops = {
     secrets.nix-github = {
-      sopsFile = lib.mkDefault ../../secrets/personal.yaml;
       format = lib.mkDefault "yaml";
       key = lib.mkDefault "nix/github";
       path = "/etc/nix/github.env";

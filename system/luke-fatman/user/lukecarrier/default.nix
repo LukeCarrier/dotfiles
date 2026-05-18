@@ -47,10 +47,14 @@ in
     ../../../../component/rust/cargo.nix
   ];
 
-  home.stateVersion = "24.05";
+  home = {
+    stateVersion = "24.05";
 
-  home.username = "lukecarrier";
-  home.homeDirectory = homeDirectory;
+    username = "lukecarrier";
+    homeDirectory = homeDirectory;
+  };
+
+  sops.defaultSopsFile = ../../../../secrets/personal.yaml;
 
   nixpkgs.config = {
     allowBroken = true;

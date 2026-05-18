@@ -24,6 +24,8 @@
 
   system.stateVersion = "25.11";
 
+  sops.defaultSopsFile = ../../secrets/personal.yaml;
+
   boot.lanzaboote.pkiBundle = lib.mkForce "/var/lib/sbctl";
 
   hardware.graphics = {

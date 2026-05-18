@@ -364,19 +364,10 @@ in
 }
 ```
 
-**`pkgs.lib.mkDefault` for SOPS file paths:**
-When a SOPS secret's source file may differ between hosts but a sensible default exists, use `mkDefault` so host-level config can override it:
-```nix
-sopsFile = pkgs.lib.mkDefault ../../secrets/personal.yaml;
-```
-
-See `component/goose/goose.nix` and `component/opencode/opencode.nix` for examples.
-
 **SOPS secret declarations use camelCase keys matching the YAML:**
 ```nix
 sops = {
   secrets."goose-openai-api-key" = {
-    sopsFile = ../../secrets/personal.yaml;
     format = "yaml";
     key = "goose/openai-api-key";
   };

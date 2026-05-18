@@ -20,6 +20,8 @@
 
   system.stateVersion = 5;
 
+  sops.defaultSopsFile = ../../secrets/employer-emed.yaml;
+
   networking = {
     computerName = "B-4653";
     hostName = "B-4653.hq.babylonhealth.com";

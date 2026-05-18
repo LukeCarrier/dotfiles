@@ -20,6 +20,8 @@
 
   system.stateVersion = 5;
 
+  sops.defaultSopsFile = ../../secrets/personal.yaml;
+
   networking = {
     computerName = "luke-fatman";
     hostName = "luke-fatman.peacehaven.carrier.family";

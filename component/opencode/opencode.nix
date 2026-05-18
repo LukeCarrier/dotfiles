@@ -48,7 +48,6 @@ in
   sops = {
     secrets = {
       opencode-github-token = {
-        sopsFile = pkgs.lib.mkDefault ../../secrets/personal.yaml;
         format = "yaml";
         key = "opencode/github";
       };

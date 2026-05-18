@@ -17,10 +17,14 @@
     ../../../../component/helix/helix.nix
   ];
 
-  home.stateVersion = "24.05";
+  home = {
+    stateVersion = "24.05";
 
-  home.username = "nix-on-droid";
-  home.homeDirectory = "/data/data/com.termux.nix/files/home";
+    username = "nix-on-droid";
+    homeDirectory = "/data/data/com.termux.nix/files/home";
+  };
+
+  sops.defaultSopsFile = ../../../../secrets/personal.yaml;
 
   home.packages = lib.mkMerge [
     (with pkgs; [
