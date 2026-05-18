@@ -7,8 +7,8 @@
 let
   inherit (lib) getExe getExe';
   selectMiniplatform = pkgs.writeShellScriptBin "emed-mini-platform" ''
-    awsEksUpdateKubeconfig="${pkgs.aws-cli-tools "aws-eks-update-kubeconfig"}"
-    fzf="${getExe pkgs.fzf}f"
+    awsEksUpdateKubeconfig="${getExe' pkgs.aws-cli-tools "aws-eks-update-kubeconfig"}"
+    fzf="${getExe pkgs.fzf}"
     yq="${getExe pkgs.yq-go}"
     platforms="$HOME/.config/emed/miniplatforms.yaml"
 
@@ -45,41 +45,11 @@ let
     ];
     text = builtins.readFile ./bin/emed-helm-template;
   };
-  emedPcDeploy = pkgs.writeShellApplication {
-    name = "emed-pc-deploy";
-    runtimeInputs = with pkgs; [
-      coreutils
-      docker-client
-      findutils
-      gawk
-      gnugrep
-      gnused
-      util-linux
-      vault
-      yq-go
-    ];
-    text = builtins.readFile ./bin/emed-pc-deploy;
-  };
-  emedShipcatKubeContext = pkgs.writeShellApplication {
-    name = "emed-shipcat-kube-context";
-    runtimeInputs = with pkgs; [
-      fzf
-      teleport
-      yq-go
-    ];
-    text = builtins.readFile ./bin/emed-shipcat-kube-context;
-  };
 in
 {
   home.packages =
-    [
-      emedHelmTemplate
-      emedPcDeploy
-      emedShipcatKubeContext
-    ]
-    ++ (with pkgs; [
-      github-cli-tools
-    ]);
+    [ emedHelmTemplate ]
+    ++ [ pkgs.github-cli-tools ];
 
   home.sessionPath = [
     "$HOME/Code/emed-labs/engineer-toolbox/bin"
