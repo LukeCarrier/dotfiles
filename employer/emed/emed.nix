@@ -6,6 +6,7 @@
 }:
 let
   inherit (lib) getExe getExe';
+  inherit (pkgs.stdenv) isDarwin;
   selectMiniplatform = pkgs.writeShellScriptBin "emed-mini-platform" ''
     awsEksUpdateKubeconfig="${getExe' pkgs.aws-cli-tools "aws-eks-update-kubeconfig"}"
     fzf="${getExe pkgs.fzf}"
@@ -49,7 +50,13 @@ in
 {
   home.packages =
     [ emedHelmTemplate ]
-    ++ [ pkgs.github-cli-tools ];
+    ++ [ pkgs.github-cli-tools ]
+    ++ (if (!isDarwin) then (with pkgs; [
+      claude-code
+      codex
+      code-cursor
+      cursor-cli
+    ]) else [ ]);
 
   home.sessionPath = [
     "$HOME/Code/emed-labs/engineer-toolbox/bin"
@@ -57,9 +64,10 @@ in
   ];
 
   home.sessionVariables = {
-    SSH_AUTH_SOCK = "$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock";
-
-    SHIPCAT_MANIFEST_DIR = "$HOME/Code/babylonhealth/manifests";
+    SSH_AUTH_SOCK =
+      if isDarwin
+      then "$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+      else "$HOME/.1password/agent.sock";
   };
 
   # sops-nix is pretty weird, in that it won't resolve any of these values
