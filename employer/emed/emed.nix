@@ -50,7 +50,13 @@ in
 {
   home.packages =
     [ emedHelmTemplate ]
-    ++ [ pkgs.github-cli-tools ]
+    ++ (with pkgs; [
+      github-cli-tools
+
+      crane
+      docker-cli-tools
+      skopeo
+    ])
     ++ (if (!isDarwin) then (with pkgs; [
       claude-code
       codex
@@ -70,45 +76,138 @@ in
       else "$HOME/.1password/agent.sock";
   };
 
-  # sops-nix is pretty weird, in that it won't resolve any of these values
-  # during the Nix evaluation and will install a helper to do it when we switch
-  # to the new generation. If secrets don't show up shortly after doing this,
-  # check the logs for that helper tool, which can be found at:
-  # ~/Libary/Logs/SopsNix/std{out,err}
-  sops.age.keyFile = "${config.home.homeDirectory}/Code/LukeCarrier/dotfiles/.sops/keys";
+  sops = {
+    # sops-nix is pretty weird, in that it won't resolve any of these values
+    # during the Nix evaluation and will install a helper to do it when we
+    # switch to the new generation. If secrets don't show up shortly after
+    # doing this, check the logs for that helper tool, which can be found at:
+    # ~/Libary/Logs/SopsNix/std{out,err}
+    age.keyFile = "${config.home.homeDirectory}/Code/LukeCarrier/dotfiles/.sops/keys";
 
-  sops.secrets.finicky-config = {
-    sopsFile = ../../secrets/employer-emed.yaml;
-    format = "yaml";
-    key = "finicky/config";
-    path = "${config.home.homeDirectory}/.finicky.js";
+    secrets = {
+      finicky-config = {
+        sopsFile = ../../secrets/employer-emed.yaml;
+        format = "yaml";
+        key = "finicky/config";
+        path = "${config.home.homeDirectory}/.finicky.js";
+      };
+
+      aws-config = {
+        sopsFile = ../../secrets/employer-emed.yaml;
+        format = "yaml";
+        key = "aws/config";
+        path = "${config.home.homeDirectory}/.aws/config";
+      };
+
+      npmrc = {
+        sopsFile = ../../secrets/employer-emed.yaml;
+        format = "yaml";
+        key = "npm/rc";
+        path = "${config.home.homeDirectory}/.npmrc";
+      };
+      yarnrc = {
+        sopsFile = ../../secrets/employer-emed.yaml;
+        format = "yaml";
+        key = "yarn/rc";
+        path = "${config.home.homeDirectory}/.yarnrc.yml";
+      };
+
+      emed-mini-platforms = {
+        sopsFile = ../../secrets/employer-emed.yaml;
+        format = "yaml";
+        key = "miniplatforms/config";
+        path = "${config.home.homeDirectory}/.config/emed/miniplatforms.yaml";
+      };
+
+      opencode-github-token.sopsFile = pkgs.lib.mkForce ../../../../secrets/employer-emed.yaml;
+
+      grafana-cloud-url = {
+        sopsFile = pkgs.lib.mkDefault ../../../../secrets/employer-emed.yaml;
+        key = "grafana/cloud/url";
+      };
+      grafana-cloud-service-account-token = {
+        sopsFile = pkgs.lib.mkDefault ../../../../secrets/employer-emed.yaml;
+        key = "grafana/cloud/service-account-token";
+      };
+
+      coralogix-uk-nonprod-api-key = {
+        sopsFile = pkgs.lib.mkDefault ../../../../secrets/employer-emed.yaml;
+        format = "yaml";
+        key = "coralogix/uk-nonprod";
+      };
+      coralogix-uk-prod-api-key = {
+        sopsFile = pkgs.lib.mkDefault ../../../../secrets/employer-emed.yaml;
+        format = "yaml";
+        key = "coralogix/uk-prod";
+      };
+      coralogix-us-nonprod-api-key = {
+        sopsFile = pkgs.lib.mkDefault ../../../../secrets/employer-emed.yaml;
+        format = "yaml";
+        key = "coralogix/us-nonprod";
+      };
+      coralogix-us-prod-api-key = {
+        sopsFile = pkgs.lib.mkDefault ../../../../secrets/employer-emed.yaml;
+        format = "yaml";
+        key = "coralogix/us-prod";
+      };
+    };
   };
 
-  sops.secrets.aws-config = {
-    sopsFile = ../../secrets/employer-emed.yaml;
-    format = "yaml";
-    key = "aws/config";
-    path = "${config.home.homeDirectory}/.aws/config";
-  };
+  programs.mcp.servers = {
+    atlassian = {
+      url = "https://mcp.atlassian.com/v1/mcp";
+    };
 
-  sops.secrets.npmrc = {
-    sopsFile = ../../secrets/employer-emed.yaml;
-    format = "yaml";
-    key = "npm/rc";
-    path = "${config.home.homeDirectory}/.npmrc";
-  };
-  sops.secrets.yarnrc = {
-    sopsFile = ../../secrets/employer-emed.yaml;
-    format = "yaml";
-    key = "yarn/rc";
-    path = "${config.home.homeDirectory}/.yarnrc.yml";
-  };
+    coralogix-uk-nonprod = {
+      command = "mcp-remote";
+      args = [
+        "https://api.eu2.coralogix.com/mgmt/api/v1/mcp"
+        "--header"
+        "Authorization: Bearer @CORALOGIX_UK_NONPROD_API_KEY@"
+      ];
+    };
+    coralogix-uk-prod = {
+      command = "mcp-remote";
+      args = [
+        "https://api.eu2.coralogix.com/mgmt/api/v1/mcp"
+        "--header"
+        "Authorization: Bearer @CORALOGIX_UK_PROD_API_KEY@"
+      ];
+    };
+    coralogix-us-nonprod = {
+      command = "mcp-remote";
+      args = [
+        "https://api.us1.coralogix.com/mgmt/api/v1/mcp"
+        "--header"
+        "Authorization: Bearer @CORALOGIX_US_NONPROD_API_KEY@"
+      ];
+    };
+    coralogix-us-prod = {
+      command = "mcp-remote";
+      args = [
+        "https://api.us1.coralogix.com/mgmt/api/v1/mcp"
+        "--header"
+        "Authorization: Bearer @CORALOGIX_US_PROD_API_KEY@"
+      ];
+    };
 
-  sops.secrets.emed-mini-platforms = {
-    sopsFile = ../../secrets/employer-emed.yaml;
-    format = "yaml";
-    key = "miniplatforms/config";
-    path = "${config.home.homeDirectory}/.config/emed/miniplatforms.yaml";
+    github = {
+      command = getExe pkgs.github-mcp-server;
+      args = [ "stdio" ];
+      env.GITHUB_PERSONAL_ACCESS_TOKEN = "@TOKEN@";
+    };
+
+    grafana-cloud = {
+      command = getExe pkgs.mcp-grafana;
+      env = {
+        GRAFANA_URL = "@URL@";
+        GRAFANA_SERVICE_ACCOUNT_TOKEN = "@SERVICE_ACCOUNT_TOKEN@";
+      };
+    };
+
+    slack = {
+      url = "https://mcp.slack.com/mcp";
+    };
   };
 
   programs.bash.initExtra = ''
@@ -116,10 +215,12 @@ in
       eval "$(${getExe selectMiniplatform})"
     }
   '';
-  programs.fish.functions.emed-mini-platform = ''
-    ${getExe selectMiniplatform} | source
-  '';
-  programs.fish.shellInit = "";
+  programs.fish = {
+    functions.emed-mini-platform = ''
+      ${getExe selectMiniplatform} | source
+    '';
+    shellInit = "";
+  };
   programs.zsh.initContent = config.programs.bash.initExtra;
 
   programs.librewolf.profiles.default =

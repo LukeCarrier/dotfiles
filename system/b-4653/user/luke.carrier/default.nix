@@ -46,12 +46,14 @@ in
     ../../../../component/rust/cargo.nix
   ];
 
-  home.stateVersion = "24.05";
+  home = {
+    stateVersion = "24.05";
+
+    home.username = "luke.carrier";
+    home.homeDirectory = homeDirectory;
+  };
 
   sops.defaultSopsFile = ../../../../secrets/employer-emed.yaml;
-
-  home.username = "luke.carrier";
-  home.homeDirectory = homeDirectory;
 
   nixpkgs.config.allowUnfreePredicate =
     pkg:
@@ -61,107 +63,4 @@ in
       "vscode-extension-github-copilot-chat"
       "vscode-extension-ms-vscode-remote-remote-containers"
     ];
-
-  home.packages = with pkgs; [
-    crane
-    docker-cli-tools
-    skopeo
-  ];
-
-  # Must be formatted exactly as follows or NVIDIA Sync will complain
-  # that ~/.ssh/config is not writable
-  programs.ssh.extraOptionOverrides = {
-    Include = "\"${homeDirectory}/Library/Application Support/NVIDIA/Sync/config/ssh_config\"";
-  };
-
-  sops.secrets = {
-    opencode-github-token.sopsFile = pkgs.lib.mkForce ../../../../secrets/employer-emed.yaml;
-
-    grafana-cloud-url = {
-      sopsFile = pkgs.lib.mkDefault ../../../../secrets/employer-emed.yaml;
-      key = "grafana/cloud/url";
-    };
-    grafana-cloud-service-account-token = {
-      sopsFile = pkgs.lib.mkDefault ../../../../secrets/employer-emed.yaml;
-      key = "grafana/cloud/service-account-token";
-    };
-
-    coralogix-uk-nonprod-api-key = {
-      sopsFile = pkgs.lib.mkDefault ../../../../secrets/employer-emed.yaml;
-      format = "yaml";
-      key = "coralogix/uk-nonprod";
-    };
-    coralogix-uk-prod-api-key = {
-      sopsFile = pkgs.lib.mkDefault ../../../../secrets/employer-emed.yaml;
-      format = "yaml";
-      key = "coralogix/uk-prod";
-    };
-    coralogix-us-nonprod-api-key = {
-      sopsFile = pkgs.lib.mkDefault ../../../../secrets/employer-emed.yaml;
-      format = "yaml";
-      key = "coralogix/us-nonprod";
-    };
-    coralogix-us-prod-api-key = {
-      sopsFile = pkgs.lib.mkDefault ../../../../secrets/employer-emed.yaml;
-      format = "yaml";
-      key = "coralogix/us-prod";
-    };
-  };
-
-  programs.mcp.servers = {
-    atlassian = {
-      url = "https://mcp.atlassian.com/v1/mcp";
-    };
-
-    coralogix-uk-nonprod = {
-      command = "mcp-remote";
-      args = [
-        "https://api.eu2.coralogix.com/mgmt/api/v1/mcp"
-        "--header"
-        "Authorization: Bearer @CORALOGIX_UK_NONPROD_API_KEY@"
-      ];
-    };
-    coralogix-uk-prod = {
-      command = "mcp-remote";
-      args = [
-        "https://api.eu2.coralogix.com/mgmt/api/v1/mcp"
-        "--header"
-        "Authorization: Bearer @CORALOGIX_UK_PROD_API_KEY@"
-      ];
-    };
-    coralogix-us-nonprod = {
-      command = "mcp-remote";
-      args = [
-        "https://api.us1.coralogix.com/mgmt/api/v1/mcp"
-        "--header"
-        "Authorization: Bearer @CORALOGIX_US_NONPROD_API_KEY@"
-      ];
-    };
-    coralogix-us-prod = {
-      command = "mcp-remote";
-      args = [
-        "https://api.us1.coralogix.com/mgmt/api/v1/mcp"
-        "--header"
-        "Authorization: Bearer @CORALOGIX_US_PROD_API_KEY@"
-      ];
-    };
-
-    github = {
-      command = getExe pkgs.github-mcp-server;
-      args = [ "stdio" ];
-      env.GITHUB_PERSONAL_ACCESS_TOKEN = "@TOKEN@";
-    };
-
-    grafana-cloud = {
-      command = getExe pkgs.mcp-grafana;
-      env = {
-        GRAFANA_URL = "@URL@";
-        GRAFANA_SERVICE_ACCOUNT_TOKEN = "@SERVICE_ACCOUNT_TOKEN@";
-      };
-    };
-
-    slack = {
-      url = "https://mcp.slack.com/mcp";
-    };
-  };
 }
