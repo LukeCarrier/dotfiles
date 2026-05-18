@@ -3,19 +3,20 @@
 PRESERVE_GENERATIONS := +2
 HOSTNAME := $(shell echo $(shell hostname) | cut -d. -f1 | tr '[:upper:]' '[:lower:]')
 USER := $(shell id -un)
+OP := switch
 FLAKE := .
 
 gc:
 	nh clean all
 
 home:
-	nh home switch "$(FLAKE)" --configuration "$(USER)@$(HOSTNAME)"
+	nh home "$(OP)" "$(FLAKE)" --configuration "$(USER)@$(HOSTNAME)"
 
 host:
-	nh os switch "$(FLAKE)" --hostname "$(HOSTNAME)"
+	nh os "$(OP)" "$(FLAKE)" --hostname "$(HOSTNAME)"
 
 host-android:
-	nix-on-droid switch --flake "$(FLAKE)" --show-trace
+	nix-on-droid "$(OP)" --flake "$(FLAKE)" --show-trace
 
 host-darwin:
-	nh darwin switch --hostname "$(HOSTNAME)"
+	nh darwin "$(OP)" --hostname "$(HOSTNAME)"
