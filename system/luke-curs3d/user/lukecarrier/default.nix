@@ -30,8 +30,6 @@
     ../../../../component/direnv/direnv.nix
     ../../../../component/firefox/firefox.nix
     ../../../../component/goose/goose.nix
-    # ../../../../component/gnome-network-displays/home.nix
-    ../../../../component/valent/home.nix
     ../../../../component/bitwarden/bitwarden.nix
     ../../../../component/handy/nixos-home.nix
     ../../../../component/openssh/openssh.nix

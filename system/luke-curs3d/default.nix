@@ -20,8 +20,6 @@
     ../../component/niri/nixos.nix
     ../../component/niri/nvidia.nix
     ../../platform/nixos/containers.nix
-    ../../component/gnome-network-displays/gnome-network-displays.nix
-    ../../component/valent/valent.nix
   ];
 
   system.stateVersion = "25.11";

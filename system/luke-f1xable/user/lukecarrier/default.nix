@@ -29,7 +29,6 @@
     ../../../../component/zsh/zsh.nix
     ../../../../component/direnv/direnv.nix
     ../../../../component/firefox/firefox.nix
-    ../../../../component/valent/home.nix
     ../../../../component/bitwarden/bitwarden.nix
     ../../../../component/handy/nixos-home.nix
     ../../../../component/goose/goose.nix
@@ -46,7 +45,6 @@
     ../../../../component/jj/jj.nix
     ../../../../component/zoxide/zoxide.nix
     ../../../../component/espanso/espanso.nix
-    ../../../../component/alacritty/alacritty.nix
     ../../../../component/ghostty/ghostty.nix
     ../../../../component/rust/cargo.nix
     ../../../../component/aws/aws.nix
