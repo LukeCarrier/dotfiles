@@ -134,16 +134,17 @@
           config ? { },
         }:
         let
-          unfreeConfig = {
+          flakeUnfree = [
             # Add only unfree packages provided by this flake here. All others
             # belong in individual system and home manager configurations.
+            "obsbot-sdk"
+          ];
+          mergedConfig = config // {
             allowUnfreePredicate =
               pkg:
-              builtins.elem (basePkgs.lib.getName pkg) [
-                "obsbot-sdk"
-              ];
-            };
-          mergedConfig = pkgs.lib.recursiveUpdate config unfreeConfig;
+              builtins.elem (basePkgs.lib.getName pkg) flakeUnfree
+              || (config.allowUnfreePredicate or (_: false)) pkg;
+          };
           basePkgs = import pkgs {
             inherit system;
             config = mergedConfig;
