@@ -102,9 +102,11 @@ nix --extra-experimental-features "nix-command flakes" develop
 Then apply:
 
 ```console
-NIX_CONFIG="experimental-features = nix-command flakes" make HOSTNAME=luke-dr0ne host
+NIX_CONFIG="experimental-features = nix-command flakes" make OP=boot HOSTNAME=luke-dr0ne host
+reboot
 ```
-Subsequent applies don't require special behaviour.
+
+Subsequent applies don't require special behaviour, unless they're touching the display manager.
 
 ## Usage
 
