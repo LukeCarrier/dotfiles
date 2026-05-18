@@ -362,7 +362,9 @@
     )
     // (import ./system {
       inherit
+        cyberhaven
         darwin
+        falcon-sensor
         home-manager
         lanzaboote
         niri

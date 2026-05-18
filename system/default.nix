@@ -33,21 +33,6 @@
       };
     };
 
-    luke-c0nstruct = darwin.lib.darwinSystem rec {
-      system = "x86_64-darwin";
-      pkgs =
-        pkgsForSystem {
-          inherit system;
-          pkgs = nixpkgs-unstable;
-        };
-      modules = [ ./luke-c0nstruct ];
-      specialArgs = {
-        inputs = {
-          inherit sops-nix;
-        };
-      };
-    };
-
     luke-fatman = darwin.lib.darwinSystem rec {
       system = "aarch64-darwin";
       pkgs =
@@ -81,6 +66,37 @@
   };
 
   nixosConfigurations = {
+    luke-c0nstruct = nixpkgs-unstable.lib.nixosSystem rec {
+      system = "x86_64-linux";
+      pkgs =
+        pkgsForSystem {
+          inherit system;
+          pkgs = nixpkgs-unstable;
+          config.allowUnfreePredicate =
+            pkg:
+            builtins.elem (nixpkgs-unstable.lib.getName pkg) [
+              "1password"
+              "1password-cli"
+              "cyberhaven-unwrapped"
+              "falcon-sensor-unwrapped"
+            ];
+        };
+      modules = [ ./luke-c0nstruct ];
+      specialArgs = {
+        inputs = {
+          inherit
+            cyberhaven
+            falcon-sensor
+            nixos-hardware
+            nix-flatpak
+            sops-nix
+            lanzaboote
+            ;
+        };
+        desktopConfig.background = desktopBackground;
+      };
+    };
+
     luke-curs3d = nixpkgs-unstable.lib.nixosSystem rec {
       system = "x86_64-linux";
       pkgs =
@@ -103,37 +119,6 @@
       specialArgs = {
         inputs = {
           inherit
-            nixos-hardware
-            nix-flatpak
-            sops-nix
-            lanzaboote
-            ;
-        };
-        desktopConfig.background = desktopBackground;
-      };
-    };
-
-    luke-dr0ne = nixpkgs-unstable.lib.nixosSystem {
-      system = "x86_64-linux";
-      pkgs =
-        pkgsForSystem {
-          system = "x86_64-linux";
-          pkgs = nixpkgs-unstable;
-          config.allowUnfreePredicate =
-            pkg:
-            builtins.elem (nixpkgs-unstable.lib.getName pkg) [
-              "1password"
-              "1password-cli"
-              "cyberhaven-unwrapped"
-              "falcon-sensor-unwrapped"
-            ];
-        };
-      modules = [ ./luke-dr0ne ];
-      specialArgs = {
-        inputs = {
-          inherit
-            cyberhaven
-            falcon-sensor
             nixos-hardware
             nix-flatpak
             sops-nix
@@ -199,101 +184,7 @@
       modules = [ ./nix-on-droid/user/nix-on-droid ];
     };
 
-    "lukecarrier@luke-curs3d" = home-manager.lib.homeManagerConfiguration rec {
-      pkgs =
-        pkgsForSystem {
-          system = "x86_64-linux";
-          pkgs = nixpkgs-unstable;
-          config.cudaSupport = true;
-        };
-      extraSpecialArgs = {
-        inputs = {
-          inherit niri nix-flatpak sops-nix;
-        };
-        inherit permittedInsecurePackages;
-        desktopConfig = {
-          background = desktopBackground;
-          pointerCursor = {
-            package = pkgs.bibata-cursors;
-            name = "Bibata-Modern-Classic";
-            size = 32;
-          };
-        };
-        gitConfig.user.signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
-        jjConfig.signing.key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
-        kanshiConfig =
-          let
-            exec = "systemctl restart --user ashell.service wpaper.service";
-          in
-          [
-            {
-              output = {
-                criteria = "Samsung Electric Company U32J59x HTPK702789";
-                mode = "3840x2160@60Hz";
-                adaptiveSync = false;
-                scale = 1.25;
-                transform = null;
-              };
-            }
-            {
-              output = {
-                criteria = "Samsung Electric Company U32J59x HTPK602008";
-                mode = "3840x2160@60Hz";
-                adaptiveSync = false;
-                scale = 1.25;
-                transform = null;
-              };
-            }
-            {
-              profile = {
-                name = "peacehavenLeftOnly";
-                outputs = [
-                  {
-                    criteria = "Samsung Electric Company U32J59x HTPK702789";
-                    status = "enable";
-                    position = "0,0";
-                  }
-                ];
-                inherit exec;
-              };
-            }
-            {
-              profile = {
-                name = "peacehavenRightOnly";
-                profile.outputs = [
-                  {
-                    criteria = "Samsung Electric Company U32J59x HTPK602008";
-                    status = "enable";
-                    position = "0,0";
-                  }
-                ];
-                inherit exec;
-              };
-            }
-            {
-              profile = {
-                name = "peacehavenAll";
-                outputs = [
-                  {
-                    criteria = "Samsung Electric Company U32J59x HTPK602008";
-                    status = "enable";
-                    position = "3072,0";
-                  }
-                  {
-                    criteria = "Samsung Electric Company U32J59x HTPK702789";
-                    status = "enable";
-                    position = "0,0";
-                  }
-                ];
-                inherit exec;
-              };
-            }
-          ];
-      };
-      modules = [ ./luke-curs3d/user/lukecarrier ];
-    };
-
-    "lukecarrier@luke-dr0ne" = home-manager.lib.homeManagerConfiguration rec {
+    "lukecarrier@luke-c0nstruct" = home-manager.lib.homeManagerConfiguration rec {
       pkgs =
         pkgsForSystem {
           system = "x86_64-linux";
@@ -301,7 +192,11 @@
         };
       extraSpecialArgs = {
         inputs = {
-          inherit niri nix-flatpak sops-nix;
+          inherit
+            niri
+            nix-flatpak
+            sops-nix
+            ;
         };
         inherit permittedInsecurePackages;
         desktopConfig = {
@@ -322,9 +217,9 @@
             {
               output = {
                 criteria = "eDP-1";
-                mode = "3840x2160@60Hz";
-                adaptiveSync = true;
-                scale = 1.75;
+                mode = "3072x1920@60Hz";
+                adaptiveSync = false;
+                scale = 1.5;
                 transform = null;
               };
             }
@@ -478,7 +373,101 @@
             }
           ];
       };
-      modules = [ ./luke-dr0ne/user/lukecarrier ];
+      modules = [ ./luke-c0nstruct/user/lukecarrier ];
+    };
+
+    "lukecarrier@luke-curs3d" = home-manager.lib.homeManagerConfiguration rec {
+      pkgs =
+        pkgsForSystem {
+          system = "x86_64-linux";
+          pkgs = nixpkgs-unstable;
+          config.cudaSupport = true;
+        };
+      extraSpecialArgs = {
+        inputs = {
+          inherit niri nix-flatpak sops-nix;
+        };
+        inherit permittedInsecurePackages;
+        desktopConfig = {
+          background = desktopBackground;
+          pointerCursor = {
+            package = pkgs.bibata-cursors;
+            name = "Bibata-Modern-Classic";
+            size = 32;
+          };
+        };
+        gitConfig.user.signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
+        jjConfig.signing.key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
+        kanshiConfig =
+          let
+            exec = "systemctl restart --user ashell.service wpaper.service";
+          in
+          [
+            {
+              output = {
+                criteria = "Samsung Electric Company U32J59x HTPK702789";
+                mode = "3840x2160@60Hz";
+                adaptiveSync = false;
+                scale = 1.25;
+                transform = null;
+              };
+            }
+            {
+              output = {
+                criteria = "Samsung Electric Company U32J59x HTPK602008";
+                mode = "3840x2160@60Hz";
+                adaptiveSync = false;
+                scale = 1.25;
+                transform = null;
+              };
+            }
+            {
+              profile = {
+                name = "peacehavenLeftOnly";
+                outputs = [
+                  {
+                    criteria = "Samsung Electric Company U32J59x HTPK702789";
+                    status = "enable";
+                    position = "0,0";
+                  }
+                ];
+                inherit exec;
+              };
+            }
+            {
+              profile = {
+                name = "peacehavenRightOnly";
+                profile.outputs = [
+                  {
+                    criteria = "Samsung Electric Company U32J59x HTPK602008";
+                    status = "enable";
+                    position = "0,0";
+                  }
+                ];
+                inherit exec;
+              };
+            }
+            {
+              profile = {
+                name = "peacehavenAll";
+                outputs = [
+                  {
+                    criteria = "Samsung Electric Company U32J59x HTPK602008";
+                    status = "enable";
+                    position = "3072,0";
+                  }
+                  {
+                    criteria = "Samsung Electric Company U32J59x HTPK702789";
+                    status = "enable";
+                    position = "0,0";
+                  }
+                ];
+                inherit exec;
+              };
+            }
+          ];
+      };
+      modules = [ ./luke-curs3d/user/lukecarrier ];
     };
 
     "lukecarrier@luke-f1xable" = home-manager.lib.homeManagerConfiguration rec {
@@ -667,23 +656,6 @@
           ];
       };
       modules = [ ./luke-f1xable/user/lukecarrier ];
-    };
-
-    "lukecarrier@luke-c0nstruct" = home-manager.lib.homeManagerConfiguration {
-      pkgs =
-        pkgsForSystem {
-          system = "x86_64-darwin";
-          pkgs = nixpkgs-unstable;
-        };
-      extraSpecialArgs = {
-        inputs = {
-          inherit sops-nix;
-        };
-        inherit permittedInsecurePackages;
-        gitConfig.user.signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
-        jjConfig.signing.key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
-      };
-      modules = [ ./luke-c0nstruct/user/lukecarrier ];
     };
 
     "lukecarrier@luke-fatman" = home-manager.lib.homeManagerConfiguration {
