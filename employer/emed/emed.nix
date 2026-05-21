@@ -188,6 +188,10 @@ in
       };
     };
 
+    scalr = {
+      url = "https://scalr.io/mcp";
+    };
+
     slack = {
       url = "https://mcp.slack.com/mcp";
     };
