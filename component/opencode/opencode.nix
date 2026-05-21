@@ -8,12 +8,19 @@ let
   mcpLib = import ../../lib/mcp.nix {inherit lib;};
   substitute = mcpLib.substitute config lib;
 
+  # programs.mcp.servers is home-manager's free-form jsonFormat.type option,
+  # so we piggy-back on it as a shared source for our own generators and
+  # slip in an `enabled` field HM itself doesn't define. Default to false
+  # to avoid overloading agents with permissions and tool descriptions.
   buildMcpConfig = _: mcpDef:
     let
       url = mcpDef.url or null;
       command = mcpDef.command or null;
       mcpType = if url != null then "remote" else "local";
-      baseMcp = {type = mcpType;};
+      baseMcp = {
+        type = mcpType;
+        enabled = mcpDef.enabled or false;
+      };
       mcpWithUrl = if url != null then baseMcp // {inherit url;} else baseMcp;
       mcpWithCommand =
         if command != null then

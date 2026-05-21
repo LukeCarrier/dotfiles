@@ -7,60 +7,41 @@
 let
   mcpLib = import ../../lib/mcp.nix { inherit lib; };
   substitute = mcpLib.substitute config lib;
+  # programs.mcp.servers is home-manager's free-form jsonFormat.type option,
+  # so we piggy-back on it as a shared source for our own generators and
+  # slip in an `enabled` field HM itself doesn't define. Default to false
+  # to avoid overloading agents with permissions and tool descriptions.
   buildGooseMcpConfig =
-    _: serverDef:
+    name: serverDef:
     let
-      command = serverDef.command or null;
       url = serverDef.url or null;
-      isLocal = command != null;
+      command = serverDef.command or null;
       isRemote = url != null;
-      env = lib.mapAttrs (_: v: substitute (toString v)) (serverDef.env or { });
+      envs = lib.mapAttrs (_: v: substitute (toString v)) (serverDef.env or { });
+      base = {
+        inherit name;
+        enabled = serverDef.enabled or false;
+        timeout = 300;
+        bundled = false;
+      } // lib.optionalAttrs (envs != { }) { inherit envs; };
     in
-    {
-      type =
-        if isLocal then
-          "command"
-        else if isRemote then
-          "http"
-        else
-          "unknown";
-    }
-    // lib.optionalAttrs isLocal {
-      command = toString command;
-      args = map (a: substitute (toString a)) (serverDef.args or [ ]);
-    }
-    // lib.optionalAttrs isRemote { inherit url; }
-    // lib.optionalAttrs (env != { }) { inherit env; };
-  gooseMcpServers = lib.mapAttrs buildGooseMcpConfig config.programs.mcp.servers;
-  mcpConfigYaml =
-    if gooseMcpServers == { } then
-      ""
+    if isRemote then
+      base
+      // {
+        type = "streamable_http";
+        uri = substitute url;
+      }
     else
-      "mcp_servers:\n"
-      + lib.concatStrings (
-        lib.mapAttrsToList (
-          name: server:
-          "  ${name}:\n"
-          + "    type: ${server.type}\n"
-          + lib.optionalString (server.command or null != null) "    command: ${toString server.command}\n"
-          + lib.optionalString ((server.args or [ ]) != [ ]) (
-            "    args:\n" + lib.concatMapStrings (arg: "      - ${toString arg}\n") server.args
-          )
-          + lib.optionalString (server.url or null != null) "    url: ${toString server.url}\n"
-          + lib.optionalString ((server.env or { }) != { }) (
-            "    env:\n"
-            +
-              lib.concatMapStrings
-                (pair: "      ${builtins.elemAt pair 0}: ${toString (builtins.elemAt pair 1)}\n")
-                (
-                  lib.mapAttrsToList (n: v: [
-                    n
-                    v
-                  ]) server.env
-                )
-          )
-        ) gooseMcpServers
-      );
+      base
+      // {
+        type = "stdio";
+        cmd = substitute (toString command);
+        args = map (a: substitute (toString a)) (serverDef.args or [ ]);
+      };
+  gooseMcpServers = lib.mapAttrs buildGooseMcpConfig config.programs.mcp.servers;
+  mcpConfigYaml = lib.concatStrings (
+    lib.mapAttrsToList (name: entry: "  ${name}: ${builtins.toJSON entry}\n") gooseMcpServers
+  );
 
   adrRecipes = ./recipes/adr;
   replaceRecipePaths = content:

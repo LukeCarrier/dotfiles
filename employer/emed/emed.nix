@@ -86,67 +86,50 @@ in
 
     secrets = {
       finicky-config = {
-        sopsFile = ../../secrets/employer-emed.yaml;
         format = "yaml";
         key = "finicky/config";
         path = "${config.home.homeDirectory}/.finicky.js";
       };
 
       aws-config = {
-        sopsFile = ../../secrets/employer-emed.yaml;
         format = "yaml";
         key = "aws/config";
         path = "${config.home.homeDirectory}/.aws/config";
       };
 
       npmrc = {
-        sopsFile = ../../secrets/employer-emed.yaml;
         format = "yaml";
         key = "npm/rc";
         path = "${config.home.homeDirectory}/.npmrc";
       };
       yarnrc = {
-        sopsFile = ../../secrets/employer-emed.yaml;
         format = "yaml";
         key = "yarn/rc";
         path = "${config.home.homeDirectory}/.yarnrc.yml";
       };
 
       emed-mini-platforms = {
-        sopsFile = ../../secrets/employer-emed.yaml;
         format = "yaml";
         key = "miniplatforms/config";
         path = "${config.home.homeDirectory}/.config/emed/miniplatforms.yaml";
       };
 
-      opencode-github-token.sopsFile = pkgs.lib.mkForce ../../../../secrets/employer-emed.yaml;
-
-      grafana-cloud-url = {
-        sopsFile = pkgs.lib.mkDefault ../../../../secrets/employer-emed.yaml;
-        key = "grafana/cloud/url";
-      };
-      grafana-cloud-service-account-token = {
-        sopsFile = pkgs.lib.mkDefault ../../../../secrets/employer-emed.yaml;
-        key = "grafana/cloud/service-account-token";
-      };
+      grafana-cloud-url.key = "grafana/cloud/url";
+      grafana-cloud-service-account-token.key = "grafana/cloud/service-account-token";
 
       coralogix-uk-nonprod-api-key = {
-        sopsFile = pkgs.lib.mkDefault ../../../../secrets/employer-emed.yaml;
         format = "yaml";
         key = "coralogix/uk-nonprod";
       };
       coralogix-uk-prod-api-key = {
-        sopsFile = pkgs.lib.mkDefault ../../../../secrets/employer-emed.yaml;
         format = "yaml";
         key = "coralogix/uk-prod";
       };
       coralogix-us-nonprod-api-key = {
-        sopsFile = pkgs.lib.mkDefault ../../../../secrets/employer-emed.yaml;
         format = "yaml";
         key = "coralogix/us-nonprod";
       };
       coralogix-us-prod-api-key = {
-        sopsFile = pkgs.lib.mkDefault ../../../../secrets/employer-emed.yaml;
         format = "yaml";
         key = "coralogix/us-prod";
       };
