@@ -39,8 +39,18 @@
   };
 
   home.pointerCursor = {
-    gtk.enable = true;
+    enable = true;
     inherit (desktopConfig.pointerCursor) package name size;
+    gtk = {
+      enable = true;
+      size = 32;
+    };
+    hyprcursor = {
+      enable = true;
+      size = 32;
+    };
+    sway.enable = true;
+    x11.enable = true;
   };
 
   gtk = {

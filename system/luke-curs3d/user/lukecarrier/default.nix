@@ -17,7 +17,6 @@
     ../../../../component/gnome-headless/gnome-headless.nix
     ../../../../component/wofi/wofi.nix
     ../../../../component/waybar/waybar.nix
-    ../../../../component/hyprcursor/hyprcursor.nix
     ../../../../component/swayidle/swayidle.nix
     ../../../../component/swaylock/swaylock.nix
     ../../../../component/wpaperd/wpaperd.nix
