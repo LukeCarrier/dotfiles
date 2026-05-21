@@ -4,11 +4,6 @@ let
   inherit (pkgs.stdenv) isDarwin;
 in
 {
-  home.packages = mkIf (!isDarwin) [
-    pkgs._1password-cli
-    pkgs._1password-gui
-  ];
-
   programs.ssh.matchBlocks.all = {
     match = "all";
     extraOptions = {

@@ -116,6 +116,12 @@
         (pkgsForSystem {
           system = "x86_64-linux";
           pkgs = nixpkgs-unstable;
+          config.allowUnfreePredicate =
+            pkg:
+            builtins.elem (nixpkgs-unstable.lib.getName pkg) [
+              "1password"
+              "1password-cli"
+            ];
         }).pkgs;
       modules = [ ./luke-dr0ne ];
       specialArgs = {

@@ -17,9 +17,11 @@ in
     inputs.lanzaboote.nixosModules.lanzaboote
     ../../platform/nixos/secure-boot.nix
     ../../platform/nixos/graphical.nix
+    ../../platform/nixos/containers.nix
+    ../../employer/emed/nixos.nix
     ../../component/niri/nixos.nix
     ../../component/librepods/nixos.nix
-    ../../platform/nixos/containers.nix
+    ../../component/1password/nixos.nix
   ];
 
   system.stateVersion = "25.11";
@@ -82,4 +84,6 @@ in
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family"
     ];
   };
+
+  programs._1password-gui.polkitPolicyOwners = [ "lukecarrier" ];
 }
