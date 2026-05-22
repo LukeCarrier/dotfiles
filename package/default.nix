@@ -27,6 +27,8 @@ rec {
 
   grafana-mcp = callPackage ./grafana-mcp { };
 
+  hibiki = callPackage ./hibiki { };
+
   kubernetes-client-tools = callPackage ./kubernetes-client-tools { };
 
   mcp-remote = callPackage ./mcp-remote { };
