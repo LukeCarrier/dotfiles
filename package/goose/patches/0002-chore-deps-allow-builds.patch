@@ -1,12 +1,12 @@
-From 96e3fe66fc57a7574934726c05876c220e675ff8 Mon Sep 17 00:00:00 2001
+From aa0c3796f8b99bc0b5db1434578cd2be657a5f2e Mon Sep 17 00:00:00 2001
 From: Luke Carrier <luke@carrier.family>
 Date: Sat, 16 May 2026 17:37:57 +0100
-Subject: [PATCH 2/5] chore(deps): allow builds
+Subject: [PATCH 2/4] chore(deps): allow builds
 
 ---
  ui/package.json        | 6 ------
- ui/pnpm-workspace.yaml | 6 ++++++
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ ui/pnpm-workspace.yaml | 8 ++++----
+ 2 files changed, 4 insertions(+), 10 deletions(-)
 
 diff --git a/ui/package.json b/ui/package.json
 index 361b903fb..46696b965 100644
@@ -25,19 +25,22 @@ index 361b903fb..46696b965 100644
    }
  }
 diff --git a/ui/pnpm-workspace.yaml b/ui/pnpm-workspace.yaml
-index fe9cb2653..d1d52eec7 100644
+index 9c19892a4..d1d52eec7 100644
 --- a/ui/pnpm-workspace.yaml
 +++ b/ui/pnpm-workspace.yaml
-@@ -5,4 +5,10 @@ packages:
-   - 'goose-binary/*'
+@@ -6,9 +6,9 @@ packages:
    - 'goose2'
  
-+allowBuilds:
+ allowBuilds:
+-  '@modelcontextprotocol/ext-apps': set this to true or false
+-  electron: set this to true or false
+-  electron-winstaller: set this to true or false
+-  esbuild: set this to true or false
 +  '@modelcontextprotocol/ext-apps': true
 +  electron: true
 +  electron-winstaller: true
 +  esbuild: true
-+
+ 
  blockExoticSubdeps: false
 -- 
 2.53.0

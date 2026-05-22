@@ -21,6 +21,12 @@ in
     ];
 
     userSettings = {
+      # Disable telemetry
+      telemetry = {
+        diagnostics = false;
+        metrics = false;
+      };
+
       # Open projects in new windows
       cli_default_open_behavior = "new_window";
 

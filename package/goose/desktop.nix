@@ -8,55 +8,45 @@
   ...
 }:
 let
-  inherit (lib) getExe makeBinPath optionalString;
+  inherit (lib) getExe optionalString;
   inherit (pkgs) electron makeDesktopItem;
-  version = "1.34.0";
+  version = "1.35.0";
   rawSrc = fetchFromGitHub {
     owner = "aaif-goose";
     repo = "goose";
     tag = "v${version}";
-    sha256 = "sha256-Ed85tMysd31aiXnUaymTmtPgh4x4urtyUsDOnh+qMks=";
+    sha256 = "sha256-phcv0quM9eZoHE1qYZ6RsXb6irWDRRpPJwEGlRDwAvM=";
   };
-  # We need to patch the pnpm configuration and workspace before fetching deps,
-  # and we need those same files during the build, else the lockfile will be
-  # considered stale.
   src = stdenv.mkDerivation (finalAttrs: {
     pname = "goose-desktop";
     inherit version;
-
     src = rawSrc;
-    # Of course we checked in stale lock files!
     patches = [
       ./patches/0001-chore-deps-don-t-block-exotic-subdeps.patch
       ./patches/0002-chore-deps-allow-builds.patch
       ./patches/0003-chore-deps-relocate-overrides.patch
       ./patches/0004-chore-deps-use-hoisted-linker-for-electron-forge.patch
-      ./patches/0005-chore-deps-fix-up-lock-file.patch
     ];
-
     buildPhase = "true";
-
     installPhase = ''
       cp -a . $out
-      # Of course there are broken symlinks, why the fuck not
-      rm -rf $out/ui/goose2/.{claude,codex}
+      find $out -type l ! -exec test -e {} \; -delete
     '';
   });
+
   pnpm = pkgs.pnpm_11;
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "goose-desktop";
-  inherit version;
+  inherit version src;
 
-  src = "${src}/ui";
-
+  pnpmRoot = "ui";
   pnpmDeps = fetchPnpmDeps {
-    inherit (finalAttrs) pname version;
-    inherit pnpm;
+    pname = finalAttrs.pname;
+    inherit version pnpm;
     src = "${src}/ui";
-    # pnpmWorkspaces = [ "goose-app" ];
     fetcherVersion = 3;
-    hash = "sha256-iaiIW+ftIM1M6NkPU/wTRU4C4GnqFKb45jKZkEeeUAU=";
+    hash = "sha256-Y+jfxYjREf+RzZNl8yEOOhtwioA6f01G+Dofp2/up64=";
   };
 
   nativeBuildInputs =
@@ -69,28 +59,17 @@ stdenv.mkDerivation (finalAttrs: {
       makeWrapper
     ]);
 
-  # Skip binary download during build
   ELECTRON_SKIP_BINARY_DOWNLOAD = "1";
-
-  configurePhase = ''
-    runHook preConfigure
-
-    # Set npm_config_nodedir for native module compilation
-    export npm_config_nodedir="${electron.headers}"
-
-    runHook postConfigure
-  '';
 
   buildPhase = ''
     runHook preBuild
-
-    pushd desktop
+    pushd ui
 
     # Patch electron-forge to use our electron distribution
-    substituteInPlace ../node_modules/@electron-forge/core-utils/dist/electron-version.js \
+    substituteInPlace node_modules/@electron-forge/core-utils/dist/electron-version.js \
       --replace-fail "return version" "return '${electron.version}'"
     substituteInPlace \
-      ../node_modules/@electron/packager/dist/packager.js \
+      node_modules/@electron/packager/dist/packager.js \
       --replace-fail "await this.getElectronZipPath(downloadOpts)" "'$(pwd)/electron.zip'"
 
     # Create electron zip from our electron distribution
@@ -101,21 +80,27 @@ stdenv.mkDerivation (finalAttrs: {
     popd
     rm -r electron-dist
 
+    pushd sdk
+    pnpm run build
+    popd
+
+    pushd desktop
     # Build the application
     pnpm run i18n:compile
+    # Compile SDK so electron-forge can resolve its exports (dist/index.js doesn't exist otherwise)
     # Unrolled the package target, else we need to patchShebangs and patch
     # electron-forge to fix package.json resolution.
     node ../node_modules/@electron-forge/cli/dist/electron-forge.js package
-
-    runHook postBuild
+    popd
 
     popd
+    runHook postBuild
   '';
 
   installPhase = ''
     runHook preInstall
 
-    pushd desktop
+    cd ui/desktop
 
     mkdir -p $out/share
     mv out/Goose-* $out/share/goose-desktop
@@ -131,8 +116,6 @@ stdenv.mkDerivation (finalAttrs: {
     ''}
 
     runHook postInstall
-
-    popd
   '';
 
   desktopItems = [
