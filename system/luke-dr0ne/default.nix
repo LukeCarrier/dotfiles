@@ -12,6 +12,7 @@ in
     ./hardware-configuration.nix
     inputs.nix-flatpak.nixosModules.nix-flatpak
     inputs.sops-nix.nixosModules.sops
+    ../../hw/dell-precision-5530.nix
     ../../platform/nixos/common.nix
     ../../platform/nixos/region/en-gb.nix
     inputs.lanzaboote.nixosModules.lanzaboote
