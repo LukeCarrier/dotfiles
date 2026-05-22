@@ -1,15 +1,14 @@
 {
   pkgs,
   fetchurl,
-  stklos,
 }:
-pkgs.stdenv.mkDerivation {
+pkgs.stdenv.mkDerivation (finalAttrs: {
   pname = "stklos";
-  version = stklos.version;
+  version = "26.0";
 
   src = fetchurl {
-    url = stklos.url;
-    hash = stklos.hash;
+    url = "https://stklos.net/download/stklos-${finalAttrs.version}.tar.gz";
+    hash = "sha256-YSTQDELOKUbRgExW7D4hclr6RYOWR1FtT7zHbf5MEow=";
   };
 
   postPatch = ''
@@ -23,4 +22,4 @@ pkgs.stdenv.mkDerivation {
   configureFlags = [ ];
 
   hardeningDisable = [ ];
-}
+})

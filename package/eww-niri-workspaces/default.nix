@@ -1,18 +1,18 @@
 {
   rustPlatform,
   fetchFromGitHub,
-  ewwNiriWorkspaces,
 }:
-rustPlatform.buildRustPackage rec {
+rustPlatform.buildRustPackage (finalAttrs: {
   pname = "eww-niri-workspaces";
-  version = ewwNiriWorkspaces.version;
+  # FIXME: there are currently no tags available :-(
+  version = "0.0.0-refs/heads/main";
 
   src = fetchFromGitHub {
-    owner = ewwNiriWorkspaces.owner;
-    repo = pname;
-    rev = ewwNiriWorkspaces.rev;
-    hash = ewwNiriWorkspaces.hash;
+    owner = "LukeCarrier";
+    repo = "eww-niri-workspaces";
+    rev = "refs/heads/main";
+    hash = "sha256-w/qGm7eOIhN+Uzj5pFRWk3jLcL8ABo3SPzksOBtYgwM=";
   };
 
-  cargoHash = ewwNiriWorkspaces.cargoHash;
-}
+  cargoHash = "sha256-45X5XrDC74znu78cKpsJ32OBpGiRNRXJ597/+c/Hcpk=";
+})
