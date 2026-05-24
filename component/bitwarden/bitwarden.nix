@@ -45,10 +45,7 @@ in
     else
       { };
 
-  programs.ssh.matchBlocks.all = {
-    match = "all";
-    extraOptions = {
-      IdentityAgent = ''"~/${socketPath}"'';
-    };
+  programs.ssh.settings."Match all" = {
+    IdentityAgent = ''"~/${socketPath}"'';
   };
 }

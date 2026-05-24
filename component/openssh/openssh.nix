@@ -6,7 +6,7 @@
     enable = true;
     enableDefaultConfig = false;
 
-    matchBlocks."*" = {
+    settings."Match all" = {
       forwardAgent = false;
       addKeysToAgent = "no";
       compression = false;
