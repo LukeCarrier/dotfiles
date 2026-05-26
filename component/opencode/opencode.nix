@@ -54,9 +54,9 @@ in
 
   sops = {
     secrets = {
-      opencode-github-token = {
+      github-mcp-token = {
         format = "yaml";
-        key = "opencode/github";
+        key = "mcp/github";
       };
     };
 

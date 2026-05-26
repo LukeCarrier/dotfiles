@@ -144,23 +144,16 @@ This architecture ensures the number and configuration of MCP servers can vary p
               type = "local";
               command = [ "${pkgs.github-mcp-server}/bin/github-mcp-server" "stdio" ];
               env = {
-                GITHUB_PERSONAL_ACCESS_TOKEN = "@TOKEN@";
-              };
-              secrets = {
-                "@TOKEN@" = config.sops.placeholder.opencode-mcp-github-work-token;
+                GITHUB_PERSONAL_ACCESS_TOKEN = "@github-mcp-token@";
               };
             };
             coralogix-n = {
               type = "local";
               command = [ "${pkgs.github-mcp-server}/bin/github-mcp-server" "--region=eu" "stdio" ];
               env = {
-                GITHUB_PERSONAL_ACCESS_TOKEN = "@TOKEN@";
-                OTHER_SECRET = "@OTHER@";
+                GITHUB_PERSONAL_ACCESS_TOKEN = "@github-mcp-token@";
               };
-              secrets = {
-                "@TOKEN@" = config.sops.placeholder.opencode-mcp-github-eu-token;
-                "@OTHER@" = config.sops.placeholder.some-other-secret;
-              };
+
             };
           };
         }

@@ -146,7 +146,7 @@ in
       args = [
         "https://api.eu2.coralogix.com/mgmt/api/v1/mcp"
         "--header"
-        "Authorization: Bearer @CORALOGIX_UK_NONPROD_API_KEY@"
+        "Authorization: Bearer @coralogix-uk-nonprod-api-key@"
       ];
     };
     coralogix-uk-prod = {
@@ -154,7 +154,7 @@ in
       args = [
         "https://api.eu2.coralogix.com/mgmt/api/v1/mcp"
         "--header"
-        "Authorization: Bearer @CORALOGIX_UK_PROD_API_KEY@"
+        "Authorization: Bearer @coralogix-uk-prod-api-key@"
       ];
     };
     coralogix-us-nonprod = {
@@ -162,7 +162,7 @@ in
       args = [
         "https://api.us1.coralogix.com/mgmt/api/v1/mcp"
         "--header"
-        "Authorization: Bearer @CORALOGIX_US_NONPROD_API_KEY@"
+        "Authorization: Bearer @coralogix-us-nonprod-api-key@"
       ];
     };
     coralogix-us-prod = {
@@ -170,21 +170,21 @@ in
       args = [
         "https://api.us1.coralogix.com/mgmt/api/v1/mcp"
         "--header"
-        "Authorization: Bearer @CORALOGIX_US_PROD_API_KEY@"
+        "Authorization: Bearer @coralogix-us-prod-api-key@"
       ];
     };
 
     github = {
       command = getExe pkgs.github-mcp-server;
       args = [ "stdio" ];
-      env.GITHUB_PERSONAL_ACCESS_TOKEN = "@TOKEN@";
+      env.GITHUB_PERSONAL_ACCESS_TOKEN = "@github-mcp-token@";
     };
 
     grafana-cloud = {
       command = getExe pkgs.mcp-grafana;
       env = {
-        GRAFANA_URL = "@URL@";
-        GRAFANA_SERVICE_ACCOUNT_TOKEN = "@SERVICE_ACCOUNT_TOKEN@";
+        GRAFANA_URL = "@grafana-cloud-url@";
+        GRAFANA_SERVICE_ACCOUNT_TOKEN = "@grafana-cloud-service-account-token@";
       };
     };
 

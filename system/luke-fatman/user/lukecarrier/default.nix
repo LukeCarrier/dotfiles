@@ -99,7 +99,7 @@ in
     github = {
       command = getExe pkgs.github-mcp-server;
       args = [ "stdio" ];
-      env.GITHUB_PERSONAL_ACCESS_TOKEN = "@TOKEN@";
+      env.GITHUB_PERSONAL_ACCESS_TOKEN = "@github-mcp-token@";
     };
     playwright = {
       command = lib.getExe pkgs.playwright-mcp;

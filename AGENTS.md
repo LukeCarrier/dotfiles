@@ -182,7 +182,7 @@ Configured declaratively in `opencode.nix`:
 - **terraform-mcp-server** - Terraform state management
 - **mcp-remote** - Remote MCP server access
 
-Secrets use `@PLACEHOLDER@` substitution → `config.sops.placeholder.<secret-name>`.
+Secrets use `@<secret-name>@` substitution → `config.sops.placeholder.<secret-name>`.
 
 ### Model Providers
 
