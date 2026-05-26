@@ -1,5 +1,35 @@
 {
   "nodes": {
+    "agentkit": {
+      "inputs": {
+        "flake-utils": [
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "nixpkgs-unstable"
+        ],
+        "rust-overlay": [
+          "rust-overlay"
+        ],
+        "throwparty": "throwparty"
+      },
+      "locked": {
+        "dir": "nix",
+        "lastModified": 1779826122,
+        "narHash": "sha256-334fXffFb0WxWSaE6MEbPNecKtThHW9K2KekRM5b7tI=",
+        "owner": "throwparty",
+        "repo": "agentkit",
+        "rev": "42edb18ebd32ca3c141b61871270050d1b30989c",
+        "type": "github"
+      },
+      "original": {
+        "dir": "nix",
+        "owner": "throwparty",
+        "ref": "nix-packages-overlay",
+        "repo": "agentkit",
+        "type": "github"
+      }
+    },
     "ashell": {
       "inputs": {
         "crane": "crane",
@@ -161,6 +191,28 @@
       "original": {
         "owner": "lnl7",
         "repo": "nix-darwin",
+        "type": "github"
+      }
+    },
+    "encore": {
+      "inputs": {
+        "nixpkgs": [
+          "agentkit",
+          "throwparty",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1768765837,
+        "narHash": "sha256-KNzMFI+OP8rF6SYud6u3w3HjeHAGxTFeVTV0RrRRdAs=",
+        "owner": "encoredev",
+        "repo": "encore-flake",
+        "rev": "d967b87343c4b79b62c1410b8a1809b39b20b198",
+        "type": "github"
+      },
+      "original": {
+        "owner": "encoredev",
+        "repo": "encore-flake",
         "type": "github"
       }
     },
@@ -849,6 +901,7 @@
     },
     "root": {
       "inputs": {
+        "agentkit": "agentkit",
         "ashell": "ashell",
         "claude-code": "claude-code",
         "code-insiders": "code-insiders",
@@ -869,13 +922,35 @@
         "nixpkgs-unstable": "nixpkgs-unstable",
         "nur": "nur",
         "opencode": "opencode",
-        "rust-overlay": "rust-overlay",
+        "rust-overlay": "rust-overlay_2",
         "sops-nix": "sops-nix",
         "wezterm": "wezterm",
         "wpaperd": "wpaperd"
       }
     },
     "rust-overlay": {
+      "inputs": {
+        "nixpkgs": [
+          "agentkit",
+          "throwparty",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1772247314,
+        "narHash": "sha256-x6IFQ9bL7YYfW2m2z8D3Em2YtAA3HE8kiCFwai2fwrw=",
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "rev": "a1ab5e89ab12e1a37c0b264af6386a7472d68a15",
+        "type": "github"
+      },
+      "original": {
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "type": "github"
+      }
+    },
+    "rust-overlay_2": {
       "inputs": {
         "nixpkgs": [
           "nixpkgs-unstable"
@@ -895,7 +970,7 @@
         "type": "github"
       }
     },
-    "rust-overlay_2": {
+    "rust-overlay_3": {
       "inputs": {
         "nixpkgs": [
           "wezterm",
@@ -1012,6 +1087,33 @@
         "type": "github"
       }
     },
+    "throwparty": {
+      "inputs": {
+        "encore": "encore",
+        "flake-utils": [
+          "agentkit",
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "agentkit",
+          "nixpkgs"
+        ],
+        "rust-overlay": "rust-overlay"
+      },
+      "locked": {
+        "lastModified": 1777987991,
+        "narHash": "sha256-O2JGRU08/wcxHk4kvalhVjxNZ1EUa04RwoT/rTfSVnE=",
+        "ref": "refs/heads/main",
+        "rev": "05c2a4055d721f8c82d0ef70c0ea52ef564278f2",
+        "revCount": 15,
+        "type": "git",
+        "url": "ssh://git@github.com/throwparty/nix"
+      },
+      "original": {
+        "type": "git",
+        "url": "ssh://git@github.com/throwparty/nix"
+      }
+    },
     "treefmt-nix": {
       "inputs": {
         "nixpkgs": [
@@ -1043,7 +1145,7 @@
         "nixpkgs": [
           "nixpkgs-unstable"
         ],
-        "rust-overlay": "rust-overlay_2",
+        "rust-overlay": "rust-overlay_3",
         "zlib": "zlib"
       },
       "locked": {
@@ -1074,16 +1176,15 @@
         "systems": "systems_4"
       },
       "locked": {
-        "lastModified": 1776121003,
-        "narHash": "sha256-TnGSGegU+Ge8uh13hUFZ+OTbPtEja+tBSe+eyxEElXc=",
-        "owner": "LukeCarrier",
+        "lastModified": 1779290018,
+        "narHash": "sha256-7arsmpH5FRfw2NrPmLvRaiv+esyXccu8/K1J6T5UYV8=",
+        "owner": "danyspin97",
         "repo": "wpaperd",
-        "rev": "449750a2d24ab3d7895da7d0fd2923f2c8a3a913",
+        "rev": "d4a4237c82826c821455543d8baf58d2ac91f071",
         "type": "github"
       },
       "original": {
-        "owner": "LukeCarrier",
-        "ref": "nvidia-current-surface-tracking",
+        "owner": "danyspin97",
         "repo": "wpaperd",
         "type": "github"
       }

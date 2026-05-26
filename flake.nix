@@ -2,6 +2,14 @@
   description = "Luke Carrier's dotfiles";
 
   inputs = {
+    agentkit = {
+      url = "github:throwparty/agentkit/nix-packages-overlay?dir=nix";
+      inputs = {
+        flake-utils.follows = "flake-utils";
+        nixpkgs.follows = "nixpkgs-unstable";
+        rust-overlay.follows = "rust-overlay";
+      };
+    };
     ashell = {
       url = "github:MalpenZibo/ashell/0.8.0";
       inputs = {
@@ -90,7 +98,7 @@
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     wpaperd = {
-      url = "github:LukeCarrier/wpaperd/nvidia-current-surface-tracking";
+      url = "github:danyspin97/wpaperd";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
       inputs.rust-overlay.follows = "rust-overlay";
     };
@@ -98,6 +106,7 @@
 
   outputs =
     {
+      agentkit,
       ashell,
       claude-code,
       code-insiders,
@@ -154,6 +163,7 @@
         {
           inherit legacyPackages;
           pkgs = basePkgs.appendOverlays [
+            agentkit.overlays.default
             claude-code.overlays.default
             code-insiders.overlays.default
             dagger.overlays.default
