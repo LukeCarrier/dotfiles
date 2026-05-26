@@ -19,11 +19,8 @@ buildPnpmPackage rec {
     hash = "sha256-EQuiz/lygmynJjBrcAkX5MTrqYKWpD4OP4mvWZfO87s=";
   };
 
-  pnpmDepsFetcherVersion = 1;
-  pnpmDepsHash =
-    if stdenv.hostPlatform.isDarwin
-    then "sha256-RLElbVkKwFo2XQur8l0zSriMUHEm3TGsW+74IVnSPa8="
-    else "sha256-XRXgiy8c2GpX1Paf3rkbw3g5/khfDxyHZ4uV47QUezE=";
+  pnpmDepsFetcherVersion = 3;
+  pnpmDepsHash = "sha256-VZEUVphs+qwiWe54xWfqsewjQfXsigArwLymYO/bCLc=";
 
   pnpmBuildScript = "build";
 
