@@ -855,27 +855,6 @@
         "type": "github"
       }
     },
-    "opencode": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs-unstable"
-        ]
-      },
-      "locked": {
-        "lastModified": 1779589456,
-        "narHash": "sha256-4vWwo7+VFznM8PMW1Wv4VfMAtJwvKgxfXe4QS9UiknI=",
-        "owner": "anomalyco",
-        "repo": "opencode",
-        "rev": "0cf99cf5f961eba7ae74f94ba5475f807393840a",
-        "type": "github"
-      },
-      "original": {
-        "owner": "anomalyco",
-        "ref": "dev",
-        "repo": "opencode",
-        "type": "github"
-      }
-    },
     "pre-commit": {
       "inputs": {
         "flake-compat": "flake-compat",
@@ -921,7 +900,6 @@
         "nixos-hardware": "nixos-hardware",
         "nixpkgs-unstable": "nixpkgs-unstable",
         "nur": "nur",
-        "opencode": "opencode",
         "rust-overlay": "rust-overlay_2",
         "sops-nix": "sops-nix",
         "wezterm": "wezterm",

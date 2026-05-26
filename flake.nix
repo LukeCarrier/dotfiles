@@ -81,10 +81,6 @@
       url = "github:nix-community/NUR";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
-    opencode = {
-      url = "github:anomalyco/opencode/dev";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
-    };
     rust-overlay = {
       url = "github:oxalica/rust-overlay";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
@@ -126,7 +122,6 @@
       nix-vscode-extensions,
       nixpkgs-unstable,
       nur,
-      opencode,
       rust-overlay,
       sops-nix,
       wezterm,
@@ -170,7 +165,6 @@
             niri.overlays.niri
             nix-vscode-extensions.overlays.default
             nur.overlays.default
-            opencode.overlays.default
             rust-overlay.overlays.default
             wpaperd.overlays.default
             (final: prev: {
@@ -188,8 +182,6 @@
                 patches = (old.patches or []) ++ [ ./package/firefox/fractional-scale.patch ];
               });
               niri = niri.packages.${system}.niri-unstable;
-              opencode = opencode.packages.${system}.default;
-              # opencode-desktop = opencode.packages.${system}.desktop;
             })
             (
               final: prev:
