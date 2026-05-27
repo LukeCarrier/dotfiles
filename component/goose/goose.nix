@@ -79,9 +79,17 @@ in
       };
     };
     templates."goose-config.yaml" = {
-      content = builtins.replaceStrings [ "@MCP_CONFIG_YAML@" ] [ mcpConfigYaml ] (
-        builtins.readFile ./config.yaml.template
-      );
+      content =
+        builtins.replaceStrings
+          [
+            "@HOME@"
+            "@MCP_CONFIG_YAML@"
+          ]
+          [
+            config.home.homeDirectory
+            mcpConfigYaml
+          ]
+          (builtins.readFile ./config.yaml.template);
       path = "${config.home.homeDirectory}/.config/goose/config.yaml";
     };
   };

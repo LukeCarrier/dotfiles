@@ -130,3 +130,7 @@ extensions:
     bundled: true
     available_tools: []
 @MCP_CONFIG_YAML@
+
+slash_commands:
+  - command: adr
+    recipe_path: @HOME@/.config/goose/recipes/adr.yaml
