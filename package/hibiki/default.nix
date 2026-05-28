@@ -19,6 +19,8 @@
   libpulseaudio,
   pipewire,
   libjack2,
+  copyDesktopItems,
+  makeDesktopItem,
 }:
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "hibiki";
@@ -36,6 +38,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
   nativeBuildInputs = [
     mold
     clang
+    copyDesktopItems
     pkg-config
     makeBinaryWrapper
     wrapGAppsHook4
@@ -57,7 +60,6 @@ rustPlatform.buildRustPackage (finalAttrs: {
   ];
 
   postInstall = ''
-    install -Dm444 assets/hibiki.desktop $out/share/applications/hibiki.desktop
     install -Dm444 assets/hibiki.svg $out/share/icons/hicolor/scalable/apps/hibiki.svg
     mkdir -p $out/share/hibiki
     cp -r src/assets/sounds $out/share/hibiki/sounds
@@ -69,6 +71,19 @@ rustPlatform.buildRustPackage (finalAttrs: {
       --set HIBIKI_SOUNDS_DIR "$out/share/hibiki/sounds"
     )
   '';
+
+  desktopItems = [
+    (makeDesktopItem {
+      name = "hibiki";
+      desktopName = "Hibiki";
+      exec = "hibiki";
+      terminal = false;
+      icon = "hibiki";
+      startupWMClass = "hibiki";
+      comment = "Elevating the tactile dialogue. A high-fidelity visual and auditory companion that gives your keystrokes a modern resonance.";
+      categories = [ "AudioVideo" "Video" ];
+    })
+  ];
 
   meta = with lib; {
     description = "Elevating the tactile dialogue. A high-fidelity visual and auditory companion that gives your keystrokes a modern resonance.";
