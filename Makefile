@@ -20,4 +20,4 @@ host-android:
 	nix-on-droid "$(OP)" --flake "$(FLAKE)" $(ARGS)
 
 host-darwin:
-	nh darwin "$(OP)" --hostname "$(HOSTNAME)" $(ARGS)
+	nh darwin "$(OP)" "$(FLAKE)" --hostname "$(HOSTNAME)" $(ARGS)
