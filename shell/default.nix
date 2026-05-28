@@ -33,12 +33,13 @@ let
   mkNodeDevShell =
     name: nodejs:
     let
-      inherit (pkgs) bun;
+      inherit (pkgs) bun hyperfine;
       pnpm = pkgs.pnpm.override { inherit nodejs; };
       typescript-language-server = pkgs.typescript-language-server.override { inherit nodejs; };
       yarn = pkgs.yarn.override { inherit nodejs; };
       toolVersions = mkToolVersions name ''
         printf "bun %s\n" "$(${getExe bun} --version 2>&1 | head -n 1)"
+        ${getExe hyperfine} --version
         printf "node %s\n" "$(${getExe nodejs} --version 2>&1 | head -n 1)"
         printf "pnpm %s\n" "$(${getExe pnpm} --version 2>&1 | head -n 1)"
         printf "typescript-language-server %s\n" "$(${getExe typescript-language-server} --version 2>&1 | head -n 1)"
@@ -51,6 +52,7 @@ let
       '';
       nativeBuildInputs = [
         bun
+        hyperfine
         nodejs
         (mkCorepack nodejs)
         pnpm
