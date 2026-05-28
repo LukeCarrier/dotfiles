@@ -19,3 +19,7 @@ Firefox popover menus should reliably be displayed and not be positioned off scr
 ## wpaperd doesn't reliably scale the wallpaper
 
 When multiple displays are connected to a system, it appears as though wpaperd gets confused and draws the wallpaper at the wrong size on some displays, not scaling it to match the full display resolution.
+
+## Non-Flatpak apps are running completely unsandboxed
+
+[jail.nix](https://alexdav.id/projects/jail-nix/) looks like a good solution to this.
