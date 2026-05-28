@@ -5,7 +5,7 @@
     settings.any = {
       duration = "1h";
       path = desktopConfig.background;
-      transition.hexagonalize = {};
+      transition.fade = {};
     };
   };
 }
