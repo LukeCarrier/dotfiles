@@ -1,0 +1,28 @@
+From a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2 Mon Sep 17 00:00:00 2001
+From: Luke Carrier <luke@carrier.family>
+Subject: [PATCH] chore(deps): set pmOnFail=ignore in workspace config
+
+pnpm 11 removed manage-package-manager-versions in favour of pmOnFail.
+The Nix fetchPnpmDeps fetcher previously set manage-package-manager-versions
+via `pnpm config set`, which fails in pnpm 11 as it is no longer a valid
+global config key. Setting pmOnFail in pnpm-workspace.yaml achieves the same
+effect: pnpm will not fail or download a different version of itself when the
+packageManager field in package.json specifies a different pnpm version.
+
+---
+ ui/pnpm-workspace.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/ui/pnpm-workspace.yaml b/ui/pnpm-workspace.yaml
+index a1b2c3d..d4e5f6a 100644
+--- a/ui/pnpm-workspace.yaml
++++ b/ui/pnpm-workspace.yaml
+@@ -14,6 +14,8 @@ blockExoticSubdeps: false
+
+ nodeLinker: hoisted
+
++pmOnFail: ignore
++
+ overrides:
+   react: ^19.2.4
+   react-dom: ^19.2.4

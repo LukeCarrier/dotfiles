@@ -3,13 +3,13 @@
   lib,
   stdenv,
   fetchFromGitHub,
-  fetchPnpmDeps,
   pkgs,
   ...
 }:
 let
   inherit (lib) getExe optionalString;
   inherit (pkgs) electron makeDesktopItem;
+  fetchPnpmDeps = (pkgs.callPackage ./fetch-pnpm-deps/default.nix { }).fetchPnpmDeps;
   version = "1.35.0";
   rawSrc = fetchFromGitHub {
     owner = "aaif-goose";
@@ -26,6 +26,7 @@ let
       ./patches/0002-chore-deps-allow-builds.patch
       ./patches/0003-chore-deps-relocate-overrides.patch
       ./patches/0004-chore-deps-use-hoisted-linker-for-electron-forge.patch
+      ./patches/0006-chore-deps-set-pmOnFail-ignore.patch
     ];
     buildPhase = "true";
     installPhase = ''
@@ -34,7 +35,26 @@ let
     '';
   });
 
-  pnpm = pkgs.pnpm_11;
+  pnpm = pkgs.pnpm_11.overrideAttrs (_: {
+    version = "11.5.2";
+    src = pkgs.fetchurl {
+      url = "https://registry.npmjs.org/pnpm/-/pnpm-11.5.2.tgz";
+      hash = "sha256-dJ3FT709zenkFLquMsF3yoR3DT/NaciBbVea3D5qLJk=";
+    };
+    # On macOS arm64, Worker threads default to trackUnmanagedFds: true.
+    # pnpm's graceful-fs EAGAIN retry loop causes fd churn; fd numbers get
+    # recycled by libuv for internal pipes. When Workers exit, Node.js cleanup
+    # closes all tracked-but-unclosed fds — which now belong to libuv internals
+    # — causing a crash that presents as SIGKILL.
+    # Fix: disable trackUnmanagedFds on the WorkerPool constructor.
+    # See https://github.com/nodejs/node/commit/7603c7e50c
+    postPatch = ''
+      substituteInPlace dist/pnpm.mjs \
+        --replace-fail \
+          'resourceLimits: this._workerResourceLimits' \
+          'resourceLimits: this._workerResourceLimits, trackUnmanagedFds: false'
+    '';
+  });
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "goose-desktop";
@@ -46,7 +66,7 @@ stdenv.mkDerivation (finalAttrs: {
     inherit version pnpm;
     src = "${src}/ui";
     fetcherVersion = 3;
-    hash = "sha256-Y+jfxYjREf+RzZNl8yEOOhtwioA6f01G+Dofp2/up64=";
+    hash = "sha256-yvxbYNglHoHu5niOs++XRdq/arDeLBtNZrFyeAxNgh0=";
   };
 
   nativeBuildInputs =
@@ -90,7 +110,7 @@ stdenv.mkDerivation (finalAttrs: {
     # Compile SDK so electron-forge can resolve its exports (dist/index.js doesn't exist otherwise)
     # Unrolled the package target, else we need to patchShebangs and patch
     # electron-forge to fix package.json resolution.
-    node ../node_modules/@electron-forge/cli/dist/electron-forge.js package
+    env DEBUG='electron-forge:*' node ../node_modules/@electron-forge/cli/dist/electron-forge.js package
     popd
 
     popd
@@ -108,9 +128,9 @@ stdenv.mkDerivation (finalAttrs: {
     ${optionalString stdenv.hostPlatform.isLinux ''
       mkdir -p $out/bin
       makeWrapper ${getExe electron} "$out/bin/goose-desktop" \
-        --add-flags "$out/share/goose-desktop/resources/app.asar" \
-        --set-default ELECTRON_FORCE_IS_PACKAGED 1 \
-        --set-default GOOSED_BINARY ${getExe goose-server}
+         --add-flags "$out/share/goose-desktop/resources/app.asar" \
+         --set-default ELECTRON_FORCE_IS_PACKAGED 1 \
+         --set-default GOOSED_BINARY ${getExe goose-server}
 
       install -Dm644 src/images/icon.svg "$out/share/icons/hicolor/scalable/apps/goose.svg"
     ''}

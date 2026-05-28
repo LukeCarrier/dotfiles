@@ -142,19 +142,22 @@ rustPlatform.buildRustPackage (finalAttrs: {
     ${lib.optionalString stdenv.hostPlatform.isDarwin "--skip=browser::tests::test_browser_action_get_text"} \
     --skip=context_mgmt::auto_compact::tests::test_auto_compact_respects_config \
     --skip=scheduler::tests::test_scheduled_session_has_schedule_id
-  '' + lib.optionalString (stdenv.hostPlatform.isLinux && stdenv.hostPlatform.isAarch64) ''
+  ''
+  + lib.optionalString (stdenv.hostPlatform.isLinux && stdenv.hostPlatform.isAarch64) ''
     # Broken on aarch64-linux: request capture races across session_id_propagation_test cases
     cargo test -p goose-cli --release -- --test-threads 1 \
     --skip=test_session_id_matches_across_calls \
     --skip=test_session_id_propagation_to_llm
-  '' + lib.optionalString stdenv.hostPlatform.isDarwin ''
+  ''
+  + lib.optionalString stdenv.hostPlatform.isDarwin ''
     cargo test -p goose-cli --release -- --test-threads 1 \
     --skip=logging::tests::test_log_file_name_no_session \
     --skip=recipes::extract_from_cli::tests::test_extract_recipe_info_from_cli_basic \
     --skip=recipes::extract_from_cli::tests::test_extract_recipe_info_from_cli_with_screenshots \
     --skip=recipes::extract_from_cli::tests::test_extract_recipe_info_from_cli_overwrite \
     --skip=test_session_id_propagation_to_llm
-  '' + ''
+  ''
+  + ''
     runHook postCheck
   '';
 
