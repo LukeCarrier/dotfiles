@@ -3,6 +3,7 @@
   lib,
   pkgs,
   inputs,
+  permittedInsecurePackages,
   ...
 }:
 {
@@ -60,19 +61,23 @@
 
   sops.defaultSopsFile = ../../../../secrets/employer-emed.yaml;
 
-  nixpkgs.config.allowUnfreePredicate =
-    let
-      names = [
-        "1password"
-        "1password-cli"
-        "onepassword-password-manager"
+  nixpkgs.config = {
+    allowUnfreePredicate =
+      let
+        names = [
+          "1password"
+          "1password-cli"
+          "onepassword-password-manager"
 
-        "claude-code"
-        "obsbot-sdk"
-        "terraform"
-      ];
-    in
-    pkg: builtins.elem (lib.getName pkg) names;
+          "claude-code"
+          "obsbot-sdk"
+          "terraform"
+        ];
+      in
+      pkg: builtins.elem (lib.getName pkg) names;
+
+    inherit permittedInsecurePackages;
+  };
 
   home.packages = with pkgs; [
     crane

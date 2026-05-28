@@ -3,6 +3,7 @@
   lib,
   inputs,
   pkgs,
+  permittedInsecurePackages,
   ...
 }:
 let
@@ -72,6 +73,8 @@ in
         "vscode-extension-ms-vscode-remote-remote-containers"
         "vscode-extension-ms-vsliveshare-vsliveshare"
       ];
+
+    inherit permittedInsecurePackages;
   };
 
   home.packages = with pkgs; [

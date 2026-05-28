@@ -12,16 +12,17 @@
   sops-nix,
   pkgsForSystem,
   desktopBackground,
+  permittedInsecurePackages,
 }:
 {
   darwinConfigurations = {
     b-4653 = darwin.lib.darwinSystem {
       system = "aarch64-darwin";
       pkgs =
-        (pkgsForSystem {
+        pkgsForSystem {
           system = "aarch64-darwin";
           pkgs = nixpkgs-unstable;
-        }).pkgs;
+        };
       modules = [ ./b-4653 ];
       specialArgs = {
         inputs = {
@@ -33,10 +34,10 @@
     luke-c0nstruct = darwin.lib.darwinSystem rec {
       system = "x86_64-darwin";
       pkgs =
-        (pkgsForSystem {
+        pkgsForSystem {
           inherit system;
           pkgs = nixpkgs-unstable;
-        }).pkgs;
+        };
       modules = [ ./luke-c0nstruct ];
       specialArgs = {
         inputs = {
@@ -48,10 +49,10 @@
     luke-fatman = darwin.lib.darwinSystem rec {
       system = "aarch64-darwin";
       pkgs =
-        (pkgsForSystem {
+        pkgsForSystem {
           inherit system;
           pkgs = nixpkgs-unstable;
-        }).pkgs;
+        };
       modules = [
         ./luke-fatman
       ];
@@ -66,10 +67,10 @@
   nixOnDroidConfigurations = {
     default = nix-on-droid.lib.nixOnDroidConfiguration {
       pkgs =
-        (pkgsForSystem {
+        pkgsForSystem {
           system = "aarch64-linux";
           pkgs = nixpkgs-unstable;
-        }).pkgs;
+        };
       modules = [ ./nix-on-droid ];
       extraSpecialArgs = {
         inputs = { };
@@ -81,7 +82,7 @@
     luke-curs3d = nixpkgs-unstable.lib.nixosSystem rec {
       system = "x86_64-linux";
       pkgs =
-        (pkgsForSystem {
+        pkgsForSystem {
           inherit system;
           pkgs = nixpkgs-unstable;
           config = {
@@ -95,7 +96,7 @@
               ];
             cudaSupport = true;
           };
-        }).pkgs;
+        };
       modules = [ ./luke-curs3d ];
       specialArgs = {
         inputs = {
@@ -113,7 +114,7 @@
     luke-dr0ne = nixpkgs-unstable.lib.nixosSystem {
       system = "x86_64-linux";
       pkgs =
-        (pkgsForSystem {
+        pkgsForSystem {
           system = "x86_64-linux";
           pkgs = nixpkgs-unstable;
           config.allowUnfreePredicate =
@@ -122,7 +123,7 @@
               "1password"
               "1password-cli"
             ];
-        }).pkgs;
+        };
       modules = [ ./luke-dr0ne ];
       specialArgs = {
         inputs = {
@@ -140,10 +141,10 @@
     luke-f1xable = nixpkgs-unstable.lib.nixosSystem {
       system = "x86_64-linux";
       pkgs =
-        (pkgsForSystem {
+        pkgsForSystem {
           system = "x86_64-linux";
           pkgs = nixpkgs-unstable;
-        }).pkgs;
+        };
       modules = [ ./luke-f1xable ];
       specialArgs = {
         inputs = {
@@ -162,14 +163,15 @@
   homeConfigurations = {
     "luke.carrier@b-4653" = home-manager.lib.homeManagerConfiguration {
       pkgs =
-        (pkgsForSystem {
+        pkgsForSystem {
           system = "aarch64-darwin";
           pkgs = nixpkgs-unstable;
-        }).pkgs;
+        };
       extraSpecialArgs = {
         inputs = {
           inherit sops-nix;
         };
+        inherit permittedInsecurePackages;
         gitConfig.user.signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJnEY8uRHXNidhl/e5+WMDKMDbA551pOE3DN9xWg4NH0 luke.carrier+id_ed25519_2025@emed.com";
         jjConfig.signing.key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJnEY8uRHXNidhl/e5+WMDKMDbA551pOE3DN9xWg4NH0 luke.carrier+id_ed25519_2025@emed.com";
       };
@@ -178,44 +180,38 @@
 
     "nix-on-droid@" = home-manager.lib.homeManagerConfiguration {
       pkgs =
-        (pkgsForSystem {
+        pkgsForSystem {
           system = "aarch64-linux";
           pkgs = nixpkgs-unstable;
-        }).pkgs;
+        };
       extraSpecialArgs = {
         inputs = { };
+        inherit permittedInsecurePackages;
         gitConfig.user.signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
         jjConfig.signing.key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
       };
       modules = [ ./nix-on-droid/user/nix-on-droid ];
     };
 
-    "lukecarrier@luke-curs3d" = home-manager.lib.homeManagerConfiguration {
+    "lukecarrier@luke-curs3d" = home-manager.lib.homeManagerConfiguration rec {
       pkgs =
-        (pkgsForSystem {
+        pkgsForSystem {
           system = "x86_64-linux";
           pkgs = nixpkgs-unstable;
           config.cudaSupport = true;
-        }).pkgs;
+        };
       extraSpecialArgs = {
         inputs = {
           inherit niri nix-flatpak sops-nix;
         };
+        inherit permittedInsecurePackages;
         desktopConfig = {
           background = desktopBackground;
-          pointerCursor =
-            let
-              pkgs =
-                (pkgsForSystem {
-                  system = "x86_64-linux";
-                  pkgs = nixpkgs-unstable;
-                }).pkgs;
-            in
-            {
-              package = pkgs.bibata-cursors;
-              name = "Bibata-Modern-Classic";
-              size = 32;
-            };
+          pointerCursor = {
+            package = pkgs.bibata-cursors;
+            name = "Bibata-Modern-Classic";
+            size = 32;
+          };
         };
         gitConfig.user.signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
         jjConfig.signing.key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
@@ -291,31 +287,24 @@
       modules = [ ./luke-curs3d/user/lukecarrier ];
     };
 
-    "lukecarrier@luke-dr0ne" = home-manager.lib.homeManagerConfiguration {
+    "lukecarrier@luke-dr0ne" = home-manager.lib.homeManagerConfiguration rec {
       pkgs =
-        (pkgsForSystem {
+        pkgsForSystem {
           system = "x86_64-linux";
           pkgs = nixpkgs-unstable;
-        }).pkgs;
+        };
       extraSpecialArgs = {
         inputs = {
           inherit niri nix-flatpak sops-nix;
         };
+        inherit permittedInsecurePackages;
         desktopConfig = {
           background = desktopBackground;
-          pointerCursor =
-            let
-              pkgs =
-                (pkgsForSystem {
-                  system = "x86_64-linux";
-                  pkgs = nixpkgs-unstable;
-                }).pkgs;
-            in
-            {
-              package = pkgs.bibata-cursors;
-              name = "Bibata-Modern-Classic";
-              size = 32;
-            };
+          pointerCursor = {
+            package = pkgs.bibata-cursors;
+            name = "Bibata-Modern-Classic";
+            size = 32;
+          };
         };
         gitConfig.user.signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJnEY8uRHXNidhl/e5+WMDKMDbA551pOE3DN9xWg4NH0 luke.carrier+id_ed25519_2025@emed.com";
         jjConfig.signing.key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJnEY8uRHXNidhl/e5+WMDKMDbA551pOE3DN9xWg4NH0 luke.carrier+id_ed25519_2025@emed.com";
@@ -486,31 +475,24 @@
       modules = [ ./luke-dr0ne/user/lukecarrier ];
     };
 
-    "lukecarrier@luke-f1xable" = home-manager.lib.homeManagerConfiguration {
+    "lukecarrier@luke-f1xable" = home-manager.lib.homeManagerConfiguration rec {
       pkgs =
-        (pkgsForSystem {
+        pkgsForSystem {
           system = "x86_64-linux";
           pkgs = nixpkgs-unstable;
-        }).pkgs;
+        };
       extraSpecialArgs = {
         inputs = {
           inherit niri nix-flatpak sops-nix;
         };
+        inherit permittedInsecurePackages;
         desktopConfig = {
           background = desktopBackground;
-          pointerCursor =
-            let
-              pkgs =
-                (pkgsForSystem {
-                  system = "x86_64-linux";
-                  pkgs = nixpkgs-unstable;
-                }).pkgs;
-            in
-            {
-              package = pkgs.bibata-cursors;
-              name = "Bibata-Modern-Classic";
-              size = 32;
-            };
+          pointerCursor = {
+            package = pkgs.bibata-cursors;
+            name = "Bibata-Modern-Classic";
+            size = 32;
+          };
         };
         gitConfig.user.signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
         jjConfig.signing.key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
@@ -683,14 +665,15 @@
 
     "lukecarrier@luke-c0nstruct" = home-manager.lib.homeManagerConfiguration {
       pkgs =
-        (pkgsForSystem {
+        pkgsForSystem {
           system = "x86_64-darwin";
           pkgs = nixpkgs-unstable;
-        }).pkgs;
+        };
       extraSpecialArgs = {
         inputs = {
           inherit sops-nix;
         };
+        inherit permittedInsecurePackages;
         gitConfig.user.signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
         jjConfig.signing.key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
       };
@@ -699,14 +682,15 @@
 
     "lukecarrier@luke-fatman" = home-manager.lib.homeManagerConfiguration {
       pkgs =
-        (pkgsForSystem {
+        pkgsForSystem {
           system = "aarch64-darwin";
           pkgs = nixpkgs-unstable;
-        }).pkgs;
+        };
       extraSpecialArgs = {
         inputs = {
           inherit sops-nix;
         };
+        inherit permittedInsecurePackages;
         gitConfig.user.signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
         jjConfig.signing.key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
       };

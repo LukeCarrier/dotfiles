@@ -3,6 +3,7 @@
   lib,
   pkgs,
   inputs,
+  permittedInsecurePackages,
   ...
 }:
 {
@@ -76,6 +77,8 @@
         "libnvjitlink"
       ];
     cudaSupport = true;
+
+    inherit permittedInsecurePackages;
   };
 
   home.packages = with pkgs; [

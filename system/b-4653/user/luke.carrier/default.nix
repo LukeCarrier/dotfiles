@@ -2,6 +2,7 @@
   lib,
   pkgs,
   inputs,
+  permittedInsecurePackages,
   ...
 }:
 let
@@ -55,12 +56,16 @@ in
 
   sops.defaultSopsFile = ../../../../secrets/employer-emed.yaml;
 
-  nixpkgs.config.allowUnfreePredicate =
-    pkg:
-    builtins.elem (lib.getName pkg) [
-      "onepassword-password-manager"
-      "vscode-extension-github-copilot"
-      "vscode-extension-github-copilot-chat"
-      "vscode-extension-ms-vscode-remote-remote-containers"
-    ];
+  nixpkgs.config = {
+    allowUnfreePredicate =
+      pkg:
+      builtins.elem (lib.getName pkg) [
+        "onepassword-password-manager"
+        "vscode-extension-github-copilot"
+        "vscode-extension-github-copilot-chat"
+        "vscode-extension-ms-vscode-remote-remote-containers"
+      ];
+
+    inherit permittedInsecurePackages;
+  };
 }

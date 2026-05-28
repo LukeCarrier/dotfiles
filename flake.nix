@@ -131,6 +131,7 @@
     }:
     let
       desktopBackground = "~/Pictures/Wallpaper";
+      permittedInsecurePackages = [ "electron-39.8.10" ];
       pkgsForSystem =
         {
           pkgs,
@@ -143,21 +144,7 @@
             # belong in individual system and home manager configurations.
             "obsbot-sdk"
           ];
-          mergedConfig = config // {
-            allowUnfreePredicate =
-              pkg:
-              builtins.elem (basePkgs.lib.getName pkg) flakeUnfree
-              || (config.allowUnfreePredicate or (_: false)) pkg;
-          };
-          basePkgs = import pkgs {
-            inherit system;
-            config = mergedConfig;
-          };
-          legacyPackages = import ./package/legacy-packages.nix { pkgs = basePkgs; };
-        in
-        {
-          inherit legacyPackages;
-          pkgs = basePkgs.appendOverlays [
+          overlays = [
             agentkit.overlays.default
             claude-code.overlays.default
             code-insiders.overlays.default
@@ -171,40 +158,97 @@
               ashell = ashell.packages.${system}.default.overrideAttrs (old: {
                 patches = (old.patches or []) ++ [ ./package/ashell/pr-740.patch ];
               });
-              direnv = prev.direnv.overrideAttrs (_old: {
-                doCheck = false;
-              });
               handy = handy.packages.${system}.handy.overrideAttrs (old: {
-                buildInputs = (old.buildInputs or []) ++ [ basePkgs.wtype ];
+                buildInputs = (old.buildInputs or []) ++ [ prev.wtype ];
                 patches = (old.patches or []) ++ [ ./package/handy/pr-1337.patch ];
               });
               niri = niri.packages.${system}.niri-unstable;
             })
             (
               final: prev:
-              self.packages.${system}
-              // {
-                github-cli-tools = self.packages.${system}.github-cli-tools;
-                python313Packages = prev.python313Packages // legacyPackages.python313Packages;
+              let
+                callPackage' = prev.callPackage;
+                aws-cli-tools = callPackage' ./package/aws-cli-tools { };
+                bw-cli-tools = callPackage' ./package/bw-cli-tools { };
+                docker-cli-tools = callPackage' ./package/docker-cli-tools { };
+                github-cli-tools = callPackage' ./package/github-cli-tools { };
+                dotfiles-meta = callPackage' ./package/dotfiles-meta { };
+                eww-niri-workspaces = callPackage' ./package/eww-niri-workspaces { };
+                excalidraw-mcp-app = callPackage' ./package/excalidraw-mcp-app { };
+                ghidra-mcp = callPackage' ./package/ghidra-mcp { };
+                ghidra-mcp-plugin = (callPackage' ./package/ghidra-mcp { }).ghidraPlugin;
+                goose-server = callPackage' ./package/goose/goose.nix { gooseBin = "goosed"; };
+                goose-cli = callPackage' ./package/goose/goose.nix { gooseBin = "goose"; };
+                goose-desktop = callPackage' ./package/goose/desktop.nix { inherit goose-server; };
+                grafana-mcp = callPackage' ./package/grafana-mcp { };
+                hibiki = callPackage' ./package/hibiki { };
+                kubernetes-client-tools = callPackage' ./package/kubernetes-client-tools { };
+                mcp-remote = callPackage' ./package/mcp-remote { };
+                monaspace-fonts = callPackage' ./package/monaspace-fonts { };
+                obsbot-camera-control = callPackage' ./package/obsbot-camera-control { };
+                ocu = callPackage' ./package/ocu { };
+                rift = callPackage' ./package/rift { };
+                spec-kit = callPackage' ./package/spec-kit { };
+                stklos = callPackage' ./package/stklos { };
+              in
+              {
+                aws-cli-tools = aws-cli-tools;
+                bw-cli-tools = bw-cli-tools;
+                docker-cli-tools = docker-cli-tools;
+                github-cli-tools = github-cli-tools;
+                dotfiles-meta = dotfiles-meta;
+                eww-niri-workspaces = eww-niri-workspaces;
+                excalidraw-mcp-app = excalidraw-mcp-app;
+                ghidra-mcp = ghidra-mcp;
+                ghidra-mcp-plugin = ghidra-mcp-plugin;
+                goose-server = goose-server;
+                goose-cli = goose-cli;
+                goose-desktop = goose-desktop;
+                grafana-mcp = grafana-mcp;
+                hibiki = hibiki;
+                kubernetes-client-tools = kubernetes-client-tools;
+                mcp-remote = mcp-remote;
+                monaspace-fonts = monaspace-fonts;
+                obsbot-camera-control-obsbot-sdk = (obsbot-camera-control.override { }).obsbot-sdk;
+                obsbot-camera-control-cli = (obsbot-camera-control.override { }).obsbot-camera-control-cli;
+                obsbot-camera-control-gui = (obsbot-camera-control.override { }).obsbot-camera-control-gui;
+                ocu = ocu;
+                rift = rift;
+                spec-kit = spec-kit;
+                stklos = stklos;
 
-                inherit (niri-float-sticky.packages.${system}) niri-float-sticky;
-                wezterm = wezterm.packages.${system}.default;
+                niri-float-sticky =
+                  niri-float-sticky.packages.${system}.niri-float-sticky;
+
+                wezterm =
+                  wezterm.packages.${system}.default;
               }
             )
           ];
+
+          mergedConfig = config // {
+            allowUnfreePredicate =
+              pkg:
+              builtins.elem (pkgs.lib.getName pkg) flakeUnfree
+              || (config.allowUnfreePredicate or (_: false)) pkg;
+            permittedInsecurePackages =
+              permittedInsecurePackages
+              ++ (config.permittedInsecurePackages or [ ]);
+          };
+        in
+        import pkgs {
+          config = mergedConfig;
+          inherit system overlays;
         };
     in
     flake-utils.lib.eachDefaultSystem (
       system:
       let
-        inherit
-          (pkgsForSystem {
+        pkgs =
+          pkgsForSystem {
             pkgs = nixpkgs-unstable;
             inherit system;
-          })
-          pkgs
-          legacyPackages
-          ;
+          };
         lib = import ./lib/node.nix {
           inherit pkgs;
           inherit (pkgs) stdenv;
@@ -217,8 +261,6 @@
         };
 
         packages = import ./package { inherit pkgs; };
-
-        inherit legacyPackages;
       }
     )
     // (import ./system {
@@ -236,6 +278,7 @@
         sops-nix
         pkgsForSystem
         desktopBackground
+        permittedInsecurePackages
         ;
     });
 }

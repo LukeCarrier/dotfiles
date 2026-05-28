@@ -3,6 +3,7 @@
   lib,
   pkgs,
   inputs,
+  permittedInsecurePackages,
   ...
 }:
 {
@@ -61,17 +62,21 @@
 
   sops.defaultSopsFile = ../../../../secrets/personal.yaml;
 
-  nixpkgs.config.allowUnfreePredicate =
-    let
-      names = [
-        "claude-code"
-        "obsbot-sdk"
-        "terraform"
-      ];
-    in
-    pkg:
-      builtins.elem pkg.pname names
-      || builtins.any (n: lib.hasPrefix n (pkg.name or "")) names;
+  nixpkgs.config = {
+    allowUnfreePredicate =
+      let
+        names = [
+          "claude-code"
+          "obsbot-sdk"
+          "terraform"
+        ];
+      in
+      pkg:
+        builtins.elem pkg.pname names
+        || builtins.any (n: lib.hasPrefix n (pkg.name or "")) names;
+
+    inherit permittedInsecurePackages;
+  };
 
   home.packages = with pkgs; [
     crane

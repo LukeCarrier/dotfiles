@@ -3,6 +3,7 @@
   lib,
   inputs,
   pkgs,
+  permittedInsecurePackages,
   ...
 }:
 let
@@ -61,6 +62,8 @@ in
       builtins.elem (getName pkg) [
         "terraform"
       ];
+
+    inherit permittedInsecurePackages;
   };
 
   home.packages = with pkgs; [
