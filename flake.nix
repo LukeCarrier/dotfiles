@@ -3,7 +3,7 @@
 
   inputs = {
     agentkit = {
-      url = "github:throwparty/agentkit/nix-packages-overlay?dir=nix";
+      url = "github:throwparty/agentkit?dir=nix";
       inputs = {
         flake-utils.follows = "flake-utils";
         nixpkgs.follows = "nixpkgs-unstable";
