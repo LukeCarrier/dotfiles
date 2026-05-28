@@ -1,26 +1,14 @@
 { config, pkgs, ... }:
 let
-  firefoxpwa = pkgs.firefoxpwa.overrideAttrs (
-    {
-      postInstall ? "",
-      ...
-    }:
-    {
-      postInstall = postInstall + ''
-        ln -s $out/share/firefoxpwa/runtime/firefox $out/share/firefoxpwa/runtime/librewolf
-        ln -s $out/share/firefoxpwa/runtime/firefox-bin $out/share/firefoxpwa/runtime/librewolf-bin
-      '';
-    }
-  );
+  unwrappedImpl = pkgs.librewolf-unwrapped;
+  wrappedImpl = pkgs.librewolf;
+  firefoxpwa = pkgs.callPackage "${pkgs.path}/pkgs/by-name/fi/firefoxpwa-unwrapped/package.nix" {
+    firefoxRuntime = unwrappedImpl;
+  };
   inherit (pkgs) lib stdenv;
 in
 {
   home.packages = (if !stdenv.isDarwin then [ firefoxpwa ] else [ ]) ++ [ pkgs.mozlz4a ];
-
-  # FIXME: pure evaluation mode prevents this:
-  # home.file.".librewolf/native-messaging-hosts".source = "${config.home.homeDirectory}/.mozilla/native-messaging-hosts";
-  # So we have to:
-  # ln -s ~/.mozilla/native-messaging-hosts ~/.librewolf/
 
   xdg.mimeApps.defaultApplications =
     let
@@ -59,7 +47,7 @@ in
     in
     {
       enable = true;
-      package = pkgs.librewolf;
+      package = wrappedImpl;
 
       languagePacks = [
         "en-GB"
