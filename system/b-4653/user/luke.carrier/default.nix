@@ -60,6 +60,7 @@ in
     allowUnfreePredicate =
       pkg:
       builtins.elem (lib.getName pkg) [
+        "claude-code"
         "onepassword-password-manager"
         "vscode-extension-github-copilot"
         "vscode-extension-github-copilot-chat"
