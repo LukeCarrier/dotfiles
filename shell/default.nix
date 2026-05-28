@@ -94,6 +94,7 @@ in
         cntr
         git
         gnumake
+        home-manager
         hydra-check
         jujutsu
         nh
@@ -110,6 +111,7 @@ in
         ${getExe cntr} --version
         ${getExe git} --version
         ${getExe jujutsu} --version
+        printf "home-manager %s\n" "$(${getExe home-manager} --version)"
         ${getExe nh} --version
         ${getExe gnumake} --version | head -n 1
         ${getExe hydra-check} --version
@@ -130,6 +132,7 @@ in
         cntr
         git
         gnumake
+        home-manager
         hydra-check
         jujutsu
         nh
