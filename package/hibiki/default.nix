@@ -60,7 +60,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
   ];
 
   postInstall = ''
-    install -Dm444 assets/hibiki.svg $out/share/icons/hicolor/scalable/apps/hibiki.svg
+    install -Dm444 ${./hibiki.svg} $out/share/icons/hicolor/scalable/apps/hibiki.svg
     mkdir -p $out/share/hibiki
     cp -r src/assets/sounds $out/share/hibiki/sounds
   '';
