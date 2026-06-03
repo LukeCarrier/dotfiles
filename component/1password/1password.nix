@@ -4,6 +4,8 @@ let
   inherit (pkgs.stdenv) isDarwin;
 in
 {
+  home.packages = [ pkgs.onepassword-tools ];
+
   programs.ssh.settings."Match all" = {
     IdentityAgent =
       if isDarwin
