@@ -6,6 +6,11 @@ in
 {
   home.packages = [ pkgs.onepassword-tools ];
 
+  # OpenTofu/Terraform only discover credentials helpers in their plugin
+  # directory, never on PATH, so link the helper into place explicitly.
+  home.file.".terraform.d/plugins/terraform-credentials-op".source =
+    getExe' pkgs.onepassword-tools "terraform-credentials-op";
+
   programs.ssh.settings."Match all" = {
     IdentityAgent =
       if isDarwin

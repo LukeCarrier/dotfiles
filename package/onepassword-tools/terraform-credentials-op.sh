@@ -1,12 +1,48 @@
 set -euo pipefail
 
-secret_ref="$1"
-verb="$2"
-host="$3"
+readonly VAULT="Employee"
+readonly FIELD="credential"
+
+item_title() {
+  printf 'tofu-%s' "$1"
+}
+
+secret_ref() {
+  printf 'op://%s/%s/%s' "$VAULT" "$(item_title "$1")" "$FIELD"
+}
+
+item_exists() {
+  op item get "$(item_title "$1")" --vault "$VAULT" >/dev/null 2>&1 </dev/null
+}
+
+read_token() {
+  op read "$(secret_ref "$1")" 2>/dev/null || true
+}
+
+put_token() {
+  local host="$1" token="$2"
+  if item_exists "$host"; then
+    op item edit "$(item_title "$host")" --vault "$VAULT" \
+      "${FIELD}[concealed]=${token}" >/dev/null </dev/null
+  else
+    op item create \
+      --category "API Credential" \
+      --title "$(item_title "$host")" \
+      --vault "$VAULT" \
+      "${FIELD}[concealed]=${token}" >/dev/null </dev/null
+  fi
+}
+
+delete_item() {
+  op item delete "$(item_title "$1")" --vault "$VAULT" >/dev/null 2>&1 || true
+}
+
+verb="$1"
+host="$2"
 
 case "$verb" in
   get)
-    token="$(op read "$secret_ref")"
+    token="$(read_token "$host")"
     if [ -n "$token" ]; then
       printf '{"token":%s}\n' "$(jq -Rn --arg v "$token" '$v')"
     else
@@ -15,16 +51,17 @@ case "$verb" in
     ;;
 
   store)
-    # Terraform may call this during `terraform login`.
-    # Read stdin to satisfy the helper protocol, but do not store.
-    cat >/dev/null
-    echo "storing credentials via this helper is not supported; update 1Password instead" >&2
-    exit 1
+    # Terraform sends the credentials as a JSON object on stdin.
+    token="$(jq -r '.token // empty')"
+    if [ -z "$token" ]; then
+      echo "no token provided on stdin" >&2
+      exit 1
+    fi
+    put_token "$host" "$token"
     ;;
 
   forget)
-    echo "forget is not supported; remove/update the item in 1Password instead" >&2
-    exit 1
+    delete_item "$host"
     ;;
 
   *)
