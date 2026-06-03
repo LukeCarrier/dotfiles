@@ -1,6 +1,6 @@
 { lib, pkgs, ... }:
 let
-  inherit (lib) mkIf;
+  inherit (lib) getExe' mkIf;
   inherit (pkgs.stdenv) isDarwin;
 in
 {
@@ -11,7 +11,10 @@ in
       else ''"~/.1password/agent.sock"'';
   };
 
-  programs.git.settings.gpg.ssh.program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign";
+  programs.git.settings.gpg.ssh.program =
+    if isDarwin
+    then "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
+    else (getExe' pkgs._1password-gui "op-ssh-sign");
 
   launchd = mkIf isDarwin {
     enable = true;
