@@ -42,6 +42,8 @@ rec {
 
   ocu = callPackage ./ocu { };
 
+  onepassword-tools = callPackage ./onepassword-tools { };
+
   rift = callPackage ./rift { };
 
   spec-kit = callPackage ./spec-kit { };

@@ -187,6 +187,7 @@
                 monaspace-fonts = callPackage' ./package/monaspace-fonts { };
                 obsbot-camera-control = callPackage' ./package/obsbot-camera-control { };
                 ocu = callPackage' ./package/ocu { };
+                onepassword-tools = callPackage' ./package/onepassword-tools { };
                 rift = callPackage' ./package/rift { };
                 spec-kit = callPackage' ./package/spec-kit { };
                 stklos = callPackage' ./package/stklos { };
@@ -213,6 +214,7 @@
                 obsbot-camera-control-cli = (obsbot-camera-control.override { }).obsbot-camera-control-cli;
                 obsbot-camera-control-gui = (obsbot-camera-control.override { }).obsbot-camera-control-gui;
                 ocu = ocu;
+                onepassword-tools = onepassword-tools;
                 rift = rift;
                 spec-kit = spec-kit;
                 stklos = stklos;
