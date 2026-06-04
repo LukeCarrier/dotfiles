@@ -352,7 +352,7 @@ in
             { app-id = "^org.signal.Signal$"; }
             { app-id = "^org.telegram.desktop$"; }
             { app-id = "^discord$"; }
-            { app-id = "^Slack$"; }
+            { app-id = "^com.slack.Slack$"; }
             { title = "^WhatsApp Web$"; }
           ];
           block-out-from = "screen-capture";
@@ -360,6 +360,7 @@ in
         # Password managers
         {
           matches = [
+            { app-id = "^1password$"; }
             { app-id = "^Bitwarden$"; }
           ];
           block-out-from = "screen-capture";
@@ -367,6 +368,8 @@ in
         # PiP overlays
         {
           matches = [
+            { title = "^Slack$"; }
+            { title = " is sharing your screen.$"; }
             { title = "^Picture-in-Picture$"; }
             {
               app-id = "^google-chrome$";
