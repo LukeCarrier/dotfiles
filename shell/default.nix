@@ -94,6 +94,7 @@ in
         cntr
         git
         gnumake
+        helix
         home-manager
         hydra-check
         jujutsu
@@ -102,6 +103,7 @@ in
         nixd
         nix-index
         nixfmt
+        sbctl
         ssh-to-age
         sops
         treefmt
@@ -110,6 +112,7 @@ in
         printf "age %s\n" "$(${getExe age} --version 2>&1 | head -n 1)"
         ${getExe cntr} --version
         ${getExe git} --version
+        ${getExe helix} --version
         ${getExe jujutsu} --version
         printf "home-manager %s\n" "$(${getExe home-manager} --version)"
         ${getExe nh} --version
@@ -119,6 +122,7 @@ in
         ${getExe nixd} --version 2>&1 | head -n 1
         ${getExe' nix-index "nix-locate"} --version 2>&1 | head -n 1
         ${getExe nixfmt} --version 2>&1 | head -n 1
+        ${getExe sbctl} --version
         ${getExe sops} --version 2>&1 | head -n 1
         ${getExe treefmt} --version 2>&1 | head -n 1
       '';
@@ -132,6 +136,7 @@ in
         cntr
         git
         gnumake
+        helix
         home-manager
         hydra-check
         jujutsu
@@ -140,6 +145,7 @@ in
         nixd
         nix-index
         nixfmt
+        sbctl
         ssh-to-age
         sops
         treefmt
