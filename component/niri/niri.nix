@@ -149,125 +149,249 @@ in
         with config.lib.niri.actions;
         {
           # Utilities
-          "${mainMod}+Escape".action = toggle-keyboard-shortcuts-inhibit;
-          "Print".action.screenshot = [ ];
-          "${mainMod}+F".action = toggle-window-floating;
-          "${mainMod}+P".action = spawn [
-            niri-float-sticky
-            "-ipc"
-            "toggle_sticky"
-          ];
-          "${mainMod}+S".action.screenshot = [ ];
-          "XF86AudioMute".action = spawn [
-            "wpctl"
-            "set-mute"
-            "@DEFAULT_AUDIO_SINK@"
-            "toggle"
-          ];
-          "XF86AudioLowerVolume".action = spawn [
-            "wpctl"
-            "set-volume"
-            "-l"
-            "1.4"
-            "@DEFAULT_AUDIO_SINK@"
-            "2%-"
-          ];
-          "XF86AudioRaiseVolume".action = spawn [
-            "wpctl"
-            "set-volume"
-            "-l"
-            "1.4"
-            "@DEFAULT_AUDIO_SINK@"
-            "2%+"
-          ];
-          "XF86AudioPrev".action = spawn [
-            "playerctl"
-            "previous"
-          ];
-          "XF86AudioPlay".action = spawn [
-            "playerctl"
-            "play-pause"
-          ];
-          "xf86audioNext".action = spawn [
-            "playerctl"
-            "next"
-          ];
-          "XF86MonBrightnessDown".action = spawn [
-            "brightnessctl"
-            "set"
-            "2%-"
-          ];
-          "XF86MonBrightnessUp".action = spawn [
-            "brightnessctl"
-            "set"
-            "+2%"
-          ];
-          "XF86AudioMedia".action = spawn [ terminal ];
+          "${mainMod}+${moveMod}+Slash" = {
+            action.show-hotkey-overlay = [ ];
+            hotkey-overlay.title = "Show this help overlay";
+          };
+          "${mainMod}+Escape" = {
+            action = toggle-keyboard-shortcuts-inhibit;
+            hotkey-overlay.title = "Toggle keyboard shortcut inhibiting";
+          };
+          "Print" = {
+            action.screenshot = [ ];
+            hotkey-overlay.title = "Take a screenshot";
+          };
+          "${mainMod}+F" = {
+            action = toggle-window-floating;
+            hotkey-overlay.title = "Toggle window floating";
+          };
+          "${mainMod}+P" = {
+            action = spawn [
+              niri-float-sticky
+              "-ipc"
+              "toggle_sticky"
+            ];
+            hotkey-overlay.title = "Toggle floating window stickiness";
+          };
+          "${mainMod}+S" = {
+            action.screenshot = [ ];
+            hotkey-overlay.title = "Take a screenshot of a region";
+          };
+          "XF86AudioMute" = {
+            action = spawn [
+              "wpctl"
+              "set-mute"
+              "@DEFAULT_AUDIO_SINK@"
+              "toggle"
+            ];
+            hotkey-overlay.title = "Toggle audio mute";
+          };
+          "XF86AudioLowerVolume" = {
+            action = spawn [
+              "wpctl"
+              "set-volume"
+              "-l"
+              "1.4"
+              "@DEFAULT_AUDIO_SINK@"
+              "2%-"
+            ];
+            hotkey-overlay.title = "Lower volume";
+          };
+          "XF86AudioRaiseVolume" = {
+            action = spawn [
+              "wpctl"
+              "set-volume"
+              "-l"
+              "1.4"
+              "@DEFAULT_AUDIO_SINK@"
+              "2%+"
+            ];
+            hotkey-overlay.title = "Raise volume";
+          };
+          "XF86AudioPrev" = {
+            action = spawn [
+              "playerctl"
+              "previous"
+            ];
+            hotkey-overlay.title = "Previous track";
+          };
+          "XF86AudioPlay" = {
+            action = spawn [
+              "playerctl"
+              "play-pause"
+            ];
+            hotkey-overlay.title = "Play/pause";
+          };
+          "xf86audioNext" = {
+            action = spawn [
+              "playerctl"
+              "next"
+            ];
+            hotkey-overlay.title = "Next track";
+          };
+          "XF86MonBrightnessDown" = {
+            action = spawn [
+              "brightnessctl"
+              "set"
+              "2%-"
+            ];
+            hotkey-overlay.title = "Lower display brightness";
+          };
+          "XF86MonBrightnessUp" = {
+            action = spawn [
+              "brightnessctl"
+              "set"
+              "+2%"
+            ];
+            hotkey-overlay.title = "Raise display brightness";
+          };
+          "XF86AudioMedia" = {
+            action = spawn [ terminal ];
+            hotkey-overlay.title = "Open a terminal";
+          };
           # The `EC takes care of this on the Framework 13 AMD:
           # Display key sends Super+L, not XF86Display, for some reason
           # XF86RFKill is done for us
           # Session management
-          "${mainMod}+0".action = spawn [
-            "loginctl"
-            "lock-session"
-          ];
+          "${mainMod}+0" = {
+            action = spawn [
+              "loginctl"
+              "lock-session"
+            ];
+            hotkey-overlay.title = "Lock the session";
+          };
           # Window/application management
-          "${mainMod}+W".action = close-window;
-          "${mainMod}+G".action = toggle-column-tabbed-display;
+          "${mainMod}+W" = {
+            action = close-window;
+            hotkey-overlay.title = "Close the focused window";
+          };
+          "${mainMod}+G" = {
+            action = toggle-column-tabbed-display;
+            hotkey-overlay.title = "Toggle tabbed column display";
+          };
           # Launcher, a la Spotlight
-          "${mainMod}+Space".action = spawn [
-            "wofi"
-            "--allow-images"
-            "--insensitive"
-            "--show"
-            "drun"
-          ];
+          "${mainMod}+Space" = {
+            action = spawn [
+              "wofi"
+              "--allow-images"
+              "--insensitive"
+              "--show"
+              "drun"
+            ];
+            hotkey-overlay.title = "Open the application launcher";
+          };
           # Navigate between windows and columns, Vi style
           # Window commands navigate tabs, no need for separate bindings
-          "${mainMod}+Tab".action = focus-window-previous;
-          "${mainMod}+H".action = focus-column-left;
-          "${mainMod}+J".action = focus-window-down;
-          "${mainMod}+K".action = focus-window-up;
-          "${mainMod}+L".action = focus-column-right;
+          "${mainMod}+Tab" = {
+            action = focus-window-previous;
+            hotkey-overlay.title = "Focus the previously focused window";
+          };
+          "${mainMod}+H" = {
+            action = focus-column-left;
+            hotkey-overlay.title = "Focus the column to the left";
+          };
+          "${mainMod}+J" = {
+            action = focus-window-down;
+            hotkey-overlay.title = "Focus the window below";
+          };
+          "${mainMod}+K" = {
+            action = focus-window-up;
+            hotkey-overlay.title = "Focus the window above";
+          };
+          "${mainMod}+L" = {
+            action = focus-column-right;
+            hotkey-overlay.title = "Focus the column to the right";
+          };
           # Move windows, Vi style
-          "${mainMod}+${moveMod}+H".action = move-column-left;
-          "${mainMod}+${moveMod}+J".action = move-window-down-or-to-workspace-down;
-          "${mainMod}+${moveMod}+K".action = move-window-up-or-to-workspace-up;
-          "${mainMod}+${moveMod}+L".action = move-column-right;
+          "${mainMod}+${moveMod}+H" = {
+            action = move-column-left;
+            hotkey-overlay.title = "Move the column left";
+          };
+          "${mainMod}+${moveMod}+J" = {
+            action = move-window-down-or-to-workspace-down;
+            hotkey-overlay.title = "Move the window down or to the workspace below";
+          };
+          "${mainMod}+${moveMod}+K" = {
+            action = move-window-up-or-to-workspace-up;
+            hotkey-overlay.title = "Move the window up or to the workspace above";
+          };
+          "${mainMod}+${moveMod}+L" = {
+            action = move-column-right;
+            hotkey-overlay.title = "Move the column right";
+          };
           # Group windows
-          "${mainMod}+${moveMod}+BracketLeft".action = consume-or-expel-window-left;
-          "${mainMod}+${moveMod}+BracketRight".action = consume-or-expel-window-right;
+          "${mainMod}+${moveMod}+BracketLeft" = {
+            action = consume-or-expel-window-left;
+            hotkey-overlay.title = "Consume or expel the window to the left";
+          };
+          "${mainMod}+${moveMod}+BracketRight" = {
+            action = consume-or-expel-window-right;
+            hotkey-overlay.title = "Consume or expel the window to the right";
+          };
           # Shift column between monitors
-          "${mainMod}+${moveMod}+Tab".action = move-column-to-monitor-next;
+          "${mainMod}+${moveMod}+Tab" = {
+            action = move-column-to-monitor-next;
+            hotkey-overlay.title = "Move the column to the next monitor";
+          };
           # Shift workspace between monitors
-          "${mainMod}+${spaceMod}+${moveMod}+Tab".action = move-workspace-to-monitor-next;
+          "${mainMod}+${spaceMod}+${moveMod}+Tab" = {
+            action = move-workspace-to-monitor-next;
+            hotkey-overlay.title = "Move the workspace to the next monitor";
+          };
           # Space management
-          "${mainMod}+${spaceMod}+${moveMod}+J".action = move-workspace-down;
-          "${mainMod}+${spaceMod}+${moveMod}+K".action = move-workspace-up;
-          "${mainMod}+R".action = spawn [ "${getExe workspaceRename}" ];
+          "${mainMod}+${spaceMod}+${moveMod}+J" = {
+            action = move-workspace-down;
+            hotkey-overlay.title = "Move the workspace down";
+          };
+          "${mainMod}+${spaceMod}+${moveMod}+K" = {
+            action = move-workspace-up;
+            hotkey-overlay.title = "Move the workspace up";
+          };
+          "${mainMod}+R" = {
+            action = spawn [ "${getExe workspaceRename}" ];
+            hotkey-overlay.title = "Rename the current workspace";
+          };
           # Space navigation
-          "${mainMod}+${spaceMod}+Space".action = toggle-overview;
-          "${mainMod}+${spaceMod}+Tab".action = focus-workspace-previous;
-          "${mainMod}+${spaceMod}+J".action = focus-workspace-down;
-          "${mainMod}+${spaceMod}+K".action = focus-workspace-up;
+          "${mainMod}+${spaceMod}+Space" = {
+            action = toggle-overview;
+            hotkey-overlay.title = "Toggle the overview";
+          };
+          "${mainMod}+${spaceMod}+Tab" = {
+            action = focus-workspace-previous;
+            hotkey-overlay.title = "Focus the previously focused workspace";
+          };
+          "${mainMod}+${spaceMod}+J" = {
+            action = focus-workspace-down;
+            hotkey-overlay.title = "Focus the workspace below";
+          };
+          "${mainMod}+${spaceMod}+K" = {
+            action = focus-workspace-up;
+            hotkey-overlay.title = "Focus the workspace above";
+          };
         }
         // lib.attrsets.listToAttrs (
           builtins.concatMap (
             i: with config.lib.niri.actions; [
               {
                 name = "${mainMod}+${toString i}";
-                value.action = focus-workspace i;
+                value = {
+                  action = focus-workspace i;
+                  hotkey-overlay.title = "Focus workspace ${toString i}";
+                };
               }
               # FIXME: use the action directly once sodiboo/niri-flake#1018 is fixed.
               {
                 name = "${mainMod}+${moveMod}+${toString i}";
-                value.action = spawn [
-                  niri
-                  "msg"
-                  "action"
-                  "move-column-to-workspace"
-                  (toString i)
-                ];
+                value = {
+                  action = spawn [
+                    niri
+                    "msg"
+                    "action"
+                    "move-column-to-workspace"
+                    (toString i)
+                  ];
+                  hotkey-overlay.title = "Move the column to workspace ${toString i}";
+                };
               }
             ]
           ) (lib.range 1 9)
