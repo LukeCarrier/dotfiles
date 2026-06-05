@@ -88,7 +88,8 @@ in
 {
   default =
     let
-      inherit (lib) getExe getExe';
+      inherit (lib) getExe getExe' optionals optionalString;
+      inherit (pkgs.stdenv.hostPlatform) isLinux;
       inherit (pkgs)
         age
         cntr
@@ -108,48 +109,55 @@ in
         sops
         treefmt
         ;
-      toolVersions = mkToolVersions "default" ''
-        printf "age %s\n" "$(${getExe age} --version 2>&1 | head -n 1)"
-        ${getExe cntr} --version
-        ${getExe git} --version
-        ${getExe helix} --version
-        ${getExe jujutsu} --version
-        printf "home-manager %s\n" "$(${getExe home-manager} --version)"
-        ${getExe nh} --version
-        ${getExe gnumake} --version | head -n 1
-        ${getExe hydra-check} --version
-        ${getExe nil} --version 2>&1 | head -n 1
-        ${getExe nixd} --version 2>&1 | head -n 1
-        ${getExe' nix-index "nix-locate"} --version 2>&1 | head -n 1
-        ${getExe nixfmt} --version 2>&1 | head -n 1
-        ${getExe sbctl} --version
-        ${getExe sops} --version 2>&1 | head -n 1
-        ${getExe treefmt} --version 2>&1 | head -n 1
-      '';
+      toolVersionsCmds =
+        ''
+          printf "age %s\n" "$(${getExe age} --version 2>&1 | head -n 1)"
+          ${getExe git} --version
+          ${getExe helix} --version
+          ${getExe jujutsu} --version
+          printf "home-manager %s\n" "$(${getExe home-manager} --version)"
+          ${getExe nh} --version
+          ${getExe gnumake} --version | head -n 1
+          ${getExe hydra-check} --version
+          ${getExe nil} --version 2>&1 | head -n 1
+          ${getExe nixd} --version 2>&1 | head -n 1
+          ${getExe' nix-index "nix-locate"} --version 2>&1 | head -n 1
+          ${getExe nixfmt} --version 2>&1 | head -n 1
+          ${getExe sops} --version 2>&1 | head -n 1
+          ${getExe treefmt} --version 2>&1 | head -n 1
+        ''
+        + (optionalString isLinux ''
+          ${getExe cntr} --version
+          ${getExe sbctl} --version
+        '');
+      toolVersions = mkToolVersions "default" toolVersionsCmds;
     in
     pkgs.mkShell {
       shellHook = ''
         cat ${toolVersions}
       '';
-      nativeBuildInputs = [
-        age
-        cntr
-        git
-        gnumake
-        helix
-        home-manager
-        hydra-check
-        jujutsu
-        nh
-        nil
-        nixd
-        nix-index
-        nixfmt
-        sbctl
-        ssh-to-age
-        sops
-        treefmt
-      ];
+      nativeBuildInputs =
+        [
+          age
+          git
+          gnumake
+          helix
+          home-manager
+          hydra-check
+          jujutsu
+          nh
+          nil
+          nixd
+          nix-index
+          nixfmt
+          ssh-to-age
+          sops
+          treefmt
+        ]
+        ++ (optionals isLinux [
+          cntr
+          sbctl
+        ]);
     };
 
   cuda =
