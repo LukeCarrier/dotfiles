@@ -130,7 +130,6 @@ in
         ''
         + (optionalString isLinux ''
           ${getExe cntr} --version
-          ${getExe sbctl} --version
         '');
       toolVersions = mkToolVersions "default" toolVersionsCmds;
     in
