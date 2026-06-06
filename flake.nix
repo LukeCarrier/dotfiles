@@ -155,9 +155,7 @@
             rust-overlay.overlays.default
             wpaperd.overlays.default
             (final: prev: {
-              ashell = ashell.packages.${system}.default.overrideAttrs (old: {
-                patches = (old.patches or []) ++ [ ./package/ashell/pr-740.patch ];
-              });
+              ashell = ashell.packages.${system}.default;
               handy = handy.packages.${system}.handy.overrideAttrs (old: {
                 buildInputs = (old.buildInputs or []) ++ [ prev.wtype ];
                 patches = (old.patches or []) ++ [ ./package/handy/pr-1337.patch ];
