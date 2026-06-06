@@ -23,8 +23,10 @@
         secondary_color.base = "#0c0d14";
         workspace_colors = [
           {
-            base = "#1a1b26";
-            text = "#ffffff";
+            base = "#ffffff";
+            strong = "#ffffff";
+            weak = "#24273a";
+            text = "#24273a";
           }
         ];
       };
