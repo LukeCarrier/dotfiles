@@ -11,7 +11,7 @@
       };
     };
     ashell = {
-      url = "github:MalpenZibo/ashell/0.8.0";
+      url = "github:MalpenZibo/ashell/main";
       inputs = {
         nixpkgs.follows = "nixpkgs-unstable";
         rust-overlay.follows = "rust-overlay";
