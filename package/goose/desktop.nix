@@ -9,6 +9,7 @@
 let
   inherit (lib) getExe optionalString;
   inherit (pkgs) electron makeDesktopItem;
+  inherit (pkgs.stdenv.hostPlatform) isDarwin;
   fetchPnpmDeps = (pkgs.callPackage ./fetch-pnpm-deps/default.nix { }).fetchPnpmDeps;
   version = "1.35.0";
   rawSrc = fetchFromGitHub {
@@ -66,7 +67,10 @@ stdenv.mkDerivation (finalAttrs: {
     inherit version pnpm;
     src = "${src}/ui";
     fetcherVersion = 3;
-    hash = "sha256-yvxbYNglHoHu5niOs++XRdq/arDeLBtNZrFyeAxNgh0=";
+    hash =
+      if isDarwin
+      then "sha256-yvxbYNglHoHu5niOs++XRdq/arDeLBtNZrFyeAxNgh0="
+      else "sha256-dgVMe+0yWMphnQ5+s/zgQQ0JKd7k1V8rqrXhVBmB+20=";
   };
 
   nativeBuildInputs =
