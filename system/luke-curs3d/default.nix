@@ -26,8 +26,6 @@
 
   sops.defaultSopsFile = ../../secrets/personal.yaml;
 
-  boot.lanzaboote.pkiBundle = lib.mkForce "/var/lib/sbctl";
-
   hardware.graphics = {
     enable = true;
     enable32Bit = true;

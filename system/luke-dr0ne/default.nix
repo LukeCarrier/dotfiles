@@ -29,8 +29,6 @@ in
 
   sops.defaultSopsFile = ../../secrets/employer-emed.yaml;
 
-  boot.lanzaboote.pkiBundle = lib.mkForce "/var/lib/sbctl";
-
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
