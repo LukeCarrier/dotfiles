@@ -103,7 +103,11 @@ in
         key = "mcp/github";
       };
     };
-    templates."goose-config.yaml" = {
+    # Rendered to staging files; the activation script below deep-merges them
+    # into ~/.config/goose/config.yaml so goose's own edits (provider/model,
+    # extension toggles) survive. The MCP subtree is re-overlaid last so its
+    # nix store paths stay fresh (see home.activation.gooseConfig).
+    templates."goose-config-base.yaml" = {
       content =
         builtins.replaceStrings
           [
@@ -115,7 +119,11 @@ in
             mcpConfigYaml
           ]
           (builtins.readFile ./config.yaml.template);
-      path = "${config.home.homeDirectory}/.config/goose/config.yaml";
+      path = "${config.home.homeDirectory}/.config/goose/.config.yaml.base";
+    };
+    templates."goose-config-mcp.yaml" = {
+      content = builtins.toJSON { extensions = gooseMcpServers; };
+      path = "${config.home.homeDirectory}/.config/goose/.config.yaml.mcp";
     };
   };
 
@@ -125,6 +133,25 @@ in
       goose-cli
       goose-desktop
     ];
+
+    # Deep-merge our managed config into goose's mutable config.yaml: base then
+    # existing (so goose's own edits win) then the MCP subtree (so nix store
+    # paths stay fresh). MCP servers remain declarative via programs.mcp.servers.
+    activation.gooseConfig = lib.hm.dag.entryAfter [ "writeBoundary" "sops-nix" ] ''
+      base="${config.home.homeDirectory}/.config/goose/.config.yaml.base"
+      mcp="${config.home.homeDirectory}/.config/goose/.config.yaml.mcp"
+      target="$HOME/.config/goose/config.yaml"
+      if [ -r "$base" ] && [ -r "$mcp" ]; then
+        tmp="$(mktemp)"
+        if [ -e "$target" ]; then
+          ${pkgs.yq-go}/bin/yq eval-all 'select(fi==0) * select(fi==1) * select(fi==2)' \
+            "$base" "$target" "$mcp" > "$tmp"
+        else
+          ${pkgs.yq-go}/bin/yq eval-all 'select(fi==0) * select(fi==1)' "$base" "$mcp" > "$tmp"
+        fi
+        $DRY_RUN_CMD mv "$tmp" "$target"
+      fi
+    '';
 
     file = {
       ".config/goose/adversary.md".source = ./adversary.md;
