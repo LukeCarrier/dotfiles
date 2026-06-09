@@ -50,6 +50,7 @@
     ../../../../component/ghostty/ghostty.nix
     ../../../../component/rust/cargo.nix
     ../../../../component/aws/aws.nix
+    ../../../../component/docker/docker.nix
     ../../../../component/kubernetes-client/kubernetes-client.nix
   ];
 
@@ -80,7 +81,6 @@
 
   home.packages = with pkgs; [
     crane
-    docker-cli-tools
     skopeo
     monaspace-fonts
     obsbot-camera-control-cli

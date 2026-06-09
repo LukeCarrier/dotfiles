@@ -42,6 +42,7 @@ in
     ../../../../component/espanso/espanso.nix
     ../../../../component/ghostty/ghostty.nix
     ../../../../component/aws/aws.nix
+    ../../../../component/docker/docker.nix
     ../../../../component/kubernetes-client/kubernetes-client.nix
     ../../../../component/lima/lima.nix
     ../../../../component/rust/cargo.nix
@@ -71,7 +72,6 @@ in
 
   home.packages = with pkgs; [
     crane
-    docker-cli-tools
     skopeo
   ];
 
