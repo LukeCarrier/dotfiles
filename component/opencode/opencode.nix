@@ -5,14 +5,15 @@
   ...
 }:
 let
-  mcpLib = import ../../lib/mcp.nix {inherit lib;};
-  substitute = mcpLib.substitute config lib;
+  agentsLib = import ../../lib/agents.nix { inherit lib; };
+  substitute = agentsLib.substitute config lib;
 
   # programs.mcp.servers is home-manager's free-form jsonFormat.type option,
   # so we piggy-back on it as a shared source for our own generators and
   # slip in an `enabled` field HM itself doesn't define. Default to false
   # to avoid overloading agents with permissions and tool descriptions.
-  buildMcpConfig = _: mcpDef:
+  buildMcpConfig =
+    _: mcpDef:
     let
       url = mcpDef.url or null;
       command = mcpDef.command or null;
@@ -21,15 +22,15 @@ let
         type = mcpType;
         enabled = mcpDef.enabled or false;
       };
-      mcpWithUrl = if url != null then baseMcp // {inherit url;} else baseMcp;
+      mcpWithUrl = if url != null then baseMcp // { inherit url; } else baseMcp;
       mcpWithCommand =
         if command != null then
-          mcpWithUrl // {command = map substitute ([ command ] ++ (mcpDef.args or [ ]));}
+          mcpWithUrl // { command = map substitute ([ command ] ++ (mcpDef.args or [ ])); }
         else
           mcpWithUrl;
       mcpWithEnv =
         if (mcpDef.env or { }) != { } then
-          mcpWithCommand // {environment = lib.mapAttrs (_: substitute) mcpDef.env;}
+          mcpWithCommand // { environment = lib.mapAttrs (_: substitute) mcpDef.env; }
         else
           mcpWithCommand;
     in
@@ -37,12 +38,42 @@ let
 
   mcpConfigurations = lib.mapAttrs buildMcpConfig config.programs.mcp.servers;
 
-  userFacingPkgs = with pkgs; [mcp-remote];
-  wrapperPkgs = with pkgs; [emcee github-mcp-server terraform-mcp-server];
+  # Lower a tool-agnostic command definition (config.agents.commands) into an
+  # opencode command: YAML frontmatter followed by the shared body.
+  buildOpencodeCommand =
+    cmd:
+    let
+      frontmatter = [
+        "description: ${cmd.description}"
+      ]
+      ++ lib.optional (cmd.agent != null) "agent: ${cmd.agent}"
+      ++ [ "subtask: false" ];
+    in
+    ''
+      ---
+      ${lib.concatStringsSep "\n" frontmatter}
+      ---
+
+    ''
+    + cmd.body;
+
+  commandFiles = lib.mapAttrs' (
+    name: cmd:
+    lib.nameValuePair ".config/opencode/commands/${name}.md" {
+      source = pkgs.writeText "${name}.md" (buildOpencodeCommand cmd);
+    }
+  ) config.agents.commands;
+
+  userFacingPkgs = with pkgs; [ mcp-remote ];
+  wrapperPkgs = with pkgs; [
+    emcee
+    github-mcp-server
+    terraform-mcp-server
+  ];
   opencode = pkgs.symlinkJoin {
     name = "opencode-wrapped";
-    paths = [pkgs.opencode];
-    buildInputs = [pkgs.makeWrapper];
+    paths = [ pkgs.opencode ];
+    buildInputs = [ pkgs.makeWrapper ];
     postBuild = ''
       wrapProgram $out/bin/opencode \
         --prefix PATH : ${pkgs.lib.makeBinPath wrapperPkgs}
@@ -50,7 +81,13 @@ let
   };
 in
 {
-  home.packages = [opencode pkgs.opencode-desktop] ++ userFacingPkgs;
+  imports = [ ../agents ];
+
+  home.packages = [
+    opencode
+    pkgs.opencode-desktop
+  ]
+  ++ userFacingPkgs;
 
   sops = {
     secrets = {
@@ -61,7 +98,7 @@ in
     };
 
     templates."opencode.jsonc" = {
-      content = builtins.replaceStrings ["@MCP_CONFIG_JSON@"] [(builtins.toJSON mcpConfigurations)] (
+      content = builtins.replaceStrings [ "@MCP_CONFIG_JSON@" ] [ (builtins.toJSON mcpConfigurations) ] (
         builtins.readFile ./opencode.jsonc.template
       );
       path = "${config.home.homeDirectory}/.config/opencode/opencode.jsonc";
@@ -76,11 +113,8 @@ in
     ".config/opencode/agent/quest.md".source = ./agent/quest.md;
     ".config/opencode/agent/scout.md".source = ./agent/scout.md;
     ".config/opencode/antigravity.json".source = ./antigravity.json;
-    ".config/opencode/commands/adr.implement.md".source = ./commands/adr.implement.md;
-    ".config/opencode/commands/adr.plan.md".source = ./commands/adr.plan.md;
-    ".config/opencode/commands/adr.reflect.md".source = ./commands/adr.reflect.md;
-    ".config/opencode/commands/adr.specify.md".source = ./commands/adr.specify.md;
-    ".config/opencode/commands/adr.tasks.md".source = ./commands/adr.tasks.md;
+    ".config/opencode/commands/adr.housekeeping.sh".source = ../agents/adr/housekeeping.sh;
     ".config/opencode/skills/direnv/SKILL.md".source = ./skills/direnv/SKILL.md;
-  };
+  }
+  // commandFiles;
 }

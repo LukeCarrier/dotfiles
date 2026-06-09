@@ -1,9 +1,3 @@
----
-description: Break an ADR plan into implementable tasks
-agent: adrian
-subtask: false
----
-
 Translate the plan into work that can be scheduled immediately. Only run after `plan.md` is complete and aligned with the spec.
 
 ## Preparation
@@ -45,3 +39,11 @@ Write `adrs/$currentDate-$featureName/tasks.md` including:
 - Checkboxes or fields for implementers to mark progress
 
 Ensure the YAML frontmatter is present and `status` reflects readiness for implementation. The final task list should make it obvious how to implement, test, and roll back the feature without referring back to conversations.
+
+## Housekeeping
+
+Before finishing, run the housekeeping script so the ADR index stays up to date:
+
+```
+bash adrs/recipes/housekeeping.sh
+```

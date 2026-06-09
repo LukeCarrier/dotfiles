@@ -1,9 +1,3 @@
----
-description: Create a technical plan based on an ADR specification
-agent: adrian
-subtask: false
----
-
 Turn the approved specification into an actionable plan. Only start after `spec.md` is measurable and internally consistent.
 
 ## Preparation
@@ -47,3 +41,11 @@ Write `adrs/$currentDate-$featureName/plan.md` that includes:
 - Risk list with mitigations, monitoring, and rollback actions
 
 Ensure the YAML frontmatter is present and `status` reflects readiness. End by confirming the plan stays aligned with the spec; if not, list the required spec updates.
+
+## Housekeeping
+
+Before finishing, run the housekeeping script so the ADR index stays up to date:
+
+```
+bash adrs/recipes/housekeeping.sh
+```

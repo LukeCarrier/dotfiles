@@ -1,9 +1,3 @@
----
-description: Generate or refine an ADR specification
-agent: adrian
-subtask: false
----
-
 Create a specification that another engineer could implement without guessing. Run this command when starting a feature or when requirements drift from earlier ADRs.
 
 ## Preparation
@@ -44,3 +38,11 @@ Produce `adrs/$currentDate-$featureName/spec.md` containing:
 - Traceability back to any earlier specifications or contracts
 
 Set the YAML frontmatter fields (`status`, `created`, `updated`, `author`, `decision`). Update `status` when the spec becomes review-ready.
+
+## Housekeeping
+
+Before finishing, run the housekeeping script so the ADR index stays up to date:
+
+```
+bash adrs/recipes/housekeeping.sh
+```

@@ -1,8 +1,3 @@
----
-description: Implement an ADR following defined tasks
-subtask: false
----
-
 Use this command once `spec.md`, `plan.md`, and `tasks.md` are accepted. Implementation must follow the documented intent exactly.
 
 ## Before writing code
@@ -39,4 +34,12 @@ Feature name:
 
 ```
 $1
+```
+
+## Housekeeping
+
+Before finishing, run the housekeeping script so the ADR index stays up to date:
+
+```
+bash adrs/recipes/housekeeping.sh
 ```

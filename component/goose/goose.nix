@@ -5,8 +5,8 @@
   ...
 }:
 let
-  mcpLib = import ../../lib/mcp.nix { inherit lib; };
-  substitute = mcpLib.substitute config lib;
+  agentsLib = import ../../lib/agents.nix { inherit lib; };
+  substitute = agentsLib.substitute config lib;
   # programs.mcp.servers is home-manager's free-form jsonFormat.type option,
   # so we piggy-back on it as a shared source for our own generators and
   # slip in an `enabled` field HM itself doesn't define. Default to false
@@ -23,7 +23,8 @@ let
         enabled = serverDef.enabled or false;
         timeout = 300;
         bundled = false;
-      } // lib.optionalAttrs (envs != { }) { inherit envs; };
+      }
+      // lib.optionalAttrs (envs != { }) { inherit envs; };
     in
     if isRemote then
       base
@@ -43,26 +44,48 @@ let
     lib.mapAttrsToList (name: entry: "  ${name}: ${builtins.toJSON entry}\n") gooseMcpServers
   );
 
-  adrRecipes = ./recipes/adr;
-  replaceRecipePaths = content:
-    lib.strings.replaceStrings
-      [
-        "adr/specify.yaml"
-        "adr/plan.yaml"
-        "adr/tasks.yaml"
-        "adr/implement.yaml"
-        "adr/reflect.yaml"
-        "adr/housekeeping.yaml"
-      ]
-      [
-        "${adrRecipes}/specify.yaml"
-        "${adrRecipes}/plan.yaml"
-        "${adrRecipes}/tasks.yaml"
-        "${adrRecipes}/implement.yaml"
-        "${adrRecipes}/reflect.yaml"
-        "${adrRecipes}/housekeeping.yaml"
-      ]
-      content;
+  # Lower a tool-agnostic command definition (config.agents.commands) into a
+  # Goose recipe. Goose reads YAML, and JSON is valid YAML, so we emit JSON via
+  # toJSON — the same approach used for the MCP config blocks above.
+  buildGooseRecipe =
+    cmd:
+    builtins.toJSON (
+      {
+        version = "1.0.0";
+        title = cmd.title;
+        description = cmd.description;
+        settings.max_turns = cmd.maxTurns;
+        instructions = cmd.body;
+        prompt = if cmd.prompt == null then cmd.description else cmd.prompt;
+        extensions = [
+          {
+            type = "builtin";
+            name = "developer";
+            timeout = cmd.timeout;
+            bundled = true;
+          }
+        ];
+      }
+      // lib.optionalAttrs (cmd.parameters != [ ]) { parameters = cmd.parameters; }
+    );
+
+  # Dotted command names map onto nested recipe paths: `adr.specify` lives at
+  # `recipes/adr/specify.yaml`.
+  recipePath = name: "${lib.replaceStrings [ "." ] [ "/" ] name}.yaml";
+  recipeFiles = lib.mapAttrs (
+    name: cmd: pkgs.writeText "${name}.yaml" (buildGooseRecipe cmd)
+  ) config.agents.commands;
+
+  # Aggregate recipes (e.g. adr.yaml) reference their sub-recipes by relative
+  # path; rewrite each to the generated recipe in the Nix store.
+  replaceRecipePaths =
+    content:
+    let
+      names = lib.attrNames config.agents.commands;
+    in
+    lib.strings.replaceStrings (map recipePath names) (map (
+      name: "${recipeFiles.${name}}"
+    ) names) content;
 
   adrYaml = pkgs.writeTextFile {
     name = "adr.yaml";
@@ -71,6 +94,8 @@ let
 
 in
 {
+  imports = [ ../agents ];
+
   sops = {
     secrets = {
       github-mcp-token = {
@@ -110,20 +135,8 @@ in
         ./custom_providers/custom_peacehaven_llama-swap_openai.json;
 
       ".config/goose/recipes/adr.yaml".source = adrYaml;
-      ".config/goose/recipes/adr/housekeeping.sh".source =
-        ./recipes/adr/housekeeping.sh;
-      ".config/goose/recipes/adr/housekeeping.yaml".source =
-        ./recipes/adr/housekeeping.yaml;
-      ".config/goose/recipes/adr/implement.yaml".source =
-        ./recipes/adr/implement.yaml;
-      ".config/goose/recipes/adr/plan.yaml".source =
-        ./recipes/adr/plan.yaml;
+      ".config/goose/recipes/adr/housekeeping.sh".source = ../agents/adr/housekeeping.sh;
       ".config/goose/recipes/adr/quest.yaml".source = ./recipes/adr/quest.yaml;
-      ".config/goose/recipes/adr/reflect.yaml".source =
-        ./recipes/adr/reflect.yaml;
-      ".config/goose/recipes/adr/specify.yaml".source =
-        ./recipes/adr/specify.yaml;
-      ".config/goose/recipes/adr/tasks.yaml".source = ./recipes/adr/tasks.yaml;
 
       ".agents/skills/direnv/SKILL.md".source = ./skills/direnv/SKILL.md;
 
@@ -133,6 +146,9 @@ in
       # ".config/goose/recipes/litterbox.yaml".source = ./recipes/litterbox.yaml;
       # ".config/goose/recipes/quest.yaml".source = ./recipes/quest.yaml;
       # ".config/goose/recipes/scout.yaml".source = ./recipes/scout.yaml;
-    };
+    }
+    // lib.mapAttrs' (
+      name: file: lib.nameValuePair ".config/goose/recipes/${recipePath name}" { source = file; }
+    ) recipeFiles;
   };
 }
