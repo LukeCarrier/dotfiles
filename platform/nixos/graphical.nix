@@ -1,4 +1,4 @@
-{ lib, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 {
   environment.systemPackages = with pkgs; [
     # System management
@@ -131,6 +131,14 @@
   services.flatpak = {
     enable = true;
     package = pkgs.flatpak;
-    overrides.global.Context.filesystems = [ "/nix/store:ro" ];
+    overrides.global = {
+      Context.filesystems = [ "/nix/store:ro" ];
+      # NixOS's /etc/localtime resolves into /nix/store rather than the
+      # /usr/share/zoneinfo layout flatpak expects, so the sandbox can't derive
+      # the zone and apps (Slack, Chrome, ...) fall back to UTC. Inject TZ
+      # directly so they never have to resolve the symlink.
+      # See https://github.com/NixOS/nixpkgs/issues/238386
+      Environment.TZ = config.time.timeZone;
+    };
   };
 }
