@@ -500,6 +500,10 @@ in
               app-id = "^google-chrome$";
               title = "^Meet – ";
             }
+            {
+              app-id = "^google-chrome$";
+              title = "^Meet – .+ - Presentation window";
+            }
           ];
           open-floating = true;
         }
