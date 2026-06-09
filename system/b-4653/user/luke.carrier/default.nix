@@ -15,6 +15,7 @@ in
     inputs.sops-nix.homeManagerModules.sops
     ../../../../platform/darwin/home.nix
     ../../../../employer/emed/emed.nix
+    ../../../../component/docker/docker.nix
     ../../../../component/shell-essential/shell-essential.nix
     ../../../../component/homebrew/homebrew.nix
     ../../../../component/fonts/fonts.nix
