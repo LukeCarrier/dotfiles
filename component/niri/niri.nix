@@ -127,6 +127,7 @@ in
           ];
         }
       ];
+      debug.honor-xdg-activation-with-invalid-serial = true;
       environment = {
         XDG_SESSION_DESKTOP = "niri";
         DISPLAY = xwaylandSatelliteDisplay;
