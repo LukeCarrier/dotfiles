@@ -52,21 +52,26 @@ let
   };
 in
 {
-  home.packages =
-    [ emedHelmTemplate ]
-    ++ (with pkgs; [
-      github-cli-tools
+  home.packages = [
+    emedHelmTemplate
+  ]
+  ++ (with pkgs; [
+    github-cli-tools
 
-      crane
-      docker-cli-tools
-      skopeo
-    ])
-    ++ (if (!isDarwin) then (with pkgs; [
-      claude-code
-      codex
-      code-cursor
-      cursor-cli
-    ]) else [ ]);
+    crane
+    skopeo
+  ])
+  ++ (
+    if (!isDarwin) then
+      (with pkgs; [
+        claude-code
+        codex
+        code-cursor
+        cursor-cli
+      ])
+    else
+      [ ]
+  );
 
   home.sessionPath = [
     "$HOME/Code/emed-labs/engineer-toolbox/bin"
@@ -75,9 +80,10 @@ in
 
   home.sessionVariables = {
     SSH_AUTH_SOCK =
-      if isDarwin
-      then "$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
-      else "$HOME/.1password/agent.sock";
+      if isDarwin then
+        "$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+      else
+        "$HOME/.1password/agent.sock";
   };
 
   sops = {
