@@ -99,8 +99,9 @@
         type = types.attrsOf commandType;
         default = { };
         description = ''
-          Agent commands, keyed by name, lowered into Goose recipes and opencode
-          commands by their respective components.
+          Agent commands, keyed by name. Every command is lowered into the
+          native format of each agent (Goose recipes, opencode commands, Claude
+          Code commands) by its respective component.
         '';
       };
     };
