@@ -31,6 +31,7 @@
     ../../../../component/firefox/firefox.nix
     ../../../../component/bitwarden/bitwarden.nix
     ../../../../component/handy/nixos-home.nix
+    ../../../../component/codex/codex.nix
     ../../../../component/goose/goose.nix
     ../../../../component/opencode/opencode.nix
     ../../../../component/agentkit/agentkit.nix
@@ -81,6 +82,7 @@
 
   home.packages = with pkgs; [
     crane
+    github-cli-tools
     skopeo
     monaspace-fonts
     obsbot-camera-control-cli
