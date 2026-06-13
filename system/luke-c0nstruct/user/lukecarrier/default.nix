@@ -82,10 +82,5 @@ in
       command = getExe' pkgs.excalidraw-mcp-app "excalidraw-mcp-app";
       args = [ "--stdio" ];
     };
-    github = {
-      command = getExe pkgs.github-mcp-server;
-      args = [ "stdio" ];
-      env.GITHUB_PERSONAL_ACCESS_TOKEN = "@github-mcp-token@";
-    };
   };
 }

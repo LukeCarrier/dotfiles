@@ -92,17 +92,37 @@ let
     text = replaceRecipePaths (builtins.readFile ./recipes/adr.yaml);
   };
 
+  # Lower a tool-agnostic agent definition (config.agents.definitions) into a
+  # Goose recipe. The body becomes the recipe prompt; metadata (description,
+  # temperature) is not represented in the recipe schema but the body itself
+  # may encode the operational boundaries the agent enforces.
+  buildGooseAgentRecipe = name: agent:
+    pkgs.writeText "${name}.yaml" (builtins.toJSON {
+      version = "1.0.0";
+      title = name;
+      description = agent.description;
+      prompt = agent.body;
+      extensions = [
+        {
+          type = "builtin";
+          name = "developer";
+          timeout = 300;
+          bundled = true;
+        }
+      ];
+    });
+
+  agentRecipeFiles = lib.mapAttrs' (name: agent:
+    lib.nameValuePair ".config/goose/recipes/${name}.yaml" {
+      source = buildGooseAgentRecipe name agent;
+    }
+  ) config.agents.definitions;
+
 in
 {
   imports = [ ../agents ];
 
   sops = {
-    secrets = {
-      github-mcp-token = {
-        format = "yaml";
-        key = "mcp/github";
-      };
-    };
     # Rendered to staging files; the activation script below deep-merges them
     # into ~/.config/goose/config.yaml so goose's own edits (provider/model,
     # extension toggles) survive. The MCP subtree is re-overlaid last so its
@@ -163,19 +183,12 @@ in
 
       ".config/goose/recipes/adr.yaml".source = adrYaml;
       ".config/goose/recipes/adr/housekeeping.sh".source = ../agents/adr/housekeeping.sh;
-      ".config/goose/recipes/adr/quest.yaml".source = ./recipes/adr/quest.yaml;
 
       ".agents/skills/direnv/SKILL.md".source = ./skills/direnv/SKILL.md;
-
-      # FIXME: migrate other agent definitions
-      # ".config/goose/recipes/adrian.yaml".source = ./recipes/adrian.yaml;
-      # ".config/goose/recipes/edmund.yaml".source = ./recipes/edmund.yaml;
-      # ".config/goose/recipes/litterbox.yaml".source = ./recipes/litterbox.yaml;
-      # ".config/goose/recipes/quest.yaml".source = ./recipes/quest.yaml;
-      # ".config/goose/recipes/scout.yaml".source = ./recipes/scout.yaml;
     }
     // lib.mapAttrs' (
       name: file: lib.nameValuePair ".config/goose/recipes/${recipePath name}" { source = file; }
-    ) recipeFiles;
+    ) recipeFiles
+    // agentRecipeFiles;
   };
 }

@@ -1,14 +1,16 @@
 { lib }:
-# Shared library for the agents subsystem. It bundles the two pieces of
-# tool-agnostic plumbing that both component/goose and component/opencode lower
-# into their own on-disk formats:
+# Shared library for the agents subsystem. It bundles the three pieces of
+# tool-agnostic plumbing that each component lowers into its own on-disk format:
 #
 #   * `substitute` — resolves @SOPS_PLACEHOLDER@ references inside the shared
 #     programs.mcp.servers shape.
 #   * `commandsModule` — declares the `agents.commands` option: a tool-agnostic
 #     description of agent slash commands / recipes. The definitions themselves
-#     are supplied as config (see component/agents/adr.nix); nothing here is
-#     specific to any particular command set.
+#     are supplied as config (see component/agents/adr.nix).
+#   * `definitionsModule` — declares the `agents.definitions` option: a
+#     tool-agnostic description of agent roles (system prompts, mode, etc.).
+#     The definitions themselves are supplied as config (see
+#     component/agents/agents.nix).
 {
   substitute =
     config: lib: text:
@@ -103,6 +105,77 @@
           native format of each agent (Goose recipes, opencode commands, Claude
           Code commands) by its respective component.
         '';
+      };
+    };
+
+  definitionsModule =
+    { lib, ... }:
+    let
+      inherit (lib) mkOption types;
+
+      permissionValueType = types.oneOf [
+        (types.enum [
+          "allow"
+          "deny"
+          "ask"
+        ])
+        (types.attrsOf (types.enum [
+          "allow"
+          "deny"
+          "ask"
+        ]))
+      ];
+    in
+    {
+      options.agents.definitions = mkOption {
+        type = types.attrsOf (types.submodule {
+          options = {
+            description = mkOption {
+              type = types.str;
+              description = "Agent role description.";
+            };
+            mode = mkOption {
+              type = types.enum [
+                "primary"
+                "subagent"
+              ];
+              description = "Whether the agent runs independently or as a subagent.";
+            };
+            temperature = mkOption {
+              type = types.float;
+              default = 0.1;
+              description = "LLM temperature for the agent.";
+            };
+            model = mkOption {
+              type = types.nullOr types.str;
+              default = null;
+              description = "Model override (tool-specific resolution).";
+            };
+            color = mkOption {
+              type = types.nullOr types.str;
+              default = null;
+              description = "Display colour (opencode).";
+            };
+            body = mkOption {
+              type = types.lines;
+              description = "System prompt / agent instructions.";
+            };
+            tools = mkOption {
+              type = types.attrsOf types.bool;
+              default = {
+                "*" = true;
+              };
+              description = "Tool availability (opencode).";
+            };
+            permission = mkOption {
+              type = types.attrsOf permissionValueType;
+              default = { };
+              description = "Permission rules (opencode).";
+            };
+          };
+        });
+        default = { };
+        description = "Agent role definitions, keyed by name.";
       };
     };
 }

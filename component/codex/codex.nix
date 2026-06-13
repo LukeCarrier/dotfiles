@@ -37,6 +37,57 @@ let
     }
   ) config.agents.commands;
 
+  # Lower the shared agent definition shape into Codex prompt files. Codex does
+  # not expose a separate agent directory, so these prompts are the Codex-native
+  # artifact that keeps the reusable definitions available in ~/.codex.
+  buildCodexAgent =
+    name: agent:
+    pkgs.writeText "${name}.md" (
+      let
+        isSafeKey = k: builtins.match "[a-zA-Z_][a-zA-Z0-9_-]*" k != null;
+        quoteIfNeeded = k: if isSafeKey k then k else ''"${k}"'';
+        safeVal = v: if v then "true" else "false";
+
+        toolsLines = lib.concatStringsSep "\n" (
+          lib.mapAttrsToList (k: v: "  ${quoteIfNeeded k}: ${safeVal v}") agent.tools
+        );
+
+        renderPermission = indent: attrs:
+          lib.concatStringsSep "\n" (
+            lib.mapAttrsToList (k: v:
+              if builtins.isAttrs v then
+                "${indent}${quoteIfNeeded k}:\n${renderPermission "${indent}  " v}"
+              else
+                "${indent}${quoteIfNeeded k}: ${v}"
+            ) attrs
+          );
+      in
+      ''
+        ---
+        description: ${agent.description}
+        color: ${agent.color}
+        mode: ${agent.mode}
+        temperature: ${builtins.toString agent.temperature}
+      ''
+      + lib.optionalString (agent.model != null) "model: ${agent.model}\n"
+      + ''
+        tools:
+        ${toolsLines}
+        permission:
+        ${renderPermission "  " agent.permission}
+        ---
+
+      ''
+      + agent.body
+    );
+
+  agentFiles = lib.mapAttrs' (
+    name: agent:
+    lib.nameValuePair ".codex/prompts/${name}.md" {
+      source = buildCodexAgent name agent;
+    }
+  ) config.agents.definitions;
+
   # Lower the shared programs.mcp.servers shape into Codex's config.toml
   # `[mcp_servers.<name>]` tables, mirroring how goose/opencode lower the same
   # source. stdio servers carry command/args/env; remote servers carry a url.
@@ -116,11 +167,6 @@ in
   ];
 
   sops = {
-    secrets.github-mcp-token = {
-      format = "yaml";
-      key = "mcp/github";
-    };
-
     # MCP servers carry secrets, so they're rendered to a staging file and
     # merged into the mutable config.toml at activation (below), rather than
     # owning the whole file — codex also keeps model settings and [profiles.*]
@@ -152,7 +198,8 @@ in
 
   # Codex ignores non-Markdown files in the prompts directory, so the shared
   # housekeeping helper rides along as a reference copy.
-  home.file = promptFiles // {
+  home.file = promptFiles // agentFiles // {
+    ".codex/AGENTS.md".source = ../agents/AGENTS.md;
     ".codex/prompts/adr.housekeeping.sh".source = ../agents/adr/housekeeping.sh;
   };
 }

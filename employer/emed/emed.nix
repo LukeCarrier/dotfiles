@@ -184,12 +184,6 @@ in
       ];
     };
 
-    github = {
-      command = getExe pkgs.github-mcp-server;
-      args = [ "stdio" ];
-      env.GITHUB_PERSONAL_ACCESS_TOKEN = "@github-mcp-token@";
-    };
-
     grafana-cloud = {
       command = getExe pkgs.mcp-grafana;
       env = {

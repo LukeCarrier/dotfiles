@@ -119,11 +119,6 @@ in
   ];
 
   sops = {
-    secrets.github-mcp-token = {
-      format = "yaml";
-      key = "mcp/github";
-    };
-
     # One --mcp-config file per server, with secrets resolved. selectClaudeMcp
     # picks among these at launch; nothing is merged into ~/.claude.json.
     templates = mcpTemplates;
