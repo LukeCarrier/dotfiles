@@ -140,6 +140,58 @@ in
         GDK_DPI_SCALE = "1.0";
         XCURSOR_SIZE = "32";
       };
+      animations = {
+        workspace-switch.kind.spring = {
+          damping-ratio = 0.78;
+          stiffness = 760;
+          epsilon = 0.0001;
+        };
+
+        window-open = {
+          kind.spring = {
+            damping-ratio = 0.72;
+            stiffness = 880;
+            epsilon = 0.0001;
+          };
+        };
+
+        window-close = {
+          kind.spring = {
+            damping-ratio = 0.68;
+            stiffness = 720;
+            epsilon = 0.0001;
+          };
+        };
+
+        horizontal-view-movement.kind.spring = {
+          damping-ratio = 0.80;
+          stiffness = 720;
+          epsilon = 0.0001;
+        };
+
+        window-movement.kind.spring = {
+          damping-ratio = 0.78;
+          stiffness = 680;
+          epsilon = 0.0001;
+        };
+
+        config-notification-open-close.kind.spring = {
+          damping-ratio = 0.65;
+          stiffness = 923;
+          epsilon = 0.001;
+        };
+
+        screenshot-ui-open.kind.easing = {
+          duration-ms = 200;
+          curve = "ease-out-quad";
+        };
+
+        overview-open-close.kind.spring = {
+          damping-ratio = 0.80;
+          stiffness = 840;
+          epsilon = 0.0001;
+        };
+      };
       binds =
         let
           mainMod = "Super";
@@ -525,6 +577,30 @@ in
         }
       ];
     };
+  };
+
+  # The upstream niri module writes config.kdl from `programs.niri.finalConfig`.
+  # Override that generated file source so the immutable store file already
+  # contains the extra blur rules instead of trying to append after activation.
+  xdg.configFile.niri-config = lib.mkForce {
+    target = "niri/config.kdl";
+    source = pkgs.writeText "niri-config.kdl" ''
+      ${config.programs.niri.finalConfig}
+
+      // codex: niri blur
+      blur {
+          passes 4
+          offset 5.0
+          noise 0.02
+          saturation 2.0
+      }
+
+      window-rule {
+          background-effect {
+              blur true
+          }
+      }
+    '';
   };
 
   programs.waybar.settings.mainBar = {
