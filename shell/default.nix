@@ -314,8 +314,8 @@ in
     };
 
   ruby33Dev = mkRubyDevShell "ruby33Dev" pkgs.ruby_3_3;
-  ruby34Dev = mkRubyDevShell "ruby33Dev" pkgs.ruby;
-  ruby40Dev = mkRubyDevShell "ruby33Dev" pkgs.ruby_4_0;
+  ruby34Dev = mkRubyDevShell "ruby34Dev" pkgs.ruby;
+  ruby40Dev = mkRubyDevShell "ruby40Dev" pkgs.ruby_4_0;
 
   rustDev =
     let
