@@ -9,25 +9,22 @@
 let
   inherit (lib) getExe optionalString;
   inherit (pkgs) electron makeDesktopItem;
-  inherit (pkgs.stdenv.hostPlatform) isDarwin;
   fetchPnpmDeps = (pkgs.callPackage ./fetch-pnpm-deps/default.nix { }).fetchPnpmDeps;
-  version = "1.35.0";
+  version = "1.38.0";
   rawSrc = fetchFromGitHub {
     owner = "aaif-goose";
     repo = "goose";
     tag = "v${version}";
-    sha256 = "sha256-phcv0quM9eZoHE1qYZ6RsXb6irWDRRpPJwEGlRDwAvM=";
+    sha256 = "sha256-bR38jxh379Rp9ZU6Hd+1aKDl+88UkmWF/niwp8uB3aE=";
   };
   src = stdenv.mkDerivation (finalAttrs: {
     pname = "goose-desktop";
     inherit version;
     src = rawSrc;
     patches = [
-      ./patches/0001-chore-deps-don-t-block-exotic-subdeps.patch
-      ./patches/0002-chore-deps-allow-builds.patch
-      ./patches/0003-chore-deps-relocate-overrides.patch
-      ./patches/0004-chore-deps-use-hoisted-linker-for-electron-forge.patch
-      ./patches/0006-chore-deps-set-pmOnFail-ignore.patch
+      ./patches/0001-chore-deps-allow-builds.patch
+      ./patches/0002-chore-deps-relocate-overrides.patch
+      ./patches/0003-chore-deps-use-hoisted-linker-for-electron-forge.patch
     ];
     buildPhase = "true";
     installPhase = ''
@@ -67,10 +64,7 @@ stdenv.mkDerivation (finalAttrs: {
     inherit version pnpm;
     src = "${src}/ui";
     fetcherVersion = 3;
-    hash =
-      if isDarwin
-      then "sha256-yvxbYNglHoHu5niOs++XRdq/arDeLBtNZrFyeAxNgh0="
-      else "sha256-dgVMe+0yWMphnQ5+s/zgQQ0JKd7k1V8rqrXhVBmB+20=";
+    hash = "sha256-nEUwkk42OEhDftzoX4KG5X7nuDq+pO8U7zckMdwnE8A=";
   };
 
   nativeBuildInputs =
@@ -88,6 +82,12 @@ stdenv.mkDerivation (finalAttrs: {
   buildPhase = ''
     runHook preBuild
     pushd ui
+
+    # Disable ad-hoc Darwin re-signing: codesign is unavailable in the Nix sandbox
+    substituteInPlace desktop/forge.config.ts \
+      --replace-fail \
+        "new FusesPlugin({" \
+        "new FusesPlugin({ resetAdHocDarwinSignature: false,"
 
     # Patch electron-forge to use our electron distribution
     substituteInPlace node_modules/@electron-forge/core-utils/dist/electron-version.js \
