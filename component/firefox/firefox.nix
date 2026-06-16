@@ -1,7 +1,7 @@
 { config, pkgs, ... }:
 let
-  unwrappedImpl = pkgs.librewolf-unwrapped;
-  wrappedImpl = pkgs.librewolf;
+  unwrappedImpl = pkgs.firefox-unwrapped;
+  wrappedImpl = pkgs.firefox;
   firefoxpwa = pkgs.callPackage "${pkgs.path}/pkgs/by-name/fi/firefoxpwa-unwrapped/package.nix" {
     firefoxRuntime = unwrappedImpl;
   };
@@ -12,7 +12,7 @@ in
 
   xdg.mimeApps.defaultApplications =
     let
-      app = "librewolf.desktop";
+      app = "firefox.desktop";
     in
     {
       "text/html" = app;
@@ -29,7 +29,7 @@ in
       "application/x-extension-xht" = app;
     };
 
-  programs.librewolf =
+  programs.firefox =
     let
       browserActions = {
         bitwarden = "_446900e4-71c2-419f-a6a7-df9c091e268b_-browser-action";
@@ -202,7 +202,7 @@ in
                 vimium
               ];
               "nav-bar" =
-                config.programs.librewolf.profiles.default.settings."browser.uiCustomization.navBarWhenVerticalTabs";
+                config.programs.firefox.profiles.default.settings."browser.uiCustomization.navBarWhenVerticalTabs";
               "toolbar-menubar" = [ "menubar-items" ];
               "TabsToolbar" = [ ];
               "vertical-tabs" = [ "tabbrowser-tabs" ];
