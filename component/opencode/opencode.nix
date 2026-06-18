@@ -91,7 +91,6 @@ let
       ''
         ---
         description: ${agent.description}
-        color: ${agent.color}
         mode: ${agent.mode}
         temperature: ${builtins.toString agent.temperature}
       ''
@@ -158,11 +157,35 @@ in
     target="$HOME/.config/opencode/opencode.jsonc"
     if [ -r "$mcp" ]; then
       tmp="$(mktemp)"
-      if [ -e "$target" ] && ${pkgs.jq}/bin/jq -e . "$target" >/dev/null 2>&1; then
-        ${pkgs.jq}/bin/jq -s '.[0] * .[1] * .[2]' ${./opencode.json} "$target" "$mcp" > "$tmp"
-      else
-        ${pkgs.jq}/bin/jq -s '.[0] * .[1]' ${./opencode.json} "$mcp" > "$tmp"
-      fi
+      ${pkgs.python3}/bin/python3 - ${./opencode.json} "$target" "$mcp" "$tmp" << 'EOF'
+import json, sys
+
+def deep_merge(base, override):
+    result = dict(base)
+    for k, v in override.items():
+        if v is None:
+            pass
+        elif k in result and isinstance(result[k], dict) and isinstance(v, dict):
+            result[k] = deep_merge(result[k], v)
+        else:
+            result[k] = v
+    return result
+
+base_path, target_path, mcp_path, out_path = sys.argv[1:]
+
+with open(base_path) as f:
+    merged = json.load(f)
+try:
+    with open(target_path) as f:
+        merged = deep_merge(merged, json.load(f))
+except (FileNotFoundError, json.JSONDecodeError):
+    pass
+with open(mcp_path) as f:
+    merged = deep_merge(merged, json.load(f))
+
+with open(out_path, 'w') as f:
+    json.dump(merged, f, indent=2)
+EOF
       $DRY_RUN_CMD mv "$tmp" "$target"
     fi
   '';

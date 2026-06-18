@@ -65,7 +65,6 @@ let
       ''
         ---
         description: ${agent.description}
-        color: ${agent.color}
         mode: ${agent.mode}
         temperature: ${builtins.toString agent.temperature}
       ''

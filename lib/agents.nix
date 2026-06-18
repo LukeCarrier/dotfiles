@@ -151,11 +151,6 @@
               default = null;
               description = "Model override (tool-specific resolution).";
             };
-            color = mkOption {
-              type = types.nullOr types.str;
-              default = null;
-              description = "Display colour (opencode).";
-            };
             body = mkOption {
               type = types.lines;
               description = "System prompt / agent instructions.";

@@ -33,7 +33,6 @@ in
       mode = "primary";
       temperature = 0.1;
       body = body "adrian";
-      color = "#146152";
       permission = {
         bash = "deny";
         edit = {
@@ -49,7 +48,6 @@ in
       mode = "primary";
       temperature = 0.1;
       body = body "edmund";
-      color = "#b4cf66";
       permission = {
         bash = "deny";
         edit = "deny";
@@ -62,7 +60,6 @@ in
       mode = "primary";
       temperature = 0.1;
       body = body "litterbox";
-      color = "#81521e";
       tools = {
         "*" = false;
         read = true;
@@ -104,7 +101,6 @@ in
       model = "github-copilot/claude-sonnet-4.5";
       temperature = 0.1;
       body = body "quest";
-      color = "#007cda";
       permission = {
         bash = "allow";
         edit = "allow";
@@ -118,7 +114,6 @@ in
       model = "github-copilot/claude-sonnet-4.5";
       temperature = 0.1;
       body = body "scout";
-      color = "#f50000";
       permission = {
         bash = "allow";
         edit = "allow";
