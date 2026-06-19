@@ -8,8 +8,7 @@
 }:
 let
   inherit (lib) getExe optionalString;
-  inherit (pkgs) electron makeDesktopItem;
-  fetchPnpmDeps = (pkgs.callPackage ./fetch-pnpm-deps/default.nix { }).fetchPnpmDeps;
+  inherit (pkgs) electron fetchPnpmDeps makeDesktopItem;
   version = "1.41.0";
 
   # nodejs 24.16.0 (pulled in by a nixpkgs-unstable bump) regressed electron-forge's
