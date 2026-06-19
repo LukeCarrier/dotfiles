@@ -8,10 +8,14 @@ let
 in
 {
   home.packages = with pkgs; [
+    amazon-ecr-credential-helper
     awscli2
     aws-cli-tools
     fzf
   ];
+
+  programs.docker-cli.settings.credHelpers = {
+  };
 
   programs.bash.shellAliases.aws-profile = ''
     export AWS_PROFILE="$(${selectProfileCmd})"
