@@ -77,7 +77,7 @@ stdenv.mkDerivation (finalAttrs: {
     pname = finalAttrs.pname;
     inherit version pnpm;
     src = "${src}/ui";
-    fetcherVersion = 3;
+    fetcherVersion = 4;
     hash = lib.attrByPath [ stdenv.hostPlatform.system ] null pnpmDepsHashes;
   };
 
