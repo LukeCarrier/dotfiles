@@ -116,4 +116,7 @@
   dconf.settings = {
     "org/gnome/desktop/interface".color-scheme = "prefer-dark";
   };
+
+  # Adopt the Firefox state directory used in 26.05 and later
+  programs.firefox.configPath = "${config.xdg.configHome}/mozilla/firefox";
 }
