@@ -1,7 +1,6 @@
 { config, lib, pkgs, ... }:
 let
   inherit (lib) getExe getExe';
-  brightnessctl = getExe pkgs.brightnessctl;
   systemctl = getExe' pkgs.systemd "systemctl";
   lockTimeoutSeconds = 120;
   lockCmd = config.services.swayidle.events.lock;
@@ -23,12 +22,7 @@ in
 
     timeouts = [
       {
-        timeout = 60;
-        command = "${brightnessctl} -sd rgb:kbd_backlight set 0";
-        resumeCommand = "${brightnessctl} -rd rgb:kbd_backlight";
-      }
-      {
-        timeout = lockTimeoutSeconds;
+        timeout = 120;
         command = lockCmd;
       }
       {

@@ -1,7 +1,6 @@
 { lib, pkgs, ... }:
 let
   inherit (lib) getExe;
-  brightnessctl = getExe pkgs.brightnessctl;
   loginctl = getExe pkgs.systemd;
   systemctl = getExe pkgs.systemd;
 in
@@ -13,11 +12,6 @@ in
         before_sleep_cmd = "${loginctl} lock-session";
       };
       listener = [
-        {
-          timeout = 60;
-          on-timeout = "${brightnessctl} -sd rgb:kbd_backlight set 0";
-          on-resume = "${brightnessctl} -rd rgb:kbd_backlight";
-        }
         {
           timeout = 120;
           on-timeout = "${loginctl} lock-session";
