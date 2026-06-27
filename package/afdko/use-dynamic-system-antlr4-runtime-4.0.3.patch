@@ -1,0 +1,62 @@
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -36,13 +36,13 @@
+ # https://www.antlr.org/download/antlr4-cpp-runtime-4.9.3-source.zip
+ # set(ANTLR4_ZIP_REPOSITORY "/path_to_antlr4_archive/a4.zip")
+ 
+-add_definitions(-DANTLR4CPP_STATIC)
+ set(ANTLR4_WITH_STATIC_CRT OFF)
+ # set(ANTLR4_TAG tags/4.13.2)
+ # This is a more recent commit than 4.13.2 that addresses a missing
+ # include directive needed in more recent Visual Studio releases
+ set(ANTLR4_TAG df4d68c09cdef73e023b8838a8bc7ca4dff1d1de)
+-include(ExternalAntlr4Cpp)
++find_path(ANTLR4_HEADER antlr4-runtime.h PATH_SUFFIXES antlr4-runtime)
++set(ANTLR4_INCLUDE_DIRS ${ANTLR4_HEADER})
+ 
+ 
+ if (DEFINED ENV{FORCE_BUILD_LIBXML2})
+--- a/c/makeotf/lib/cffread/CMakeLists.txt
++++ b/c/makeotf/lib/cffread/CMakeLists.txt
+@@ -8,6 +8,6 @@
+     add_dependencies(makeotf_cffread ${LIBXML2_TARGET})
+ endif()
+ 
+-target_link_libraries(makeotf_cffread PUBLIC antlr4_static)
++target_link_libraries(makeotf_cffread PUBLIC antlr4-runtime)
+ 
+ target_compile_definitions(makeotf_cffread PRIVATE $<$<CONFIG:Debug>:CFF_DEBUG=1> CFF_T13_SUPPORT=0)
+--- a/c/makeotf/lib/hotconv/CMakeLists.txt
++++ b/c/makeotf/lib/hotconv/CMakeLists.txt
+@@ -70,7 +70,7 @@
+ set_property(TARGET hotconv PROPERTY C_STANDARD 99)
+ set_property(TARGET hotconv PROPERTY CXX_STANDARD 17)
+ target_include_directories(hotconv PRIVATE AFTER $<$<COMPILE_LANGUAGE:CXX>:${ANTLR4_INCLUDE_DIRS}>)
+-target_link_libraries(hotconv PUBLIC antlr4_static)
++target_link_libraries(hotconv PUBLIC antlr4-runtime)
+
+ target_link_libraries(hotconv PUBLIC ${CHOSEN_LIBXML2_LIBRARY})
+ 
+--- a/cmake/AddAFDKOTests.cmake
++++ b/cmake/AddAFDKOTests.cmake
+@@ -10,9 +10,9 @@
+ 
+ if(HAS_PYTEST AND BUILD_TESTING)
+     if(WIN32)
+-        set(PERTESTENV "PATH=${CMAKE_RUNTIME_OUTPUT_DIRECTORY}\\;$ENV{PATH};PYTHONPATH=${CMAKE_SOURCE_DIR}/python\\;$ENV{PYTHONPATH};AFDKO_TEST_SKIP_CONSOLE=True")
++        set(PERTESTENV "PATH=${CMAKE_RUNTIME_OUTPUT_DIRECTORY}\\;$ENV{PATH};PYTHONPATH=${CMAKE_SOURCE_DIR}/python\\;${CMAKE_SOURCE_DIR}/tests\\;$ENV{PYTHONPATH};AFDKO_TEST_SKIP_CONSOLE=True")
+     else()
+-        set(PERTESTENV "PATH=${CMAKE_RUNTIME_OUTPUT_DIRECTORY}:$ENV{PATH};PYTHONPATH=${CMAKE_SOURCE_DIR}/python:$ENV{PYTHONPATH};AFDKO_TEST_SKIP_CONSOLE=True")
++        set(PERTESTENV "PATH=${CMAKE_RUNTIME_OUTPUT_DIRECTORY}:$ENV{PATH};PYTHONPATH=${CMAKE_SOURCE_DIR}/python:${CMAKE_SOURCE_DIR}/tests:$ENV{PYTHONPATH};AFDKO_TEST_SKIP_CONSOLE=True")
+     endif()
+     list(APPEND CMAKE_CTEST_ARGUMENTS "--output-on-failure")
+     add_test(NAME runner_test COMMAND Python3::Interpreter -m pytest "${CMAKE_SOURCE_DIR}/tests/runner_test.py")
+--- /dev/null
++++ b/conftest.py
+@@ -0,0 +1,6 @@
++from pathlib import Path
++import sys
++
++root = Path(__file__).resolve().parent
++for path in (root / "tests", root / "python"):
++    sys.path.insert(0, str(path))

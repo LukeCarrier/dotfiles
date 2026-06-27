@@ -136,7 +136,6 @@
       sops-nix,
       wezterm,
       wpaperd,
-      self,
       ...
     }:
     let
@@ -166,9 +165,20 @@
             wpaperd.overlays.default
             (final: prev: {
               ashell = ashell.packages.${system}.default;
+              # NixOS/nixpkgs#535887
+              cantarell-fonts =
+                prev.cantarell-fonts.overrideAttrs (old: {
+                  nativeBuildInputs = builtins.map (
+                    drv:
+                    if (drv.pname or null) == "afdko" then
+                      prev.python3.pkgs.afdko
+                    else
+                      drv
+                  ) old.nativeBuildInputs;
+                });
               handy = handy.packages.${system}.handy.overrideAttrs (old: {
-                buildInputs = (old.buildInputs or []) ++ [ prev.wtype ];
-                patches = (old.patches or []) ++ [ ./package/handy/pr-1337.patch ];
+                buildInputs = (old.buildInputs or [ ]) ++ [ prev.wtype ];
+                patches = (old.patches or [ ]) ++ [ ./package/handy/pr-1337.patch ];
               });
               niri = niri.packages.${system}.niri-unstable;
             })
@@ -227,11 +237,9 @@
                 spec-kit = spec-kit;
                 stklos = stklos;
 
-                niri-float-sticky =
-                  niri-float-sticky.packages.${system}.niri-float-sticky;
+                niri-float-sticky = niri-float-sticky.packages.${system}.niri-float-sticky;
 
-                wezterm =
-                  wezterm.packages.${system}.default;
+                wezterm = wezterm.packages.${system}.default;
               }
             )
             # eMed security agents
@@ -326,11 +334,8 @@
           mergedConfig = config // {
             allowUnfreePredicate =
               pkg:
-              builtins.elem (pkgs.lib.getName pkg) flakeUnfree
-              || (config.allowUnfreePredicate or (_: false)) pkg;
-            permittedInsecurePackages =
-              permittedInsecurePackages
-              ++ (config.permittedInsecurePackages or [ ]);
+              builtins.elem (pkgs.lib.getName pkg) flakeUnfree || (config.allowUnfreePredicate or (_: false)) pkg;
+            permittedInsecurePackages = permittedInsecurePackages ++ (config.permittedInsecurePackages or [ ]);
           };
         in
         import pkgs {
@@ -341,11 +346,10 @@
     flake-utils.lib.eachDefaultSystem (
       system:
       let
-        pkgs =
-          pkgsForSystem {
-            pkgs = nixpkgs-unstable;
-            inherit system;
-          };
+        pkgs = pkgsForSystem {
+          pkgs = nixpkgs-unstable;
+          inherit system;
+        };
         lib = import ./lib/node.nix {
           inherit pkgs;
           inherit (pkgs) stdenv;
