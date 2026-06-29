@@ -23,7 +23,10 @@ in
 
   programs.mcp.servers.github = {
     command = lib.getExe pkgs.github-mcp-server;
-    args = [ "stdio" ];
+    args = [
+      "stdio"
+      "--toolsets=default,actions"
+    ];
     env.GITHUB_PERSONAL_ACCESS_TOKEN = "@github-mcp-token@";
   };
 
