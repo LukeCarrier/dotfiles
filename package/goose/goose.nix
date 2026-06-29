@@ -37,6 +37,7 @@
 }:
 
 let
+  # Download tokenisers ahead of build, as that step lacks network access.
   # NOTE: When updating, also update the hash in goose-cli/librusty_v8.nix
   gpt4o-tokenizer = fetchurl {
     url = "https://huggingface.co/Xenova/gpt-4o/resolve/31376962e96831b948abe05d420160d0793a65a4/tokenizer.json";
