@@ -22,9 +22,6 @@ let
       url = "https://github.com/NixOS/nixpkgs/archive/de51b6369f3e5dae8e71ac179f04cf1f42ba936d.tar.gz";
       sha256 = "sha256-jGEYnI9HPEjIV3mwEGJs10IzrMgDaJdXLcWEO9lq2Z4=";
     }) { inherit (stdenv.hostPlatform) system; }).nodejs;
-  pnpmDepsHashes = {
-    aarch64-darwin = "sha256-yagfbfR8laTr4Vp0mylfJ6FVwQgGAFXQdoFtv+zlE9A=";
-  };
   rawSrc = fetchFromGitHub {
     owner = "aaif-goose";
     repo = "goose";
@@ -53,13 +50,7 @@ let
       url = "https://registry.npmjs.org/pnpm/-/pnpm-11.5.2.tgz";
       hash = "sha256-dJ3FT709zenkFLquMsF3yoR3DT/NaciBbVea3D5qLJk=";
     };
-    # On macOS arm64, Worker threads default to trackUnmanagedFds: true.
-    # pnpm's graceful-fs EAGAIN retry loop causes fd churn; fd numbers get
-    # recycled by libuv for internal pipes. When Workers exit, Node.js cleanup
-    # closes all tracked-but-unclosed fds — which now belong to libuv internals
-    # — causing a crash that presents as SIGKILL.
-    # Fix: disable trackUnmanagedFds on the WorkerPool constructor.
-    # See https://github.com/nodejs/node/commit/7603c7e50c
+    # Mitigate NixOS/nixpkgs#525627
     postPatch = ''
       substituteInPlace dist/pnpm.mjs \
         --replace-fail \
@@ -78,7 +69,7 @@ stdenv.mkDerivation (finalAttrs: {
     inherit version pnpm;
     src = "${src}/ui";
     fetcherVersion = 4;
-    hash = lib.attrByPath [ stdenv.hostPlatform.system ] null pnpmDepsHashes;
+    hash = "sha256-yagfbfR8laTr4Vp0mylfJ6FVwQgGAFXQdoFtv+zlE9A=";
   };
 
   nativeBuildInputs = [
