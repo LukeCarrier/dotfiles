@@ -21,9 +21,8 @@ rec {
   ghidra-mcp = callPackage ./ghidra-mcp { };
   ghidra-mcp-plugin = (callPackage ./ghidra-mcp { }).ghidraPlugin;
 
-  goose-server = callPackage ./goose/goose.nix { gooseBin = "goosed"; };
-  goose-cli = callPackage ./goose/goose.nix { gooseBin = "goose"; };
-  goose-desktop = callPackage ./goose/desktop.nix { inherit goose-server; };
+  goose-cli = callPackage ./goose/goose.nix { };
+  goose-desktop = callPackage ./goose/desktop.nix { inherit goose-cli; };
 
   grafana-mcp = callPackage ./grafana-mcp { };
 

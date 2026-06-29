@@ -205,9 +205,8 @@
                 excalidraw-mcp-app = callPackage' ./package/excalidraw-mcp-app { };
                 ghidra-mcp = callPackage' ./package/ghidra-mcp { };
                 ghidra-mcp-plugin = (callPackage' ./package/ghidra-mcp { }).ghidraPlugin;
-                goose-server = callPackage' ./package/goose/goose.nix { gooseBin = "goosed"; };
-                goose-cli = callPackage' ./package/goose/goose.nix { gooseBin = "goose"; };
-                goose-desktop = callPackage' ./package/goose/desktop.nix { inherit goose-server; };
+                goose-cli = callPackage' ./package/goose/goose.nix { };
+                goose-desktop = callPackage' ./package/goose/desktop.nix { inherit goose-cli; };
                 grafana-mcp = callPackage' ./package/grafana-mcp { };
                 hibiki = callPackage' ./package/hibiki { };
                 kubernetes-client-tools = callPackage' ./package/kubernetes-client-tools { };
@@ -230,7 +229,6 @@
                 excalidraw-mcp-app = excalidraw-mcp-app;
                 ghidra-mcp = ghidra-mcp;
                 ghidra-mcp-plugin = ghidra-mcp-plugin;
-                goose-server = goose-server;
                 goose-cli = goose-cli;
                 goose-desktop = goose-desktop;
                 grafana-mcp = grafana-mcp;

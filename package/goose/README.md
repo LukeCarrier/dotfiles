@@ -78,7 +78,7 @@ Inherited from the main Goose build in [`goose.nix`](./goose.nix):
 
 ## Version Management
 
-All components share version **`1.41.0`**, sourced from the `v1.41.0` Git tag. When updating the version:
+All components share version **`1.43.0`**, sourced from the `v1.43.0` Git tag. When updating the version:
 
 1. Update the `version` string in `server.nix` and `desktop.nix`.
 2. Update the `tag` and `hash` in `fetchFromGitHub` to match the new tag.

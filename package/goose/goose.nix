@@ -1,6 +1,4 @@
 {
-  gooseBin,
-
   lib,
   stdenv,
   callPackage,
@@ -35,16 +33,30 @@
   wtype,
   wl-clipboard,
 }:
-
 let
+  basePath = lib.makeBinPath (
+    [
+      bash
+      python3
+    ]
+    ++ lib.optionals stdenv.hostPlatform.isLinux [
+      # X11
+      xdotool
+      wmctrl
+      xclip
+      xwininfo
+      # Wayland
+      wtype
+      wl-clipboard
+    ]
+  );
+
   # Download tokenisers ahead of build, as that step lacks network access.
-  # NOTE: When updating, also update the hash in goose-cli/librusty_v8.nix
   gpt4o-tokenizer = fetchurl {
     url = "https://huggingface.co/Xenova/gpt-4o/resolve/31376962e96831b948abe05d420160d0793a65a4/tokenizer.json";
     hash = "sha256-Q6OtRhimqTj4wmFBVOoQwxrVOmLVaDrgsOYTNXXO8H4=";
     meta.license = lib.licenses.mit;
   };
-
   claude-tokenizer = fetchurl {
     url = "https://huggingface.co/Xenova/claude-tokenizer/resolve/cae688821ea05490de49a6d3faa36468a4672fad/tokenizer.json";
     hash = "sha256-wkFzffJLTn98mvT9zuKaDKkD3LKIqLdTvDRqMJKRF2c=";
@@ -53,20 +65,20 @@ let
 in
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "goose-cli";
-  version = "1.41.0";
+  version = "1.43.0";
 
   src = fetchFromGitHub {
     owner = "aaif-goose";
     repo = "goose";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-6hTjZnrTyFOhWLTLN/sa7IAXQVcQ/08gWz21KEGANAE=";
+    hash = "sha256-lmeS+iOyZ262H9NykK3GFIEA7ipOnqnurRKPY8xbwKw=";
   };
 
-  cargoHash = "sha256-dnqj+aE/wu3vtt6yMJM9+mY+XHfbKA8KtlJnj0AsTIA=";
+  cargoHash = "sha256-OgYI8hVRUIY/Kl0PKJ+LZ98UCNrW7/p211EUtGOWwiI=";
 
   cargoBuildFlags = [
     "--bin"
-    gooseBin
+    "goose"
   ];
 
   nativeBuildInputs = [
@@ -95,25 +107,8 @@ rustPlatform.buildRustPackage (finalAttrs: {
   '';
 
   postFixup = ''
-    wrapProgram $out/bin/${gooseBin} \
-      --prefix PATH : ${
-        lib.makeBinPath (
-          [
-            bash
-            python3
-          ]
-          ++ lib.optionals stdenv.hostPlatform.isLinux [
-            # X11
-            xdotool
-            wmctrl
-            xclip
-            xwininfo
-            # Wayland
-            wtype
-            wl-clipboard
-          ]
-        )
-      }
+    wrapProgram $out/bin/goose \
+      --prefix PATH : ${basePath}
   '';
 
   nativeCheckInputs = [
@@ -172,7 +167,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     description = "The open source agent framework for automating the web and your computer";
     homepage = "https://github.com/aaif-goose/goose";
     license = lib.licenses.asl20;
-    mainProgram = gooseBin;
+    mainProgram = "goose";
     maintainers = with lib.maintainers; [
       cloudripper
       thardin

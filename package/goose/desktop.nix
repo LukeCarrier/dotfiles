@@ -1,5 +1,5 @@
 {
-  goose-server,
+  goose-cli,
   lib,
   stdenv,
   fetchFromGitHub,
@@ -9,7 +9,7 @@
 let
   inherit (lib) getExe optionalString;
   inherit (pkgs) electron fetchPnpmDeps makeDesktopItem;
-  version = "1.41.0";
+  version = "1.43.0";
 
   # nodejs 24.16.0 (pulled in by a nixpkgs-unstable bump) regressed electron-forge's
   # `package` step: the plugin-vite process-exit handler fires mid "Finalizing
@@ -26,17 +26,13 @@ let
     owner = "aaif-goose";
     repo = "goose";
     tag = "v${version}";
-    hash = "sha256-6hTjZnrTyFOhWLTLN/sa7IAXQVcQ/08gWz21KEGANAE=";
+    hash = "sha256-lmeS+iOyZ262H9NykK3GFIEA7ipOnqnurRKPY8xbwKw=";
   };
   src = stdenv.mkDerivation (finalAttrs: {
     pname = "goose-desktop";
     inherit version;
     src = rawSrc;
-    patches = [
-      ./patches/0001-chore-deps-allow-builds.patch
-      ./patches/0002-chore-deps-relocate-overrides.patch
-      ./patches/0003-chore-deps-use-hoisted-linker-for-electron-forge.patch
-    ];
+    patches = [ ];
     buildPhase = "true";
     installPhase = ''
       cp -a . $out
@@ -81,6 +77,7 @@ stdenv.mkDerivation (finalAttrs: {
     zip
     copyDesktopItems
     makeWrapper
+    asar
   ]);
 
   ELECTRON_SKIP_BINARY_DOWNLOAD = "1";
@@ -147,11 +144,32 @@ stdenv.mkDerivation (finalAttrs: {
     ''}
 
     ${optionalString stdenv.hostPlatform.isLinux ''
+      # Forge's extraResource: ['src/bin'] bundles resources/bin/goose — place
+      # the Nix-built binary there so findGooseBinaryPath discovers it naturally
+      # in packaged mode (GOOSE_BINARY env var is rejected when isPackaged=true).
+      mkdir -p $out/share/goose-desktop/resources/bin
+      cp ${getExe goose-cli} $out/share/goose-desktop/resources/bin/goose
+
+      # Our wrapper runs nixpkgs' electron binary directly, passing app.asar
+      # as an argument (see makeWrapper below), rather than a renamed,
+      # forge-produced executable. Electron derives `process.resourcesPath`
+      # from the running binary's own location in this case, so it resolves
+      # into electron's own store path instead of our resources dir. Bake in
+      # the real path at build time, the same way nixpkgs'
+      # youtube-music-desktop-app patches its packaged app.asar.
+      asar extract \
+        $out/share/goose-desktop/resources/app.asar \
+        patched-asar
+      sed -i "s#process\.resourcesPath#'$out/share/goose-desktop/resources'#g" \
+        patched-asar/.vite/build/main.js
+      rm $out/share/goose-desktop/resources/app.asar
+      asar pack patched-asar $out/share/goose-desktop/resources/app.asar
+      rm -rf patched-asar
+
       mkdir -p $out/bin
       makeWrapper ${getExe electron} "$out/bin/goose-desktop" \
          --add-flags "$out/share/goose-desktop/resources/app.asar" \
-         --set-default ELECTRON_FORCE_IS_PACKAGED 1 \
-         --set-default GOOSED_BINARY ${getExe goose-server}
+         --set ELECTRON_FORCE_IS_PACKAGED 1
 
       install -Dm644 src/images/icon.svg "$out/share/icons/hicolor/scalable/apps/goose.svg"
     ''}
