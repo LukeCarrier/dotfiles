@@ -42,10 +42,16 @@
       url = "github:LukeCarrier/falcon-sensor-nixos/leave-nixpkgs-alone";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
-    flake-utils.url = "github:numtide/flake-utils";
+    flake-utils = {
+      url = "github:numtide/flake-utils";
+      inputs.systems.follows = "systems";
+    };
     handy = {
       url = "github:cjpais/handy";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
+      inputs = {
+        nixpkgs.follows = "nixpkgs-unstable";
+        bun2nix.inputs.systems.follows = "systems";
+      };
     };
     home-manager = {
       url = "github:nix-community/home-manager/master";
@@ -96,6 +102,10 @@
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
+    systems = {
+      url = "path:./flake.systems.nix";
+      flake = false;
     };
     wezterm = {
       url = "github:wez/wezterm/main?dir=nix";
