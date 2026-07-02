@@ -1,3 +1,15 @@
+# Terraform credential helper for the 1Password CLI
+#
+# To use, configure in ~/.terraformrc as follows:
+#
+#     credentials_helper "op" {}
+#
+# Then confirm during terraform/tofu login that the following message is
+# printed before entering any credentials:
+#
+#     If login is successful, OpenTofu will store the token in the configured
+#     "op" credentials helper for use by subsequent commands.
+
 set -euo pipefail
 
 readonly VAULT="Employee"
