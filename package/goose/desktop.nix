@@ -10,12 +10,27 @@ let
   inherit (lib) getExe optionalString;
   inherit (pkgs) electron makeDesktopItem;
   fetchPnpmDeps = (pkgs.callPackage ./fetch-pnpm-deps/default.nix { }).fetchPnpmDeps;
-  version = "1.38.0";
+  version = "1.41.0";
+
+  # nodejs 24.16.0 (pulled in by a nixpkgs-unstable bump) regressed electron-forge's
+  # `package` step: the plugin-vite process-exit handler fires mid "Finalizing
+  # package", so the packaged app is never written to out/ and the install phase's
+  # `mv out/Goose-*` finds nothing. Packaging runs under nodejs — electron is only
+  # bundled, never executed here — so pin the build toolchain's node to the last
+  # known-good 24.15.0. Revisit when a newer node no longer exhibits the race.
+  nodejsPinned =
+    (import (fetchTarball {
+      url = "https://github.com/NixOS/nixpkgs/archive/de51b6369f3e5dae8e71ac179f04cf1f42ba936d.tar.gz";
+      sha256 = "sha256-jGEYnI9HPEjIV3mwEGJs10IzrMgDaJdXLcWEO9lq2Z4=";
+    }) { inherit (stdenv.hostPlatform) system; }).nodejs;
+  pnpmDepsHashes = {
+    aarch64-darwin = "sha256-yagfbfR8laTr4Vp0mylfJ6FVwQgGAFXQdoFtv+zlE9A=";
+  };
   rawSrc = fetchFromGitHub {
     owner = "aaif-goose";
     repo = "goose";
     tag = "v${version}";
-    sha256 = "sha256-bR38jxh379Rp9ZU6Hd+1aKDl+88UkmWF/niwp8uB3aE=";
+    hash = "sha256-6hTjZnrTyFOhWLTLN/sa7IAXQVcQ/08gWz21KEGANAE=";
   };
   src = stdenv.mkDerivation (finalAttrs: {
     pname = "goose-desktop";
@@ -64,18 +79,19 @@ stdenv.mkDerivation (finalAttrs: {
     inherit version pnpm;
     src = "${src}/ui";
     fetcherVersion = 3;
-    hash = "sha256-nEUwkk42OEhDftzoX4KG5X7nuDq+pO8U7zckMdwnE8A=";
+    hash = lib.attrByPath [ stdenv.hostPlatform.system ] null pnpmDepsHashes;
   };
 
-  nativeBuildInputs =
-    [ pnpm ]
-    ++ (with pkgs; [
-      nodejs
-      pnpmConfigHook
-      zip
-      copyDesktopItems
-      makeWrapper
-    ]);
+  nativeBuildInputs = [
+    pnpm
+    nodejsPinned
+  ]
+  ++ (with pkgs; [
+    pnpmConfigHook
+    zip
+    copyDesktopItems
+    makeWrapper
+  ]);
 
   ELECTRON_SKIP_BINARY_DOWNLOAD = "1";
 
