@@ -45,6 +45,7 @@ in
     ../../../../component/ghostty/ghostty.nix
     ../../../../component/aws/aws.nix
     ../../../../component/docker/docker.nix
+    ../../../../component/helm/helm.nix
     ../../../../component/kubernetes-client/kubernetes-client.nix
     ../../../../component/lima/lima.nix
     ../../../../component/rust/cargo.nix

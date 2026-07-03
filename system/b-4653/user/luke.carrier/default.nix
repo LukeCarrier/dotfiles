@@ -16,6 +16,7 @@ in
     ../../../../platform/darwin/home.nix
     ../../../../employer/emed/emed.nix
     ../../../../component/docker/docker.nix
+    ../../../../component/helm/helm.nix
     ../../../../component/shell-essential/shell-essential.nix
     ../../../../component/homebrew/homebrew.nix
     ../../../../component/fonts/fonts.nix

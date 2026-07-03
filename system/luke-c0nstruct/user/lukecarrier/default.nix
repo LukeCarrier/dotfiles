@@ -56,6 +56,7 @@
     ../../../../component/rust/cargo.nix
     ../../../../component/aws/aws.nix
     ../../../../component/docker/docker.nix
+    ../../../../component/helm/helm.nix
     ../../../../component/kubernetes-client/kubernetes-client.nix
   ];
 
