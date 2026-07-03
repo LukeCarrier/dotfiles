@@ -214,7 +214,7 @@ in
   };
   programs.zsh.initContent = config.programs.bash.initExtra;
 
-  programs.librewolf.profiles.default =
+  programs.firefox.profiles.default =
     let
       browserActions = {
         "1password" = "_d634138d-c276-4fc8-924b-40a0ea21d284_-browser-action";
