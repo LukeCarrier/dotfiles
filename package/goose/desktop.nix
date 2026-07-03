@@ -145,6 +145,17 @@ stdenv.mkDerivation (finalAttrs: {
     mkdir -p $out/share
     mv out/Goose-* $out/share/goose-desktop
 
+    ${optionalString stdenv.hostPlatform.isDarwin ''
+      # Expose the .app under $out/Applications so Home Manager's macOS app
+      # linker (mac-app-util) — which scans each package's Applications/ dir —
+      # picks it up into ~/Applications/Home Manager Apps. Glob rather than
+      # hard-code the bundle name so a productName change can't silently drop it.
+      mkdir -p $out/Applications
+      for app in $out/share/goose-desktop/*.app; do
+        ln -s "$app" "$out/Applications/$(basename "$app")"
+      done
+    ''}
+
     ${optionalString stdenv.hostPlatform.isLinux ''
       mkdir -p $out/bin
       makeWrapper ${getExe electron} "$out/bin/goose-desktop" \
