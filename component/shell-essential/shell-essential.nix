@@ -9,7 +9,6 @@
       freshfetch
       pv
       unixtools.watch
-      watchexec
 
       # Development tools
       dotfiles-meta
