@@ -5,6 +5,7 @@ direct=0
 prefix=
 config="${AWS_CONFIG_FILE:-$HOME/.aws/config}"
 profile="$AWS_PROFILE"
+jobs="${AWS_SSO_GEN_PROFILES_JOBS:-8}"
 
 set -eu -o pipefail
 IFS=$'\n\t'
@@ -15,9 +16,29 @@ parse_args() {
       -d|--direct ) direct=1     ; shift   ;;
       -n|--prefix ) prefix="$2"  ; shift 2 ;;
       -p|--profile) profile="$2" ; shift 2 ;;
+      -j|--jobs   ) jobs="$2"    ; shift 2 ;;
       *           ) break                  ;;
     esac
   done
+}
+
+# Index the roles available in a single account, writing the resulting profile
+# stanzas (NUL-terminated, so they survive later sorting) to $outfile. Intended
+# to be launched in the background; relies on variables set up by main().
+process_account() {
+  local dest_account_index="$1" dest_account_id="$2" dest_account_name="$3" outfile="$4"
+  echo "$0: processing ${dest_account_name} (${dest_account_id}; $(( dest_account_index + 1 )) of ${num_accounts})" >&2
+  local template
+  if (( $direct == 0 )); then
+    template='.roleList[] | "[profile '"${prefix}${dest_account_name}"'--\(.roleName)]\nsso_session = '"$sso_session"'\nsso_account_id = '"$dest_account_id"'\nsso_role_name = \(.roleName)\u0000"'
+  else
+    template='.roleList[] | "[profile '"${prefix}${dest_account_name}"'--\(.roleName)]\nsso_start_url = '"$start_url"'\nsso_region = '"$sso_region"'\nsso_account_id = '"$dest_account_id"'\nsso_role_name = \(.roleName)\u0000"'
+  fi
+  aws sso list-account-roles \
+      --region "$sso_region" \
+      --access-token "${access_token}" \
+      --account-id "${dest_account_id}" \
+      --output json | jq -j "$template" > "$outfile"
 }
 
 main() {
@@ -66,21 +87,25 @@ main() {
       --output json)"
   local num_accounts="$(printf "%s" "$accounts" | jq -r '.accountList | length')"
   echo "$0: found ${num_accounts} accounts" >&2
-  printf "%s" "$accounts" | jq -r '.accountList | to_entries[] | [.key, .value.accountId, .value.accountName] | @tsv' | \
-    while IFS=$'\t' read -r dest_account_index dest_account_id dest_account_name; do
-      echo "$0: processing ${dest_account_name} (${dest_account_id}; $(( dest_account_index + 1 )) of ${num_accounts})" >&2
-      if (( $direct == 0 )); then
-        template='.roleList[] | "[profile '"${prefix}${dest_account_name}"'--\(.roleName)]\nsso_session = '"$sso_session"'\nsso_account_id = '"$dest_account_id"'\nsso_role_name = \(.roleName)"'
-      else
-        template='.roleList[] | "[profile '"${prefix}${dest_account_name}"'--\(.roleName)]\nsso_start_url = '"$start_url"'\nsso_region = '"$sso_region"'\nsso_account_id = '"$dest_account_id"'\nsso_role_name = \(.roleName)"'
-      fi
-      aws sso list-account-roles \
-          --region "$sso_region" \
-          --access-token "${access_token}" \
-          --account-id "${dest_account_id}" \
-          --output json | jq -r "$template"
-      printf "\n"
+  # Index each account's roles concurrently, capping at $jobs in flight so we
+  # don't overwhelm the SSO API. Each worker writes its stanzas to its own file
+  # so output can't interleave.
+  local workdir="$(mktemp -d)"
+  trap 'rm -rf "$workdir"' EXIT
+  while IFS=$'\t' read -r dest_account_index dest_account_id dest_account_name; do
+    while (( $(jobs -rp | wc -l) >= jobs )); do
+      wait -n
     done
+    process_account "$dest_account_index" "$dest_account_id" "$dest_account_name" \
+      "$workdir/$dest_account_index" &
+  done < <(printf "%s" "$accounts" | jq -r '.accountList | to_entries[] | [.key, .value.accountId, .value.accountName] | @tsv')
+  wait
+
+  # Collect every worker's stanzas, sort them (by profile name, since that heads
+  # each NUL-terminated record) and emit, one blank line between stanzas.
+  if compgen -G "$workdir/*" > /dev/null; then
+    cat "$workdir"/* | sort -z | awk 'BEGIN { RS = "\0"; ORS = "\n\n" } length'
+  fi
 }
 
 parse_args "$@"
