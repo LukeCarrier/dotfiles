@@ -19,8 +19,8 @@ buildPnpmPackage rec {
     hash = "sha256-EQuiz/lygmynJjBrcAkX5MTrqYKWpD4OP4mvWZfO87s=";
   };
 
-  pnpmDepsFetcherVersion = 3;
-  pnpmDepsHash = "sha256-VZEUVphs+qwiWe54xWfqsewjQfXsigArwLymYO/bCLc=";
+  pnpmDepsFetcherVersion = 4;
+  pnpmDepsHash = "sha256-a9hc2U1bKWsqsEUpYvw2IY/mcy4d7iPVgl/tUHUg1rk=";
 
   pnpmBuildScript = "build";
 
