@@ -72,8 +72,8 @@ in
       ui_font_size = 16;
       ui_font_weight = 500;
       buffer_font_size = 14;
-      ui_font_family = "IBM Plex Sans";
-      buffer_font_family = "MonaspiceKr Nerd Font";
+      ui_font_family = "Poppins";
+      buffer_font_family = "Monaspace Krypton";
       terminal = {
         font_size = 12;
         font_family = "MonaspiceKr Nerd Font";
