@@ -41,6 +41,11 @@ let
     }
   ) config.agents.commands;
 
+  buildSkillFiles = basePath:
+    lib.mapAttrs' (name: path:
+      lib.nameValuePair "${basePath}/${name}/SKILL.md" { source = path; }
+    ) config.agents.skills;
+
   inherit (lib) getExe getExe';
 
   # Lower one entry of the shared programs.mcp.servers shape into Claude Code's
@@ -111,7 +116,7 @@ let
   '';
 in
 {
-  imports = [ ../agents ];
+  imports = [ ../agents/agents.nix ];
 
   home.packages = with pkgs; [
     claude-code
@@ -126,5 +131,6 @@ in
 
   home.file = commandFiles // {
     ".claude/commands/adr/housekeeping.sh".source = ../agents/adr/housekeeping.sh;
-  };
+  }
+  // buildSkillFiles ".claude/skills";
 }

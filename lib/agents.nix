@@ -172,5 +172,11 @@
         default = { };
         description = "Agent role definitions, keyed by name.";
       };
+
+      options.agents.skills = mkOption {
+        type = types.attrsOf types.path;
+        default = { };
+        description = "Skills available to agents, keyed by skill name.";
+      };
     };
 }

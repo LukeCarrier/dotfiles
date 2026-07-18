@@ -6,6 +6,10 @@
 }:
 let
   agentsLib = import ../../lib/agents.nix { inherit lib; };
+  buildSkillFiles = basePath:
+    lib.mapAttrs' (name: path:
+      lib.nameValuePair "${basePath}/${name}/SKILL.md" { source = path; }
+    ) config.agents.skills;
   substitute = agentsLib.substitute config lib;
 
   # programs.mcp.servers is home-manager's free-form jsonFormat.type option,
@@ -130,7 +134,7 @@ let
   };
 in
 {
-  imports = [ ../agents ];
+  imports = [ ../agents/agents.nix ];
 
   home.packages = [
     opencode
@@ -194,8 +198,8 @@ EOF
     ".config/opencode/AGENTS.md".source = ../agents/AGENTS.md;
     ".config/opencode/antigravity.json".source = ./antigravity.json;
     ".config/opencode/commands/adr.housekeeping.sh".source = ../agents/adr/housekeeping.sh;
-    ".config/opencode/skills/direnv/SKILL.md".source = ./skills/direnv/SKILL.md;
   }
   // commandFiles
-  // agentFiles;
+  // agentFiles
+  // buildSkillFiles ".config/opencode/skills";
 }

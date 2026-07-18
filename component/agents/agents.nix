@@ -1,21 +1,29 @@
 {
-  config,
   lib,
   pkgs,
   ...
 }:
-# Agent definition data. This is pure data: it populates the tool-agnostic
-# `agents.definitions` option (declared in lib/agents.nix), which each component
-# lowers into its own on-disk format — mirroring how `agents.commands` works.
-#
-# Each agent's body (system prompt) lives as Markdown under ./agent/<name>.md;
-# metadata (mode, temperature, tools, permissions) is defined here alongside the
-# body reference so both are in one module. OpenCode renders the full .md with
-# frontmatter; Goose wraps the body in a recipe; etc.
 let
   body = name: builtins.readFile (./agent + "/${name}.md");
+  adrBody = name: builtins.readFile (./adr + "/${name}.md");
+
+  featureParams = [
+    {
+      key = "feature_name";
+      description = "Feature name";
+    }
+    {
+      key = "current_date";
+      description = "Current date in YYYY-MM-DD format";
+    }
+  ];
 in
 {
+  imports = [
+    (import ../../lib/agents.nix { inherit lib; }).commandsModule
+    (import ../../lib/agents.nix { inherit lib; }).definitionsModule
+  ];
+
   sops.secrets.github-mcp-token = {
     format = "yaml";
     key = "mcp/github";
@@ -28,6 +36,57 @@ in
       "--toolsets=default,actions"
     ];
     env.GITHUB_PERSONAL_ACCESS_TOKEN = "@github-mcp-token@";
+  };
+
+  agents.skills = {
+    direnv = ./skills/direnv/SKILL.md;
+    jj = ./skills/jj/SKILL.md;
+  };
+
+  agents.commands = {
+    "adr.specify" = {
+      title = "ADR Specify";
+      description = "Generate or refine an ADR specification";
+      body = adrBody "specify";
+      agent = "adrian";
+    };
+    "adr.plan" = {
+      title = "ADR Plan";
+      description = "Create a technical plan based on an ADR specification";
+      body = adrBody "plan";
+      agent = "adrian";
+      parameters = featureParams;
+    };
+    "adr.tasks" = {
+      title = "ADR Tasks";
+      description = "Break an ADR plan into implementable tasks";
+      body = adrBody "tasks";
+      agent = "adrian";
+      parameters = featureParams;
+    };
+    "adr.implement" = {
+      title = "ADR Implement";
+      description = "Implement an ADR following defined tasks";
+      body = adrBody "implement";
+      maxTurns = 100;
+      timeout = 600;
+      parameters = featureParams;
+    };
+    "adr.reflect" = {
+      title = "ADR Reflect";
+      description = "Capture learnings and improve the ADR process";
+      body = adrBody "reflect";
+      agent = "adrian";
+      parameters = featureParams;
+    };
+    "adr.housekeeping" = {
+      title = "ADR Housekeeping";
+      description = "Maintains adrs/README.md with all ADRs grouped by status";
+      prompt = "Run the housekeeping script to regenerate the ADR README";
+      body = adrBody "housekeeping";
+      maxTurns = 10;
+      timeout = 60;
+    };
   };
 
   agents.definitions = {

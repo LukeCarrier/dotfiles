@@ -6,6 +6,10 @@
 }:
 let
   agentsLib = import ../../lib/agents.nix { inherit lib; };
+  buildSkillFiles = basePath:
+    lib.mapAttrs' (name: path:
+      lib.nameValuePair "${basePath}/${name}/SKILL.md" { source = path; }
+    ) config.agents.skills;
   substitute = agentsLib.substitute config lib;
   # programs.mcp.servers is home-manager's free-form jsonFormat.type option,
   # so we piggy-back on it as a shared source for our own generators and
@@ -120,7 +124,7 @@ let
 
 in
 {
-  imports = [ ../agents ];
+  imports = [ ../agents/agents.nix ];
 
   sops = {
     # Rendered to staging files; the activation script below deep-merges them
@@ -183,12 +187,11 @@ in
 
       ".config/goose/recipes/adr.yaml".source = adrYaml;
       ".config/goose/recipes/adr/housekeeping.sh".source = ../agents/adr/housekeeping.sh;
-
-      ".agents/skills/direnv/SKILL.md".source = ./skills/direnv/SKILL.md;
     }
     // lib.mapAttrs' (
       name: file: lib.nameValuePair ".config/goose/recipes/${recipePath name}" { source = file; }
     ) recipeFiles
-    // agentRecipeFiles;
+    // agentRecipeFiles
+    // buildSkillFiles ".agents/skills";
   };
 }

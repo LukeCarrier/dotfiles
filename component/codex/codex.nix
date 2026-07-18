@@ -8,6 +8,11 @@ let
   agentsLib = import ../../lib/agents.nix { inherit lib; };
   substitute = agentsLib.substitute config lib;
 
+  buildSkillFiles = basePath:
+    lib.mapAttrs' (name: path:
+      lib.nameValuePair "${basePath}/${name}/SKILL.md" { source = path; }
+    ) config.agents.skills;
+
   # Lower a tool-agnostic command definition (config.agents.commands) into a
   # Codex custom prompt: YAML frontmatter followed by the shared body. Codex
   # prompts are flat Markdown files whose name becomes the slash command
@@ -32,14 +37,14 @@ let
 
   promptFiles = lib.mapAttrs' (
     name: cmd:
-    lib.nameValuePair ".codex/prompts/${name}.md" {
+    lib.nameValuePair ".config/codex/prompts/${name}.md" {
       source = pkgs.writeText "${name}.md" (buildCodexPrompt cmd);
     }
   ) config.agents.commands;
 
   # Lower the shared agent definition shape into Codex prompt files. Codex does
   # not expose a separate agent directory, so these prompts are the Codex-native
-  # artifact that keeps the reusable definitions available in ~/.codex.
+  # artifact that keeps the reusable definitions available in ~/.config/codex/.
   buildCodexAgent =
     name: agent:
     pkgs.writeText "${name}.md" (
@@ -82,7 +87,7 @@ let
 
   agentFiles = lib.mapAttrs' (
     name: agent:
-    lib.nameValuePair ".codex/prompts/${name}.md" {
+    lib.nameValuePair ".config/codex/prompts/${name}.md" {
       source = buildCodexAgent name agent;
     }
   ) config.agents.definitions;
@@ -141,7 +146,7 @@ let
     yq="${getExe pkgs.yq-go}"
     jq="${getExe pkgs.jq}"
     codex="${getExe pkgs.codex}"
-    config="$HOME/.codex/config.toml"
+    config="$HOME/.config/codex/config.toml"
 
     mapfile -t servers < <(
       "$yq" -p toml -o json '.mcp_servers // {} | keys' "$config" 2>/dev/null | "$jq" -r '.[]' | sort | \
@@ -158,7 +163,7 @@ let
   '';
 in
 {
-  imports = [ ../agents ];
+  imports = [ ../agents/agents.nix ];
 
   home.packages = with pkgs; [
     codex
@@ -173,7 +178,7 @@ in
     # `codex -c mcp_servers.<name>.enabled=true` or a profile.
     templates."codex-config-mcp.toml" = {
       content = mcpConfigToml;
-      path = "${config.home.homeDirectory}/.codex/.config.toml.mcp";
+      path = "${config.home.homeDirectory}/.config/codex/.config.toml.mcp";
     };
   };
 
@@ -181,8 +186,8 @@ in
   # existing then MCP (so MCP wins — store paths stay fresh and declarative),
   # preserving the user's other settings and any servers they added themselves.
   home.activation.codexConfig = lib.hm.dag.entryAfter [ "writeBoundary" "sops-nix" ] ''
-    mcp="${config.home.homeDirectory}/.codex/.config.toml.mcp"
-    target="$HOME/.codex/config.toml"
+    mcp="${config.home.homeDirectory}/.config/codex/.config.toml.mcp"
+    target="$HOME/.config/codex/config.toml"
     if [ -r "$mcp" ]; then
       tmp="$(mktemp)"
       if [ -e "$target" ] && ${pkgs.yq-go}/bin/yq -p toml -o toml '.' "$target" >/dev/null 2>&1; then
@@ -198,7 +203,8 @@ in
   # Codex ignores non-Markdown files in the prompts directory, so the shared
   # housekeeping helper rides along as a reference copy.
   home.file = promptFiles // agentFiles // {
-    ".codex/AGENTS.md".source = ../agents/AGENTS.md;
-    ".codex/prompts/adr.housekeeping.sh".source = ../agents/adr/housekeeping.sh;
-  };
+    ".config/codex/AGENTS.md".source = ../agents/AGENTS.md;
+    ".config/codex/prompts/adr.housekeeping.sh".source = ../agents/adr/housekeeping.sh;
+  }
+  // buildSkillFiles ".config/codex/skills";
 }
