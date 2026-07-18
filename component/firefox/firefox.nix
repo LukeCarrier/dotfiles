@@ -39,6 +39,7 @@ in
         markDownload = "_1c5e4c6f-5530-49a3-b216-31ce7d744db0_-browser-action";
         progressiveWebAppsForFirefox = "firefoxpwa_filips_si-browser-action";
         readAloud = "_ddc62400-f22d-4dd3-8b4a-05837de53c2e_-browser-action";
+        stylus = "_7a7a4a92-a2a0-41d1-9fd7-1e92480d612d_-browser-action";
         uBlockOrigin = "ublock0_raymondhill_net-browser-action";
         vimium = "_d7742d87-e61d-4b78-b8a1-b469842139fa_-browser-action";
         zotero = "zotero_chnm_gmu_edu-browser-action";
@@ -75,6 +76,7 @@ in
             istilldontcareaboutcookies
             read-aloud
             refined-github
+            stylus
             ublock-origin
             vimium
             zotero-connector
@@ -197,6 +199,7 @@ in
                 markDownload
                 refinedGitHub
                 progressiveWebAppsForFirefox
+                stylus
                 readAloud
                 uBlockOrigin
                 vimium
