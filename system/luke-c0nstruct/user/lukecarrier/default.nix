@@ -94,7 +94,6 @@
     crane
     skopeo
     hibiki
-    monaspace-fonts
     obsbot-camera-control-cli
     obsbot-camera-control-gui
     nautilus

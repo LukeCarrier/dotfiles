@@ -85,7 +85,6 @@
     crane
     github-cli-tools
     skopeo
-    monaspace-fonts
     obsbot-camera-control-cli
     obsbot-camera-control-gui
     stklos

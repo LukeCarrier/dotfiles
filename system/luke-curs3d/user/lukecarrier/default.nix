@@ -87,7 +87,6 @@
   home.packages = with pkgs; [
     crane
     skopeo
-    monaspace-fonts
     nautilus
   ];
 
