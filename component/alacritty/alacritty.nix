@@ -18,7 +18,7 @@
 
       font = {
         size = 12;
-        normal.family = "MonaspiceKr NF";
+        normal.family = builtins.elemAt config.fonts.fontconfig.defaultFonts.monospace 1;
       };
 
       mouse.hide_when_typing = true;

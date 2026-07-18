@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 {
   home.packages = [ pkgs.mako ];
 
@@ -9,7 +9,7 @@
       border-radius = 8;
       border-size = 3;
       group-by = "app-name";
-      font = "Poppins 12";
+      font = "${builtins.elemAt config.fonts.fontconfig.defaultFonts.sansSerif 0} 12";
       background-color = "#000000bf";
       text-color = "#ffffff";
     };

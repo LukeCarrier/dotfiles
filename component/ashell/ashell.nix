@@ -1,11 +1,11 @@
-{ ... }:
+{ config, ... }:
 {
   programs.ashell = {
     enable = true;
     systemd.enable = true;
     settings = {
       appearance = {
-        font_name = "Poppins";
+        font_name = builtins.elemAt config.fonts.fontconfig.defaultFonts.sansSerif 0;
         opacity = 0.8;
         menu.opacity = 0.8;
         primary_color = "#7aa2f7";

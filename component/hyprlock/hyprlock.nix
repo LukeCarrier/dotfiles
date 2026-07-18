@@ -39,7 +39,7 @@ in
           text = ''cmd[update:1000] echo "$TIME"'';
           color = "rgba(200, 200, 200, 1.0)";
           font_size = 55;
-          font_family = "Poppins";
+          font_family = builtins.elemAt config.fonts.fontconfig.defaultFonts.sansSerif 0;
           position = "-100, 70";
           halign = "right";
           valign = "bottom";

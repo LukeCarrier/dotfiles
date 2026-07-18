@@ -56,8 +56,8 @@
   gtk = {
     enable = true;
     font = {
-      package = pkgs.poppins;
-      name = "Poppins";
+      package = pkgs.inter;
+      name = "Inter";
     };
     theme = {
       package = pkgs.colloid-gtk-theme;

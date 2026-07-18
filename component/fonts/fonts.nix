@@ -8,6 +8,8 @@
 
     font-awesome
 
+    inter
+
     liberation_ttf
 
     monaspace
@@ -27,8 +29,8 @@
     hinting = "full";
 
     defaultFonts = {
-      monospace = [ "Monaspace Krypton" ];
-      sansSerif = [ "Poppins" ];
+      monospace = [ "Monaspace Krypton" "MonaspiceKr Nerd Font" ];
+      sansSerif = [ "Inter" ];
       serif = [ "Crimson Pro" ];
     };
   };

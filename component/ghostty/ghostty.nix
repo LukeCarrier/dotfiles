@@ -1,6 +1,8 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 let
   inherit (pkgs) stdenv;
+  inherit (config.fonts.fontconfig.defaultFonts) monospace;
+  primaryFont = builtins.elemAt monospace 1;
 in
 {
   programs.ghostty = {
@@ -18,10 +20,10 @@ in
       window-padding-x = 8;
       window-padding-y = 8;
 
-      font-family = "MonaspiceKr NF";
-      font-family-bold = "MonaspiceKr NF Bold";
-      font-family-italic = "MonaspiceKr NF Italic";
-      font-family-bold-italic = "MonaspiceKr NF Bold Italic";
+      font-family = primaryFont;
+      font-family-bold = "${primaryFont} Bold";
+      font-family-italic = "${primaryFont} Italic";
+      font-family-bold-italic = "${primaryFont} Bold Italic";
       font-size = 12;
 
       theme = "TokyoNight Storm";

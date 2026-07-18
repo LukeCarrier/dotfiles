@@ -1,6 +1,7 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 let
   inherit (pkgs) stdenv;
+  inherit (config.fonts.fontconfig) defaultFonts;
   dummy = stdenv.mkDerivation {
     pname = "dummy";
     version = "0";
@@ -72,11 +73,11 @@ in
       ui_font_size = 16;
       ui_font_weight = 500;
       buffer_font_size = 14;
-      ui_font_family = "Poppins";
-      buffer_font_family = "Monaspace Krypton";
+      ui_font_family = builtins.elemAt defaultFonts.sansSerif 0;
+      buffer_font_family = builtins.elemAt defaultFonts.monospace 0;
       terminal = {
         font_size = 12;
-        font_family = "MonaspiceKr Nerd Font";
+        font_family = builtins.elemAt defaultFonts.monospace 1;
       };
 
       # Edit predictions

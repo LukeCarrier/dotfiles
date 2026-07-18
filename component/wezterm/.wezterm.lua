@@ -8,7 +8,7 @@ config.enable_wayland = true
 config.front_end = "WebGpu"
 
 config.window_frame = {
-  font = wezterm.font { family = 'Poppins' },
+  font = wezterm.font { family = 'Inter' },
 }
 config.adjust_window_size_when_changing_font_size = false
 config.window_background_opacity = 0.85
@@ -18,7 +18,7 @@ config.command_palette_font_size = 18.0
 config.use_fancy_tab_bar = true
 config.hide_tab_bar_if_only_one_tab = true
 
-config.font = wezterm.font('MonaspiceKr NF')
+config.font = wezterm.font('MonaspiceKr Nerd Font')
 config.font_size = 14.0
 
 config.color_scheme = 'Tokyo Night Storm'

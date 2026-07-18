@@ -8,7 +8,7 @@
     @define-color alert #eb4d4b;
 
     * {
-      font-family: "Poppins", "Font Awesome 6 Free";
+      font-family: "${builtins.elemAt config.fonts.fontconfig.defaultFonts.sansSerif 0}", "Font Awesome 6 Free";
     }
 
     window, #outer-box {

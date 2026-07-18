@@ -1,4 +1,7 @@
-{ lib, pkgs, ... }:
+{ config, lib, pkgs, ... }:
+let
+  inherit (config.fonts.fontconfig.defaultFonts) monospace;
+in
 {
   xdg.mimeApps.defaultApplications =
     let
@@ -84,11 +87,9 @@
         "editor.bracketPairColorization.enabled" = true;
         "editor.lineNumbers" = "relative";
         # Fonts
-        "editor.fontFamily" =
-          "'MonaspiceKr NF', 'JetBrains Mono', 'Cascadia Code', Menlo, Monaco, Consolas, 'Courier New', monospace";
+        "editor.fontFamily" = "'${builtins.elemAt monospace 0}', monospace";
         "editor.fontSize" = 13;
-        "terminal.integrated.fontFamily" =
-          "'JetBrainsMono Nerd Font', 'JetBrains Mono', 'CaskaydiaCove Nerd Font', 'Cascadia Code PL', 'Cascadia Code', Menlo, Monaco, Consolas, 'Courier New', monospace";
+        "terminal.integrated.fontFamily" = "'${builtins.elemAt monospace 1}', monospace";
         "terminal.integrated.fontSize" = 13;
         "editor.fontLigatures" = true;
         "disableLigatures.mode" = "Cursor";
