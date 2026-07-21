@@ -31,10 +31,11 @@
     ../../../../component/firefox/firefox.nix
     ../../../../component/bitwarden/bitwarden.nix
     ../../../../component/handy/nixos-home.nix
+    ../../../../component/agentkit/agentkit.nix
     ../../../../component/codex/codex.nix
     ../../../../component/goose/goose.nix
     ../../../../component/opencode/opencode.nix
-    ../../../../component/agentkit/agentkit.nix
+    ../../../../component/pi/pi.nix
     ../../../../component/openssh/openssh.nix
     ../../../../component/atuin/atuin.nix
     ../../../../component/starship/starship.nix

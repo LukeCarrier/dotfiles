@@ -1,0 +1,75 @@
+# Agent Configuration
+
+Central configuration for AI coding agents (opencode, goose, claude-code, codex, pi).
+
+## Architecture
+
+Agent configurations follow a three-layer plumbing pattern:
+
+```
+lib/agents.nix
+  └─ declares shared options: agents.commands, agents.definitions, agents.skills
+  └─ provides substitute() for @SOPS_PLACEHOLDER@ resolution
+
+component/agents/agents.nix
+  └─ supplies concrete values for those options
+  └─ single source of truth for roles, commands, and skills
+
+component/<name>/<name>.nix
+  └─ lowers shared config into agent-native format
+  └─ e.g. opencode → YAML frontmatter .md files under .config/opencode/
+  └─ e.g. goose → JSON recipe .yaml files under .config/goose/
+```
+
+Each harness imports `../agents/agents.nix`, reads from `config.agents.*`, and generates the agent-specific on-disk layout. The shared options module (`lib/agents.nix`) provides three option trees:
+
+- **`config.agents.commands`** — slash commands / recipes (tool-agnostic description)
+- **`config.agents.definitions`** — agent role definitions (system prompts, mode, permissions)
+- **`config.agents.skills`** — procedural knowledge modules referenced by path
+
+MCP server configuration lives under `config.programs.mcp.servers` (home-manager's free-form type) and is lowered into each agent's MCP config format by the harness. SOPS placeholders are resolved at activation time via the `substitute` function.
+
+## Agents
+
+| Agent | Mode | Role |
+|-------|------|------|
+| **Adrian** | primary | ADR architect — leads the specification → plan → tasks cycle |
+| **Edmund** | primary | Read-only explorer for codebase analysis and questions |
+| **Litterbox** | primary | Isolated sandbox executor for untrusted code |
+| **Quest** | subagent | Quality analyst — identifies testing gaps and quality risks |
+| **Scout** | subagent | Security analyst — reviews for vulnerabilities and insecure patterns |
+
+System prompts live in `agent/*.md`. Subagent definitions reference a model override (e.g. `claude-sonnet-4.5`) that the harness resolves against available providers.
+
+## Commands
+
+ADR workflow commands in `adr/*.md`, routed to Adrian for the planning steps:
+
+| Command | Agent | Purpose |
+|---------|-------|---------|
+| `adr.specify` | Adrian | Build or refine `spec.md` |
+| `adr.plan` | Adrian | Create technical plan in `plan.md` |
+| `adr.tasks` | Adrian | Break plan into implementable tasks in `tasks.md` |
+| `adr.implement` | (general) | Execute implementation per tasks |
+| `adr.reflect` | Adrian | Capture learnings and improve instructions |
+| `adr.housekeeping` | (general) | Regenerate ADR README index |
+
+Parameters (feature name, current date) are declared in `agents.nix` and lowered per-format.
+
+## Skills
+
+| Skill | Source | Purpose |
+|-------|--------|---------|
+| `direnv` | `skills/direnv/SKILL.md` | Environment variable handling via direnv |
+| `jj` | `skills/jj/SKILL.md` | Jujutsu version control operations |
+| `pr-check-failure` | `skills/pr-check-failure/SKILL.md` | Diagnosing failing CI checks and build breaks |
+
+Skills are installed by each harness into the agent's config directory. The shared code at `skills/<name>/SKILL.md` is the canonical copy.
+
+## Cross-cutting concerns
+
+**SOPS secrets**: MCP server tokens are declared in `agents.nix` and substituted at activation by the harness. Add new secrets via `sops.secrets.<name>` in `agents.nix` and reference them with `@<name>@` in the server definition.
+
+**Housekeeping script**: `adr/housekeeping.sh` synchronises the ADR README index. Harnesses copy it into their config tree.
+
+**AGENTS.md**: `AGENTS.md` contains ground-rules shared across all harnesses. Each component links it into its config directory.
