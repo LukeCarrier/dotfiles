@@ -41,6 +41,7 @@ in
   agents.skills = {
     direnv = ./skills/direnv/SKILL.md;
     jj = ./skills/jj/SKILL.md;
+    pr-check-failure = ./skills/pr-check-failure/SKILL.md;
   };
 
   agents.commands = {
