@@ -6,6 +6,8 @@ in
 rec {
   aws-cli-tools = callPackage ./aws-cli-tools { };
 
+  buzz = callPackage ./buzz { };
+
   bw-cli-tools = callPackage ./bw-cli-tools { };
 
   docker-cli-tools = callPackage ./docker-cli-tools { };
