@@ -50,4 +50,6 @@ rec {
   spec-kit = callPackage ./spec-kit { };
 
   stklos = callPackage ./stklos { };
+
+  toon-cli = callPackage ./toon-cli { };
 }

@@ -226,6 +226,7 @@
                 rift = callPackage' ./package/rift { };
                 spec-kit = callPackage' ./package/spec-kit { };
                 stklos = callPackage' ./package/stklos { };
+                toon-cli = callPackage' ./package/toon-cli { };
               in
               {
                 aws-cli-tools = aws-cli-tools;
@@ -252,6 +253,7 @@
                 rift = rift;
                 spec-kit = spec-kit;
                 stklos = stklos;
+                toon-cli = toon-cli;
 
                 niri-float-sticky = niri-float-sticky.packages.${system}.niri-float-sticky;
 
