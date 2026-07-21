@@ -17,6 +17,14 @@ let
       description = "Current date in YYYY-MM-DD format";
     }
   ];
+
+  # Review subagents: read-only on codebase, return findings via Task tool.
+  reviewPermissions = {
+    bash = "allow";
+    edit = "deny";
+    write = "deny";
+    webfetch = "allow";
+  };
 in
 {
   imports = [
@@ -39,6 +47,7 @@ in
   };
 
   agents.skills = {
+    code-review = ./skills/code-review/SKILL.md;
     direnv = ./skills/direnv/SKILL.md;
     jj = ./skills/jj/SKILL.md;
     pr-check-failure = ./skills/pr-check-failure/SKILL.md;
@@ -158,30 +167,44 @@ in
       };
     };
 
-    quest = {
-      description = "Quality Analyst";
+    archie = {
+      description = "Architecture Reviewer";
       mode = "subagent";
-      model = "github-copilot/claude-sonnet-4.5";
+      temperature = 0.1;
+      body = body "archie";
+      permission = reviewPermissions;
+    };
+
+    ollie = {
+      description = "Operations Engineer";
+      mode = "subagent";
+      temperature = 0.1;
+      body = body "ollie";
+      permission = reviewPermissions;
+    };
+
+    paige = {
+      description = "Product Reviewer";
+      mode = "subagent";
+      temperature = 0.1;
+      body = body "paige";
+      permission = reviewPermissions;
+    };
+
+    quest = {
+      description = "QA Engineer";
+      mode = "subagent";
       temperature = 0.1;
       body = body "quest";
-      permission = {
-        bash = "allow";
-        edit = "allow";
-        webfetch = "allow";
-      };
+      permission = reviewPermissions;
     };
 
     scout = {
-      description = "Security Analyst";
+      description = "Security Engineer";
       mode = "subagent";
-      model = "github-copilot/claude-sonnet-4.5";
       temperature = 0.1;
       body = body "scout";
-      permission = {
-        bash = "allow";
-        edit = "allow";
-        webfetch = "allow";
-      };
+      permission = reviewPermissions;
     };
   };
 }

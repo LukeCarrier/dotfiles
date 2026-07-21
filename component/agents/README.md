@@ -36,8 +36,11 @@ MCP server configuration lives under `config.programs.mcp.servers` (home-manager
 | **Adrian** | primary | ADR architect — leads the specification → plan → tasks cycle |
 | **Edmund** | primary | Read-only explorer for codebase analysis and questions |
 | **Litterbox** | primary | Isolated sandbox executor for untrusted code |
-| **Quest** | subagent | Quality analyst — identifies testing gaps and quality risks |
-| **Scout** | subagent | Security analyst — reviews for vulnerabilities and insecure patterns |
+| **Archie** | subagent | Architecture reviewer — structure, clarity, convention |
+| **Ollie** | subagent | Operations engineer — performance, reliability, configuration, observability |
+| **Paige** | subagent | Product reviewer — completeness, functional correctness (vs spec) |
+| **Quest** | subagent | QA engineer — test coverage, edge cases, regression quality |
+| **Scout** | subagent | Security engineer — vulnerabilities, threat model, data handling |
 
 System prompts live in `agent/*.md`. Subagent definitions reference a model override (e.g. `claude-sonnet-4.5`) that the harness resolves against available providers.
 
@@ -60,6 +63,7 @@ Parameters (feature name, current date) are declared in `agents.nix` and lowered
 
 | Skill | Source | Purpose |
 |-------|--------|---------|
+| `code-review` | `skills/code-review/SKILL.md` | Multi-agent code review with specialised reviewers |
 | `direnv` | `skills/direnv/SKILL.md` | Environment variable handling via direnv |
 | `jj` | `skills/jj/SKILL.md` | Jujutsu version control operations |
 | `pr-check-failure` | `skills/pr-check-failure/SKILL.md` | Diagnosing failing CI checks and build breaks |
