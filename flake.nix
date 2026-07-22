@@ -205,6 +205,14 @@
               let
                 callPackage' = prev.callPackage;
                 aws-cli-tools = callPackage' ./package/aws-cli-tools { };
+                buzz-acp = callPackage' ./package/buzz/acp.nix { };
+                buzz-agent = callPackage' ./package/buzz/agent.nix { };
+                buzz-cli = callPackage' ./package/buzz/cli.nix { };
+                buzz-dev-mcp = callPackage' ./package/buzz/dev-mcp.nix { };
+                buzz-desktop = callPackage' ./package/buzz/desktop.nix {
+                  inherit buzz-acp buzz-agent buzz-cli buzz-dev-mcp git-credential-nostr;
+                };
+                git-credential-nostr = callPackage' ./package/buzz/git-credential-nostr.nix { };
                 bw-cli-tools = callPackage' ./package/bw-cli-tools { };
                 docker-cli-tools = callPackage' ./package/docker-cli-tools { };
                 github-cli-tools = callPackage' ./package/github-cli-tools { };
@@ -230,6 +238,8 @@
               in
               {
                 aws-cli-tools = aws-cli-tools;
+                buzz-cli = buzz-cli;
+                buzz-desktop = buzz-desktop;
                 bw-cli-tools = bw-cli-tools;
                 docker-cli-tools = docker-cli-tools;
                 github-cli-tools = github-cli-tools;

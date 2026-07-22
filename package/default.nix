@@ -2,11 +2,29 @@
 let
   inherit (pkgs) callPackage;
   obsbot-camera-control = callPackage ./obsbot-camera-control { };
+
+  buzzAcp = callPackage ./buzz/acp.nix { };
+  buzzAgent = callPackage ./buzz/agent.nix { };
+  buzzCli = callPackage ./buzz/cli.nix { };
+  buzzDevMcp = callPackage ./buzz/dev-mcp.nix { };
+  gitCredentialNostr = callPackage ./buzz/git-credential-nostr.nix { };
 in
 rec {
   aws-cli-tools = callPackage ./aws-cli-tools { };
 
-  buzz = callPackage ./buzz { };
+  buzz-acp = buzzAcp;
+  buzz-agent = buzzAgent;
+  buzz-cli = buzzCli;
+  buzz-dev-mcp = buzzDevMcp;
+  git-credential-nostr = gitCredentialNostr;
+
+  buzz-desktop = callPackage ./buzz/desktop.nix {
+    "buzz-acp" = buzzAcp;
+    "buzz-agent" = buzzAgent;
+    "buzz-cli" = buzzCli;
+    "buzz-dev-mcp" = buzzDevMcp;
+    "git-credential-nostr" = gitCredentialNostr;
+  };
 
   bw-cli-tools = callPackage ./bw-cli-tools { };
 

@@ -84,7 +84,8 @@
 
   home.packages = with pkgs; [
     crane
-    buzz
+    buzz-cli
+    buzz-desktop
     github-cli-tools
     skopeo
     obsbot-camera-control-cli
