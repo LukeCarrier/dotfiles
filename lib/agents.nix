@@ -93,6 +93,11 @@
             default = [ ];
             description = "Ordered list of command parameters.";
           };
+          fixtures = mkOption {
+            type = types.attrsOf types.path;
+            default = { };
+            description = "Fixture files required by this command, keyed by filename.";
+          };
         };
       };
     in
@@ -174,7 +179,19 @@
       };
 
       options.agents.skills = mkOption {
-        type = types.attrsOf types.path;
+        type = types.attrsOf (types.submodule {
+          options = {
+            source = mkOption {
+              type = types.path;
+              description = "Path to the SKILL.md file.";
+            };
+            fixtures = mkOption {
+              type = types.attrsOf types.path;
+              default = { };
+              description = "Fixture files required by this skill, keyed by filename.";
+            };
+          };
+        });
         default = { };
         description = "Skills available to agents, keyed by skill name.";
       };

@@ -1,42 +1,44 @@
-Use `/adr.reflect` once `/adr.implement` finishes so you can codify what happened and tighten the process for next time.
+---
+status: draft
+created: 2026-01-21
+updated: 2026-01-21
+author: Luke Carrier
+---
 
-## Preparation
+# `adr.reflect`
 
-1. Current date:
+Write a retrospective in TOON format. This is an optional final step after implementation.
 
-   ```
-   !date +"%Y-%m-%d"
-   ```
+## Usage
 
-2. Feature name:
-
-   ```
-   $1
-   ```
-
-3. Gather `spec.md`, `plan.md`, `tasks.md`, commit history, and any runbooks or incident notes.
+```
+/adr.reflect <feature-slug>
+```
 
 ## Process
 
-1. **Review the cycle** — Compare the shipped implementation to each ADR artifact. Note mismatches, missing tests, or contradictions (e.g., pruning behavior vs. template/apply rules).
-2. **Document evidence** — Capture real metrics, test outcomes, and rollout notes. Avoid vague statements.
-3. **Record learnings** — Write a retrospective at `adrs/$currentDate-$featureName/retro.md` covering what worked, what failed, and concrete actions.
-4. **Propose improvements** — Call out updates needed in `agent/adrian.md`, command templates, skills, or repository structure (such as extracting workflow-matrix logic into scripts for testing).
-5. **Update statuses** — Set each ADR artifact `status` to `implemented` (or another accurate state) and run housekeeping.sh to update the index.
-6. **Request approvals** — Present any instruction or workflow changes to the user before editing agent docs.
+1. Read `adrs/<YYYY-MM-DD>-<feature-slug>/spec.toon`, `plan.toon`, and `tasks.toon`.
+2. Reflect on what went well, what didn't, and what could be improved.
+3. Write the retrospective to `adrs/<YYYY-MM-DD>-<feature-slug>/retro.toon` with the TOON schema below.
+4. Validate: `toon --decode adrs/<YYYY-MM-DD>-<feature-slug>/retro.toon | check-jsonschema --schemafile ${FIXTURES_DIR}/retro.schema.json /dev/stdin`. Fix any validation errors.
+5. Run `bash ${FIXTURES_DIR}/build.sh adrs/<YYYY-MM-DD>-<feature-slug>` to generate `retro.md`.
+
+## TOON Schema
+
+```toon
+title: <Human-readable title>
+status: draft
+created: <YYYY-MM-DD>
+author: <name>
+wentWell[N]:
+  - <what went well>
+wentBadly[N]:
+  - <what didn't go well>
+improvements[N]:
+  - <process improvement>
+```
 
 ## Output
 
-- `adrs/$currentDate-$featureName/retro.md` summarizing the learnings.
-- `adrs/.meta/$currentDate-$featureName-retrospective.md` using the standard template.
-- Recommendations for instruction or tooling updates with clear owners.
-
-Keep the tone plain and actionable. The goal is to prevent future ambiguity by teaching the next agent exactly what to repeat or avoid.
-
-## Housekeeping
-
-Before finishing, run the housekeeping script so the ADR index stays up to date:
-
-```
-bash adrs/recipes/housekeeping.sh
-```
+- `adrs/<YYYY-MM-DD>-<feature-slug>/retro.toon` — structured retrospective in TOON
+- `adrs/<YYYY-MM-DD>-<feature-slug>/retro.md` — human-readable markdown (generated)

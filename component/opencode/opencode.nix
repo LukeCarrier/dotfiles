@@ -7,9 +7,24 @@
 let
   agentsLib = import ../../lib/agents.nix { inherit lib; };
   buildSkillFiles = basePath:
-    lib.mapAttrs' (name: path:
-      lib.nameValuePair "${basePath}/${name}/SKILL.md" { source = path; }
-    ) config.agents.skills;
+    builtins.foldl' (acc: name:
+      let
+        skill = config.agents.skills.${name};
+        prefix = "${basePath}/${name}";
+      in
+      acc
+      // { "${prefix}/SKILL.md".source = skill.source; }
+      // lib.mapAttrs' (fname: fpath:
+        lib.nameValuePair "${prefix}/${fname}" { source = fpath; }
+      ) skill.fixtures
+    ) { } (builtins.attrNames config.agents.skills);
+
+  buildCommandFixtures = commandsBase:
+    builtins.foldl' (acc: cmd:
+      acc // lib.mapAttrs' (fname: fpath:
+        lib.nameValuePair "${commandsBase}/${fname}" { source = fpath; }
+      ) (cmd.fixtures or { })
+    ) { } (builtins.attrValues config.agents.commands);
   substitute = agentsLib.substitute config lib;
 
   # programs.mcp.servers is home-manager's free-form jsonFormat.type option,
@@ -61,59 +76,78 @@ let
     ''
     + cmd.body;
 
+  substituteDirectives = let
+    search = "$" + "{FIXTURES_DIR}";
+    dir = "${config.home.homeDirectory}/.config/opencode/commands";
+  in ''
+    --replace '${search}' '${dir}'
+  '';
   commandFiles = lib.mapAttrs' (
     name: cmd:
     lib.nameValuePair ".config/opencode/commands/${name}.md" {
-      source = pkgs.writeText "${name}.md" (buildOpencodeCommand cmd);
+      source = pkgs.stdenv.mkDerivation {
+        name = "${name}.md";
+        src = pkgs.writeText "${name}-src.md" (buildOpencodeCommand cmd);
+        dontUnpack = true;
+        installPhase = ''
+          substitute "$src" "$TMPDIR/result" ${substituteDirectives}
+          mv "$TMPDIR/result" "$out"
+        '';
+      };
     }
   ) config.agents.commands;
 
   # Lower a tool-agnostic agent definition (config.agents.definitions) into an
   # opencode agent file: YAML frontmatter followed by the shared body.
-  buildOpencodeAgent =
-    name: agent:
-    pkgs.writeText "agent-${name}.md" (
-      let
-        isSafeKey = k: builtins.match "[a-zA-Z_][a-zA-Z0-9_-]*" k != null;
-        quoteIfNeeded = k: if isSafeKey k then k else ''"${k}"'';
-        safeVal = v: if v then "true" else "false";
+  buildOpencodeAgent = name: agent:
+    let
+      isSafeKey = k: builtins.match "[a-zA-Z_][a-zA-Z0-9_-]*" k != null;
+      quoteIfNeeded = k: if isSafeKey k then k else ''"${k}"'';
+      safeVal = v: if v then "true" else "false";
 
-        toolsLines = lib.concatStringsSep "\n" (
-          lib.mapAttrsToList (k: v: "  ${quoteIfNeeded k}: ${safeVal v}") agent.tools
+      toolsLines = lib.concatStringsSep "\n" (
+        lib.mapAttrsToList (k: v: "  ${quoteIfNeeded k}: ${safeVal v}") agent.tools
+      );
+
+      renderPermission = indent: attrs:
+        lib.concatStringsSep "\n" (
+          lib.mapAttrsToList (k: v:
+            if builtins.isAttrs v then
+              "${indent}${quoteIfNeeded k}:\n${renderPermission "${indent}  " v}"
+            else
+              "${indent}${quoteIfNeeded k}: ${v}"
+          ) attrs
         );
+    in
+    ''
+      ---
+      description: ${agent.description}
+      mode: ${agent.mode}
+      temperature: ${builtins.toString agent.temperature}
+    ''
+    + lib.optionalString (agent.model != null) "model: ${agent.model}\n"
+    + ''
+      tools:
+      ${toolsLines}
+      permission:
+      ${renderPermission "  " agent.permission}
+      ---
 
-        renderPermission = indent: attrs:
-          lib.concatStringsSep "\n" (
-            lib.mapAttrsToList (k: v:
-              if builtins.isAttrs v then
-                "${indent}${quoteIfNeeded k}:\n${renderPermission "${indent}  " v}"
-              else
-                "${indent}${quoteIfNeeded k}: ${v}"
-            ) attrs
-          );
-      in
-      ''
-        ---
-        description: ${agent.description}
-        mode: ${agent.mode}
-        temperature: ${builtins.toString agent.temperature}
-      ''
-      + lib.optionalString (agent.model != null) "model: ${agent.model}\n"
-      + ''
-        tools:
-        ${toolsLines}
-        permission:
-        ${renderPermission "  " agent.permission}
-        ---
-
-      ''
-      + agent.body
-    );
+    ''
+    + agent.body;
 
   agentFiles = lib.mapAttrs' (
     name: agent:
     lib.nameValuePair ".config/opencode/agent/${name}.md" {
-      source = buildOpencodeAgent name agent;
+      source = pkgs.stdenv.mkDerivation {
+        inherit name;
+        src = pkgs.writeText "${name}-src.md" (buildOpencodeAgent name agent);
+        dontUnpack = true;
+        installPhase = ''
+          substitute "$src" "$TMPDIR/result" ${substituteDirectives}
+          mv "$TMPDIR/result" "$out"
+        '';
+      };
     }
   ) config.agents.definitions;
 
@@ -197,9 +231,9 @@ EOF
   home.file = {
     ".config/opencode/AGENTS.md".source = ../agents/AGENTS.md;
     ".config/opencode/antigravity.json".source = ./antigravity.json;
-    ".config/opencode/commands/adr.housekeeping.sh".source = ../agents/adr/housekeeping.sh;
   }
   // commandFiles
   // agentFiles
-  // buildSkillFiles ".config/opencode/skills";
+  // buildSkillFiles ".config/opencode/skills"
+  // buildCommandFixtures ".config/opencode/commands";
 }

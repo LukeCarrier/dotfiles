@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["title", "status", "created", "author", "problem", "goals", "requirements", "nonFunctional", "acceptance"],
+  "properties": {
+    "title": { "type": "string" },
+    "status": { "type": "string", "enum": ["draft", "proposed", "accepted", "rejected", "implemented", "superseded"] },
+    "created": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+    "author": { "type": "string" },
+    "context": { "type": "string" },
+    "problem": { "type": "string" },
+    "goals": { "type": "array", "items": { "type": "string" } },
+    "nonGoals": { "type": "array", "items": { "type": "string" } },
+    "requirements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "slug", "description"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^FR-\\d+$" },
+          "title": { "type": "string" },
+          "slug": { "type": "string", "pattern": "^[a-z][a-z0-9-]+$" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "nonFunctional": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "slug", "description"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^NFR-\\d+$" },
+          "title": { "type": "string" },
+          "slug": { "type": "string", "pattern": "^[a-z][a-z0-9-]+$" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "acceptance": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "slug", "description"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^AC-\\d+$" },
+          "title": { "type": "string" },
+          "slug": { "type": "string", "pattern": "^[a-z][a-z0-9-]+$" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "edgeCases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "slug", "description"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^EC-\\d+$" },
+          "title": { "type": "string" },
+          "slug": { "type": "string", "pattern": "^[a-z][a-z0-9-]+$" },
+          "description": { "type": "string" }
+        }
+      }
+    }
+  }
+}

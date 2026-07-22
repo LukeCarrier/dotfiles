@@ -10,4 +10,4 @@ set -euo pipefail
 INPUT="${1:-/dev/stdin}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-toon decode "$INPUT" | jq -f "$SCRIPT_DIR/report.jq" -r
+toon --decode "$INPUT" | jq -f "$SCRIPT_DIR/report.jq" -r

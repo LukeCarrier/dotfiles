@@ -1,48 +1,74 @@
-Create a specification that another engineer could implement without guessing. Run this command when starting a feature or when requirements drift from earlier ADRs.
+---
+status: draft
+created: 2026-01-21
+updated: 2026-01-21
+author: Luke Carrier
+---
 
-## Preparation
+# `adr.specify`
 
-1. Capture the current date for the ADR folder name when creating a new record (use the original folder date when revisiting an ADR):
+Create an ADR specification in TOON format. This is the first stage of the ADR process.
 
-   ```
-   !date +"%Y-%m-%d"
-   ```
+## Usage
 
-2. Arguments:
-
-   ```
-   $ARGUMENTS
-   ```
-
-   - The first word is the feature slug.
-   - Everything after the first word is the short description.
+```
+/adr.specify <title> <description>
+```
 
 ## Process
 
-1. Read any existing ADRs for the same feature. List directories with the same slug in reverse chronological order so you inspect the most recent first. If more than one ADR might apply, use the question tool (when available) to ask the user which record to edit before proceeding. Align terminology with the chosen ADR; if disagreements exist, document them and resolve before proceeding.
-2. Interview the user (or restate requirements) until you can list measurable success criteria.
-3. Write in plain English. Explain the value, actors, and user journeys first.
-4. Enumerate functional and non-functional requirements. Each requirement must have acceptance criteria and references to metrics or observable states.
-5. Describe edge cases, failure handling, and regional nuances. Call out rules that differ per environment.
-6. Confirm that every requirement could be tested. If not, the requirement needs more detail.
+1. If the description is ambiguous, ask clarifying questions before writing.
+2. Check whether an existing ADR already covers this topic — if so, tell the user and stop.
+3. Write a specification file at `adrs/<YYYY-MM-DD>-<feature-slug>/spec.toon` with the TOON schema below.
+4. Validate the TOON structure against the schema: `toon --decode adrs/<YYYY-MM-DD>-<feature-slug>/spec.toon | check-jsonschema --schemafile ${FIXTURES_DIR}/spec.schema.json /dev/stdin`. Fix any validation errors.
+5. Run `bash ${FIXTURES_DIR}/build.sh adrs/<YYYY-MM-DD>-<feature-slug>` to generate `spec.md`.
+
+## TOON Schema
+
+The following fields are REQUIRED unless marked optional:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `title` | string | Human-readable feature title |
+| `status` | string | One of: `draft`, `proposed`, `accepted`, `rejected`, `implemented`, `superseded` |
+| `created` | string | `YYYY-MM-DD` |
+| `author` | string | Author name |
+| `context` | string (optional) | Background or motivating context |
+| `problem` | string | Concise problem statement |
+| `goals` | array of strings | Desired outcomes |
+| `nonGoals` | array of strings (optional) | Explicitly out of scope |
+| `requirements` | array of {id,title,slug,description} | Functional requirements (FR-NNN) |
+| `nonFunctional` | array of {id,title,slug,description} | Non-functional requirements (NFR-NNN) |
+| `acceptance` | array of {id,title,slug,description} | Acceptance criteria (AC-NNN) |
+| `edgeCases` | array of {id,title,slug,description} (optional) | Edge cases (EC-NNN) |
+
+### Example
+
+The jq renderer (`spec.jq`) parses this exact structure, so field names and nesting MUST match:
+
+```toon
+title: User Authentication
+status: draft
+created: 2026-07-23
+author: ADR Agent
+context:
+  The current login system lacks MFA support.
+problem: Users cannot authenticate with hardware security keys
+goals[2]:
+  - Add TOTP support
+  - Support WebAuthn
+requirements[2]{id,title,slug,description}:
+  FR-001,User Login,user-login,"Users authenticate via SSO"
+  FR-002,Hardware Keys,hardware-keys,"WebAuthn is supported for HSM-backed auth"
+nonFunctional[1]{id,title,slug,description}:
+  NFR-001,Session Expiry,session-expiry,"Sessions expire after 15 minutes of inactivity"
+acceptance[1]{id,title,slug,description}:
+  AC-001,Login Flow,login-flow, "SSO login completes in under 3 seconds"
+```
+
+Slugs are stable identifiers (lowercase-kebab-case) used for canonical addressing. They MUST NOT change after the spec is created — they form the traceability link between tasks and requirements. Tabular arrays use TOON's `{fields}` + CSV rows format; descriptions with commas, colons, or whitespace MUST be quoted.
 
 ## Output
 
-Produce `adrs/$currentDate-$featureName/spec.md` containing:
-
-- Problem statement and business context
-- User journeys / flows
-- Functional requirements with acceptance criteria
-- Non-functional requirements (latency, compliance, regions, etc.)
-- Edge cases, failure handling, and rollback expectations
-- Traceability back to any earlier specifications or contracts
-
-Set the YAML frontmatter fields (`status`, `created`, `updated`, `author`, `decision`). Update `status` when the spec becomes review-ready.
-
-## Housekeeping
-
-Before finishing, run the housekeeping script so the ADR index stays up to date:
-
-```
-bash adrs/recipes/housekeeping.sh
-```
+- `adrs/<YYYY-MM-DD>-<feature-slug>/spec.toon` — structured spec in TOON
+- `adrs/<YYYY-MM-DD>-<feature-slug>/spec.md` — human-readable markdown (generated by render script)

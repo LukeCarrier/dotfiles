@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["title", "wentWell", "wentBadly", "improvements"],
+  "properties": {
+    "title": { "type": "string" },
+    "wentWell": { "type": "array", "items": { "type": "string" } },
+    "wentBadly": { "type": "array", "items": { "type": "string" } },
+    "improvements": { "type": "array", "items": { "type": "string" } }
+  }
+}

@@ -7,9 +7,24 @@
 let
   agentsLib = import ../../lib/agents.nix { inherit lib; };
   buildSkillFiles = basePath:
-    lib.mapAttrs' (name: path:
-      lib.nameValuePair "${basePath}/${name}/SKILL.md" { source = path; }
-    ) config.agents.skills;
+    builtins.foldl' (acc: name:
+      let
+        skill = config.agents.skills.${name};
+        prefix = "${basePath}/${name}";
+      in
+      acc
+      // { "${prefix}/SKILL.md".source = skill.source; }
+      // lib.mapAttrs' (fname: fpath:
+        lib.nameValuePair "${prefix}/${fname}" { source = fpath; }
+      ) skill.fixtures
+    ) { } (builtins.attrNames config.agents.skills);
+
+  buildCommandFixtures = commandsBase:
+    builtins.foldl' (acc: cmd:
+      acc // lib.mapAttrs' (fname: fpath:
+        lib.nameValuePair "${commandsBase}/${fname}" { source = fpath; }
+      ) (cmd.fixtures or { })
+    ) { } (builtins.attrValues config.agents.commands);
   substitute = agentsLib.substitute config lib;
   # programs.mcp.servers is home-manager's free-form jsonFormat.type option,
   # so we piggy-back on it as a shared source for our own generators and
@@ -76,8 +91,23 @@ let
   # Dotted command names map onto nested recipe paths: `adr.specify` lives at
   # `recipes/adr/specify.yaml`.
   recipePath = name: "${lib.replaceStrings [ "." ] [ "/" ] name}.yaml";
-  recipeFiles = lib.mapAttrs (
-    name: cmd: pkgs.writeText "${name}.yaml" (buildGooseRecipe cmd)
+  substituteDirectives = let
+    search = "$" + "{FIXTURES_DIR}";
+    dir = "${config.home.homeDirectory}/.config/goose/recipes";
+  in ''
+    --replace '${search}' '${dir}'
+  '';
+
+  recipeFiles = lib.mapAttrs (name: cmd:
+    pkgs.stdenv.mkDerivation {
+      inherit name;
+      src = pkgs.writeText "${name}.yaml" (buildGooseRecipe cmd);
+      dontUnpack = true;
+      installPhase = ''
+        substitute "$src" "$TMPDIR/result" ${substituteDirectives}
+        mv "$TMPDIR/result" "$out"
+      '';
+    }
   ) config.agents.commands;
 
   # Aggregate recipes (e.g. adr.yaml) reference their sub-recipes by relative
@@ -101,7 +131,7 @@ let
   # temperature) is not represented in the recipe schema but the body itself
   # may encode the operational boundaries the agent enforces.
   buildGooseAgentRecipe = name: agent:
-    pkgs.writeText "${name}.yaml" (builtins.toJSON {
+    builtins.toJSON {
       version = "1.0.0";
       title = name;
       description = agent.description;
@@ -114,11 +144,19 @@ let
           bundled = true;
         }
       ];
-    });
+    };
 
   agentRecipeFiles = lib.mapAttrs' (name: agent:
     lib.nameValuePair ".config/goose/recipes/${name}.yaml" {
-      source = buildGooseAgentRecipe name agent;
+      source = pkgs.stdenv.mkDerivation {
+        inherit name;
+        src = pkgs.writeText "${name}.yaml" (buildGooseAgentRecipe name agent);
+        dontUnpack = true;
+        installPhase = ''
+          substitute "$src" "$TMPDIR/result" ${substituteDirectives}
+          mv "$TMPDIR/result" "$out"
+        '';
+      };
     }
   ) config.agents.definitions;
 
@@ -192,6 +230,7 @@ in
       name: file: lib.nameValuePair ".config/goose/recipes/${recipePath name}" { source = file; }
     ) recipeFiles
     // agentRecipeFiles
-    // buildSkillFiles ".agents/skills";
+    // buildSkillFiles ".agents/skills"
+    // buildCommandFixtures ".config/goose/recipes";
   };
 }

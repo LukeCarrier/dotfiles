@@ -50,12 +50,12 @@ ADR workflow commands in `adr/*.md`, routed to Adrian for the planning steps:
 
 | Command | Agent | Purpose |
 |---------|-------|---------|
-| `adr.specify` | Adrian | Build or refine `spec.md` |
-| `adr.plan` | Adrian | Create technical plan in `plan.md` |
-| `adr.tasks` | Adrian | Break plan into implementable tasks in `tasks.md` |
+| `adr.specify` | Adrian | Build or refine `spec.toon` (rendered to `spec.md`) |
+| `adr.plan` | Adrian | Create technical plan in `plan.toon` (rendered to `plan.md`) |
+| `adr.tasks` | Adrian | Break plan into implementable tasks in `tasks.toon` (rendered to `tasks.md`) |
 | `adr.implement` | (general) | Execute implementation per tasks |
-| `adr.reflect` | Adrian | Capture learnings and improve instructions |
-| `adr.housekeeping` | (general) | Regenerate ADR README index |
+| `adr.reflect` | Adrian | Capture learnings in `retro.toon` (rendered to `retro.md`) |
+| `adr.housekeeping` | (general) | Regenerate ADR README index from `spec.toon` files |
 
 Parameters (feature name, current date) are declared in `agents.nix` and lowered per-format.
 
@@ -67,6 +67,7 @@ Parameters (feature name, current date) are declared in `agents.nix` and lowered
 | `direnv` | `skills/direnv/SKILL.md` | Environment variable handling via direnv |
 | `jj` | `skills/jj/SKILL.md` | Jujutsu version control operations |
 | `pr-check-failure` | `skills/pr-check-failure/SKILL.md` | Diagnosing failing CI checks and build breaks |
+| `toon` | `skills/toon/SKILL.md` | TOON format writing rules and common pitfalls |
 
 Skills are installed by each harness into the agent's config directory. The shared code at `skills/<name>/SKILL.md` is the canonical copy.
 
@@ -74,6 +75,8 @@ Skills are installed by each harness into the agent's config directory. The shar
 
 **SOPS secrets**: MCP server tokens are declared in `agents.nix` and substituted at activation by the harness. Add new secrets via `sops.secrets.<name>` in `agents.nix` and reference them with `@<name>@` in the server definition.
 
-**Housekeeping script**: `adr/housekeeping.sh` synchronises the ADR README index. Harnesses copy it into their config tree.
+**Housekeeping script**: `adr/housekeeping.sh` synchronises the ADR README index from `spec.toon` files. Harnesses copy it into their config tree.
+
+**ADR TOON pipeline**: All ADR artifacts (spec, plan, tasks, retro) are authored in TOON format and built to human-readable markdown via `adr/build.sh`, which validates each `.toon` against its JSON Schema then renders with jq. The `.toon` file is the source of truth; `.md` files are generated.
 
 **AGENTS.md**: `AGENTS.md` contains ground-rules shared across all harnesses. Each component links it into its config directory.

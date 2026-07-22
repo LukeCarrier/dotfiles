@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Maintains adrs/README.md with all ADRs grouped by status
+# Maintains adrs/README.md with all ADRs grouped by status.
+# Reads from spec.toon files. Requires: toon (from toon-cli), jq.
 
 set -euo pipefail
 
@@ -13,38 +14,10 @@ fi
 
 STATUSES=("implemented" "accepted" "draft" "rejected" "superseded")
 
-extract_field() {
-  local file="$1"
+read_spec_field() {
+  local spec_file="$1"
   local field="$2"
-
-  awk -v field="$field" '
-    BEGIN { in_frontmatter=0; found=0 }
-    /^---$/ {
-      if (NR==1) { in_frontmatter=1; next }
-      else if (in_frontmatter) { exit }
-    }
-    in_frontmatter && $0 ~ "^" field ":" {
-      sub("^" field ": *", "")
-      print
-      found=1
-      exit
-    }
-  ' "$file"
-}
-
-extract_h1() {
-  local file="$1"
-  awk '
-    /^---$/ {
-      if (NR==1) { in_frontmatter=1; next }
-      else if (in_frontmatter) { in_frontmatter=0; next }
-    }
-    !in_frontmatter && /^# / {
-      sub(/^# /, "")
-      print
-      exit
-    }
-  ' "$file"
+  toon --decode "$spec_file" 2>/dev/null | jq -r ".${field} // empty" 2>/dev/null || true
 }
 
 is_valid_status() {
@@ -73,14 +46,14 @@ declare -A adr_by_status
 while IFS= read -r adr_dir; do
   dir_name="$(basename "$adr_dir")"
 
-  spec_file="$adr_dir/spec.md"
+  spec_file="$adr_dir/spec.toon"
   created=""
-  h1_title=""
+  title=""
 
   if [[ -f "$spec_file" ]]; then
-    status=$(extract_field "$spec_file" "status" || echo "draft")
-    created=$(extract_field "$spec_file" "created" || echo "")
-    h1_title=$(extract_h1 "$spec_file" || echo "")
+    status=$(read_spec_field "$spec_file" "status" || echo "draft")
+    created=$(read_spec_field "$spec_file" "created" || echo "")
+    title=$(read_spec_field "$spec_file" "title" || echo "")
   fi
 
   if [[ -z "$status" ]] || ! is_valid_status "$status"; then
@@ -91,7 +64,7 @@ while IFS= read -r adr_dir; do
     created="${BASH_REMATCH[1]}"
   fi
 
-  adr_by_status["$status"]+="${created}|${dir_name}|${h1_title}"$'\n'
+  adr_by_status["$status"]+="${created}|${dir_name}|${title}"$'\n'
 done < <(find "$ADRS_DIR" -mindepth 1 -maxdepth 1 -type d -name '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-*' | sort -r)
 
 for status in "${STATUSES[@]}"; do
@@ -100,12 +73,11 @@ for status in "${STATUSES[@]}"; do
     echo "## $heading" >> "$ADRS_DIR/README.md"
     echo "" >> "$ADRS_DIR/README.md"
 
-    while IFS='|' read -r date dir_name h1_title; do
+    while IFS='|' read -r date dir_name adr_title; do
       [[ -z "$dir_name" ]] && continue
 
-      # Use h1 title if available, otherwise fall back to slug
-      if [[ -n "$h1_title" ]]; then
-        display_title="$h1_title"
+      if [[ -n "$adr_title" ]]; then
+        display_title="$adr_title"
       else
         feature_name="${dir_name#*-*-*-}"
         display_title="$(tr '-' ' ' <<< "$feature_name" | sed 's/\b\(.\)/\u\1/g')"
@@ -122,12 +94,11 @@ if [[ -n "${adr_by_status[unknown]:-}" ]]; then
   echo "## Unknown Status" >> "$ADRS_DIR/README.md"
   echo "" >> "$ADRS_DIR/README.md"
 
-  while IFS='|' read -r date dir_name h1_title; do
+  while IFS='|' read -r date dir_name adr_title; do
     [[ -z "$dir_name" ]] && continue
 
-    # Use h1 title if available, otherwise fall back to slug
-    if [[ -n "$h1_title" ]]; then
-      display_title="$h1_title"
+    if [[ -n "$adr_title" ]]; then
+      display_title="$adr_title"
     else
       feature_name="${dir_name#*-*-*-}"
       display_title="$(tr '-' ' ' <<< "$feature_name" | sed 's/\b\(.\)/\u\1/g')"

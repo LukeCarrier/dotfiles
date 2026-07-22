@@ -18,9 +18,203 @@ let
     }
   ];
 
+  adrBuildSh = pkgs.writeShellScript "adr-build-sh" ''
+    set -euo pipefail
+
+    ADR_DIR="''${1:-$PWD}"
+    SCRIPT_DIR="$(cd "$(dirname "''${BASH_SOURCE[0]}")" && pwd)"
+
+    rendered=0
+
+    for artifact in spec plan tasks retro; do
+      toon_file="$ADR_DIR/$artifact.toon"
+      md_file="$ADR_DIR/$artifact.md"
+      jq_file="$SCRIPT_DIR/$artifact.jq"
+      schema_file="$SCRIPT_DIR/$artifact.schema.json"
+
+      if [[ ! -f "$toon_file" ]]; then continue; fi
+      if [[ ! -f "$jq_file" ]]; then
+        echo "Warning: no jq template for $artifact (expected $jq_file)" >&2
+        continue
+      fi
+
+      tmp_json=$(mktemp)
+      trap 'rm -f "$tmp_json"' EXIT
+
+      toon --decode "$toon_file" > "$tmp_json"
+      if [[ -f "$schema_file" ]]; then
+        check-jsonschema --schemafile "$schema_file" "$tmp_json" >&2
+      fi
+      jq -f "$jq_file" -r "$tmp_json" > "$md_file"
+      echo "✓ $md_file"
+      rendered=$((rendered + 1))
+    done
+
+    if [[ $rendered -eq 0 ]]; then
+      echo "No .toon files found in $ADR_DIR" >&2
+      exit 1
+    fi
+  '';
+  adrDir = pkgs.runCommand "adr-fixtures" {
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+  } ''
+    mkdir $out
+    cp ${adrBuildSh} $out/build.sh
+    cp ${./adr/spec.jq} $out/spec.jq
+    cp ${pkgs.writeText "spec.schema.json" ''
+      {
+        "$schema": "https://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "required": ["title", "status", "created", "author", "problem", "goals", "requirements", "nonFunctional", "acceptance"],
+        "properties": {
+          "title": { "type": "string" },
+          "status": { "type": "string", "enum": ["draft", "proposed", "accepted", "rejected", "implemented", "superseded"] },
+          "created": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+          "author": { "type": "string" },
+          "context": { "type": "string" },
+          "problem": { "type": "string" },
+          "goals": { "type": "array", "items": { "type": "string" } },
+          "nonGoals": { "type": "array", "items": { "type": "string" } },
+          "requirements": {
+            "type": "array", "items": {
+              "type": "object", "required": ["id", "title", "slug", "description"],
+              "properties": {
+                "id": { "type": "string", "pattern": "^FR-\\d+$" },
+                "title": { "type": "string" },
+                "slug": { "type": "string", "pattern": "^[a-z][a-z0-9-]+$" },
+                "description": { "type": "string" }
+              }
+            }
+          },
+          "nonFunctional": {
+            "type": "array", "items": {
+              "type": "object", "required": ["id", "title", "slug", "description"],
+              "properties": {
+                "id": { "type": "string", "pattern": "^NFR-\\d+$" },
+                "title": { "type": "string" },
+                "slug": { "type": "string", "pattern": "^[a-z][a-z0-9-]+$" },
+                "description": { "type": "string" }
+              }
+            }
+          },
+          "acceptance": {
+            "type": "array", "items": {
+              "type": "object", "required": ["id", "title", "slug", "description"],
+              "properties": {
+                "id": { "type": "string", "pattern": "^AC-\\d+$" },
+                "title": { "type": "string" },
+                "slug": { "type": "string", "pattern": "^[a-z][a-z0-9-]+$" },
+                "description": { "type": "string" }
+              }
+            }
+          },
+          "edgeCases": {
+            "type": "array", "items": {
+              "type": "object", "required": ["id", "title", "slug", "description"],
+              "properties": {
+                "id": { "type": "string", "pattern": "^EC-\\d+$" },
+                "title": { "type": "string" },
+                "slug": { "type": "string", "pattern": "^[a-z][a-z0-9-]+$" },
+                "description": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    ''} $out/spec.schema.json
+    cp ${./adr/plan.jq} $out/plan.jq
+    cp ${pkgs.writeText "plan.schema.json" ''
+      {
+        "$schema": "https://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "required": ["title", "approach", "architecture", "technologies", "components"],
+        "properties": {
+          "title": { "type": "string" },
+          "approach": { "type": "string" },
+          "architecture": { "type": "string" },
+          "technologies": {
+            "type": "array", "items": {
+              "type": "object", "required": ["name", "role"],
+              "properties": {
+                "name": { "type": "string" },
+                "role": { "type": "string" }
+              }
+            }
+          },
+          "components": {
+            "type": "array", "items": {
+              "type": "object", "required": ["name", "purpose"],
+              "properties": {
+                "name": { "type": "string" },
+                "purpose": { "type": "string" },
+                "details": { "type": "string" }
+              }
+            }
+          },
+          "dataFlow": { "type": "string" },
+          "deployment": { "type": "string" }
+        }
+      }
+    ''} $out/plan.schema.json
+    cp ${./adr/tasks.jq} $out/tasks.jq
+    cp ${pkgs.writeText "tasks.schema.json" ''
+      {
+        "$schema": "https://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "required": ["title", "items"],
+        "properties": {
+          "title": { "type": "string" },
+          "items": {
+            "type": "array", "items": {
+              "type": "object",
+              "required": ["id", "title", "criteria", "complexity", "effort"],
+              "properties": {
+                "id": { "type": "string" },
+                "title": { "type": "string" },
+                "description": { "type": "string" },
+                "criteria": { "type": "string" },
+                "complexity": { "type": "string", "enum": ["low", "medium", "high"] },
+                "effort": { "type": "string" },
+                "dependencies": { "type": "string" },
+                "refs": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    ''} $out/tasks.schema.json
+    cp ${./adr/retro.jq} $out/retro.jq
+    cp ${pkgs.writeText "retro.schema.json" ''
+      {
+        "$schema": "https://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "required": ["title", "wentWell", "wentBadly", "improvements"],
+        "properties": {
+          "title": { "type": "string" },
+          "wentWell": { "type": "array", "items": { "type": "string" } },
+          "wentBadly": { "type": "array", "items": { "type": "string" } },
+          "improvements": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    ''} $out/retro.schema.json
+    chmod +x $out/build.sh
+    wrapProgram $out/build.sh --prefix PATH : "${lib.makeBinPath (with pkgs; [ toon-cli jq check-jsonschema ])}"
+  '';
+  adrFixtures = {
+    "build.sh" = "${adrDir}/build.sh";
+    "spec.jq" = "${adrDir}/spec.jq";
+    "spec.schema.json" = "${adrDir}/spec.schema.json";
+    "plan.jq" = "${adrDir}/plan.jq";
+    "plan.schema.json" = "${adrDir}/plan.schema.json";
+    "tasks.jq" = "${adrDir}/tasks.jq";
+    "tasks.schema.json" = "${adrDir}/tasks.schema.json";
+    "retro.jq" = "${adrDir}/retro.jq";
+    "retro.schema.json" = "${adrDir}/retro.schema.json";
+  };
+
   # Review subagents: read-only on codebase, return findings via Task tool.
   reviewPermissions = {
-    bash = "allow";
+    bash = "deny";
     edit = "deny";
     write = "deny";
     webfetch = "allow";
@@ -47,10 +241,17 @@ in
   };
 
   agents.skills = {
-    code-review = ./skills/code-review/SKILL.md;
-    direnv = ./skills/direnv/SKILL.md;
-    jj = ./skills/jj/SKILL.md;
-    pr-check-failure = ./skills/pr-check-failure/SKILL.md;
+    code-review = {
+      source = ./skills/code-review/SKILL.md;
+      fixtures = {
+        "report.sh" = ./skills/code-review/report.sh;
+        "report.jq" = ./skills/code-review/report.jq;
+      };
+    };
+    direnv.source = ./skills/direnv/SKILL.md;
+    jj.source = ./skills/jj/SKILL.md;
+    pr-check-failure.source = ./skills/pr-check-failure/SKILL.md;
+    toon.source = ./skills/toon/SKILL.md;
   };
 
   agents.commands = {
@@ -59,6 +260,7 @@ in
       description = "Generate or refine an ADR specification";
       body = adrBody "specify";
       agent = "adrian";
+      fixtures = adrFixtures;
     };
     "adr.plan" = {
       title = "ADR Plan";
@@ -66,6 +268,7 @@ in
       body = adrBody "plan";
       agent = "adrian";
       parameters = featureParams;
+      fixtures = adrFixtures;
     };
     "adr.tasks" = {
       title = "ADR Tasks";
@@ -73,6 +276,7 @@ in
       body = adrBody "tasks";
       agent = "adrian";
       parameters = featureParams;
+      fixtures = adrFixtures;
     };
     "adr.implement" = {
       title = "ADR Implement";
@@ -81,6 +285,7 @@ in
       maxTurns = 100;
       timeout = 600;
       parameters = featureParams;
+      fixtures = adrFixtures;
     };
     "adr.reflect" = {
       title = "ADR Reflect";
@@ -88,6 +293,7 @@ in
       body = adrBody "reflect";
       agent = "adrian";
       parameters = featureParams;
+      fixtures = adrFixtures;
     };
     "adr.housekeeping" = {
       title = "ADR Housekeeping";
@@ -96,6 +302,13 @@ in
       body = adrBody "housekeeping";
       maxTurns = 10;
       timeout = 60;
+      fixtures = adrFixtures // {
+        "adr.housekeeping.sh" = pkgs.runCommand "adr-housekeeping-sh" {
+          nativeBuildInputs = [ pkgs.makeWrapper ];
+        } ''
+          makeWrapper ${./adr/housekeeping.sh} "$out" --prefix PATH : "${lib.makeBinPath (with pkgs; [ toon-cli jq ])}"
+        '';
+      };
     };
   };
 
@@ -106,7 +319,10 @@ in
       temperature = 0.1;
       body = body "adrian";
       permission = {
-        bash = "deny";
+        bash = {
+          "*" = "deny";
+          "bash *build.sh *" = "allow";
+        };
         edit = {
           "*" = "ask";
           "adrs/*" = "allow";

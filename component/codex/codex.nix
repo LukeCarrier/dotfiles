@@ -9,15 +9,37 @@ let
   substitute = agentsLib.substitute config lib;
 
   buildSkillFiles = basePath:
-    lib.mapAttrs' (name: path:
-      lib.nameValuePair "${basePath}/${name}/SKILL.md" { source = path; }
-    ) config.agents.skills;
+    builtins.foldl' (acc: name:
+      let
+        skill = config.agents.skills.${name};
+        prefix = "${basePath}/${name}";
+      in
+      acc
+      // { "${prefix}/SKILL.md".source = skill.source; }
+      // lib.mapAttrs' (fname: fpath:
+        lib.nameValuePair "${prefix}/${fname}" { source = fpath; }
+      ) skill.fixtures
+    ) { } (builtins.attrNames config.agents.skills);
+
+  buildCommandFixtures = commandsBase:
+    builtins.foldl' (acc: cmd:
+      acc // lib.mapAttrs' (fname: fpath:
+        lib.nameValuePair "${commandsBase}/${fname}" { source = fpath; }
+      ) (cmd.fixtures or { })
+    ) { } (builtins.attrValues config.agents.commands);
 
   # Lower a tool-agnostic command definition (config.agents.commands) into a
   # Codex custom prompt: YAML frontmatter followed by the shared body. Codex
   # prompts are flat Markdown files whose name becomes the slash command
   # directly, so the dotted name maps straight through (`adr.specify` ->
   # `/adr.specify`).
+  substituteDirectives = let
+    search = "$" + "{FIXTURES_DIR}";
+    dir = "${config.home.homeDirectory}/.config/codex/prompts";
+  in ''
+    --replace '${search}' '${dir}'
+  '';
+
   buildCodexPrompt =
     cmd:
     let
@@ -38,57 +60,70 @@ let
   promptFiles = lib.mapAttrs' (
     name: cmd:
     lib.nameValuePair ".config/codex/prompts/${name}.md" {
-      source = pkgs.writeText "${name}.md" (buildCodexPrompt cmd);
+      source = pkgs.stdenv.mkDerivation {
+        inherit name;
+        src = pkgs.writeText "${name}.md" (buildCodexPrompt cmd);
+        dontUnpack = true;
+        installPhase = ''
+          substitute "$src" "$TMPDIR/result" ${substituteDirectives}
+          mv "$TMPDIR/result" "$out"
+        '';
+      };
     }
   ) config.agents.commands;
 
   # Lower the shared agent definition shape into Codex prompt files. Codex does
   # not expose a separate agent directory, so these prompts are the Codex-native
   # artifact that keeps the reusable definitions available in ~/.config/codex/.
-  buildCodexAgent =
-    name: agent:
-    pkgs.writeText "${name}.md" (
-      let
-        isSafeKey = k: builtins.match "[a-zA-Z_][a-zA-Z0-9_-]*" k != null;
-        quoteIfNeeded = k: if isSafeKey k then k else ''"${k}"'';
-        safeVal = v: if v then "true" else "false";
+  buildCodexAgent = name: agent:
+    let
+      isSafeKey = k: builtins.match "[a-zA-Z_][a-zA-Z0-9_-]*" k != null;
+      quoteIfNeeded = k: if isSafeKey k then k else ''"${k}"'';
+      safeVal = v: if v then "true" else "false";
 
-        toolsLines = lib.concatStringsSep "\n" (
-          lib.mapAttrsToList (k: v: "  ${quoteIfNeeded k}: ${safeVal v}") agent.tools
+      toolsLines = lib.concatStringsSep "\n" (
+        lib.mapAttrsToList (k: v: "  ${quoteIfNeeded k}: ${safeVal v}") agent.tools
+      );
+
+      renderPermission = indent: attrs:
+        lib.concatStringsSep "\n" (
+          lib.mapAttrsToList (k: v:
+            if builtins.isAttrs v then
+              "${indent}${quoteIfNeeded k}:\n${renderPermission "${indent}  " v}"
+            else
+              "${indent}${quoteIfNeeded k}: ${v}"
+          ) attrs
         );
+    in
+    ''
+      ---
+      description: ${agent.description}
+      mode: ${agent.mode}
+      temperature: ${builtins.toString agent.temperature}
+    ''
+    + lib.optionalString (agent.model != null) "model: ${agent.model}\n"
+    + ''
+      tools:
+      ${toolsLines}
+      permission:
+      ${renderPermission "  " agent.permission}
+      ---
 
-        renderPermission = indent: attrs:
-          lib.concatStringsSep "\n" (
-            lib.mapAttrsToList (k: v:
-              if builtins.isAttrs v then
-                "${indent}${quoteIfNeeded k}:\n${renderPermission "${indent}  " v}"
-              else
-                "${indent}${quoteIfNeeded k}: ${v}"
-            ) attrs
-          );
-      in
-      ''
-        ---
-        description: ${agent.description}
-        mode: ${agent.mode}
-        temperature: ${builtins.toString agent.temperature}
-      ''
-      + lib.optionalString (agent.model != null) "model: ${agent.model}\n"
-      + ''
-        tools:
-        ${toolsLines}
-        permission:
-        ${renderPermission "  " agent.permission}
-        ---
-
-      ''
-      + agent.body
-    );
+    ''
+    + agent.body;
 
   agentFiles = lib.mapAttrs' (
     name: agent:
     lib.nameValuePair ".config/codex/prompts/${name}.md" {
-      source = buildCodexAgent name agent;
+      source = pkgs.stdenv.mkDerivation {
+        inherit name;
+        src = pkgs.writeText "${name}.md" (buildCodexAgent name agent);
+        dontUnpack = true;
+        installPhase = ''
+          substitute "$src" "$TMPDIR/result" ${substituteDirectives}
+          mv "$TMPDIR/result" "$out"
+        '';
+      };
     }
   ) config.agents.definitions;
 
@@ -206,5 +241,6 @@ in
     ".config/codex/AGENTS.md".source = ../agents/AGENTS.md;
     ".config/codex/prompts/adr.housekeeping.sh".source = ../agents/adr/housekeeping.sh;
   }
-  // buildSkillFiles ".config/codex/skills";
+  // buildSkillFiles ".config/codex/skills"
+  // buildCommandFixtures ".config/codex/prompts";
 }

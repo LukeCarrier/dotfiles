@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["title", "items"],
+  "properties": {
+    "title": { "type": "string" },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "criteria", "complexity", "effort"],
+        "properties": {
+          "id": { "type": "string" },
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "criteria": { "type": "string" },
+          "complexity": { "type": "string", "enum": ["low", "medium", "high"] },
+          "effort": { "type": "string" },
+          "dependencies": { "type": "string" },
+          "refs": { "type": "string" }
+        }
+      }
+    }
+  }
+}

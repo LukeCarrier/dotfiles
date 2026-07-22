@@ -1,51 +1,46 @@
-Turn the approved specification into an actionable plan. Only start after `spec.md` is measurable and internally consistent.
+---
+status: draft
+created: 2026-01-21
+updated: 2026-01-21
+author: Luke Carrier
+---
 
-## Preparation
+# `adr.plan`
 
-1. Capture the current date for the ADR directory:
+Create a technical plan in TOON format. This must happen after `specify`.
 
-   ```
-   !date +"%Y-%m-%d"
-   ```
+## Usage
 
-2. Feature name:
-
-   ```
-   $1
-   ```
-
-3. Read the latest `spec.md` and previous ADRs touching the same systems. Note any terminology or contract you must keep.
+```
+/adr.plan <feature-slug> [constraints...]
+```
 
 ## Process
 
-1. Trace every requirement from the spec into the plan. If a requirement cannot be mapped to architecture, stop and clarify the spec.
-2. Describe the architecture in concrete terms: components, data stores, workflows, and interfaces. Stick to the vocabulary used in the spec.
-3. Resolve contradictions. Example: if you plan to prune infrastructure in a region, you must also run template and apply steps there. If the design requires skipping template/apply for empty regions, explain why pruning is disabled there as well.
-4. Call out environment and region behavior. Specify what runs where, what inputs are needed, and what triggers each workflow.
-5. Detail the testing strategy. When GitHub/GitLab workflows cannot be tested directly, extract the matrix or pruning logic into scripts (e.g., shell or Python) and describe how to cover them with BATS or unit tests. A plan without a repeatable verification path is invalid.
-6. Identify risks, mitigations, rollout strategy, and monitoring/rollback steps. Be explicit about failure detection.
-7. Keep the language plain. Focus on what will be built, why, and how it will be tested.
+1. Read `adrs/<YYYY-MM-DD>-<feature-slug>/spec.toon` to understand the requirements.
+2. Determine the appropriate implementation approach and architecture.
+3. Write the plan to `adrs/<YYYY-MM-DD>-<feature-slug>/plan.toon` with the TOON schema below.
+4. Validate: `toon --decode adrs/<YYYY-MM-DD>-<feature-slug>/plan.toon | check-jsonschema --schemafile ${FIXTURES_DIR}/plan.schema.json /dev/stdin`. Fix any validation errors.
+5. Run `bash ${FIXTURES_DIR}/build.sh adrs/<YYYY-MM-DD>-<feature-slug>` to generate `plan.md`.
 
-If you discover new requirements, either update the spec (with approval) or document the open question and block the plan.
+## TOON Schema
+
+```toon
+title: <Human-readable title>
+status: draft
+created: <YYYY-MM-DD>
+author: <name>
+approach: <high-level approach>
+architecture: <architecture overview>
+technologies[N]{name,role}:
+  <name>,<role>
+components[N]{name,purpose,details}:
+  <name>,<purpose>,<details>
+dataFlow: <optional data flow description>
+deployment: <optional deployment considerations>
+```
 
 ## Output
 
-Write `adrs/$currentDate-$featureName/plan.md` that includes:
-
-- Architecture overview tied back to each spec requirement
-- Technology choices with short justifications
-- Component breakdowns and sequencing
-- Data flow diagrams or text descriptions covering normal and failure paths
-- Environment/region deployment rules, including pruning vs. template/apply behavior
-- Testing strategy (tools, scripts, CI steps, local validation)
-- Risk list with mitigations, monitoring, and rollback actions
-
-Ensure the YAML frontmatter is present and `status` reflects readiness. End by confirming the plan stays aligned with the spec; if not, list the required spec updates.
-
-## Housekeeping
-
-Before finishing, run the housekeeping script so the ADR index stays up to date:
-
-```
-bash adrs/recipes/housekeeping.sh
-```
+- `adrs/<YYYY-MM-DD>-<feature-slug>/plan.toon` — structured plan in TOON
+- `adrs/<YYYY-MM-DD>-<feature-slug>/plan.md` — human-readable markdown (generated)

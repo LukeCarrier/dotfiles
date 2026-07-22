@@ -34,17 +34,47 @@ let
     ''
     + cmd.body;
 
+  substituteDirectives = let
+    search = "$" + "{FIXTURES_DIR}";
+    dir = "${config.home.homeDirectory}/.claude/commands";
+  in ''
+    --replace '${search}' '${dir}'
+  '';
+
   commandFiles = lib.mapAttrs' (
     name: cmd:
     lib.nameValuePair ".claude/commands/${commandPath name}" {
-      source = pkgs.writeText "${name}.md" (buildClaudeCommand cmd);
+      source = pkgs.stdenv.mkDerivation {
+        inherit name;
+        src = pkgs.writeText "${name}.md" (buildClaudeCommand cmd);
+        dontUnpack = true;
+        installPhase = ''
+          substitute "$src" "$TMPDIR/result" ${substituteDirectives}
+          mv "$TMPDIR/result" "$out"
+        '';
+      };
     }
   ) config.agents.commands;
 
   buildSkillFiles = basePath:
-    lib.mapAttrs' (name: path:
-      lib.nameValuePair "${basePath}/${name}/SKILL.md" { source = path; }
-    ) config.agents.skills;
+    builtins.foldl' (acc: name:
+      let
+        skill = config.agents.skills.${name};
+        prefix = "${basePath}/${name}";
+      in
+      acc
+      // { "${prefix}/SKILL.md".source = skill.source; }
+      // lib.mapAttrs' (fname: fpath:
+        lib.nameValuePair "${prefix}/${fname}" { source = fpath; }
+      ) skill.fixtures
+    ) { } (builtins.attrNames config.agents.skills);
+
+  buildCommandFixtures = commandsBase:
+    builtins.foldl' (acc: cmd:
+      acc // lib.mapAttrs' (fname: fpath:
+        lib.nameValuePair "${commandsBase}/${fname}" { source = fpath; }
+      ) (cmd.fixtures or { })
+    ) { } (builtins.attrValues config.agents.commands);
 
   inherit (lib) getExe getExe';
 
@@ -132,5 +162,6 @@ in
   home.file = commandFiles // {
     ".claude/commands/adr/housekeeping.sh".source = ../agents/adr/housekeeping.sh;
   }
-  // buildSkillFiles ".claude/skills";
+  // buildSkillFiles ".claude/skills"
+  // buildCommandFixtures ".claude/commands";
 }
