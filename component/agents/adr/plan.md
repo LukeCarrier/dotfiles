@@ -40,6 +40,17 @@ dataFlow: <optional data flow description>
 deployment: <optional deployment considerations>
 ```
 
+### Diagrams
+
+Reference external Mermaid `.mmd` files in any free-text field (e.g., `architecture`, `dataFlow`) using the `{{mermaid: <file>}}` syntax:
+
+```toon
+architecture:
+  {{mermaid: architecture.mmd}}
+```
+
+Place the `.mmd` file alongside the `.toon` file. At build time, `build.sh` inlines the Mermaid source as a ` ```mermaid ` code block — no pre-rendering or external tooling required.
+
 ## Output
 
 - `adrs/<YYYY-MM-DD>-<feature-slug>/plan.toon` — structured plan in TOON

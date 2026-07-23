@@ -35,6 +35,29 @@ for artifact in spec plan tasks retro; do
   fi
 
   jq -f "$jq_file" -r "$tmp_json" > "$md_file"
+
+  # Inline {{mermaid: <file>}} references as fenced code blocks.
+  # Author writes {{mermaid: architecture.mmd}} in TOON free-text fields;
+  # build.sh replaces the entire line with the .mmd content wrapped in ```mermaid.
+  if grep -q '{{mermaid: ' "$md_file" 2>/dev/null; then
+    tmp_file=$(mktemp)
+    while IFS= read -r line || [[ -n "$line" ]]; do
+      if [[ "$line" =~ \{\{mermaid:\ ([^}]+)\}\} ]]; then
+        mmd_file="$ADR_DIR/${BASH_REMATCH[1]}"
+        printf '\n```mermaid\n' >> "$tmp_file"
+        if [[ -f "$mmd_file" ]]; then
+          cat "$mmd_file" >> "$tmp_file"
+        else
+          echo "<!-- mermaid: file not found: ${BASH_REMATCH[1]} -->" >> "$tmp_file"
+        fi
+        printf '\n```\n' >> "$tmp_file"
+      else
+        printf '%s\n' "$line" >> "$tmp_file"
+      fi
+    done < "$md_file"
+    mv "$tmp_file" "$md_file"
+  fi
+
   echo "✓ $md_file"
   rendered=$((rendered + 1))
 done

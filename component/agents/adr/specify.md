@@ -68,6 +68,10 @@ acceptance[1]{id,title,slug,description}:
 
 Slugs are stable identifiers (lowercase-kebab-case) used for canonical addressing. They MUST NOT change after the spec is created — they form the traceability link between tasks and requirements. Tabular arrays use TOON's `{fields}` + CSV rows format; descriptions with commas, colons, or whitespace MUST be quoted.
 
+### Diagrams
+
+Reference external Mermaid `.mmd` files in the `context` field via `{{mermaid: <file>}}`. Place `.mmd` files alongside the `.toon` file; `build.sh` inlines them as ` ```mermaid ` blocks at render time.
+
 ## Output
 
 - `adrs/<YYYY-MM-DD>-<feature-slug>/spec.toon` — structured spec in TOON
