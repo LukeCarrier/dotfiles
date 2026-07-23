@@ -217,6 +217,7 @@
                 buzz-desktop = callPackage' ./package/buzz/desktop.nix {
                   inherit buzz-acp buzz-agent buzz-cli buzz-dev-mcp git-credential-nostr;
                 };
+                buzz-relay = callPackage' ./package/buzz/relay.nix { };
                 git-credential-nostr = callPackage' ./package/buzz/git-credential-nostr.nix { };
                 bw-cli-tools = callPackage' ./package/bw-cli-tools { };
                 docker-cli-tools = callPackage' ./package/docker-cli-tools { };
@@ -245,6 +246,7 @@
                 aws-cli-tools = aws-cli-tools;
                 buzz-cli = buzz-cli;
                 buzz-desktop = buzz-desktop;
+                buzz-relay = buzz-relay;
                 bw-cli-tools = bw-cli-tools;
                 docker-cli-tools = docker-cli-tools;
                 github-cli-tools = github-cli-tools;
