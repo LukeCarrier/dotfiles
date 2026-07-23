@@ -55,6 +55,7 @@
     ../../../../component/docker/docker.nix
     ../../../../component/helm/helm.nix
     ../../../../component/kubernetes-client/kubernetes-client.nix
+    ../../../../component/minikube/minikube.nix
   ];
 
   home = {

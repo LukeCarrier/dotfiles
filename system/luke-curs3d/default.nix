@@ -20,6 +20,7 @@
     ../../component/niri/nixos.nix
     ../../component/niri/nvidia.nix
     ../../platform/nixos/containers.nix
+    ../../platform/nixos/virt.nix
   ];
 
   system.stateVersion = "25.11";
@@ -69,14 +70,8 @@
     ];
   };
 
-  virtualisation.libvirtd = {
-    enable = true;
-    qemu.swtpm.enable = true;
-  };
-
   environment.systemPackages = with pkgs; [
     android-tools
-    swtpm
   ];
 
   users.users.lukecarrier = {
@@ -85,9 +80,6 @@
     extraGroups = [
       "adbusers"
       "input"
-      "kvm"
-      "libvirtd"
-      "qemu-libvirtd"
       "networkmanager"
       "wheel"
     ];

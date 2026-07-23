@@ -21,7 +21,9 @@ in
     ../../platform/nixos/graphical.nix
     ../../component/niri/nixos.nix
     ../../component/librepods/nixos.nix
+    ../../component/minikube/nixos.nix
     ../../platform/nixos/containers.nix
+    ../../platform/nixos/virt.nix
   ];
 
   system.stateVersion = "24.05";
@@ -38,6 +40,10 @@ in
   networking = {
     hostName = "luke-f1xable";
     domain = "peacehaven.carrier.family";
+
+    extraHosts = ''
+      127.0.0.1 buzz.throw.party
+    '';
   };
 
   boot.initrd.luks.devices."luks-d0d2e346-4317-481e-98cc-3a1d879f3b2a".device =
@@ -64,14 +70,8 @@ in
     SUBSYSTEM=="power_supply", ENV{POWER_SUPPLY_ONLINE}=="1", RUN+="${getExe pkgs.bash} -c 'echo 80 >/sys/class/power_supply/BAT?/charge_control_end_threshold'"
   '';
 
-  virtualisation.libvirtd = {
-    enable = true;
-    qemu.swtpm.enable = true;
-  };
-
   environment.systemPackages = with pkgs; [
     android-tools
-    swtpm
   ];
 
   users.users.lukecarrier = {
@@ -80,9 +80,6 @@ in
     extraGroups = [
       "adbusers"
       "input"
-      "kvm"
-      "libvirtd"
-      "qemu-libvirtd"
       "networkmanager"
       "wheel"
     ];

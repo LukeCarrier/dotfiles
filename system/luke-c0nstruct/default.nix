@@ -18,6 +18,7 @@
     ../../platform/nixos/secure-boot.nix
     ../../platform/nixos/graphical.nix
     ../../platform/nixos/containers.nix
+    ../../platform/nixos/virt.nix
     ../../employer/emed/nixos.nix
     ../../component/niri/nixos.nix
     ../../component/librepods/nixos.nix
@@ -92,21 +93,11 @@
     ];
   };
 
-  virtualisation.libvirtd = {
-    enable = true;
-    qemu.swtpm.enable = true;
-  };
-
-  environment.systemPackages = [ pkgs.swtpm ];
-
   users.users.lukecarrier = {
     isNormalUser = true;
     description = "Luke Carrier";
     extraGroups = [
       "input"
-      "kvm"
-      "libvirtd"
-      "qemu-libvirtd"
       "networkmanager"
       "wheel"
     ];
