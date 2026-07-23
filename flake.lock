@@ -162,16 +162,15 @@
         ]
       },
       "locked": {
-        "lastModified": 1779294016,
-        "narHash": "sha256-TIBCVzOMYQ0/SWsBmkGvrXkdz/U9Ix5/8vWGXB4z7Rk=",
+        "lastModified": 1784284703,
+        "narHash": "sha256-RenUzovJsOTN7mACS+llS2Z4ySLkYsWGXZIZlTguxv0=",
         "owner": "LukeCarrier",
         "repo": "cyberhaven-nix",
-        "rev": "96166f2303a987743e48ec0cff1fe12404dd0d19",
+        "rev": "a6716a084428ce3a92ed6fc097ce013f99616fd9",
         "type": "github"
       },
       "original": {
         "owner": "LukeCarrier",
-        "ref": "build-fhs-env",
         "repo": "cyberhaven-nix",
         "type": "github"
       }
@@ -216,6 +215,26 @@
         "type": "github"
       }
     },
+    "disko": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs-unstable"
+        ]
+      },
+      "locked": {
+        "lastModified": 1781152676,
+        "narHash": "sha256-RxWs5ND31KzTG7wvMM+PMfUjyNpmIEr999lqNARaM5o=",
+        "owner": "nix-community",
+        "repo": "disko",
+        "rev": "ff8702b4de27f72b4c78573dfb89ec74e36abdf1",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "disko",
+        "type": "github"
+      }
+    },
     "encore": {
       "inputs": {
         "nixpkgs": [
@@ -245,16 +264,15 @@
         ]
       },
       "locked": {
-        "lastModified": 1779263356,
-        "narHash": "sha256-LLyHEhaiY/0OeuPlp5muyV0UrxlZ7CGAu5Z3+fg15Xw=",
+        "lastModified": 1784284740,
+        "narHash": "sha256-4Lom2jFOd7BWmvpt4BwQNPekzKkqAlVpl5cHtsEkjVw=",
         "owner": "LukeCarrier",
         "repo": "falcon-sensor-nixos",
-        "rev": "3a4a88b1cab09b77aec7c52c5029859ab1cd385b",
+        "rev": "6f12becd8589f56b1482f8fba20271b2297e4447",
         "type": "github"
       },
       "original": {
         "owner": "LukeCarrier",
-        "ref": "leave-nixpkgs-alone",
         "repo": "falcon-sensor-nixos",
         "type": "github"
       }
@@ -925,6 +943,7 @@
         "cyberhaven": "cyberhaven",
         "dagger": "dagger",
         "darwin": "darwin",
+        "disko": "disko",
         "falcon-sensor": "falcon-sensor",
         "flake-utils": "flake-utils",
         "handy": "handy",

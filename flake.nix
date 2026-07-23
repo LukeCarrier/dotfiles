@@ -27,7 +27,7 @@
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     cyberhaven = {
-      url = "github:LukeCarrier/cyberhaven-nix/build-fhs-env";
+      url = "github:LukeCarrier/cyberhaven-nix";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     darwin = {
@@ -38,8 +38,12 @@
       url = "github:dagger/nix";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
     falcon-sensor = {
-      url = "github:LukeCarrier/falcon-sensor-nixos/leave-nixpkgs-alone";
+      url = "github:LukeCarrier/falcon-sensor-nixos";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     flake-utils = {
@@ -127,6 +131,7 @@
       cyberhaven,
       dagger,
       darwin,
+      disko,
       falcon-sensor,
       flake-utils,
       handy,
@@ -396,6 +401,7 @@
       inherit
         cyberhaven
         darwin
+        disko
         falcon-sensor
         home-manager
         lanzaboote
