@@ -24,7 +24,7 @@
       theme = "bgrt";
     };
 
-    consoleLogLevel = 0;
+    consoleLogLevel = lib.mkDefault 0;
 
     kernelModules = [
       # Dynamically loading this module means permissions don't get applied to
