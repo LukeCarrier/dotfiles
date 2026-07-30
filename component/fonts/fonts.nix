@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 {
   home.packages = with pkgs; [
     crimson-pro
@@ -25,8 +25,8 @@
 
   fonts.fontconfig = {
     enable = true;
-    antialiasing = true;
-    hinting = "full";
+    antialiasing = lib.mkDefault true;
+    hinting = lib.mkDefault "full";
 
     defaultFonts = {
       monospace = [ "Monaspace Krypton" "MonaspiceKr Nerd Font" ];

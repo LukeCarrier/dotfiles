@@ -128,4 +128,19 @@ in
   dconf.settings = {
     "org/gnome/desktop/interface".color-scheme = "prefer-dark";
   };
+
+  fonts.fontconfig.hinting = lib.mkForce "slight";
+
+  xdg.configFile."fontconfig/conf.d/10-subpixel.conf".text = ''
+    <?xml version="1.0"?>
+    <!DOCTYPE fontconfig SYSTEM "fonts.dtd">
+    <fontconfig>
+      <match target="font">
+        <edit name="rgba" mode="assign"><const>rgb</const></edit>
+        <edit name="lcdfilter" mode="assign"><const>lcddefault</const></edit>
+        <edit name="hintstyle" mode="assign"><const>hintslight</const></edit>
+        <edit name="antialias" mode="assign"><bool>true</bool></edit>
+      </match>
+    </fontconfig>
+  '';
 }
