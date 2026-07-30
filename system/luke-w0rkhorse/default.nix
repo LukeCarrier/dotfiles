@@ -14,6 +14,7 @@
     inputs.lanzaboote.nixosModules.lanzaboote
     inputs.nix-flatpak.nixosModules.nix-flatpak
     inputs.sops-nix.nixosModules.sops
+    ../../hw/thinkpad-l14.nix
     ../../platform/nixos/common.nix
     ../../platform/nixos/region/en-gb.nix
     ../../platform/nixos/secure-boot.nix
@@ -34,22 +35,10 @@
 
   boot.lanzaboote.pkiBundle = lib.mkForce "/var/lib/sbctl";
 
-  boot.kernelParams = [
-    # Attempt to resolve issues with Thunderbolt docks after resuming from suspend
-    # "usbcore.autosuspend=-1"
-  ];
-
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
   };
-
-  services.hardware.bolt.enable = true;
-
-  # Cap battery charge at 80% to reduce wear.
-  services.udev.extraRules = ''
-    ACTION=="add", SUBSYSTEM=="power_supply", ENV{POWER_SUPPLY_NAME}=="BAT0", ATTR{charge_control_end_threshold}="80"
-  '';
 
   programs.gamescope.enable = true;
 
