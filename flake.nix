@@ -214,6 +214,9 @@
                   # GStreamer pipewiresrc (GNOME Network Displays) to negotiate
                   # a buffer format at all under niri's DMA-BUF-only export.
                   ./package/niri/pr-1791.patch
+                  # niri-wm/niri#4382: column navigation with trackpoint
+                  # swipe gestures.
+                  ./package/niri/pr-4382.patch
                 ];
               });
             })
