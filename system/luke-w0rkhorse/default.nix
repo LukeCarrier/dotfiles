@@ -25,6 +25,7 @@
     ../../component/niri/nixos.nix
     ../../component/librepods/nixos.nix
     ../../component/1password/nixos.nix
+    ../../component/gnome-network-displays/gnome-network-displays.nix
   ];
 
   system.stateVersion = "26.05";
