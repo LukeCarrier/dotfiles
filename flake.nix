@@ -103,6 +103,10 @@
       url = "github:oxalica/rust-overlay";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
+    shanocast = {
+      url = "github:rgerganov/shanocast";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
@@ -148,6 +152,7 @@
       nixpkgs-unstable,
       nur,
       rust-overlay,
+      shanocast,
       sops-nix,
       wezterm,
       wpaperd,
@@ -273,6 +278,8 @@
                 toon-cli = toon-cli;
 
                 niri-float-sticky = niri-float-sticky.packages.${system}.niri-float-sticky;
+
+                shanocast = shanocast.packages.${system}.default;
 
                 wezterm = wezterm.packages.${system}.default;
               }
