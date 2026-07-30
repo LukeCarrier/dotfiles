@@ -208,7 +208,14 @@
                 buildInputs = (old.buildInputs or [ ]) ++ [ prev.wtype ];
                 patches = (old.patches or [ ]) ++ [ ./package/handy/pr-1337.patch ];
               });
-              niri = niri.packages.${system}.niri-unstable;
+              niri = niri.packages.${system}.niri-unstable.overrideAttrs (old: {
+                patches = (old.patches or [ ]) ++ [
+                  # niri-wm/niri#1791: SHM screencast fallback, needed for
+                  # GStreamer pipewiresrc (GNOME Network Displays) to negotiate
+                  # a buffer format at all under niri's DMA-BUF-only export.
+                  ./package/niri/pr-1791.patch
+                ];
+              });
             })
             (
               final: prev:

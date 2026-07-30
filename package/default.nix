@@ -54,6 +54,8 @@ rec {
 
   monaspace-fonts = callPackage ./monaspace-fonts { };
 
+  inherit (pkgs) niri;
+
   inherit (obsbot-camera-control)
     obsbot-sdk
     obsbot-camera-control-cli
