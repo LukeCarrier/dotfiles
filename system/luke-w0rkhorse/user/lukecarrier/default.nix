@@ -6,6 +6,9 @@
   permittedInsecurePackages,
   ...
 }:
+let
+  inherit (lib) getExe';
+in
 {
   imports = [
     inputs.niri.homeModules.niri
@@ -37,13 +40,11 @@
     ../../../../component/opencode/opencode.nix
     ../../../../component/claude-code/claude-code.nix
     ../../../../component/codex/codex.nix
-    ../../../../component/1password/1password.nix
     ../../../../component/handy/nixos-home.nix
     ../../../../component/openssh/openssh.nix
     ../../../../component/atuin/atuin.nix
     ../../../../component/starship/starship.nix
     ../../../../component/tmux/tmux.nix
-    ../../../../component/coder/coder.nix
     ../../../../component/helix/helix.nix
     ../../../../component/vim/vim.nix
     ../../../../component/zed/zed.nix
@@ -55,7 +56,6 @@
     ../../../../component/ghostty/ghostty.nix
     ../../../../component/rust/cargo.nix
     ../../../../component/aws/aws.nix
-    ../../../../component/docker/docker.nix
     ../../../../component/helm/helm.nix
     ../../../../component/kubernetes-client/kubernetes-client.nix
   ];

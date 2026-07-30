@@ -396,6 +396,32 @@ decision: accepted | rejected | pending
 ---
 ```
 
+### Vendored security agents (unwrapped/wrapper split)
+
+Third-party security agents distributed as `.deb` files (Cyberhaven, CrowdStrike
+Falcon Sensor) follow an "unwrapped + wrapper" split, mirroring the nixpkgs
+`-unwrapped` convention:
+
+- `<pkg>-unwrapped.nix` builds the derivation from the `.deb`. It is the
+  override point — swap this out per-host to change the version.
+- `<pkg>.nix` is the wrapper (FHS env, symlinkJoin, etc.) that consumes
+  `<pkg>-unwrapped` as a `callPackage` argument.
+- The flake exposes `overlays.default` that adds both packages via
+  `final.callPackage`, so overriding `<pkg>-unwrapped` in a later overlay
+  automatically flows through to `<pkg>`.
+- The nixos module attaches the flake's overlay via `nixpkgs.overlays = [
+  <pkg>-overlay ];` inside its `config` block, so any host-level overlay applied
+  with `lib.mkAfter` wins.
+
+To override the vendored `.deb` for a specific host, add an overlay in the
+employer/host-level nixos module with `lib.mkAfter`, redefining
+`<pkg>-unwrapped` only. The wrapper is regenerated automatically via
+`callPackage`. See `employer/emed/nixos.nix` for the canonical example.
+
+Unfree packages named by the wrapper (e.g. `Cyberhaven`) or the unwrapped
+(e.g. `cyberhaven-unwrapped`, `falcon-sensor-unwrapped`) must be listed in
+`config.allowUnfreePredicate` in `system/default.nix` for the host.
+
 ---
 
 ## Testing and Validation

@@ -1,16 +1,18 @@
 keys:
   - &me age19ndv83pvgryxmk2ndd3fy49jpx4hra5au3zu0vhw0f24splxnu7sq8mtz6
   - &c0nstruct age1m2jqtfutrkudrlduaf4d49sey3j66sycw7t0kchrvjvedxy9mshslxjgpl
+  - &curs3d age1l49uxlvy64jhqhfc2r7ur4qy8erh62nqg24rafqpznx9t9ee9c6qzwn4de
   - &f1xable age1u82l2vw5s9upca8l9wukq2r4w2hj6yce8wcm4z5jw9ujccen5cas7svwkx
   - &fatman age1tsypj2vpuy6dnlx3le2225l39knhm43xzsxqm57wdwh29t5vj3vq70h0c7
   - &employer_emed age14ddy9t7d0dnlmrumefw45ft9jqvzwz6l9d2th8hfd738xhjluckskuhe7p
   - &employer_emed_b-4653 age1jklllmcjlj8ln8jfrdmp2scg2q93tkk3msnsc5jxcjsamwp5vdgshwr7my
-  - &curs3d age1l49uxlvy64jhqhfc2r7ur4qy8erh62nqg24rafqpznx9t9ee9c6qzwn4de
+  - &w0rkhorse age1uuc0r56ntwucfe7nlrw7qr28fa7jeuc98084ljl7lfkcz7mxggksmlffx0
 recipients:
   - &emed
     - *employer_emed
     - *employer_emed_b-4653
     - *c0nstruct
+    - *w0rkhorse
   - &personal
     - *me
     - *curs3d

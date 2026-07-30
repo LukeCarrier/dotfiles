@@ -109,13 +109,20 @@
             builtins.elem (nixpkgs-unstable.lib.getName pkg) [
               "1password"
               "1password-cli"
+              "Cyberhaven"
+              "cyberhaven"
+              "cyberhaven-unwrapped"
+              "falcon-sensor"
+              "falcon-sensor-unwrapped"
             ];
         };
       modules = [ ./luke-w0rkhorse ];
       specialArgs = {
         inputs = {
           inherit
+            cyberhaven
             disko
+            falcon-sensor
             nixos-hardware
             nix-flatpak
             sops-nix
@@ -439,9 +446,9 @@
             {
               output = {
                 criteria = "eDP-1";
-                mode = "3072x1920@60Hz";
+                mode = "1920x1200@60Hz";
                 adaptiveSync = false;
-                scale = 1.5;
+                scale = 1.0;
                 transform = null;
               };
             }

@@ -100,6 +100,7 @@ in
         helix
         home-manager
         hydra-check
+        jjui
         jujutsu
         nh
         nil
@@ -116,6 +117,7 @@ in
           printf "age %s\n" "$(${getExe age} --version 2>&1 | head -n 1)"
           ${getExe git} --version
           ${getExe helix} --version
+          ${getExe jjui} --version
           ${getExe jujutsu} --version
           printf "home-manager %s\n" "$(${getExe home-manager} --version)"
           ${getExe nh} --version
@@ -145,6 +147,7 @@ in
           helix
           home-manager
           hydra-check
+          jjui
           jujutsu
           nh
           nil

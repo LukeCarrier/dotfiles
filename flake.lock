@@ -162,11 +162,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1784284703,
-        "narHash": "sha256-RenUzovJsOTN7mACS+llS2Z4ySLkYsWGXZIZlTguxv0=",
+        "lastModified": 1785448221,
+        "narHash": "sha256-+IOgNQi5cChdJ1zRqyglYWwdfPH6E1uCXocH9hTpR+w=",
         "owner": "LukeCarrier",
         "repo": "cyberhaven-nix",
-        "rev": "a6716a084428ce3a92ed6fc097ce013f99616fd9",
+        "rev": "2fa3cd774f19249665ff6eb00ea25b3120b16692",
         "type": "github"
       },
       "original": {
@@ -264,11 +264,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1784284740,
-        "narHash": "sha256-4Lom2jFOd7BWmvpt4BwQNPekzKkqAlVpl5cHtsEkjVw=",
+        "lastModified": 1785448270,
+        "narHash": "sha256-ZJRSiAa1mJEBopJhPTSEkm+dvxKOGybBsii8N3iIiQ8=",
         "owner": "LukeCarrier",
         "repo": "falcon-sensor-nixos",
-        "rev": "6f12becd8589f56b1482f8fba20271b2297e4447",
+        "rev": "e831f138b2e0a5ffc950a03ceac78b8195227be5",
         "type": "github"
       },
       "original": {

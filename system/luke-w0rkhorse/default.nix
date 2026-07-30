@@ -9,18 +9,18 @@
     ./disk-config.nix
     (modulesPath + "/installer/scan/not-detected.nix")
     inputs.disko.nixosModules.disko
-    # inputs.cyberhaven.nixosModules.cyberhaven
-    # inputs.falcon-sensor.nixosModules.default
+    inputs.cyberhaven.nixosModules.cyberhaven
+    inputs.falcon-sensor.nixosModules.default
+    inputs.lanzaboote.nixosModules.lanzaboote
     inputs.nix-flatpak.nixosModules.nix-flatpak
     inputs.sops-nix.nixosModules.sops
     ../../platform/nixos/common.nix
     ../../platform/nixos/region/en-gb.nix
-    # inputs.lanzaboote.nixosModules.lanzaboote
-    # ../../platform/nixos/secure-boot.nix
+    ../../platform/nixos/secure-boot.nix
     ../../platform/nixos/graphical.nix
     ../../platform/nixos/containers.nix
     ../../platform/nixos/virt.nix
-    # ../../employer/emed/nixos.nix
+    ../../employer/emed/nixos.nix
     ../../component/niri/nixos.nix
     ../../component/librepods/nixos.nix
     ../../component/1password/nixos.nix
@@ -32,15 +32,11 @@
 
   sops.defaultSopsFile = ../../secrets/employer-emed.yaml;
 
-  # boot.lanzaboote.pkiBundle = lib.mkForce "/var/lib/sbctl";
+  boot.lanzaboote.pkiBundle = lib.mkForce "/var/lib/sbctl";
 
   boot.kernelParams = [
     # Attempt to resolve issues with Thunderbolt docks after resuming from suspend
     # "usbcore.autosuspend=-1"
-    # The internal panel hangs off the AMD dGPU (the i915 eDP path is disabled),
-    # so amdgpu failing to read the panel's DPCD/EDID on bring-up leaves us with a
-    # blank or red screen. Disabling PSR works around the flaky eDP link training.
-    # "amdgpu.dcdebugmask=0x10"
   ];
 
   hardware.graphics = {
@@ -48,20 +44,12 @@
     enable32Bit = true;
   };
 
-  hardware.apple.touchBar = {
-    enable = true;
-    settings = {
-      MediaLayerDefault = false;
-      EnablePixelShift = true;
-    };
-  };
-
   services.hardware.bolt.enable = true;
 
   # Cap battery charge at 80% to reduce wear.
-  # services.udev.extraRules = ''
-  #   ACTION=="add", SUBSYSTEM=="acpi", DRIVER=="applesmc", ATTR{battery_charge_limit}="80"
-  # '';
+  services.udev.extraRules = ''
+    ACTION=="add", SUBSYSTEM=="power_supply", ENV{POWER_SUPPLY_NAME}=="BAT0", ATTR{charge_control_end_threshold}="80"
+  '';
 
   programs.gamescope.enable = true;
 
