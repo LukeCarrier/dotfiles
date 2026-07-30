@@ -37,9 +37,10 @@ let
       url = mcpDef.url or null;
       command = mcpDef.command or null;
       mcpType = if url != null then "remote" else "local";
+      enabled = mcpDef.enabled or false;
       baseMcp = {
         type = mcpType;
-        enabled = mcpDef.enabled or false;
+        enabled = if enabled == null then false else enabled;
       };
       mcpWithUrl = if url != null then baseMcp // { inherit url; } else baseMcp;
       mcpWithCommand =
