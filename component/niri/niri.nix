@@ -542,6 +542,19 @@ in
           ];
           block-out-from = "screen-capture";
         }
+        # 1Password prompts (SSH agent approval, unlock) — the prompt window has
+        # the bare title "1Password", unlike the main app ("… — 1Password").
+        # niri can't anchor to the requesting app, so float it centred + focused.
+        {
+          matches = [
+            {
+              app-id = "^1password$";
+              title = "^1Password$";
+            }
+          ];
+          open-floating = true;
+          open-focused = true;
+        }
         # PiP overlays
         {
           matches = [
