@@ -184,6 +184,11 @@
             rust-overlay.overlays.default
             wpaperd.overlays.default
             (final: prev: {
+              fwupd = prev.fwupd.overrideAttrs (old: {
+                mesonFlags = (old.mesonFlags or []) ++ [ "-Defi_app_location=/run/fwupd-efi" ];
+              });
+            })
+            (final: prev: {
               ashell = ashell.packages.${system}.default;
               # NixOS/nixpkgs#535887
               cantarell-fonts =
