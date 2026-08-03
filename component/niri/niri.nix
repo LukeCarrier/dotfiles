@@ -23,6 +23,9 @@ let
     fi
   '';
   urgent-color = "#ff0000";
+  mainMod = "Super";
+  moveMod = "Shift";
+  spaceMod = "Alt";
 in
 {
   home.packages = (
@@ -92,9 +95,10 @@ in
 
   programs.niri = {
     enable = true;
-    package = pkgs.niri-unstable;
+    package = pkgs.niri;
     settings = {
       input = {
+        mod-key = mainMod;
         keyboard = {
           xkb = {
             layout = "us";
@@ -194,9 +198,6 @@ in
       };
       binds =
         let
-          mainMod = "Super";
-          moveMod = "Shift";
-          spaceMod = "Alt";
           terminal = "xdg-terminal";
         in
         with config.lib.niri.actions;
@@ -598,7 +599,10 @@ in
   xdg.configFile.niri-config = lib.mkForce {
     target = "niri/config.kdl";
     source = pkgs.writeText "niri-config.kdl" ''
-      ${config.programs.niri.finalConfig}
+      ${lib.replaceStrings
+        [ ''mod-key "Super"'' ]
+        [ "    trackpoint {\n        scroll-factor 0.5\n    }\n    mod-key \"Super\"" ]
+        config.programs.niri.finalConfig}
 
       // codex: niri blur
       blur {
