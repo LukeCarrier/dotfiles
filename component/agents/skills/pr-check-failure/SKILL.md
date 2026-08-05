@@ -1,61 +1,53 @@
 ---
 name: pr-check-failure
-description: Diagnosing and fixing failing GitHub Actions CI checks and broken builds
+description: Diagnose and fix failing GitHub Actions CI checks. Load when a PR's checks are red, a workflow run failed, or a build broke in CI.
 ---
 
 ## When to use me
 
-When a PR's GitHub Actions checks are failing and you need to determine the cause and fix it.
+When a PR's GitHub Actions checks are failing and you need to find the cause and fix it.
 
-## Diagnosis workflow
+## Orient first
 
-1. **Fetch and switch to the PR branch** — get the exact branch name from the PR's `head.ref` field (via `github_pull_request_read` with `get` method), then use the `fetch-remote` skill to fetch, then use the `switch-branch` skill to check out that ref.
+Discover the specifics — never assume paths, branch names, or stack:
 
-2. **Get the job logs using local tools first**
-   - The repo is checked out to the local filesystem at `/home/lukecarrier/Code/throwparty/agentkit`.
-   - To get job logs from a failing CI run: use `github_get_job_logs` with `return_content=true` and provide the `job_id` or `run_id`. The job ID is typically visible in the run URL as the last path segment.
-   - Read the tool output file that gets saved (the truncated content) to find the actual error.
-   - The logs contain ANSI escape sequences but the error messages are still readable.
+- **Branch**: read the PR's `head.ref` (via `github_pull_request_read`). Fetch and check it out.
+- **Local checkout**: the repo is on disk in the current workspace. Read workflow and source files from disk, not through the GitHub API — the API is slower and can serve a different ref than you have checked out.
+- **Stack**: infer from the repo (workflow files, lockfiles, `flake.nix`, `package.json`, etc.). Don't presume a language or build tool.
 
-3. **Read relevant files from disk, not from GitHub API**
-   - CI workflow files are under `.github/workflows/` — read them directly from disk with the `Read` tool.
-   - Composite actions are under `.github/actions/`.
-   - The goreleaser config is `.goreleaser.yaml` at repo root.
-   - The Nix flake is `nix/flake.nix`.
-   - Source code is under `crates/`.
-   - Do NOT use `github_get_file_contents` for files in this repo — they're available locally.
+## Get the logs
 
-4. **Check if the failure is transient or real**
-   - If the failure is `dorny/paths-filter` with a GitHub API 5xx error → transient, re-run the workflow.
-   - If the failure mentions Nix hash mismatch → real, needs a hash update.
-   - If the failure is a Nix daemon connection error → likely transient, re-run.
+Fetch failing-job logs with `github_get_job_logs` (`return_content=true`), passing the `job_id` or `run_id` — the run ID is the last path segment of the run URL. Read the saved tool-output file to find the error. Logs carry ANSI escapes but the messages remain readable.
 
-5. **For transient failures**: re-run via `github_actions_run_trigger` with `method=rerun_workflow_run` and the `run_id` from the run URL.
+## Triage: transient or real
 
-6. **For Nix hash mismatches**: the error output shows `got: sha256-<hash>` which is the correct hash. Extract it and update `cargoHash` in `nix/flake.nix`.
+Classify before fixing — re-running a real failure wastes minutes; hand-patching a transient one wastes effort.
 
-7. **For other failures**: inspect the full job log for the actual error message. Trace the call chain from the workflow file to understand the build steps.
+**Transient** — re-run, don't patch:
+- Network/registry timeouts, 5xx from an upstream API, runner or daemon connection drops.
+- A step that succeeds on re-run with no code change.
 
-### How to trace a build failure
+**Real** — needs a code/config fix:
+- Compile/type/lint/test failures.
+- Dependency-hash or lockfile mismatches (the error usually prints the expected value — extract and apply it).
+- Anything that reproduces on re-run.
 
-1. Identify the failing job name from the run URL or job log.
-2. Find the workflow file that defines that job (under `.github/workflows/`). Read it locally.
-3. For release/snapshot builds, the job runs `goreleaser release --clean`. Read `.goreleaser.yaml` to see the targets and builder config.
-4. For macOS cross-compilation, trace the env vars: `prepare-macos-sdk.sh` sets `SDKROOT`, `MACOSX_DEPLOYMENT_TARGET`, and `ZIG_SYSTEM_LIB_DIR`. The workflow passes these to the goreleaser Release step.
-5. Look at the nix flake (`nix/flake.nix`) to see available tools (zig, cargo-zigbuild, etc.) and rust targets.
+## Rerun workflows
 
-## Transient failures to ignore
+Use `github_actions_run_trigger` (not the `gh` CLI). Methods, all requiring `owner`, `repo`, `run_id`:
 
-- `dorny/paths-filter` → GitHub API 5xx, re-run
-- Nix connection to daemon socket → re-run
-- Any step that succeeds on re-run without code changes
+- `rerun_workflow_run` — the whole run
+- `rerun_failed_jobs` — only failed jobs
+- `cancel_workflow_run` — a stuck run
 
-## Rerunning workflows
+## Trace a real build failure
 
-Use `github_actions_run_trigger` — never `gh` CLI. Available methods:
+1. Identify the failing job name from the run URL or log.
+2. Find the workflow defining it under `.github/workflows/`; read it locally. Follow any composite actions under `.github/actions/`.
+3. Follow the failing step to the command it runs, then to that command's config (build manifest, lockfile, task runner).
+4. Trace env vars the step depends on back to where they're set — a missing or wrong env var is a common root cause.
+5. Reproduce locally where feasible: running the same command on your checkout closes the loop faster than pushing and waiting for CI.
 
-- `rerun_workflow_run` — rerun the entire workflow run
-- `rerun_failed_jobs` — rerun only failed jobs
-- `cancel_workflow_run` — cancel a run stuck or in progress
+## Completion criterion
 
-All require `owner`, `repo`, and `run_id` from the run URL.
+The originating check passes on a fresh run — not merely "the error message changed". For a real fix, confirm the same command succeeds locally (or, if CI-only, that the re-run goes green).
