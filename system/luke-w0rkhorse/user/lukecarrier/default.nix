@@ -65,6 +65,16 @@ in
 
     username = "lukecarrier";
     homeDirectory = "/home/lukecarrier";
+
+    packages = with pkgs; [
+      asciinema
+      crane
+      skopeo
+      hibiki
+      obsbot-camera-control-cli
+      obsbot-camera-control-gui
+      nautilus
+    ];
   };
 
   sops.defaultSopsFile = ../../../../secrets/employer-emed.yaml;
@@ -89,15 +99,6 @@ in
 
     inherit permittedInsecurePackages;
   };
-
-  home.packages = with pkgs; [
-    crane
-    skopeo
-    hibiki
-    obsbot-camera-control-cli
-    obsbot-camera-control-gui
-    nautilus
-  ];
 
   sops.age.keyFile = "${config.home.homeDirectory}/Code/LukeCarrier/dotfiles/.sops/keys";
 
