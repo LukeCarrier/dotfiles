@@ -17,7 +17,7 @@ Create an ADR specification in TOON format. This is the first stage of the ADR p
 
 ## Process
 
-1. If the description is ambiguous, ask clarifying questions before writing.
+1. If the description is anything but fully settled, run the `align` skill to reach a shared understanding before writing.
 2. Check whether an existing ADR already covers this topic — if so, tell the user and stop.
 3. Write a specification file at `adrs/<YYYY-MM-DD>-<feature-slug>/spec.toon` with the TOON schema below.
 4. Validate the TOON structure against the schema: `toon --decode adrs/<YYYY-MM-DD>-<feature-slug>/spec.toon | check-jsonschema --schemafile ${FIXTURES_DIR}/spec.schema.json /dev/stdin`. Fix any validation errors.

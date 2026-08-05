@@ -63,6 +63,7 @@ Parameters (feature name, current date) are declared in `agents.nix` and lowered
 
 | Skill | Source | Purpose |
 |-------|--------|---------|
+| `align` | `skills/align/SKILL.md` | Relentless clarification interview to reach shared understanding |
 | `code-review` | `skills/code-review/SKILL.md` | Multi-agent code review with specialised reviewers |
 | `direnv` | `skills/direnv/SKILL.md` | Environment variable handling via direnv |
 | `jj` | `skills/jj/SKILL.md` | Jujutsu version control operations |

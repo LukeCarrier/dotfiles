@@ -262,6 +262,7 @@ in
   };
 
   agents.skills = {
+    align.source = ./skills/align/SKILL.md;
     code-review = {
       source = ./skills/code-review/SKILL.md;
       fixtures = {

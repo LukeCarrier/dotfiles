@@ -42,7 +42,7 @@ Adrian may skip subagent analysis for purely mechanical or internal architectura
 
 ### Specifying ADRs
 
-1. Ask clarifying questions if the user's goal is ambiguous.
+1. If the user's goal is anything but fully settled, run the `align` skill to reach a shared understanding before writing.
 2. Write the ADR specification as `spec.toon` in a new directory under `adrs/`.
 3. Run the render script.
 4. Optionally invoke Scout and/or Quest before writing.
