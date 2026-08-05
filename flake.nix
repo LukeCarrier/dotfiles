@@ -10,6 +10,14 @@
         rust-overlay.follows = "rust-overlay";
       };
     };
+    asciinema = {
+      url = "github:asciinema/asciinema";
+      inputs = {
+        flake-utils.follows = "flake-utils";
+        nixpkgs.follows = "nixpkgs-unstable";
+        rust-overlay.follows = "rust-overlay";
+      };
+    };
     ashell = {
       url = "github:MalpenZibo/ashell/main";
       inputs = {
@@ -19,8 +27,10 @@
     };
     claude-code = {
       url = "github:sadjow/claude-code-nix";
-      inputs.flake-utils.follows = "flake-utils";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
+      inputs = {
+        flake-utils.follows = "flake-utils";
+        nixpkgs.follows = "nixpkgs-unstable";
+      };
     };
     code-insiders = {
       url = "github:iosmanthus/code-insiders-flake";
@@ -129,6 +139,7 @@
   outputs =
     {
       agentkit,
+      asciinema,
       ashell,
       claude-code,
       code-insiders,
@@ -189,6 +200,7 @@
               });
             })
             (final: prev: {
+              asciinema = asciinema.packages.${system}.default;
               ashell = ashell.packages.${system}.default;
               # NixOS/nixpkgs#535887
               cantarell-fonts =

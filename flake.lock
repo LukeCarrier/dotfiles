@@ -29,6 +29,32 @@
         "type": "github"
       }
     },
+    "asciinema": {
+      "inputs": {
+        "flake-utils": [
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "nixpkgs-unstable"
+        ],
+        "rust-overlay": [
+          "rust-overlay"
+        ]
+      },
+      "locked": {
+        "lastModified": 1781946088,
+        "narHash": "sha256-A303wZbkg+cBc4bhUPXjelYBn+n73WM++7B247QIkPM=",
+        "owner": "asciinema",
+        "repo": "asciinema",
+        "rev": "3c610957c7dbbdfcb362a1cdfc39df4eb21f48ad",
+        "type": "github"
+      },
+      "original": {
+        "owner": "asciinema",
+        "repo": "asciinema",
+        "type": "github"
+      }
+    },
     "ashell": {
       "inputs": {
         "crane": "crane",
@@ -992,6 +1018,7 @@
     "root": {
       "inputs": {
         "agentkit": "agentkit",
+        "asciinema": "asciinema",
         "ashell": "ashell",
         "claude-code": "claude-code",
         "code-insiders": "code-insiders",
