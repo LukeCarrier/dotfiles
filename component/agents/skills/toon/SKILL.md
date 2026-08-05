@@ -83,12 +83,7 @@ toon --decode tasks.toon | check-jsonschema --schemafile ${FIXTURES_DIR}/tasks.s
 toon --decode retro.toon | check-jsonschema --schemafile ${FIXTURES_DIR}/retro.schema.json /dev/stdin
 ```
 
-If decode fails, fix the syntax errors. Common mistakes:
-- Missing comma in tabular row
-- Unquoted string containing comma
-- Wrong number of fields in a tabular row
-- Extra whitespace after a value
-- Indentation inconsistency (mixing spaces/tabs)
+If decode fails, fix the syntax errors — see the table below.
 
 ## Common mistakes
 
