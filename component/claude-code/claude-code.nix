@@ -5,76 +5,14 @@
   ...
 }:
 let
+  # Build the claude-code configuration package
+  agentConfig = import ../../lib/agent-config.nix {
+    inherit pkgs config lib;
+  };
+  claudeCodeConfigPkg = agentConfig.claudeCodeConfig;
+
   agentsLib = import ../../lib/agents.nix { inherit lib; };
   substitute = agentsLib.substitute config lib;
-
-  # Dotted command names map onto namespacing subdirectories: `adr.specify`
-  # lives at `commands/adr/specify.md`, invoked as `/adr:specify`.
-  commandPath = name: "${lib.replaceStrings [ "." ] [ "/" ] name}.md";
-
-  # Lower a tool-agnostic command definition (config.agents.commands) into a
-  # Claude Code custom slash command: YAML frontmatter followed by the shared
-  # body.
-  buildClaudeCommand =
-    cmd:
-    let
-      argumentHint = lib.concatMapStringsSep " " (p: "[${p.key}]") cmd.parameters;
-      frontmatter = [
-        "description: ${cmd.description}"
-      ]
-      ++ lib.optional (cmd.parameters != [ ]) "argument-hint: ${argumentHint}"
-      # Bodies capture the current date via a shelled-out `date` invocation.
-      ++ [ "allowed-tools: Bash(date:*)" ];
-    in
-    ''
-      ---
-      ${lib.concatStringsSep "\n" frontmatter}
-      ---
-
-    ''
-    + cmd.body;
-
-  substituteDirectives = let
-    search = "$" + "{FIXTURES_DIR}";
-    dir = "${config.home.homeDirectory}/.claude/commands";
-  in ''
-    --replace '${search}' '${dir}'
-  '';
-
-  commandFiles = lib.mapAttrs' (
-    name: cmd:
-    lib.nameValuePair ".claude/commands/${commandPath name}" {
-      source = pkgs.stdenv.mkDerivation {
-        inherit name;
-        src = pkgs.writeText "${name}.md" (buildClaudeCommand cmd);
-        dontUnpack = true;
-        installPhase = ''
-          substitute "$src" "$TMPDIR/result" ${substituteDirectives}
-          mv "$TMPDIR/result" "$out"
-        '';
-      };
-    }
-  ) config.agents.commands;
-
-  buildSkillFiles = basePath:
-    builtins.foldl' (acc: name:
-      let
-        skill = config.agents.skills.${name};
-        prefix = "${basePath}/${name}";
-      in
-      acc
-      // { "${prefix}/SKILL.md".source = skill.source; }
-      // lib.mapAttrs' (fname: fpath:
-        lib.nameValuePair "${prefix}/${fname}" { source = fpath; }
-      ) skill.fixtures
-    ) { } (builtins.attrNames config.agents.skills);
-
-  buildCommandFixtures = commandsBase:
-    builtins.foldl' (acc: cmd:
-      acc // lib.mapAttrs' (fname: fpath:
-        lib.nameValuePair "${commandsBase}/${fname}" { source = fpath; }
-      ) (cmd.fixtures or { })
-    ) { } (builtins.attrValues config.agents.commands);
 
   inherit (lib) getExe getExe';
 
@@ -159,9 +97,10 @@ in
     templates = mcpTemplates;
   };
 
-  home.file = commandFiles // {
-    ".claude/commands/adr/housekeeping.sh".source = ../agents/adr/housekeeping.sh;
-  }
-  // buildSkillFiles ".claude/skills"
-  // buildCommandFixtures ".claude/commands";
+  # Copy the built configuration to ~/.claude during activation
+  home.activation.claudeCodeConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    $DRY_RUN_CMD rm -rf "$HOME/.claude"
+    $DRY_RUN_CMD cp -r ${claudeCodeConfigPkg} "$HOME/.claude"
+    $DRY_RUN_CMD chmod -R u+w "$HOME/.claude"
+  '';
 }

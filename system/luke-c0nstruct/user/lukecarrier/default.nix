@@ -6,6 +6,9 @@
   permittedInsecurePackages,
   ...
 }:
+let
+  inherit (lib) getExe getExe';
+in
 {
   imports = [
     inputs.niri.homeModules.niri
