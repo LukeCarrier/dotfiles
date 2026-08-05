@@ -69,6 +69,7 @@ in
     packages = with pkgs; [
       asciinema
       crane
+      lumen
       skopeo
       hibiki
       obsbot-camera-control-cli
