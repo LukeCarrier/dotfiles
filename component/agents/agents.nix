@@ -273,6 +273,7 @@ in
     jj.source = ./skills/jj/SKILL.md;
     pr-check-failure.source = ./skills/pr-check-failure/SKILL.md;
     toon.source = ./skills/toon/SKILL.md;
+    writing-skills.source = ./skills/writing-skills/SKILL.md;
   };
 
   agents.commands = {

@@ -68,6 +68,7 @@ Parameters (feature name, current date) are declared in `agents.nix` and lowered
 | `jj` | `skills/jj/SKILL.md` | Jujutsu version control operations |
 | `pr-check-failure` | `skills/pr-check-failure/SKILL.md` | Diagnosing failing GitHub Actions CI checks |
 | `toon` | `skills/toon/SKILL.md` | TOON format writing rules and common pitfalls |
+| `writing-skills` | `skills/writing-skills/SKILL.md` | How to write skills, agent definitions, and AGENTS.md |
 
 Skills are installed by each harness into the agent's config directory. The shared code at `skills/<name>/SKILL.md` is the canonical copy.
 
