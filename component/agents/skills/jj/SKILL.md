@@ -1,83 +1,73 @@
 ---
 name: jj
-description: Working with jj (Jujutsu) version control in this repo. Load when the user mentions jj, commits, branches, rebasing, or pushing.
+description: Working with jj (Jujutsu) version control. Load when the user mentions jj, or asks to commit, rebase, push, or inspect history in a jj repo.
 ---
 
 ## When to use me
 
-Use when you need to interact with jj for version control operations: committing, rebasing, pushing, pulling, or inspecting history. This repo uses jj as its primary VCS interface, backed by a Git remote.
+Whenever version control runs through jj: committing, rebasing, pushing, fetching, or inspecting history.
 
-## How jj is set up here
+## Orient first
 
-- **Remote**: `origin` → `https://github.com/throwparty/agentkit` (HTTPS, not SSH)
-- **No custom config**: No `.jjconfig.toml`, no `~/.jj/` config. All settings are jj defaults.
-- **Underlying Git**: jj stores data in `.jj/repo/` but there is also a `.git/` directory. Use `jj` commands, not `git` commands. Using `git` will corrupt jj's state.
+jj setup varies per repo — discover it, never assume:
+
+```bash
+jj git remote list   # remote names and URLs
+jj bookmark list     # local bookmarks
+```
+
+Use the discovered remote name (usually `origin`, but confirm) in `jj git push`/`fetch`.
+
+## Co-located repos
+
+A repo with both `.jj/` and `.git/` metadata is **co-located**. jj imports Git state on each command and exports its own state back, so `git` operations do not corrupt jj — jj reconciles them on its next invocation.
+
+**Prefer jj commands regardless, especially for writes.** Reach for `git` only for reads jj has no equivalent for. Let jj own history mutation so its operation log stays authoritative and undoable (`jj op log`, `jj undo`).
 
 ## Common operations
 
-### Check status
+### Status and history
 ```bash
 jj status
-```
-
-### View log
-```bash
 jj log --limit 10
-jj log -r 'main..@'  # commits ahead of main
-jj log -r 'remote_bookmarks()..@ | (remote_bookmarks()..@)-'  # default revset
+jj log -r 'main..@'   # commits ahead of main
 ```
 
-### List bookmarks (branches)
+### Bookmarks (jj's name for branches)
 ```bash
 jj bookmark list
-jj bookmark list --all  # includes remote-tracking bookmarks
+jj bookmark list --all   # includes remote-tracking bookmarks
 ```
 
-### Create a new change
+### Describe the working copy
 ```bash
 jj describe -m "feat: my feature description"
 ```
 
-Changes are automatically created on `jj new` (like `jj checkout -b` in Git). The working copy is always a change.
+The working copy is always a change. `jj new` starts a fresh change on top; re-running `jj describe -m` amends the current one.
 
-### Amend changes
+### Rebase
 ```bash
-# After making edits:
-jj describe -m "better message"
+jj rebase -d main -r <change-id>   # a specific change
+jj rebase -d main                   # the working copy
 ```
 
-### Rebase onto main
-```bash
-jj rebase -d main -r <change-id>
-# or to rebase the current working copy:
-jj rebase -d main
-```
-
-### Push to remote
+### Push and fetch
 ```bash
 jj git push --bookmark <bookmark-name>
-```
-
-Since remote bookmarks don't automatically track local ones, always specify `--bookmark` explicitly.
-
-### Fetch from remote
-```bash
 jj git fetch
 ```
 
-### See diff
+Local and remote bookmarks are distinct and do not auto-track. Always name the bookmark explicitly on push.
+
+### Diff
 ```bash
-jj diff -r <change-id> --stat  # summary
-jj diff -r <change-id>         # full diff
+jj diff -r <change-id> --stat   # summary
+jj diff -r <change-id>          # full diff
 ```
 
-## Important caveats
+## Caveats
 
-- **Never use `git` commands** directly on this repo. jj manages the Git repo internally and `git` operations will corrupt jj's state.
-- **No tracking relationship** is set up between local and remote bookmarks. Always push explicitly with `--bookmark`.
-- **The working copy is a jj change**, not a Git branch. Use `jj describe -m ""` for empty/clean working copies.
-- **`jj git push` will not force-push** by default. It errors if the remote has diverged. Use with care.
-
-## Bookmarks vs branches
-
-jj calls branches "bookmarks". The local `main` bookmark and `origin/main` remote bookmark are distinct — they don't automatically have a tracking relationship. After rebasing, you may need to force-push (though this is rarely needed day-to-day).
+- **`jj git push` won't force-push by default.** It errors if the remote diverged. Use with care.
+- **Bookmarks don't auto-track.** Push explicitly with `--bookmark`; after a rebase the local and remote bookmark diverge until you push.
+- **Undo is cheap.** A wrong mutation is recoverable via `jj undo` / `jj op restore` — prefer fixing forward over aborting.
