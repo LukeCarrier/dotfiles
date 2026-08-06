@@ -5,7 +5,7 @@ HOSTNAME := $(shell echo $(shell hostname) | cut -d. -f1 | tr '[:upper:]' '[:low
 USER := $(shell id -un)
 OS := $(shell uname -s)
 OP := switch
-ARGS := --show-trace
+ARGS := --show-activation-logs --show-trace
 FLAKE := .
 
 gc:
