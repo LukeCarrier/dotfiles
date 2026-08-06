@@ -192,13 +192,9 @@ in
       };
     };
 
-    scalr = {
-      url = "https://scalr.io/mcp";
-    };
+    scalr.url = "https://emed.scalr.io/mcp";
 
-    slack = {
-      url = "https://mcp.slack.com/mcp";
-    };
+    slack.url = "https://mcp.slack.com/mcp";
   };
 
   programs.bash.initExtra = ''
