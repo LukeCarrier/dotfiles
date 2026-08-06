@@ -23,5 +23,10 @@
     }
   ];
 
+  services.upower = {
+    criticalPowerAction = "Hibernate";
+    percentageAction = 5;
+  };
+
   services.hardware.bolt.enable = true;
 }
