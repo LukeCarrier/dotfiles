@@ -13,6 +13,7 @@
 
   # Cap battery charge at 80% to reduce wear.
   services.udev.extraRules = ''
+    ACTION=="add", SUBSYSTEM=="power_supply", ENV{POWER_SUPPLY_NAME}=="BAT0", ATTR{charge_control_start_threshold}="75"
     ACTION=="add", SUBSYSTEM=="power_supply", ENV{POWER_SUPPLY_NAME}=="BAT0", ATTR{charge_control_end_threshold}="80"
   '';
 
