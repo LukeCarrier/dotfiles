@@ -20,6 +20,7 @@
     ../../platform/nixos/containers.nix
     ../../platform/nixos/virt.nix
     ../../employer/emed/nixos.nix
+    ../../component/gnome-headless/nixos.nix
     ../../component/niri/nixos.nix
     ../../component/librepods/nixos.nix
     ../../component/1password/nixos.nix

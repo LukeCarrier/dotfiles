@@ -21,6 +21,7 @@
     ../../platform/nixos/graphical.nix
     ../../platform/nixos/containers.nix
     ../../platform/nixos/virt.nix
+    ../../component/gnome-headless/nixos.nix
     ../../employer/emed/nixos.nix
     ../../component/niri/nixos.nix
     ../../component/librepods/nixos.nix

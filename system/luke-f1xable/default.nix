@@ -19,6 +19,7 @@ in
     inputs.lanzaboote.nixosModules.lanzaboote
     ../../platform/nixos/secure-boot.nix
     ../../platform/nixos/graphical.nix
+    ../../component/gnome-headless/nixos.nix
     ../../component/niri/nixos.nix
     ../../component/librepods/nixos.nix
     ../../component/minikube/nixos.nix
