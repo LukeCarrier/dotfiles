@@ -63,7 +63,7 @@ in
   };
 
   systemd.user.services = {
-    # sodiboo/niri-flake#509
+    # niri-flake polkit agent: keep it from starting before the graphical session
     niri-flake-polkit = {
       after = {
         "graphical-session.target" = true;
@@ -113,6 +113,12 @@ in
         focus-follows-mouse = { };
       };
       clipboard.disable-primary = true;
+      blur = {
+        passes = 4;
+        offset = 5.0;
+        noise = 0.02;
+        saturation = 2.0;
+      };
       overview.backdrop-color = "#000000";
       spawn-at-startup = [
         {
@@ -433,7 +439,7 @@ in
                   hotkey-overlay.title = "Focus workspace ${toString i}";
                 };
               }
-              # FIXME: use the action directly once sodiboo/niri-flake#1018 is fixed.
+              # FIXME: use the action directly once niri-flake exposes move-column-to-workspace.
               {
                 name = "${mainMod}+${moveMod}+${toString i}";
                 value = {
@@ -589,35 +595,28 @@ in
           #   inactive-color = "#7d0d2d";
           # };
         }
+        # Blur behind every window
+        {
+          background-effect = {
+            blur = true;
+          };
+        }
       ];
     };
   };
 
   # The upstream niri module writes config.kdl from `programs.niri.finalConfig`.
-  # Override that generated file source so the immutable store file already
-  # contains the extra blur rules instead of trying to append after activation.
+  # It can't express the trackpoint scroll-factor (which we add ourselves via
+  # package/niri/pr-4382.patch), so inject that node into the generated input
+  # block.
   xdg.configFile.niri-config = lib.mkForce {
     target = "niri/config.kdl";
-    source = pkgs.writeText "niri-config.kdl" ''
-      ${lib.replaceStrings
+    source = pkgs.writeText "niri-config.kdl" (
+      lib.replaceStrings
         [ ''mod-key "Super"'' ]
         [ "    trackpoint {\n        scroll-factor 0.5\n    }\n    mod-key \"Super\"" ]
-        config.programs.niri.finalConfig}
-
-      // codex: niri blur
-      blur {
-          passes 4
-          offset 5.0
-          noise 0.02
-          saturation 2.0
-      }
-
-      window-rule {
-          background-effect {
-              blur true
-          }
-      }
-    '';
+        config.programs.niri.finalConfig
+    );
   };
 
   programs.waybar.settings.mainBar = {

@@ -77,7 +77,7 @@
       inputs.rust-overlay.follows = "rust-overlay";
     };
     niri = {
-      url = "github:sodiboo/niri-flake";
+      url = "github:epireyn/niri-flake";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     niri-float-sticky = {
