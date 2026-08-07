@@ -283,6 +283,28 @@
         "type": "github"
       }
     },
+    "encore_2": {
+      "inputs": {
+        "nixpkgs": [
+          "tardy",
+          "throwparty",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1768765837,
+        "narHash": "sha256-KNzMFI+OP8rF6SYud6u3w3HjeHAGxTFeVTV0RrRRdAs=",
+        "owner": "encoredev",
+        "repo": "encore-flake",
+        "rev": "d967b87343c4b79b62c1410b8a1809b39b20b198",
+        "type": "github"
+      },
+      "original": {
+        "owner": "encoredev",
+        "repo": "encore-flake",
+        "type": "github"
+      }
+    },
     "falcon-sensor": {
       "inputs": {
         "nixpkgs": [
@@ -1045,6 +1067,7 @@
         "shanocast": "shanocast",
         "sops-nix": "sops-nix",
         "systems": "systems",
+        "tardy": "tardy",
         "wezterm": "wezterm",
         "wpaperd": "wpaperd"
       }
@@ -1092,6 +1115,28 @@
       }
     },
     "rust-overlay_3": {
+      "inputs": {
+        "nixpkgs": [
+          "tardy",
+          "throwparty",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1772247314,
+        "narHash": "sha256-x6IFQ9bL7YYfW2m2z8D3Em2YtAA3HE8kiCFwai2fwrw=",
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "rev": "a1ab5e89ab12e1a37c0b264af6386a7472d68a15",
+        "type": "github"
+      },
+      "original": {
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "type": "github"
+      }
+    },
+    "rust-overlay_4": {
       "inputs": {
         "nixpkgs": [
           "wezterm",
@@ -1212,6 +1257,35 @@
         "type": "github"
       }
     },
+    "tardy": {
+      "inputs": {
+        "flake-utils": [
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "nixpkgs-unstable"
+        ],
+        "rust-overlay": [
+          "rust-overlay"
+        ],
+        "throwparty": "throwparty_2"
+      },
+      "locked": {
+        "dir": "nix",
+        "lastModified": 1786406309,
+        "narHash": "sha256-KBet/WXsHMIf+cE42TjqhrwlgMwXh3325yE9BrdcQn0=",
+        "owner": "throwparty",
+        "repo": "tardy",
+        "rev": "91dcbaf6870b693628d11bca0289f818f8be7206",
+        "type": "github"
+      },
+      "original": {
+        "dir": "nix",
+        "owner": "throwparty",
+        "repo": "tardy",
+        "type": "github"
+      }
+    },
     "throwparty": {
       "inputs": {
         "encore": "encore",
@@ -1224,6 +1298,33 @@
           "nixpkgs"
         ],
         "rust-overlay": "rust-overlay"
+      },
+      "locked": {
+        "lastModified": 1780530296,
+        "narHash": "sha256-BIXqNwC/tWmBYhyBew6obxh6WBP3pIjyHi0NC9Wig88=",
+        "ref": "refs/heads/main",
+        "rev": "6c931ab69d4286908684345ee84f07115297a4d0",
+        "revCount": 16,
+        "type": "git",
+        "url": "ssh://git@github.com/throwparty/nix"
+      },
+      "original": {
+        "type": "git",
+        "url": "ssh://git@github.com/throwparty/nix"
+      }
+    },
+    "throwparty_2": {
+      "inputs": {
+        "encore": "encore_2",
+        "flake-utils": [
+          "tardy",
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "tardy",
+          "nixpkgs"
+        ],
+        "rust-overlay": "rust-overlay_3"
       },
       "locked": {
         "lastModified": 1780530296,
@@ -1270,7 +1371,7 @@
         "nixpkgs": [
           "nixpkgs-unstable"
         ],
-        "rust-overlay": "rust-overlay_3",
+        "rust-overlay": "rust-overlay_4",
         "zlib": "zlib"
       },
       "locked": {

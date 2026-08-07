@@ -1,4 +1,7 @@
-{ config, ... }:
+{ config, lib, pkgs, ... }:
+let
+  inherit (lib) getExe;
+in
 {
   programs.ashell = {
     enable = true;
@@ -30,11 +33,26 @@
           }
         ];
       };
+      CustomModule = [
+        (
+          let
+            inherit (pkgs) tardy;
+            tardyBin = getExe tardy;
+          in
+          {
+            name = "Tardy";
+            type = "Button";
+            listen_cmd = "${tardyBin} daemon --format=ashell";
+            command = "${tardyBin} open";
+          }
+        )
+      ];
       modules = {
         left = [ "Workspaces" ];
         center = [ "Privacy" "SystemInfo" "MediaPlayer" ];
         right = [
           "Tempo"
+          "Tardy"
           [ "Settings" "Tray" ]
         ];
       };

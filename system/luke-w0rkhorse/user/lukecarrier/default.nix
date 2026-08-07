@@ -75,6 +75,7 @@ in
       obsbot-camera-control-cli
       obsbot-camera-control-gui
       nautilus
+      tardy
     ];
   };
 

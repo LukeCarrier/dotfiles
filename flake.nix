@@ -125,6 +125,14 @@
       url = "path:./flake.systems.nix";
       flake = false;
     };
+    tardy = {
+      url = "github:throwparty/tardy?dir=nix";
+      inputs = {
+        flake-utils.follows = "flake-utils";
+        nixpkgs.follows = "nixpkgs-unstable";
+        rust-overlay.follows = "rust-overlay";
+      };
+    };
     wezterm = {
       url = "github:wez/wezterm/main?dir=nix";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
@@ -167,6 +175,7 @@
       sops-nix,
       wezterm,
       wpaperd,
+      tardy,
       ...
     }:
     let
@@ -193,6 +202,7 @@
             nix-vscode-extensions.overlays.default
             nur.overlays.default
             rust-overlay.overlays.default
+            tardy.overlays.default
             wpaperd.overlays.default
             (final: prev: {
               fwupd = prev.fwupd.overrideAttrs (old: {
