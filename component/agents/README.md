@@ -67,6 +67,7 @@ Parameters (feature name, current date) are declared in `agents.nix` and lowered
 | `code-review` | `skills/code-review/SKILL.md` | Multi-agent code review with specialised reviewers |
 | `command-not-found` | `skills/command-not-found/SKILL.md` | Retry failed commands via direnv exec or nix develop |
 | `jj` | `skills/jj/SKILL.md` | Jujutsu version control operations |
+| `nix` | `skills/nix/SKILL.md` | Reading pinned Nix source and verifying flake configs |
 | `pr-check-failure` | `skills/pr-check-failure/SKILL.md` | Diagnosing failing GitHub Actions CI checks |
 | `toon` | `skills/toon/SKILL.md` | TOON format writing rules and common pitfalls |
 | `writing-skills` | `skills/writing-skills/SKILL.md` | How to write skills, agent definitions, and AGENTS.md |
