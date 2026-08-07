@@ -270,7 +270,7 @@ in
         "report.jq" = ./skills/code-review/report.jq;
       };
     };
-    direnv.source = ./skills/direnv/SKILL.md;
+    "command-not-found".source = ./skills/command-not-found/SKILL.md;
     jj.source = ./skills/jj/SKILL.md;
     pr-check-failure.source = ./skills/pr-check-failure/SKILL.md;
     toon.source = ./skills/toon/SKILL.md;

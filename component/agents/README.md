@@ -65,7 +65,7 @@ Parameters (feature name, current date) are declared in `agents.nix` and lowered
 |-------|--------|---------|
 | `align` | `skills/align/SKILL.md` | Relentless clarification interview to reach shared understanding |
 | `code-review` | `skills/code-review/SKILL.md` | Multi-agent code review with specialised reviewers |
-| `direnv` | `skills/direnv/SKILL.md` | Environment variable handling via direnv |
+| `command-not-found` | `skills/command-not-found/SKILL.md` | Retry failed commands via direnv exec or nix develop |
 | `jj` | `skills/jj/SKILL.md` | Jujutsu version control operations |
 | `pr-check-failure` | `skills/pr-check-failure/SKILL.md` | Diagnosing failing GitHub Actions CI checks |
 | `toon` | `skills/toon/SKILL.md` | TOON format writing rules and common pitfalls |
