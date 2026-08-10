@@ -83,4 +83,9 @@ in
     (getExe vicinae)
     "dmenu"
   ];
+
+  wayland.windowManager.hyprland.settings = {
+    "$menu" = "vicinae toggle";
+    bind = [ "$mainMod, SPACE, exec, $menu" ];
+  };
 }

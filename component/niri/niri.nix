@@ -14,8 +14,7 @@ let
   xwaylandSatelliteDisplay = ":1";
   workspaceRename = pkgs.writeShellScriptBin "niri-workspace-rename" ''
     niri="${niri}"
-    wofi="${getExe pkgs.wofi}"
-    name="$("$wofi" --dmenu --lines 1 </dev/null)"
+    name="$(${lib.concatStringsSep " " (map (entry: ''"${entry}"'') config.programs.niri.workspacePicker)} </dev/null)"
     if [[ "$name" == "" ]]; then
       "$niri" msg action unset-workspace-name
     else
@@ -28,603 +27,623 @@ let
   spaceMod = "Alt";
 in
 {
-  home.packages = (
-    with pkgs;
-    [
-      brightnessctl
-      playerctl
-
-      wl-clipboard
-      wf-recorder
-      crosspipe
-
-      mako
-      libnotify
-    ]
-  );
-
-  xdg.portal = {
-    enable = true;
-    extraPortals = with pkgs; [
-      xdg-desktop-portal-gtk
-      xdg-desktop-portal-gnome
-    ];
-    config.niri = {
-      default = [
-        "gtk"
-        "gnome"
+  options.programs.niri = {
+    launcher = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [ ];
+      example = [
+        (getExe pkgs.wofi)
+        "--allow-images"
+        "--insensitive"
+        "--show"
+        "drun"
       ];
-      "org.freedesktop.impl.portal.Access" = "gtk";
-      "org.freedesktop.impl.portal.Notification" = "gtk";
-      "org.freedesktop.impl.portal.Screencast" = "gnome";
-      "org.freedesktop.impl.portal.Secret" = "gnome-keyring";
-      "org.freedesktop.impl.portal.Settings" = "gtk";
+      description = "Command to spawn for the Super+Space application launcher. Set by the launcher component.";
+    };
+    workspacePicker = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [ ];
+      description = "Command to prompt for a workspace name (reads nothing from stdin). Set by the launcher component.";
     };
   };
 
-  systemd.user.services = {
-    # niri-flake polkit agent: keep it from starting before the graphical session
-    niri-flake-polkit = {
-      after = {
-        "graphical-session.target" = true;
+  config = {
+    home.packages = (
+      with pkgs;
+      [
+        brightnessctl
+        playerctl
+
+        wl-clipboard
+        wf-recorder
+        crosspipe
+
+        mako
+        libnotify
+      ]
+    );
+
+    xdg.portal = {
+      enable = true;
+      extraPortals = with pkgs; [
+        xdg-desktop-portal-gtk
+        xdg-desktop-portal-gnome
+      ];
+      config.niri = {
+        default = [
+          "gtk"
+          "gnome"
+        ];
+        "org.freedesktop.impl.portal.Access" = "gtk";
+        "org.freedesktop.impl.portal.Notification" = "gtk";
+        "org.freedesktop.impl.portal.Screencast" = "gnome";
+        "org.freedesktop.impl.portal.Secret" = "gnome-keyring";
+        "org.freedesktop.impl.portal.Settings" = "gtk";
       };
     };
 
-    niri-float-sticky = {
-      Unit.Description = "Sticky floating windows for the Niri window manager";
-      Install.WantedBy = [ "graphical-session.target" ];
-      Service = {
-        ExecStart = "${niri-float-sticky} -title '^Picture-in-Picture$' -title '^Meet – '";
-        Restart = "on-failure";
-        RestartSec = "2";
-        Type = "notify";
+    systemd.user.services = {
+      # niri-flake polkit agent: keep it from starting before the graphical session
+      niri-flake-polkit = {
+        after = {
+          "graphical-session.target" = true;
+        };
+      };
+
+      niri-float-sticky = {
+        Unit.Description = "Sticky floating windows for the Niri window manager";
+        Install.WantedBy = [ "graphical-session.target" ];
+        Service = {
+          ExecStart = "${niri-float-sticky} -title '^Picture-in-Picture$' -title '^Meet – '";
+          Restart = "on-failure";
+          RestartSec = "2";
+          Type = "notify";
+        };
+      };
+
+      niri-xwayland-satellite = {
+        Unit.Description = "Xwayland Satellite";
+        Install.WantedBy = [ "graphical-session.target" ];
+        Service = {
+          ExecStart = "${xwaylandSatellite} ${xwaylandSatelliteDisplay}";
+          Restart = "on-failure";
+          RestartSec = "2";
+          Type = "notify";
+        };
       };
     };
 
-    niri-xwayland-satellite = {
-      Unit.Description = "Xwayland Satellite";
-      Install.WantedBy = [ "graphical-session.target" ];
-      Service = {
-        ExecStart = "${xwaylandSatellite} ${xwaylandSatelliteDisplay}";
-        Restart = "on-failure";
-        RestartSec = "2";
-        Type = "notify";
-      };
-    };
-  };
-
-  programs.niri = {
-    enable = true;
-    package = pkgs.niri;
-    settings = {
-      input = {
-        mod-key = mainMod;
-        keyboard = {
-          xkb = {
-            layout = "us";
+    programs.niri = {
+      enable = true;
+      package = pkgs.niri;
+      settings = {
+        input = {
+          mod-key = mainMod;
+          keyboard = {
+            xkb = {
+              layout = "us";
+            };
           };
+          touchpad = {
+            click-method = "clickfinger";
+            natural-scroll = true;
+            tap = true;
+          };
+          warp-mouse-to-focus.enable = true;
+          focus-follows-mouse = { };
         };
-        touchpad = {
-          click-method = "clickfinger";
-          natural-scroll = true;
-          tap = true;
+        clipboard.disable-primary = true;
+        blur = {
+          passes = 4;
+          offset = 5.0;
+          noise = 0.02;
+          saturation = 2.0;
         };
-        warp-mouse-to-focus.enable = true;
-        focus-follows-mouse = { };
-      };
-      clipboard.disable-primary = true;
-      blur = {
-        passes = 4;
-        offset = 5.0;
-        noise = 0.02;
-        saturation = 2.0;
-      };
-      overview.backdrop-color = "#000000";
-      spawn-at-startup = [
-        {
-          command = [
-            systemctl
-            "--user"
-            "import-environment"
-            "WAYLAND_DISPLAY"
-            "XDG_CURRENT_DESKTOP"
-          ];
-        }
-        {
-          command = [
-            kanshictl
-            "reload"
-          ];
-        }
-      ];
-      debug.honor-xdg-activation-with-invalid-serial = true;
-      environment = {
-        XDG_SESSION_DESKTOP = "niri";
-        DISPLAY = xwaylandSatelliteDisplay;
-        CLUTTER_BACKEND = "wayland";
-        GDK_BACKEND = "wayland,x11,*";
-        QT_AUTO_SCREEN_SCALE_FACTOR = "1";
-        QT_QPA_PLATFORM = "wayland;xcb";
-        NIXOS_OZONE_WL = "1";
-        GDK_SCALE = "1.0";
-        GDK_DPI_SCALE = "1.0";
-        XCURSOR_SIZE = "32";
-      };
-      animations = {
-        workspace-switch.kind.spring = {
-          damping-ratio = 0.78;
-          stiffness = 760;
-          epsilon = 0.0001;
+        overview.backdrop-color = "#000000";
+        spawn-at-startup = [
+          {
+            command = [
+              systemctl
+              "--user"
+              "import-environment"
+              "WAYLAND_DISPLAY"
+              "XDG_CURRENT_DESKTOP"
+            ];
+          }
+          {
+            command = [
+              kanshictl
+              "reload"
+            ];
+          }
+        ];
+        debug.honor-xdg-activation-with-invalid-serial = true;
+        environment = {
+          XDG_SESSION_DESKTOP = "niri";
+          DISPLAY = xwaylandSatelliteDisplay;
+          CLUTTER_BACKEND = "wayland";
+          GDK_BACKEND = "wayland,x11,*";
+          QT_AUTO_SCREEN_SCALE_FACTOR = "1";
+          QT_QPA_PLATFORM = "wayland;xcb";
+          NIXOS_OZONE_WL = "1";
+          GDK_SCALE = "1.0";
+          GDK_DPI_SCALE = "1.0";
+          XCURSOR_SIZE = "32";
         };
-
-        window-open = {
-          kind.spring = {
-            damping-ratio = 0.72;
-            stiffness = 880;
+        animations = {
+          workspace-switch.kind.spring = {
+            damping-ratio = 0.78;
+            stiffness = 760;
             epsilon = 0.0001;
           };
-        };
 
-        window-close = {
-          kind.spring = {
-            damping-ratio = 0.68;
+          window-open = {
+            kind.spring = {
+              damping-ratio = 0.72;
+              stiffness = 880;
+              epsilon = 0.0001;
+            };
+          };
+
+          window-close = {
+            kind.spring = {
+              damping-ratio = 0.68;
+              stiffness = 720;
+              epsilon = 0.0001;
+            };
+          };
+
+          horizontal-view-movement.kind.spring = {
+            damping-ratio = 0.80;
             stiffness = 720;
             epsilon = 0.0001;
           };
-        };
 
-        horizontal-view-movement.kind.spring = {
-          damping-ratio = 0.80;
-          stiffness = 720;
-          epsilon = 0.0001;
-        };
+          window-movement.kind.spring = {
+            damping-ratio = 0.78;
+            stiffness = 680;
+            epsilon = 0.0001;
+          };
 
-        window-movement.kind.spring = {
-          damping-ratio = 0.78;
-          stiffness = 680;
-          epsilon = 0.0001;
-        };
+          config-notification-open-close.kind.spring = {
+            damping-ratio = 0.65;
+            stiffness = 923;
+            epsilon = 0.001;
+          };
 
-        config-notification-open-close.kind.spring = {
-          damping-ratio = 0.65;
-          stiffness = 923;
-          epsilon = 0.001;
-        };
+          screenshot-ui-open.kind.easing = {
+            duration-ms = 200;
+            curve = "ease-out-quad";
+          };
 
-        screenshot-ui-open.kind.easing = {
-          duration-ms = 200;
-          curve = "ease-out-quad";
+          overview-open-close.kind.spring = {
+            damping-ratio = 0.80;
+            stiffness = 840;
+            epsilon = 0.0001;
+          };
         };
-
-        overview-open-close.kind.spring = {
-          damping-ratio = 0.80;
-          stiffness = 840;
-          epsilon = 0.0001;
+        binds =
+          let
+            terminal = "xdg-terminal";
+          in
+          with config.lib.niri.actions;
+          (lib.optionalAttrs (config.programs.niri.launcher != []) {
+            # Launcher, a la Spotlight
+            "${mainMod}+Space" = {
+              action = spawn config.programs.niri.launcher;
+              hotkey-overlay.title = "Open the application launcher";
+            };
+          })
+          // (lib.optionalAttrs (config.programs.niri.workspacePicker != []) {
+            "${mainMod}+R" = {
+              action = spawn [ "${getExe workspaceRename}" ];
+              hotkey-overlay.title = "Rename the current workspace";
+            };
+          })
+          // {
+            # Utilities
+            "${mainMod}+${moveMod}+Slash" = {
+              action.show-hotkey-overlay = [ ];
+              hotkey-overlay.title = "Show this help overlay";
+            };
+            "${mainMod}+Escape" = {
+              action = toggle-keyboard-shortcuts-inhibit;
+              hotkey-overlay.title = "Toggle keyboard shortcut inhibiting";
+            };
+            "Print" = {
+              action.screenshot = [ ];
+              hotkey-overlay.title = "Take a screenshot";
+            };
+            "${mainMod}+F" = {
+              action = toggle-window-floating;
+              hotkey-overlay.title = "Toggle window floating";
+            };
+            "${mainMod}+P" = {
+              action = spawn [
+                niri-float-sticky
+                "-ipc"
+                "toggle_sticky"
+              ];
+              hotkey-overlay.title = "Toggle floating window stickiness";
+            };
+            "${mainMod}+S" = {
+              action.screenshot = [ ];
+              hotkey-overlay.title = "Take a screenshot of a region";
+            };
+            "XF86AudioMute" = {
+              action = spawn [
+                "wpctl"
+                "set-mute"
+                "@DEFAULT_AUDIO_SINK@"
+                "toggle"
+              ];
+              hotkey-overlay.title = "Toggle audio mute";
+            };
+            "XF86AudioLowerVolume" = {
+              action = spawn [
+                "wpctl"
+                "set-volume"
+                "-l"
+                "1.4"
+                "@DEFAULT_AUDIO_SINK@"
+                "2%-"
+              ];
+              hotkey-overlay.title = "Lower volume";
+            };
+            "XF86AudioRaiseVolume" = {
+              action = spawn [
+                "wpctl"
+                "set-volume"
+                "-l"
+                "1.4"
+                "@DEFAULT_AUDIO_SINK@"
+                "2%+"
+              ];
+              hotkey-overlay.title = "Raise volume";
+            };
+            "XF86AudioPrev" = {
+              action = spawn [
+                "playerctl"
+                "previous"
+              ];
+              hotkey-overlay.title = "Previous track";
+            };
+            "XF86AudioPlay" = {
+              action = spawn [
+                "playerctl"
+                "play-pause"
+              ];
+              hotkey-overlay.title = "Play/pause";
+            };
+            "xf86audioNext" = {
+              action = spawn [
+                "playerctl"
+                "next"
+              ];
+              hotkey-overlay.title = "Next track";
+            };
+            "XF86MonBrightnessDown" = {
+              action = spawn [
+                "brightnessctl"
+                "set"
+                "2%-"
+              ];
+              hotkey-overlay.title = "Lower display brightness";
+            };
+            "XF86MonBrightnessUp" = {
+              action = spawn [
+                "brightnessctl"
+                "set"
+                "+2%"
+              ];
+              hotkey-overlay.title = "Raise display brightness";
+            };
+            "XF86AudioMedia" = {
+              action = spawn [ terminal ];
+              hotkey-overlay.title = "Open a terminal";
+            };
+            # The `EC takes care of this on the Framework 13 AMD:
+            # Display key sends Super+L, not XF86Display, for some reason
+            # XF86RFKill is done for us
+            # Session management
+            "${mainMod}+0" = {
+              action = spawn [
+                "loginctl"
+                "lock-session"
+              ];
+              hotkey-overlay.title = "Lock the session";
+            };
+            # Window/application management
+            "${mainMod}+W" = {
+              action = close-window;
+              hotkey-overlay.title = "Close the focused window";
+            };
+            "${mainMod}+G" = {
+              action = toggle-column-tabbed-display;
+              hotkey-overlay.title = "Toggle tabbed column display";
+            };
+            # Navigate between windows and columns, Vi style
+            # Window commands navigate tabs, no need for separate bindings
+            "${mainMod}+Tab" = {
+              action = focus-window-previous;
+              hotkey-overlay.title = "Focus the previously focused window";
+            };
+            "${mainMod}+H" = {
+              action = focus-column-left;
+              hotkey-overlay.title = "Focus the column to the left";
+            };
+            "${mainMod}+J" = {
+              action = focus-window-down;
+              hotkey-overlay.title = "Focus the window below";
+            };
+            "${mainMod}+K" = {
+              action = focus-window-up;
+              hotkey-overlay.title = "Focus the window above";
+            };
+            "${mainMod}+L" = {
+              action = focus-column-right;
+              hotkey-overlay.title = "Focus the column to the right";
+            };
+            # Move windows, Vi style
+            "${mainMod}+${moveMod}+H" = {
+              action = move-column-left;
+              hotkey-overlay.title = "Move the column left";
+            };
+            "${mainMod}+${moveMod}+J" = {
+              action = move-window-down-or-to-workspace-down;
+              hotkey-overlay.title = "Move the window down or to the workspace below";
+            };
+            "${mainMod}+${moveMod}+K" = {
+              action = move-window-up-or-to-workspace-up;
+              hotkey-overlay.title = "Move the window up or to the workspace above";
+            };
+            "${mainMod}+${moveMod}+L" = {
+              action = move-column-right;
+              hotkey-overlay.title = "Move the column right";
+            };
+            # Group windows
+            "${mainMod}+${moveMod}+BracketLeft" = {
+              action = consume-or-expel-window-left;
+              hotkey-overlay.title = "Consume or expel the window to the left";
+            };
+            "${mainMod}+${moveMod}+BracketRight" = {
+              action = consume-or-expel-window-right;
+              hotkey-overlay.title = "Consume or expel the window to the right";
+            };
+            # Shift column between monitors
+            "${mainMod}+${moveMod}+Tab" = {
+              action = move-column-to-monitor-next;
+              hotkey-overlay.title = "Move the column to the next monitor";
+            };
+            # Shift workspace between monitors
+            "${mainMod}+${spaceMod}+${moveMod}+Tab" = {
+              action = move-workspace-to-monitor-next;
+              hotkey-overlay.title = "Move the workspace to the next monitor";
+            };
+            # Space management
+            "${mainMod}+${spaceMod}+${moveMod}+J" = {
+              action = move-workspace-down;
+              hotkey-overlay.title = "Move the workspace down";
+            };
+            "${mainMod}+${spaceMod}+${moveMod}+K" = {
+              action = move-workspace-up;
+              hotkey-overlay.title = "Move the workspace up";
+            };
+            # Space navigation
+            "${mainMod}+${spaceMod}+Space" = {
+              action = toggle-overview;
+              hotkey-overlay.title = "Toggle the overview";
+            };
+            "${mainMod}+${spaceMod}+Tab" = {
+              action = focus-workspace-previous;
+              hotkey-overlay.title = "Focus the previously focused workspace";
+            };
+            "${mainMod}+${spaceMod}+J" = {
+              action = focus-workspace-down;
+              hotkey-overlay.title = "Focus the workspace below";
+            };
+            "${mainMod}+${spaceMod}+K" = {
+              action = focus-workspace-up;
+              hotkey-overlay.title = "Focus the workspace above";
+            };
+          }
+          // lib.attrsets.listToAttrs (
+            builtins.concatMap (
+              i: with config.lib.niri.actions; [
+                {
+                  name = "${mainMod}+${toString i}";
+                  value = {
+                    action = focus-workspace i;
+                    hotkey-overlay.title = "Focus workspace ${toString i}";
+                  };
+                }
+                # FIXME: use the action directly once niri-flake exposes move-column-to-workspace.
+                {
+                  name = "${mainMod}+${moveMod}+${toString i}";
+                  value = {
+                    action = spawn [
+                      niri
+                      "msg"
+                      "action"
+                      "move-column-to-workspace"
+                      (toString i)
+                    ];
+                    hotkey-overlay.title = "Move the column to workspace ${toString i}";
+                  };
+                }
+              ]
+            ) (lib.range 1 9)
+          );
+        switch-events = with config.lib.niri.actions; {
+          lid-close.action = spawn [
+            "kanshictl"
+            "switch"
+            "peacehavenDockedClosed"
+          ];
+          lid-open.action = spawn [
+            "kanshictl"
+            "switch"
+            "peacehavenDockedOpen"
+          ];
         };
-      };
-      binds =
-        let
-          terminal = "xdg-terminal";
-        in
-        with config.lib.niri.actions;
-        {
-          # Utilities
-          "${mainMod}+${moveMod}+Slash" = {
-            action.show-hotkey-overlay = [ ];
-            hotkey-overlay.title = "Show this help overlay";
+        prefer-no-csd = true;
+        layout = {
+          always-center-single-column = true;
+          gaps = 6;
+          struts = {
+            left = 0;
+            right = 0;
+            top = 0;
+            bottom = 0;
           };
-          "${mainMod}+Escape" = {
-            action = toggle-keyboard-shortcuts-inhibit;
-            hotkey-overlay.title = "Toggle keyboard shortcut inhibiting";
+          border.enable = false;
+          focus-ring = {
+            enable = true;
+            width = 2;
+            active.color = "#ffffff";
+            urgent.color = urgent-color;
           };
-          "Print" = {
-            action.screenshot = [ ];
-            hotkey-overlay.title = "Take a screenshot";
+          shadow.enable = true;
+          tab-indicator = {
+            hide-when-single-tab = true;
+            place-within-column = true;
+            position = "left";
+            gaps-between-tabs = 6.0;
+            width = 16.0;
+            corner-radius = 8.0;
+            urgent.color = urgent-color;
           };
-          "${mainMod}+F" = {
-            action = toggle-window-floating;
-            hotkey-overlay.title = "Toggle window floating";
-          };
-          "${mainMod}+P" = {
-            action = spawn [
-              niri-float-sticky
-              "-ipc"
-              "toggle_sticky"
+        };
+        layer-rules = [
+          {
+            matches = [
+              { namespace = "^notifications$"; }
             ];
-            hotkey-overlay.title = "Toggle floating window stickiness";
-          };
-          "${mainMod}+S" = {
-            action.screenshot = [ ];
-            hotkey-overlay.title = "Take a screenshot of a region";
-          };
-          "XF86AudioMute" = {
-            action = spawn [
-              "wpctl"
-              "set-mute"
-              "@DEFAULT_AUDIO_SINK@"
-              "toggle"
-            ];
-            hotkey-overlay.title = "Toggle audio mute";
-          };
-          "XF86AudioLowerVolume" = {
-            action = spawn [
-              "wpctl"
-              "set-volume"
-              "-l"
-              "1.4"
-              "@DEFAULT_AUDIO_SINK@"
-              "2%-"
-            ];
-            hotkey-overlay.title = "Lower volume";
-          };
-          "XF86AudioRaiseVolume" = {
-            action = spawn [
-              "wpctl"
-              "set-volume"
-              "-l"
-              "1.4"
-              "@DEFAULT_AUDIO_SINK@"
-              "2%+"
-            ];
-            hotkey-overlay.title = "Raise volume";
-          };
-          "XF86AudioPrev" = {
-            action = spawn [
-              "playerctl"
-              "previous"
-            ];
-            hotkey-overlay.title = "Previous track";
-          };
-          "XF86AudioPlay" = {
-            action = spawn [
-              "playerctl"
-              "play-pause"
-            ];
-            hotkey-overlay.title = "Play/pause";
-          };
-          "xf86audioNext" = {
-            action = spawn [
-              "playerctl"
-              "next"
-            ];
-            hotkey-overlay.title = "Next track";
-          };
-          "XF86MonBrightnessDown" = {
-            action = spawn [
-              "brightnessctl"
-              "set"
-              "2%-"
-            ];
-            hotkey-overlay.title = "Lower display brightness";
-          };
-          "XF86MonBrightnessUp" = {
-            action = spawn [
-              "brightnessctl"
-              "set"
-              "+2%"
-            ];
-            hotkey-overlay.title = "Raise display brightness";
-          };
-          "XF86AudioMedia" = {
-            action = spawn [ terminal ];
-            hotkey-overlay.title = "Open a terminal";
-          };
-          # The `EC takes care of this on the Framework 13 AMD:
-          # Display key sends Super+L, not XF86Display, for some reason
-          # XF86RFKill is done for us
-          # Session management
-          "${mainMod}+0" = {
-            action = spawn [
-              "loginctl"
-              "lock-session"
-            ];
-            hotkey-overlay.title = "Lock the session";
-          };
-          # Window/application management
-          "${mainMod}+W" = {
-            action = close-window;
-            hotkey-overlay.title = "Close the focused window";
-          };
-          "${mainMod}+G" = {
-            action = toggle-column-tabbed-display;
-            hotkey-overlay.title = "Toggle tabbed column display";
-          };
-          # Launcher, a la Spotlight
-          "${mainMod}+Space" = {
-            action = spawn [
-              "wofi"
-              "--allow-images"
-              "--insensitive"
-              "--show"
-              "drun"
-            ];
-            hotkey-overlay.title = "Open the application launcher";
-          };
-          # Navigate between windows and columns, Vi style
-          # Window commands navigate tabs, no need for separate bindings
-          "${mainMod}+Tab" = {
-            action = focus-window-previous;
-            hotkey-overlay.title = "Focus the previously focused window";
-          };
-          "${mainMod}+H" = {
-            action = focus-column-left;
-            hotkey-overlay.title = "Focus the column to the left";
-          };
-          "${mainMod}+J" = {
-            action = focus-window-down;
-            hotkey-overlay.title = "Focus the window below";
-          };
-          "${mainMod}+K" = {
-            action = focus-window-up;
-            hotkey-overlay.title = "Focus the window above";
-          };
-          "${mainMod}+L" = {
-            action = focus-column-right;
-            hotkey-overlay.title = "Focus the column to the right";
-          };
-          # Move windows, Vi style
-          "${mainMod}+${moveMod}+H" = {
-            action = move-column-left;
-            hotkey-overlay.title = "Move the column left";
-          };
-          "${mainMod}+${moveMod}+J" = {
-            action = move-window-down-or-to-workspace-down;
-            hotkey-overlay.title = "Move the window down or to the workspace below";
-          };
-          "${mainMod}+${moveMod}+K" = {
-            action = move-window-up-or-to-workspace-up;
-            hotkey-overlay.title = "Move the window up or to the workspace above";
-          };
-          "${mainMod}+${moveMod}+L" = {
-            action = move-column-right;
-            hotkey-overlay.title = "Move the column right";
-          };
-          # Group windows
-          "${mainMod}+${moveMod}+BracketLeft" = {
-            action = consume-or-expel-window-left;
-            hotkey-overlay.title = "Consume or expel the window to the left";
-          };
-          "${mainMod}+${moveMod}+BracketRight" = {
-            action = consume-or-expel-window-right;
-            hotkey-overlay.title = "Consume or expel the window to the right";
-          };
-          # Shift column between monitors
-          "${mainMod}+${moveMod}+Tab" = {
-            action = move-column-to-monitor-next;
-            hotkey-overlay.title = "Move the column to the next monitor";
-          };
-          # Shift workspace between monitors
-          "${mainMod}+${spaceMod}+${moveMod}+Tab" = {
-            action = move-workspace-to-monitor-next;
-            hotkey-overlay.title = "Move the workspace to the next monitor";
-          };
-          # Space management
-          "${mainMod}+${spaceMod}+${moveMod}+J" = {
-            action = move-workspace-down;
-            hotkey-overlay.title = "Move the workspace down";
-          };
-          "${mainMod}+${spaceMod}+${moveMod}+K" = {
-            action = move-workspace-up;
-            hotkey-overlay.title = "Move the workspace up";
-          };
-          "${mainMod}+R" = {
-            action = spawn [ "${getExe workspaceRename}" ];
-            hotkey-overlay.title = "Rename the current workspace";
-          };
-          # Space navigation
-          "${mainMod}+${spaceMod}+Space" = {
-            action = toggle-overview;
-            hotkey-overlay.title = "Toggle the overview";
-          };
-          "${mainMod}+${spaceMod}+Tab" = {
-            action = focus-workspace-previous;
-            hotkey-overlay.title = "Focus the previously focused workspace";
-          };
-          "${mainMod}+${spaceMod}+J" = {
-            action = focus-workspace-down;
-            hotkey-overlay.title = "Focus the workspace below";
-          };
-          "${mainMod}+${spaceMod}+K" = {
-            action = focus-workspace-up;
-            hotkey-overlay.title = "Focus the workspace above";
-          };
-        }
-        // lib.attrsets.listToAttrs (
-          builtins.concatMap (
-            i: with config.lib.niri.actions; [
-              {
-                name = "${mainMod}+${toString i}";
-                value = {
-                  action = focus-workspace i;
-                  hotkey-overlay.title = "Focus workspace ${toString i}";
-                };
-              }
-              # FIXME: use the action directly once niri-flake exposes move-column-to-workspace.
-              {
-                name = "${mainMod}+${moveMod}+${toString i}";
-                value = {
-                  action = spawn [
-                    niri
-                    "msg"
-                    "action"
-                    "move-column-to-workspace"
-                    (toString i)
-                  ];
-                  hotkey-overlay.title = "Move the column to workspace ${toString i}";
-                };
-              }
-            ]
-          ) (lib.range 1 9)
-        );
-      switch-events = with config.lib.niri.actions; {
-        lid-close.action = spawn [
-          "kanshictl"
-          "switch"
-          "peacehavenDockedClosed"
+            block-out-from = "screencast";
+          }
         ];
-        lid-open.action = spawn [
-          "kanshictl"
-          "switch"
-          "peacehavenDockedOpen"
+        window-rules = [
+          {
+            open-floating = false;
+            open-fullscreen = false;
+            open-maximized = false;
+            # open-maximized-to-edges = false;
+            clip-to-geometry = true;
+            draw-border-with-background = false;
+            geometry-corner-radius = {
+              top-left = 8.0;
+              top-right = 8.0;
+              bottom-left = 8.0;
+              bottom-right = 8.0;
+            };
+          }
+          # Splash screens
+          {
+            matches = [
+              {
+                at-startup = true;
+                is-floating = true;
+              }
+            ];
+            open-focused = false;
+          }
+          # Messaging clients
+          {
+            matches = [
+              { app-id = "^org.mozilla.Thunderbird$"; }
+              { app-id = "^org.signal.Signal$"; }
+              { app-id = "^org.telegram.desktop$"; }
+              { app-id = "^discord$"; }
+              { app-id = "^com.slack.Slack$"; }
+              { title = "^WhatsApp Web$"; }
+            ];
+            block-out-from = "screen-capture";
+          }
+          # Password managers
+          {
+            matches = [
+              { app-id = "^1password$"; }
+              { app-id = "^Bitwarden$"; }
+            ];
+            block-out-from = "screen-capture";
+          }
+          # 1Password prompts (SSH agent approval, unlock) — the prompt window has
+          # the bare title "1Password", unlike the main app ("… — 1Password").
+          # niri can't anchor to the requesting app, so float it centred + focused.
+          {
+            matches = [
+              {
+                app-id = "^1password$";
+                title = "^1Password$";
+              }
+            ];
+            open-floating = true;
+            open-focused = true;
+          }
+          # PiP overlays
+          {
+            matches = [
+              { title = "^Slack$"; }
+              { title = " is sharing your screen.$"; }
+              { title = "^Picture-in-Picture$"; }
+              {
+                app-id = "^google-chrome$";
+                title = "^Meet – ";
+              }
+              {
+                app-id = "^google-chrome$";
+                title = "^Meet – .+ - Presentation window";
+              }
+            ];
+            open-floating = true;
+          }
+          # Cast targets
+          {
+            matches = [
+              {
+                is-window-cast-target = true;
+              }
+            ];
+            # focus-ring = {
+            #   active-color = "#f38ba8";
+            #   inactive-color = "#7d0d2d";
+            # };
+            # tab-indicator = {
+            #   active-color = "#f38ba8";
+            #   inactive-color = "#7d0d2d";
+            # };
+          }
+          # Blur behind every window
+          {
+            background-effect = {
+              blur = true;
+            };
+          }
         ];
       };
-      prefer-no-csd = true;
-      layout = {
-        always-center-single-column = true;
-        gaps = 6;
-        struts = {
-          left = 0;
-          right = 0;
-          top = 0;
-          bottom = 0;
-        };
-        border.enable = false;
-        focus-ring = {
-          enable = true;
-          width = 2;
-          active.color = "#ffffff";
-          urgent.color = urgent-color;
-        };
-        shadow.enable = true;
-        tab-indicator = {
-          hide-when-single-tab = true;
-          place-within-column = true;
-          position = "left";
-          gaps-between-tabs = 6.0;
-          width = 16.0;
-          corner-radius = 8.0;
-          urgent.color = urgent-color;
-        };
-      };
-      layer-rules = [
-        {
-          matches = [
-            { namespace = "^notifications$"; }
-          ];
-          block-out-from = "screencast";
-        }
-      ];
-      window-rules = [
-        {
-          open-floating = false;
-          open-fullscreen = false;
-          open-maximized = false;
-          # open-maximized-to-edges = false;
-          clip-to-geometry = true;
-          draw-border-with-background = false;
-          geometry-corner-radius = {
-            top-left = 8.0;
-            top-right = 8.0;
-            bottom-left = 8.0;
-            bottom-right = 8.0;
-          };
-        }
-        # Splash screens
-        {
-          matches = [
-            {
-              at-startup = true;
-              is-floating = true;
-            }
-          ];
-          open-focused = false;
-        }
-        # Messaging clients
-        {
-          matches = [
-            { app-id = "^org.mozilla.Thunderbird$"; }
-            { app-id = "^org.signal.Signal$"; }
-            { app-id = "^org.telegram.desktop$"; }
-            { app-id = "^discord$"; }
-            { app-id = "^com.slack.Slack$"; }
-            { title = "^WhatsApp Web$"; }
-          ];
-          block-out-from = "screen-capture";
-        }
-        # Password managers
-        {
-          matches = [
-            { app-id = "^1password$"; }
-            { app-id = "^Bitwarden$"; }
-          ];
-          block-out-from = "screen-capture";
-        }
-        # 1Password prompts (SSH agent approval, unlock) — the prompt window has
-        # the bare title "1Password", unlike the main app ("… — 1Password").
-        # niri can't anchor to the requesting app, so float it centred + focused.
-        {
-          matches = [
-            {
-              app-id = "^1password$";
-              title = "^1Password$";
-            }
-          ];
-          open-floating = true;
-          open-focused = true;
-        }
-        # PiP overlays
-        {
-          matches = [
-            { title = "^Slack$"; }
-            { title = " is sharing your screen.$"; }
-            { title = "^Picture-in-Picture$"; }
-            {
-              app-id = "^google-chrome$";
-              title = "^Meet – ";
-            }
-            {
-              app-id = "^google-chrome$";
-              title = "^Meet – .+ - Presentation window";
-            }
-          ];
-          open-floating = true;
-        }
-        # Cast targets
-        {
-          matches = [
-            {
-              is-window-cast-target = true;
-            }
-          ];
-          # focus-ring = {
-          #   active-color = "#f38ba8";
-          #   inactive-color = "#7d0d2d";
-          # };
-          # tab-indicator = {
-          #   active-color = "#f38ba8";
-          #   inactive-color = "#7d0d2d";
-          # };
-        }
-        # Blur behind every window
-        {
-          background-effect = {
-            blur = true;
-          };
-        }
-      ];
     };
-  };
 
-  # The upstream niri module writes config.kdl from `programs.niri.finalConfig`.
-  # It can't express the trackpoint scroll-factor (which we add ourselves via
-  # package/niri/pr-4382.patch), so inject that node into the generated input
-  # block.
-  xdg.configFile.niri-config = lib.mkForce {
-    target = "niri/config.kdl";
-    source = pkgs.writeText "niri-config.kdl" (
-      lib.replaceStrings
-        [ ''mod-key "Super"'' ]
-        [ "    trackpoint {\n        scroll-factor 0.5\n    }\n    mod-key \"Super\"" ]
-        config.programs.niri.finalConfig
-    );
-  };
+    # The upstream niri module writes config.kdl from `programs.niri.finalConfig`.
+    # It can't express the trackpoint scroll-factor (which we add ourselves via
+    # package/niri/pr-4382.patch), so inject that node into the generated input
+    # block.
+    xdg.configFile.niri-config = lib.mkForce {
+      target = "niri/config.kdl";
+      source = pkgs.writeText "niri-config.kdl" (
+        lib.replaceStrings
+          [ ''mod-key "Super"'' ]
+          [ "    trackpoint {\n        scroll-factor 0.5\n    }\n    mod-key \"Super\"" ]
+          config.programs.niri.finalConfig
+      );
+    };
 
-  programs.waybar.settings.mainBar = {
-    modules-left = [
-      "niri/workspaces"
-      "niri/window"
-    ];
+    programs.waybar.settings.mainBar = {
+      modules-left = [
+        "niri/workspaces"
+        "niri/window"
+      ];
 
-    "niri/workspaces".format = "{index} {value}";
+      "niri/workspaces".format = "{index} {value}";
+    };
   };
 }

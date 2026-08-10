@@ -45,7 +45,6 @@ in
       "$mainMod" = "SUPER";
       "$groupMod" = "ALT";
       "$moveMod" = "SHIFT";
-      "$menu" = "wofi --allow-images --insensitive --show drun";
       "$terminal" = "xdg-terminal";
       debug = {
         suppress_errors = true;
@@ -125,8 +124,6 @@ in
         # Window/application management
         "$mainMod, w, killactive"
         "$mainMod, g, togglegroup"
-        # Launcher, a la Spotlight
-        "$mainMod, SPACE, exec, $menu"
         # Navigate between windows, Vi style
         "$mainMod, h, movefocus, l"
         "$mainMod, j, movefocus, d"

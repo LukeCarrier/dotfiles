@@ -1,6 +1,35 @@
-{ config, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+let
+  inherit (lib) getExe;
+  launcher = [
+    (getExe pkgs.wofi)
+    "--allow-images"
+    "--insensitive"
+    "--show"
+    "drun"
+  ];
+  workspacePicker = [
+    (getExe pkgs.wofi)
+    "--dmenu"
+    "--lines"
+    "1"
+  ];
+in
 {
   home.packages = [ pkgs.wofi ];
+
+  programs.niri.launcher = launcher;
+  programs.niri.workspacePicker = workspacePicker;
+
+  wayland.windowManager.hyprland.settings = {
+    "$menu" = "wofi --allow-images --insensitive --show drun";
+    bind = [ "$mainMod, SPACE, exec, $menu" ];
+  };
 
   home.file."${config.xdg.configHome}/wofi/style.css".text = ''
     @define-color default-fg #2d3e4e;
