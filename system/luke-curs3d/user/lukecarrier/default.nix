@@ -66,6 +66,7 @@
     allowUnfreePredicate =
       pkg:
       builtins.elem (lib.getName pkg) [
+        "claude-code"
         "terraform"
         "cuda_cccl"
         "cuda_cudart"
@@ -78,6 +79,14 @@
         "libcurand"
         "libcusparse"
         "libnvjitlink"
+        "cuda_cupti"
+        "cuda_nvtx"
+        "cuda_sanitizer_api"
+        "gds"
+        "libcusolver"
+        "libnpp"
+        "libnvjpeg"
+        "nccl"
       ];
     cudaSupport = true;
 
