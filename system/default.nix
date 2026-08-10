@@ -669,7 +669,7 @@
             {
               profile = {
                 name = "peacehavenRightOnly";
-                profile.outputs = [
+                outputs = [
                   {
                     criteria = "Samsung Electric Company U32J59x HTPK602008";
                     status = "enable";
