@@ -1,9 +1,10 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "plugin": [
-    "@zhafron/opencode-kiro-auth@1.6.5",
-    "opencode-antigravity-auth@1.6.0",
-    "opencode-claude-auth@0.7.3"
+    "@cortexkit/opencode-antigravity-auth@2.0.1",
+    "@zhafron/opencode-kiro-auth@2.0.0",
+    "opencode-claude-auth@2.1.6",
+    "opencode-cursor-oauth@0.1.1"
   ],
   "keybinds": {
     "input_submit": "ctrl+enter",
