@@ -133,6 +133,9 @@
         rust-overlay.follows = "rust-overlay";
       };
     };
+    # Deliberately not following nixpkgs: the vicinae Cachix cache is keyed to
+    # the flake's own nixpkgs pin, so any override causes a cache miss.
+    vicinae.url = "github:vicinaehq/vicinae";
     wezterm = {
       url = "github:wez/wezterm/main?dir=nix";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
@@ -176,6 +179,7 @@
       wezterm,
       wpaperd,
       tardy,
+      vicinae,
       ...
     }:
     let
@@ -378,6 +382,7 @@
         nixos-hardware
         nixpkgs-unstable
         sops-nix
+        vicinae
         pkgsForSystem
         desktopBackground
         permittedInsecurePackages

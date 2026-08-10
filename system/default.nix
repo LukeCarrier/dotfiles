@@ -13,6 +13,7 @@
   nixos-hardware,
   nixpkgs-unstable,
   sops-nix,
+  vicinae,
   pkgsForSystem,
   desktopBackground,
   permittedInsecurePackages,
@@ -126,6 +127,7 @@
             nixos-hardware
             nix-flatpak
             sops-nix
+            vicinae
             lanzaboote
             ;
         };
@@ -425,6 +427,7 @@
             niri
             nix-flatpak
             sops-nix
+            vicinae
             ;
         };
         inherit permittedInsecurePackages;
