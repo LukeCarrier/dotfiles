@@ -1,0 +1,218 @@
+From 03e9691a8fa9a1f6f49a747b4aaf8998ed5bb42b Mon Sep 17 00:00:00 2001
+From: Luke Carrier <luke@carrier.family>
+Date: Mon, 10 Aug 2026 21:15:17 +0100
+Subject: [PATCH] feat(custom_module): tooltips
+
+---
+ src/app.rs                   | 33 +++++++++++++++++++++-----
+ src/components/menu.rs       |  3 +++
+ src/config.rs                |  2 +-
+ src/modules/custom_module.rs | 45 ++++++++++++++++++++++++++++++++----
+ src/modules/mod.rs           |  4 +++-
+ 5 files changed, 75 insertions(+), 12 deletions(-)
+
+diff --git a/src/app.rs b/src/app.rs
+index 2823da1c..82c606c7 100644
+--- a/src/app.rs
++++ b/src/app.rs
+@@ -304,13 +304,22 @@ impl App {
+                     .close_menu(id, None, self.general_config.enable_esc_key)
+             }
+             Message::FinishCloseMenu(id) => self.outputs.finish_close_menu(id),
+-            Message::Custom(name, msg) => {
+-                if let Some(custom) = self.custom.get_mut(&name) {
+-                    custom.update(msg);
++            Message::Custom(name, msg) => match msg {
++                modules::custom_module::Message::TooltipHover(ui_ref, id) => self
++                    .outputs
++                    .toggle_menu(id, MenuType::CustomTooltip(name), ui_ref, false),
++                modules::custom_module::Message::TooltipUnhover(id) => self.outputs.close_menu(
++                    id,
++                    Some(MenuType::CustomTooltip(name)),
++                    self.general_config.enable_esc_key,
++                ),
++                other => {
++                    if let Some(custom) = self.custom.get_mut(&name) {
++                        custom.update(other);
++                    }
++                    Task::none()
+                 }
+-
+-                Task::none()
+-            }
++            },
+             Message::Updates(msg) => {
+                 if let Some(updates) = self.updates.as_mut() {
+                     match updates.update(msg) {
+@@ -708,6 +717,18 @@ impl App {
+                             .map(Message::Settings),
+                         ui_ref,
+                     ),
++                    MenuType::CustomTooltip(name) => self.menu_wrapper(
++                        id,
++                        self.custom
++                            .get(name)
++                            .map(|custom| {
++                                custom
++                                    .tooltip_view()
++                                    .map(|msg| Message::Custom(name.clone(), msg))
++                            })
++                            .unwrap_or_else(|| Row::new().into()),
++                        ui_ref,
++                    ),
+                 }
+             }
+             Some(HasOutput::Menu(None)) => Row::new().into(),
+diff --git a/src/components/menu.rs b/src/components/menu.rs
+index 4de089d8..bef1ef62 100644
+--- a/src/components/menu.rs
++++ b/src/components/menu.rs
+@@ -29,6 +29,7 @@ pub enum MenuType {
+     VpnTooltip,
+     BatteryTooltip,
+     PeripheralBatteryTooltip(usize),
++    CustomTooltip(String),
+ }
+ 
+ #[derive(Clone, Debug)]
+@@ -203,6 +204,7 @@ impl Menu {
+                 | MenuType::VpnTooltip
+                 | MenuType::BatteryTooltip
+                 | MenuType::PeripheralBatteryTooltip(_)
++                | MenuType::CustomTooltip(_)
+         );
+         match &mut self.open {
+             None => self.open(menu_type, button_ui_ref, request_keyboard, output_id),
+@@ -223,6 +225,7 @@ impl Menu {
+                         | MenuType::VpnTooltip
+                         | MenuType::BatteryTooltip
+                         | MenuType::PeripheralBatteryTooltip(_)
++                        | MenuType::CustomTooltip(_)
+                 ) && menu_is_tooltip =>
+             {
+                 Task::none()
+diff --git a/src/config.rs b/src/config.rs
+index 2037dcea..877d3556 100644
+--- a/src/config.rs
++++ b/src/config.rs
+@@ -1365,7 +1365,7 @@ pub struct CustomModuleDef {
+     #[serde(default)]
+     pub icon: Option<String>,
+ 
+-    /// yields json lines containing text, alt, (pot tooltip)
++    /// yields json lines containing text, alt, (optionally tooltip)
+     #[serde(default, deserialize_with = "empty_string_as_none")]
+     pub listen_cmd: Option<String>,
+     /// map of regex -> icon
+diff --git a/src/modules/custom_module.rs b/src/modules/custom_module.rs
+index 12c97f12..4d072939 100644
+--- a/src/modules/custom_module.rs
++++ b/src/modules/custom_module.rs
+@@ -1,14 +1,15 @@
+ use crate::{
+     components::icons::{DynamicIcon, StaticIcon, icon},
++    components::{ButtonHierarchy, ButtonKind, ButtonUIRef, position_button},
+     config::CustomModuleDef,
+     theme::use_theme,
+     utils::launcher::execute_command,
+ };
+ use iced::widget::canvas;
+ use iced::{
+-    Element, Length, Subscription, Theme,
++    Element, Length, Subscription, SurfaceId, Theme,
+     stream::channel,
+-    widget::{Space, Stack, row, text},
++    widget::{Space, Stack, column, row, text},
+ };
+ use iced::{
+     mouse::Cursor,
+@@ -35,6 +36,8 @@ pub struct Custom {
+ pub struct CustomListenData {
+     pub alt: String,
+     pub text: Option<String>,
++    #[serde(default)]
++    pub tooltip: Option<String>,
+ }
+ 
+ #[derive(Debug, Clone)]
+@@ -45,6 +48,8 @@ pub enum Message {
+     LaunchScrollUpCommand,
+     LaunchScrollDownCommand,
+     Update(CustomListenData),
++    TooltipHover(ButtonUIRef, SurfaceId),
++    TooltipUnhover(SurfaceId),
+ }
+ 
+ // Define a struct for the canvas program
+@@ -116,12 +121,13 @@ impl Custom {
+             Message::Update(data) => {
+                 self.data = data;
+             }
++            Message::TooltipHover(..) | Message::TooltipUnhover(..) => {}
+         }
+     }
+ 
+-    pub fn view(&'_ self) -> Element<'_, Message> {
++    pub fn view(&'_ self, id: SurfaceId) -> Element<'_, Message> {
+         let space = use_theme(|theme| theme.space);
+-        match self.config.r#type {
++        let content = match self.config.r#type {
+             crate::config::CustomModuleType::Text => self
+                 .data
+                 .text
+@@ -194,9 +200,40 @@ impl Custom {
+                     icon_with_alert
+                 }
+             }
++        };
++
++        if let Some(tooltip) = self.data.tooltip.as_deref()
++            && !tooltip.is_empty()
++        {
++            let hover_style = use_theme(|theme| {
++                theme.button_style(ButtonKind::Transparent, ButtonHierarchy::Secondary)
++            });
++            position_button(content)
++                .width(Length::Shrink)
++                .height(Length::Shrink)
++                .padding(0)
++                .style(hover_style)
++                .on_hover_with_position(move |ui_ref| Message::TooltipHover(ui_ref, id))
++                .on_unhover(Message::TooltipUnhover(id))
++                .into()
++        } else {
++            content
+         }
+     }
+ 
++    pub fn tooltip_view(&'_ self) -> Element<'_, Message> {
++        let space = use_theme(|theme| theme.space);
++        let lines: Vec<Element<'_, Message>> = self
++            .data
++            .tooltip
++            .as_deref()
++            .unwrap_or_default()
++            .lines()
++            .map(|line| text(line).into())
++            .collect();
++        column(lines).spacing(space.xs).into()
++    }
++
+     pub fn subscription(&self) -> Subscription<(String, Message)> {
+         let name = self.config.name.clone();
+         if let Some(listen_cmd) = self.config.listen_cmd.clone() {
+diff --git a/src/modules/mod.rs b/src/modules/mod.rs
+index a8a6adb3..490279d5 100644
+--- a/src/modules/mod.rs
++++ b/src/modules/mod.rs
+@@ -249,7 +249,9 @@ impl App {
+                     }
+                 };
+                 (
+-                    custom.view().map(|msg| Message::Custom(name.clone(), msg)),
++                    custom
++                        .view(id)
++                        .map(|msg| Message::Custom(name.clone(), msg)),
+                     action,
+                 )
+             }),

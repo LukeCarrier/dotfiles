@@ -211,7 +211,10 @@
             })
             (final: prev: {
               asciinema = asciinema.packages.${system}.default;
-              ashell = ashell.packages.${system}.default;
+              ashell = ashell.packages.${system}.default.overrideAttrs (old: {
+                # MalpenZibo/ashell#914: tooltips for custom modules.
+                patches = (old.patches or [ ]) ++ [ ./package/ashell/pr-914.patch ];
+              });
               # NixOS/nixpkgs#535887
               cantarell-fonts =
                 prev.cantarell-fonts.overrideAttrs (old: {
