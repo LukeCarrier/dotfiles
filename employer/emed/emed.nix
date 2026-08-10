@@ -32,7 +32,7 @@ let
     printf 'export KUBECONFIG=%s\n' "$kubeconfig"
     printf '%s --region %s\n' "$awsEksUpdateKubeconfig" "$aws_region"
     if [[ "$clusters" == *","* ]]; then
-      printf "(!) Multiple clusters are enabled in this region; select one with kubectl config use-context %s\n" "$clusters"
+      printf "(!) Multiple clusters are enabled in this region; select one with kubectl config use-context %s\n" "$clusters" >&2
     else
       printf 'kubectl config use-context %s' "$aws_profile--$clusters"
     fi
