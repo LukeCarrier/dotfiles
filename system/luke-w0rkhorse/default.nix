@@ -14,6 +14,7 @@
     inputs.lanzaboote.nixosModules.lanzaboote
     inputs.nix-flatpak.nixosModules.nix-flatpak
     inputs.sops-nix.nixosModules.sops
+    inputs.vicinae.nixosModules.default
     ../../hw/thinkpad-l14.nix
     ../../platform/nixos/common.nix
     ../../platform/nixos/region/en-gb.nix
@@ -60,12 +61,15 @@
   nix.settings = {
     substituters = [
       "https://nix-community.cachix.org"
+      "https://vicinae.cachix.org"
     ];
     trusted-substituters = [
       "https://nix-community.cachix.org"
+      "https://vicinae.cachix.org"
     ];
     trusted-public-keys = [
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+      "vicinae.cachix.org-1:1kDrfienkGHPYbkpNj1mWTr7Fm1+zcenzgTizIcI3oc="
     ];
   };
 
