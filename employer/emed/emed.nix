@@ -7,6 +7,10 @@
 let
   inherit (lib) getExe getExe';
   inherit (pkgs.stdenv) isDarwin;
+  openUrlInContainer = pkgs.fetchurl {
+    url = "https://addons.mozilla.org/firefox/downloads/file/3566167/open_url_in_container-1.0.3.xpi";
+    sha256 = "sha256-aHIRpf5u4IwrMGApKFhHSyf5E4Mpa8G2ugORwAq8Jpc=";
+  };
   selectMiniplatform = pkgs.writeShellScriptBin "emed-mini-platform" ''
     awsEksUpdateKubeconfig="${getExe' pkgs.aws-cli-tools "aws-eks-update-kubeconfig"}"
     fzf="${getExe pkgs.fzf}"
@@ -95,6 +99,12 @@ in
     age.keyFile = "${config.home.homeDirectory}/Code/LukeCarrier/dotfiles/.sops/keys";
 
     secrets = {
+      compass-config = {
+        format = "yaml";
+        key = "compass/config";
+        path = "${config.home.homeDirectory}/.config/compass/config.rhai";
+      };
+
       finicky-config = {
         format = "yaml";
         key = "finicky/config";
@@ -230,7 +240,7 @@ in
         };
       };
       extensions.packages = lib.mkForce (
-        with pkgs.nur.repos.rycee.firefox-addons;
+        (with pkgs.nur.repos.rycee.firefox-addons;
         [
           istilldontcareaboutcookies
           multi-account-containers
@@ -240,7 +250,8 @@ in
           refined-github
           ublock-origin
           vimium
-        ]
+        ])
+        ++ [ openUrlInContainer ]
       );
       settings."browser.uiCustomization.navBarWhenVerticalTabs" = lib.mkForce [
         "sidebar-button"

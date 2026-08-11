@@ -5,6 +5,10 @@ let
   firefoxpwa = pkgs.callPackage "${pkgs.path}/pkgs/by-name/fi/firefoxpwa-unwrapped/package.nix" {
     firefoxRuntime = unwrappedImpl;
   };
+  openUrlInContainer = pkgs.fetchurl {
+    url = "https://addons.mozilla.org/firefox/downloads/file/3566167/open_url_in_container-1.0.3.xpi";
+    sha256 = "sha256-aHIRpf5u4IwrMGApKFhHSyf5E4Mpa8G2ugORwAq8Jpc=";
+  };
   inherit (pkgs) lib stdenv;
 in
 {
@@ -68,7 +72,7 @@ in
         };
         containersForce = true;
         extensions.packages = lib.mkDefault (
-          with pkgs.nur.repos.rycee.firefox-addons;
+          (with pkgs.nur.repos.rycee.firefox-addons;
           [
             bitwarden
             multi-account-containers
@@ -81,7 +85,8 @@ in
             vimium
             zotero-connector
           ]
-          ++ (if stdenv.isDarwin then [ ] else [ pkgs.nur.repos.rycee.firefox-addons.pwas-for-firefox ])
+          ++ (if stdenv.isDarwin then [ ] else [ pwas-for-firefox ]))
+          ++ [ openUrlInContainer ]
         );
         search = {
           force = true;
@@ -244,7 +249,7 @@ in
 
           "privacy.resistFingerprinting.exemptedDomains" = [ "claude.ai" ];
 
-          "network.protocol-handler.external.ext+container" = true;
+          "network.protocol-handler.expose.ext+container" = false;
         };
       };
     };

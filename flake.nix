@@ -35,6 +35,14 @@
       url = "github:iosmanthus/code-insiders-flake";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
+    compass = {
+      url = "github:throwparty/compass?dir=nix";
+      inputs = {
+        flake-utils.follows = "flake-utils";
+        nixpkgs.follows = "nixpkgs-unstable";
+        rust-overlay.follows = "rust-overlay";
+      };
+    };
     cyberhaven = {
       url = "github:LukeCarrier/cyberhaven-nix";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
@@ -153,6 +161,7 @@
       ashell,
       claude-code,
       code-insiders,
+      compass,
       cyberhaven,
       dagger,
       darwin,
@@ -200,6 +209,7 @@
             agentkit.overlays.default
             claude-code.overlays.default
             code-insiders.overlays.default
+            compass.overlays.default
             dagger.overlays.default
             niri.overlays.niri
             nix-vscode-extensions.overlays.default
