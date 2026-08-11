@@ -17,7 +17,7 @@ $root.problem,
 ($root.goals[] | "- \(.)"),
 "",
 (if ($root.nonGoals | length) > 0 then
-  "## Non-goals\n\n" + ($root.nonGoals[] | "- \(.)") + "\n\n"
+  "## Non-goals\n\n" + ($root.nonGoals | map("- \(.)") | join("\n")) + "\n\n"
 else "" end),
 "## Functional Requirements",
 "",
@@ -50,7 +50,7 @@ else "" end),
   ""
 ),
 (if ($root.edgeCases | length) > 0 then
-  "## Edge Cases\n\n" + ($root.edgeCases[] |
-    "### \(.id): \(.title)\n\n\(.description)\n\n**Slug:** `\(.slug)`\n"
-  )
+  ("## Edge Cases\n\n" + ($root.edgeCases | map(
+    "### \(.id): \(.title)\n\n\(.description)\n\n**Slug:** `\(.slug)`"
+  ) | join("\n")) + "\n"
 else "" end)
