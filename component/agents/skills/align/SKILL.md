@@ -5,6 +5,12 @@ description: Interview the user relentlessly until you share their understanding
 
 Reach a shared understanding before acting. Map the work as a **design tree**: every decision branches into the decisions that hang off it.
 
+## Design tree
+
+Name the **root decisions** first — the choices nothing else hangs off — then the decisions that hang off each one, down to the leaves. A root left open shadows every branch beneath it, so the tree is also the schedule: roots come in round 1. Render the tree for the user before the first round so they can correct the map itself, not just answer the questions.
+
+For example: config language is a root; matcher set, sandboxing posture, and config discovery hang off it, so none are in the light until the language is settled.
+
 Work the tree in **rounds**. A question is **in the light** when every decision it depends on is already settled — you can ask it now without guessing at answers you haven't heard. A question is **in shadow** while a decision it depends on is still open; it waits. Each answer is **casting light**: it settles a decision and lights up the questions that hung off it, ready for a later round.
 
 Each round, ask everything **in the light** at once. Number each question and give your recommended answer:

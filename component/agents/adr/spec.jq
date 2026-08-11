@@ -50,7 +50,7 @@ else "" end),
   ""
 ),
 (if ($root.edgeCases | length) > 0 then
-  ("## Edge Cases\n\n" + ($root.edgeCases | map(
+  "## Edge Cases\n\n" + ($root.edgeCases | map(
     "### \(.id): \(.title)\n\n\(.description)\n\n**Slug:** `\(.slug)`"
   ) | join("\n")) + "\n"
 else "" end)
