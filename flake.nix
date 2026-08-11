@@ -230,14 +230,7 @@
                       drv
                   ) old.nativeBuildInputs;
                 });
-              flatpak = prev.flatpak.overrideAttrs (old: {
-                patches = (old.patches or [ ]) ++ [
-                  (prev.fetchpatch {
-                    url = "https://github.com/flatpak/flatpak/pull/6721.diff";
-                    hash = "sha256-cU+m3Uu5RKTrAjICPYlQ4Q2Mmh0t0tO+2xK8SLW5Agw=";
-                  })
-                ];
-              });
+
               handy = handy.packages.${system}.handy.overrideAttrs (old: {
                 buildInputs = (old.buildInputs or [ ]) ++ [ prev.wtype ];
                 patches = (old.patches or [ ]) ++ [ ./package/handy/pr-1337.patch ];
