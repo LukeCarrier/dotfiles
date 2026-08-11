@@ -243,6 +243,8 @@ in
           "privacy.clearOnShutdown_v2.cookiesAndStorage" = false;
 
           "privacy.resistFingerprinting.exemptedDomains" = [ "claude.ai" ];
+
+          "network.protocol-handler.external.ext+container" = true;
         };
       };
     };
