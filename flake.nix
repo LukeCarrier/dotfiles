@@ -28,7 +28,6 @@
     claude-code = {
       url = "github:sadjow/claude-code-nix";
       inputs = {
-        flake-utils.follows = "flake-utils";
         nixpkgs.follows = "nixpkgs-unstable";
       };
     };
