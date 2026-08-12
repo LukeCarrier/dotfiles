@@ -5,7 +5,7 @@
   ...
 }:
 let
-  inherit (lib) getExe getExe';
+  inherit (lib) getExe getExe' mkForce;
   inherit (pkgs.stdenv) isDarwin;
   openUrlInContainer = pkgs.nur.repos.rycee.firefox-addons.buildFirefoxXpiAddon {
     pname = "open-url-in-container";
@@ -19,6 +19,17 @@ let
       homepage = "https://github.com/honsiorovskyi/open-url-in-container";
     };
   };
+  compassDesktop = pkgs.makeDesktopItem {
+    name = "compass";
+    exec = "${getExe pkgs.compass} open %U";
+    desktopName = "Compass";
+    mimeTypes = [
+      "text/html"
+      "x-scheme-handler/http"
+      "x-scheme-handler/https"
+      "x-scheme-handler/about"
+      "x-scheme-handler/unknown"
+    ];
   };
   selectMiniplatform = pkgs.writeShellScriptBin "emed-mini-platform" ''
     awsEksUpdateKubeconfig="${getExe' pkgs.aws-cli-tools "aws-eks-update-kubeconfig"}"
@@ -67,6 +78,7 @@ in
 {
   home.packages = [
     emedHelmTemplate
+    compassDesktop
   ]
   ++ (with pkgs; [
     github-cli-tools
@@ -97,6 +109,14 @@ in
         "$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
       else
         "$HOME/.1password/agent.sock";
+  };
+
+  xdg.mimeApps.defaultApplications = {
+    "text/html" = mkForce "compass.desktop";
+    "x-scheme-handler/http" = mkForce "compass.desktop";
+    "x-scheme-handler/https" = mkForce "compass.desktop";
+    "x-scheme-handler/about" = mkForce "compass.desktop";
+    "x-scheme-handler/unknown" = mkForce "compass.desktop";
   };
 
   sops = {

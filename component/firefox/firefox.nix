@@ -18,13 +18,14 @@ let
     };
   };
   inherit (pkgs) lib stdenv;
+  inherit (lib) mkDefault;
 in
 {
   home.packages = (if !stdenv.isDarwin then [ firefoxpwa ] else [ ]) ++ [ pkgs.mozlz4a ];
 
   xdg.mimeApps.defaultApplications =
     let
-      app = "firefox.desktop";
+      app = mkDefault "firefox.desktop";
     in
     {
       "text/html" = app;
