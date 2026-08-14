@@ -148,6 +148,7 @@ in
               "import-environment"
               "WAYLAND_DISPLAY"
               "XDG_CURRENT_DESKTOP"
+              "NIRI_SOCKET"
             ];
           }
           {
@@ -487,6 +488,7 @@ in
           ];
         };
         prefer-no-csd = true;
+
         layout = {
           always-center-single-column = true;
           gaps = 6;
