@@ -19,8 +19,21 @@
     };
 
     templates."nix-access-tokens".content = ''
-      access-tokens = "github.com:${config.sops.placeholder.nix-github}"
+      access-tokens = github.com=${config.sops.placeholder.nix-github}
     '';
+
+    templates."nix-netrc" = {
+      content = ''
+        machine github.com
+        login api
+        password ${config.sops.placeholder.nix-github}
+        machine codeload.github.com
+        login api
+        password ${config.sops.placeholder.nix-github}
+      '';
+      mode = "0400";
+      owner = "root";
+    };
   };
 
   nix = {
@@ -48,6 +61,7 @@
 
     extraOptions = ''
       !include ${config.sops.templates.nix-access-tokens.path}
+      netrc-file = ${config.sops.templates.nix-netrc.path}
     '';
   };
 }
