@@ -91,7 +91,6 @@ main() {
   # don't overwhelm the SSO API. Each worker writes its stanzas to its own file
   # so output can't interleave.
   local workdir="$(mktemp -d)"
-  trap 'rm -rf "$workdir"' EXIT
   while IFS=$'\t' read -r dest_account_index dest_account_id dest_account_name; do
     while (( $(jobs -rp | wc -l) >= jobs )); do
       wait -n
@@ -103,9 +102,13 @@ main() {
 
   # Collect every worker's stanzas, sort them (by profile name, since that heads
   # each NUL-terminated record) and emit, one blank line between stanzas.
-  if compgen -G "$workdir/*" > /dev/null; then
+  shopt -s nullglob
+  files=("$workdir"/*)
+  if [ ${#files[@]} -gt 0 ]; then
     cat "$workdir"/* | sort -z | awk 'BEGIN { RS = "\0"; ORS = "\n\n" } length'
   fi
+  
+  rm -rf "$workdir"
 }
 
 parse_args "$@"
