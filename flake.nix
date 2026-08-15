@@ -87,6 +87,10 @@
       url = "github:epireyn/niri-flake";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
+    nirinit = {
+      url = "github:amaanq/nirinit";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
     niri-float-sticky = {
       url = "github:probeldev/niri-float-sticky";
       inputs = {
@@ -172,6 +176,7 @@
       home-manager,
       lanzaboote,
       niri,
+      nirinit,
       niri-float-sticky,
       nixos-hardware,
       nix-flatpak,
@@ -377,10 +382,10 @@
         home-manager
         lanzaboote
         niri
+        nirinit
         nix-flatpak
         nix-on-droid
         nix-rosetta-builder
-        nix-std
         nixos-hardware
         nixpkgs-unstable
         sops-nix

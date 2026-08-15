@@ -6,10 +6,10 @@
   home-manager,
   lanzaboote,
   niri,
+  nirinit,
   nix-flatpak,
   nix-on-droid,
   nix-rosetta-builder,
-  nix-std,
   nixos-hardware,
   nixpkgs-unstable,
   sops-nix,
@@ -124,6 +124,7 @@
             cyberhaven
             disko
             falcon-sensor
+            nirinit
             nixos-hardware
             nix-flatpak
             sops-nix

@@ -12,6 +12,7 @@
     inputs.cyberhaven.nixosModules.cyberhaven
     inputs.falcon-sensor.nixosModules.default
     inputs.lanzaboote.nixosModules.lanzaboote
+    inputs.nirinit.nixosModules.nirinit
     inputs.nix-flatpak.nixosModules.nix-flatpak
     inputs.sops-nix.nixosModules.sops
     inputs.vicinae.nixosModules.default
