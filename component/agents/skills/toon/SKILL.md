@@ -66,6 +66,16 @@ items[2]{name,description}:
   paige,"Evaluates completeness against the spec"
 ```
 
+### Multiline strings
+
+TOON has no block strings. A value that must contain newlines is a single-line quoted string using `\n` escapes. Do NOT continue the value onto further indented lines — each continuation line is parsed as a new key and decoding fails with `Missing colon after key`. Physical line breaks inside quotes are also rejected (`Unterminated string: missing closing quote`).
+
+```toon
+context: "First paragraph.\n\nSecond paragraph with a colon: here.\n{{mermaid: file.mmd}}"
+```
+
+The decoder restores `\n` escapes to real newlines, so the resulting JSON value is identical to what a block string would have produced.
+
 ## Validation
 
 Always validate TOON output before writing:
@@ -92,5 +102,6 @@ If decode fails, fix the syntax errors — see the table below.
 | `key:value` (no space after colon) | `key: value` |
 | `items[2]{a,b}: val1,val2,val3` (wrong field count) | Match row columns to `{fields}` count |
 | `thing: value with , comma` (bare comma) | Quote: `"value with , comma"` |
+| Value continued onto indented lines | Join into one quoted string with `\n` escapes |
 | Mixed tab/space indentation | Use 2 spaces only |
 | Trailing whitespace on lines | Strip it |
