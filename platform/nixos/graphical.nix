@@ -107,7 +107,7 @@
   services.xserver.enable = true;
   services.libinput.enable = true;
   services.greetd.enable = true;
-  programs.regreet = {
+  services.displayManager.regreet = {
     enable = true;
     cageArgs = [
       "-m"
