@@ -120,7 +120,7 @@ let
     lib.nameValuePair "agent/${name}.md" (pkgs.writeText "${name}.md" (buildOpencodeAgent name agent))
   ) config.agents.definitions;
 
-  baseConfig = builtins.fromJSON (builtins.readFile ../../component/opencode/opencode.json);
+  baseConfig = builtins.fromJSON (builtins.readFile ./opencode.json);
   fullConfig = lib.recursiveUpdate baseConfig { mcp = mcpConfigurations; };
 
   skillFiles = buildSkillFiles "skills";
@@ -129,8 +129,9 @@ let
   configFiles =
     {
       "opencode.jsonc" = pkgs.writeText "opencode.jsonc" (builtins.toJSON fullConfig);
-      "AGENTS.md" = ../../component/agents/AGENTS.md;
-      "antigravity.json" = ../../component/opencode/antigravity.json;
+      "tui.json" = ./tui.json;
+      "AGENTS.md" = ../agents/AGENTS.md;
+      "antigravity.json" = ./antigravity.json;
     }
     // commandFiles
     // agentFiles

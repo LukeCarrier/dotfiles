@@ -6,10 +6,6 @@
     "opencode-claude-auth@2.1.6",
     "opencode-cursor-oauth@0.1.1"
   ],
-  "keybinds": {
-    "input_submit": "ctrl+enter",
-    "input_newline": "enter"
-  },
   "compaction": {
     "auto": true,
     "prune": false,

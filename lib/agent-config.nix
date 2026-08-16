@@ -8,11 +8,6 @@
 let
   agentsLib = import ./agents.nix { inherit lib; };
 
-  # Build opencode configuration directory
-  opencodeConfig = import ./agent-config/opencode.nix {
-    inherit pkgs config lib agentsLib;
-  };
-
   # Build goose configuration directory  
   gooseConfig = import ./agent-config/goose.nix {
     inherit pkgs config lib agentsLib;
@@ -29,7 +24,7 @@ let
   };
 in
 {
-  inherit opencodeConfig claudeCodeConfig codexConfig;
+  inherit claudeCodeConfig codexConfig;
   gooseConfig = gooseConfig.config;
   gooseAgents = gooseConfig.agents;
 }

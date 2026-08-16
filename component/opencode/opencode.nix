@@ -5,11 +5,10 @@
   ...
 }:
 let
-  # Build the opencode configuration package
-  agentConfig = import ../../lib/agent-config.nix {
-    inherit pkgs config lib;
+  agentsLib = import ../../lib/agents.nix { inherit lib; };
+  opencodeConfigPkg = import ./config.nix {
+    inherit pkgs config lib agentsLib;
   };
-  opencodeConfigPkg = agentConfig.opencodeConfig;
 
   userFacingPkgs = with pkgs; [ mcp-remote ];
   wrapperPkgs = with pkgs; [
