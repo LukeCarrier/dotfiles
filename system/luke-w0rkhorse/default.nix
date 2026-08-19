@@ -35,6 +35,11 @@
 
   hardware.facter.reportPath = ./facter.json;
 
+  boot.binfmt = {
+    emulatedSystems = [ "aarch64-linux" ];
+    preferStaticEmulators = true;
+  };
+
   sops.defaultSopsFile = ../../secrets/employer-emed.yaml;
 
   boot.lanzaboote.pkiBundle = lib.mkForce "/var/lib/sbctl";
