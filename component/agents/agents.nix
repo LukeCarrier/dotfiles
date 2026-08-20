@@ -272,6 +272,7 @@ in
     };
     "command-not-found".source = ./skills/command-not-found/SKILL.md;
     jj.source = ./skills/jj/SKILL.md;
+    jj-split-change.source = ./skills/jj-split-change/SKILL.md;
     nix.source = ./skills/nix/SKILL.md;
     pr-check-failure.source = ./skills/pr-check-failure/SKILL.md;
     toon.source = ./skills/toon/SKILL.md;
