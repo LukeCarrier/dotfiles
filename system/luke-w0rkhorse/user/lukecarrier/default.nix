@@ -12,6 +12,7 @@ in
 {
   imports = [
     inputs.niri.homeModules.niri
+    inputs.nirivana.homeManagerModules.default
     inputs.vicinae.homeManagerModules.default
     inputs.nix-flatpak.homeManagerModules.nix-flatpak
     inputs.sops-nix.homeManagerModules.sops
@@ -115,6 +116,8 @@ in
     key = "aws/config";
     path = "${config.home.homeDirectory}/.aws/config";
   };
+
+  services.nirivana.enable = true;
 
   programs.home-manager.enable = true;
 

@@ -6,7 +6,7 @@
   home-manager,
   lanzaboote,
   niri,
-  nirinit,
+  nirivana,
   nix-flatpak,
   nix-on-droid,
   nix-rosetta-builder,
@@ -124,7 +124,7 @@
             cyberhaven
             disko
             falcon-sensor
-            nirinit
+            nirivana
             nixos-hardware
             nix-flatpak
             sops-nix
@@ -426,6 +426,7 @@
           inherit
             disko
             niri
+            nirivana
             nix-flatpak
             sops-nix
             vicinae
