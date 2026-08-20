@@ -79,3 +79,4 @@ Walks the range bisecting on exit code: 0 = good, non-0 = bad. Prints the first 
 - **`jj git push` won't force-push by default.** It errors if the remote diverged. Use with care.
 - **Bookmarks don't auto-track.** Push explicitly with `--bookmark`; after a rebase the local and remote bookmark diverge until you push.
 - **Undo is cheap.** A wrong mutation is recoverable via `jj undo` / `jj op restore` — prefer fixing forward over aborting.
+- **`jj squash` opens an editor by default.** Pass `--message` to avoid it: `jj squash --into <rev> --message "<msg>"`.
