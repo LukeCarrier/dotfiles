@@ -66,6 +66,14 @@ jj diff -r <change-id> --stat   # summary
 jj diff -r <change-id>          # full diff
 ```
 
+### Bisect
+
+```bash
+jj bisect run --range '<good>::<bad>' -- <command>
+```
+
+Walks the range bisecting on exit code: 0 = good, non-0 = bad. Prints the first bad revision when done. To discard any commits created during the search, run the `jj op restore` command it prints at the end.
+
 ## Caveats
 
 - **`jj git push` won't force-push by default.** It errors if the remote diverged. Use with care.
