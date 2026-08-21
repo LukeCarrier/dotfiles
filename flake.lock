@@ -761,11 +761,11 @@
       },
       "locked": {
         "dir": "nix",
-        "lastModified": 1787218833,
-        "narHash": "sha256-0RnVXfhSmpyOioAfKepYoWACXfTND7dqSQYrwov89v0=",
+        "lastModified": 1787339113,
+        "narHash": "sha256-Ar0/yuLD3S/XxeXqCrrPWYVw2BhUdz1JWFC/Kc4Y6Ik=",
         "ref": "refs/heads/main",
-        "rev": "37fb5ed9575ba41c2984fe886d332a285686f95e",
-        "revCount": 33,
+        "rev": "845ccc7ecb6bdb11e12d46d6e5c0c95cdcceec85",
+        "revCount": 34,
         "type": "git",
         "url": "ssh://git@github.com/throwparty/nirivana"
       },
