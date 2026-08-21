@@ -7,7 +7,8 @@ eMed-specific Nix configuration.
 Cyberhaven and Falcon Sensor are provided by `emed-nix`'s
 `nixosModules.emed-security-baseline` (see `../../nix` /
 `modules/emed-security-baseline/nixos.nix` in the `emed-labs/nix` repo), not
-by this repo. `nixos.nix` here only sets `emed.securityAgents.enable = true;`.
+by this repo. `nixos.nix` here only sets `emed.securityAgents.enable = true;`
+and `emed.blockUsbStorage = true;`.
 The steps below still apply, but the overlay you're editing lives in that
 repo's module, not in `flake.nix` here.
 

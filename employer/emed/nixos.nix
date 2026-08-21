@@ -4,4 +4,5 @@
   # default.nix); this just switches it on. See employer/emed/README.md for
   # how to bump the vendored .deb versions.
   emed.securityAgents.enable = true;
+  emed.blockUsbStorage = true;
 }
