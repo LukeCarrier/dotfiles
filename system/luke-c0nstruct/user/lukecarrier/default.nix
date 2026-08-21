@@ -117,17 +117,6 @@ in
 
   programs.home-manager.enable = true;
 
-  xdg.mimeApps = {
-    enable = true;
-    defaultApplications =
-      let
-        app = "org.gnome.Nautilus";
-      in
-      {
-        "x-scheme-handler/file" = app;
-      };
-  };
-
   dconf.settings = {
     "org/gnome/desktop/interface".color-scheme = "prefer-dark";
   };

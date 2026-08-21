@@ -27,6 +27,39 @@
   };
 
   xdg = {
+    mimeApps = {
+      enable = true;
+      defaultApplications =
+        let
+          app = "org.gnome.Nautilus.desktop";
+        in
+        {
+          "inode/directory" = app;
+          "x-scheme-handler/file" = app;
+          "application/x-7z-compressed" = app;
+          "application/x-7z-compressed-tar" = app;
+          "application/x-bzip" = app;
+          "application/x-bzip-compressed-tar" = app;
+          "application/x-bzip2-compressed-tar" = app;
+          "application/x-compressed-tar" = app;
+          "application/x-cpio" = app;
+          "application/x-gzip" = app;
+          "application/x-lha" = app;
+          "application/x-lzip-compressed-tar" = app;
+          "application/x-lzma-compressed-tar" = app;
+          "application/x-tar" = app;
+          "application/x-xar" = app;
+          "application/x-xz" = app;
+          "application/x-xz-compressed-tar" = app;
+          "application/zip" = app;
+          "application/gzip" = app;
+          "application/bzip2" = app;
+          "application/vnd.rar" = app;
+          "application/zstd" = app;
+          "application/x-zstd-compressed-tar" = app;
+        };
+    };
+
     portal = {
       configPackages = [ pkgs.gnome-keyring ];
       extraPortals = [ pkgs.xdg-desktop-portal-gtk ];

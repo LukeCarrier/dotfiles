@@ -12,7 +12,21 @@ in
       app = "Helix.desktop";
     in
     {
+      "text/english" = app;
       "text/plain" = app;
+      "text/x-makefile" = app;
+      "text/x-c++hdr" = app;
+      "text/x-c++src" = app;
+      "text/x-chdr" = app;
+      "text/x-csrc" = app;
+      "text/x-java" = app;
+      "text/x-moc" = app;
+      "text/x-pascal" = app;
+      "text/x-tcl" = app;
+      "text/x-tex" = app;
+      "application/x-shellscript" = app;
+      "text/x-c" = app;
+      "text/x-c++" = app;
     };
 
   programs.helix = {

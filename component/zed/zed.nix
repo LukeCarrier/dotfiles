@@ -13,6 +13,8 @@ let
   };
 in
 {
+  xdg.mimeApps.defaultApplications."x-scheme-handler/zed" = "dev.zed.Zed.desktop";
+
   programs.zed-editor = {
     enable = true;
     package = if stdenv.hostPlatform.isDarwin then dummy else pkgs.zed-editor;
