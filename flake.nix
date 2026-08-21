@@ -43,10 +43,6 @@
         rust-overlay.follows = "rust-overlay";
       };
     };
-    cyberhaven = {
-      url = "github:LukeCarrier/cyberhaven-nix";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
-    };
     darwin = {
       url = "github:lnl7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
@@ -59,8 +55,8 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
-    falcon-sensor = {
-      url = "github:LukeCarrier/falcon-sensor-nixos";
+    emed-nix = {
+      url = "git+ssh://git@github.com/emed-labs/nix";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     flake-utils = {
@@ -172,11 +168,10 @@
       claude-code,
       code-insiders,
       compass,
-      cyberhaven,
       dagger,
       darwin,
       disko,
-      falcon-sensor,
+      emed-nix,
       flake-utils,
       handy,
       home-manager,
@@ -337,9 +332,9 @@
                 wezterm = wezterm.packages.${system}.default;
               }
             )
-            # eMed security agents overlays are applied by the respective nixos
-            # modules (falcon-sensor, cyberhaven). The -unwrapped derivations are
-            # overridden per-host via employer/emed/nixos.nix.
+            # eMed security agents (Cyberhaven, Falcon) overlays are applied by
+            # emed-nix's nixosModules.emed-security-baseline, imported per-host
+            # and enabled via employer/emed/nixos.nix.
           ];
 
           mergedConfig = config // {
@@ -377,10 +372,9 @@
     )
     // (import ./system {
       inherit
-        cyberhaven
         darwin
         disko
-        falcon-sensor
+        emed-nix
         home-manager
         lanzaboote
         niri

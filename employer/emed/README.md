@@ -4,6 +4,13 @@ eMed-specific Nix configuration.
 
 ## Security and compliance
 
+Cyberhaven and Falcon Sensor are provided by `emed-nix`'s
+`nixosModules.emed-security-baseline` (see `../../nix` /
+`modules/emed-security-baseline/nixos.nix` in the `emed-labs/nix` repo), not
+by this repo. `nixos.nix` here only sets `emed.securityAgents.enable = true;`.
+The steps below still apply, but the overlay you're editing lives in that
+repo's module, not in `flake.nix` here.
+
 The Cyberhaven and Falcon Sensor packaging depends on a `.deb` files being pre-seeded in the Nix store, as the binaries for these are not made publicly available.
 
 ### Deploying Cyberhaven
@@ -28,9 +35,10 @@ The Cyberhaven and Falcon Sensor packaging depends on a `.deb` files being pre-s
    sha256-QP2OIKYI03nclno85kFXwZRuB/KaIoMtN9RTXxpt45w=
    ```
 4. Update the `version`, `name`, `url` and `hash` fields in the overlay
-   providing `cyberhaven` and `cyberhaven-unwrapped` in `flake.nix` with the
-   new version/ref pair (e.g. `26.03.03.141-ef2a88`), filename, download URL,
-   and the SRI hash from step 3.
+   providing `cyberhaven` and `cyberhaven-unwrapped`, in
+   `modules/emed-security-baseline/nixos.nix` in the `emed-labs/nix` repo,
+   with the new version/ref pair (e.g. `26.03.03.141-ef2a88`), filename,
+   download URL, and the SRI hash from step 3.
 5. The Cyberhaven `installToken` in `employer/emed/nixos.nix` is a short-lived
    JWT (decode the middle segment to read its `exp` claim). When it expires,
    fetch a fresh one from the Cyberhaven console and replace the value.
@@ -55,6 +63,7 @@ The Cyberhaven and Falcon Sensor packaging depends on a `.deb` files being pre-s
    sha256-D70fSI5Ms2qN8+BVyjYtK75IgT8QeiDqCt95+lqBvP0=
    ```
 4. Update the `name`, `url` and `hash` fields in the overlay providing
-   `falcon-sensor` and `falcon-sensor-unwrapped` in `flake.nix` with the new
-   filename, download URL (from the CrowdStrike sensor download page), and
-   the SRI hash from step 3.
+   `falcon-sensor` and `falcon-sensor-unwrapped`, in
+   `modules/emed-security-baseline/nixos.nix` in the `emed-labs/nix` repo,
+   with the new filename, download URL (from the CrowdStrike sensor download
+   page), and the SRI hash from step 3.

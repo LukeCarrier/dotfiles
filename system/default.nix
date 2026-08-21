@@ -1,8 +1,7 @@
 {
-  cyberhaven,
   darwin,
   disko,
-  falcon-sensor,
+  emed-nix,
   home-manager,
   lanzaboote,
   niri,
@@ -87,8 +86,7 @@
       specialArgs = {
         inputs = {
           inherit
-            cyberhaven
-            falcon-sensor
+            emed-nix
             nixos-hardware
             nix-flatpak
             sops-nix
@@ -111,10 +109,7 @@
             builtins.elem (nixpkgs-unstable.lib.getName pkg) [
               "1password"
               "1password-cli"
-              "Cyberhaven"
-              "cyberhaven"
               "cyberhaven-unwrapped"
-              "falcon-sensor"
               "falcon-sensor-unwrapped"
             ];
         };
@@ -122,9 +117,8 @@
       specialArgs = {
         inputs = {
           inherit
-            cyberhaven
             disko
-            falcon-sensor
+            emed-nix
             nirivana
             nixos-hardware
             nix-flatpak

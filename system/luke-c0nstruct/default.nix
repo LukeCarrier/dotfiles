@@ -7,8 +7,7 @@
 {
   imports = [
     ./hardware-configuration.nix
-    inputs.cyberhaven.nixosModules.cyberhaven
-    inputs.falcon-sensor.nixosModules.default
+    inputs.emed-nix.nixosModules.emed-security-baseline
     inputs.nix-flatpak.nixosModules.nix-flatpak
     inputs.sops-nix.nixosModules.sops
     inputs.vicinae.nixosModules.default

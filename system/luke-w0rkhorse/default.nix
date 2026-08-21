@@ -9,8 +9,7 @@
     ./disk-config.nix
     (modulesPath + "/installer/scan/not-detected.nix")
     inputs.disko.nixosModules.disko
-    inputs.cyberhaven.nixosModules.cyberhaven
-    inputs.falcon-sensor.nixosModules.default
+    inputs.emed-nix.nixosModules.emed-security-baseline
     inputs.lanzaboote.nixosModules.lanzaboote
     inputs.nix-flatpak.nixosModules.nix-flatpak
     inputs.sops-nix.nixosModules.sops

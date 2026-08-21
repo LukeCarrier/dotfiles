@@ -413,14 +413,20 @@ Falcon Sensor) follow an "unwrapped + wrapper" split, mirroring the nixpkgs
   <pkg>-overlay ];` inside its `config` block, so any host-level overlay applied
   with `lib.mkAfter` wins.
 
-To override the vendored `.deb` for a specific host, add an overlay in the
-employer/host-level nixos module with `lib.mkAfter`, redefining
-`<pkg>-unwrapped` only. The wrapper is regenerated automatically via
-`callPackage`. See `employer/emed/nixos.nix` for the canonical example.
+To override the vendored `.deb` for a specific host, add an overlay with
+`lib.mkAfter`, redefining `<pkg>-unwrapped` only. The wrapper is regenerated
+automatically via `callPackage`. For Cyberhaven and Falcon Sensor
+specifically, this overlay now lives in `emed-labs/nix`'s
+`modules/emed-security-baseline/nixos.nix` (exposed here as
+`inputs.emed-nix.nixosModules.emed-security-baseline` and switched on via
+`emed.securityAgents.enable = true;` in `employer/emed/nixos.nix`) rather than
+in this repo.
 
 Unfree packages named by the wrapper (e.g. `Cyberhaven`) or the unwrapped
 (e.g. `cyberhaven-unwrapped`, `falcon-sensor-unwrapped`) must be listed in
-`config.allowUnfreePredicate` in `system/default.nix` for the host.
+`config.allowUnfreePredicate` in `system/default.nix` for the host, since
+`pkgs` is built externally via `pkgsForSystem` before the module system runs
+(the module's own `nixpkgs.config.allowUnfreePredicate` won't take effect).
 
 ---
 
