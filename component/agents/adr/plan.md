@@ -1,7 +1,7 @@
 ---
 status: draft
 created: 2026-01-21
-updated: 2026-01-21
+updated: 2026-08-22
 author: Luke Carrier
 ---
 
@@ -50,6 +50,8 @@ architecture:
 ```
 
 Place the `.mmd` file alongside the `.toon` file. At build time, `build.sh` inlines the Mermaid source as a ` ```mermaid ` code block — no pre-rendering or external tooling required.
+
+UI screens proposed by the plan are sketched as wireframes: author one `.wireloom` file per screen under `screens/` (grammar in the `wireframing` skill) and reference them from any free-text field via `{{wireloom: <file>}}`. `build.sh` renders them inline as images.
 
 ## Output
 

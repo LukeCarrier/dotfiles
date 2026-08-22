@@ -1,7 +1,7 @@
 ---
 status: draft
 created: 2026-01-21
-updated: 2026-01-21
+updated: 2026-08-22
 author: Luke Carrier
 ---
 
@@ -71,6 +71,10 @@ Slugs are stable identifiers (lowercase-kebab-case) used for canonical addressin
 ### Diagrams
 
 Reference external Mermaid `.mmd` files in the `context` field via `{{mermaid: <file>}}`. Place `.mmd` files alongside the `.toon` file; `build.sh` inlines them as ` ```mermaid ` blocks at render time.
+
+### Wireframes
+
+When a requirement describes a user-facing screen, sketch it rather than describing the layout in prose. Author one `.wireloom` file per screen under a `screens/` subdirectory (grammar in the `wireframing` skill), then reference it from that requirement's `description` or the `context` field via `{{wireloom: <file>}}`. Validate by rendering first — `wireloom-render adrs/<dir>/screens/*.wireloom -o /tmp/wireframes` must exit without parse errors — then run `build.sh`, which inlines each reference as an SVG image.
 
 ## Output
 

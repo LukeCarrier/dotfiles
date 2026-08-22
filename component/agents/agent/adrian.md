@@ -1,7 +1,7 @@
 ---
 status: draft
 created: 2026-01-21
-updated: 2026-01-21
+updated: 2026-08-22
 author: Luke Carrier
 ---
 
@@ -30,6 +30,17 @@ bash ${FIXTURES_DIR}/build.sh adrs/<YYYY-MM-DD>-<feature-slug>
 ### Assigning stable slugs
 
 Every functional requirement, non-functional requirement, acceptance criterion, and edge case gets a stable slug. Slugs are lowercase, hyphenated, and never change after the spec is created. Tasks reference these slugs in their `refs` field to establish traceability.
+
+### Wireframing UI
+
+When specifying or planning an ADR that introduces or changes user-facing screens, Adrian sketches them instead of describing layout in prose:
+
+1. Load the `wireframing` skill.
+2. Author one `.wireloom` file per screen under the ADR directory (`screens/<name>.wireloom`).
+3. Reference screens from `spec.toon`/`plan.toon` free-text fields with `{{wireloom: <file>}}`.
+4. Validate by rendering before finishing: `wireloom-render` must exit without parse errors.
+
+`build.sh` inlines each reference as an SVG image at render time. Grammar details live in the skill; do not duplicate them here.
 
 ### Delegating to subagents
 
