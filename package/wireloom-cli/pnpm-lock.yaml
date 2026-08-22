@@ -1,0 +1,23 @@
+lockfileVersion: '9.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+importers:
+
+  .:
+    dependencies:
+      wireloom:
+        specifier: ~0.7.0
+        version: 0.7.0
+
+packages:
+
+  wireloom@0.7.0:
+    resolution: {integrity: sha512-xxQ/+ja5clhTvQhSSZmGzVIPdehVn0tXzrbUag8KT4QiCGXJMmgLM5/BjWFlkEw51DJjBkRDeCJm2J/d2trPAg==}
+    engines: {node: '>=18'}
+
+snapshots:
+
+  wireloom@0.7.0: {}

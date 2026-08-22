@@ -302,6 +302,7 @@
                 spec-kit = callPackage' ./package/spec-kit { };
                 stklos = callPackage' ./package/stklos { };
                 toon-cli = callPackage' ./package/toon-cli { };
+                wireloom-cli = callPackage' ./package/wireloom-cli { };
               in
               {
                 aws-cli-tools = aws-cli-tools;
@@ -332,6 +333,7 @@
                 spec-kit = spec-kit;
                 stklos = stklos;
                 toon-cli = toon-cli;
+                wireloom-cli = wireloom-cli;
 
                 niri-float-sticky = niri-float-sticky.packages.${system}.niri-float-sticky;
 

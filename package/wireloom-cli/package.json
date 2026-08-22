@@ -1,0 +1,12 @@
+{
+  "name": "wireloom-cli",
+  "version": "0.1.0",
+  "description": "Render Wireloom sources into a navigable SVG prototype",
+  "type": "module",
+  "bin": {
+    "wireloom-render": "./index.mjs"
+  },
+  "dependencies": {
+    "wireloom": "~0.7.0"
+  }
+}

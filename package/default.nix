@@ -74,4 +74,6 @@ rec {
   stklos = callPackage ./stklos { };
 
   toon-cli = callPackage ./toon-cli { };
+
+  wireloom-cli = callPackage ./wireloom-cli { };
 }
