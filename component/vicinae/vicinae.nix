@@ -10,7 +10,7 @@ let
   vicinae = inputs.vicinae.packages.${pkgs.stdenv.hostPlatform.system}.default;
   settingsFile = "${config.xdg.configHome}/vicinae/nix.json";
   settingsJSON = pkgs.writeText "vicinae-nix.json" (builtins.toJSON {
-    close_on_focus_loss = true;
+    close_on_focus_loss = false;
     pop_to_root_on_close = true;
     font."normal".family = builtins.elemAt config.fonts.fontconfig.defaultFonts.sansSerif 0;
     font."normal".size = 12;

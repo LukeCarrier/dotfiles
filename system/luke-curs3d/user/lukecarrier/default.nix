@@ -11,12 +11,13 @@
     inputs.niri.homeModules.niri
     inputs.nix-flatpak.homeManagerModules.nix-flatpak
     inputs.sops-nix.homeManagerModules.sops
+    inputs.vicinae.homeManagerModules.default
     ../../../../component/shell-essential/shell-essential.nix
     ../../../../component/fonts/fonts.nix
     ../../../../component/readline/readline.nix
     ../../../../component/kanshi/kanshi.nix
     ../../../../component/gnome-headless/gnome-headless.nix
-    ../../../../component/wofi/wofi.nix
+    ../../../../component/vicinae/vicinae.nix
     ../../../../component/waybar/waybar.nix
     ../../../../component/swayidle/swayidle.nix
     ../../../../component/swaylock/swaylock.nix

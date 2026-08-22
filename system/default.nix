@@ -235,6 +235,7 @@
             niri
             nix-flatpak
             sops-nix
+            vicinae
             ;
         };
         inherit permittedInsecurePackages;
@@ -619,7 +620,7 @@
         };
       extraSpecialArgs = {
         inputs = {
-          inherit niri nix-flatpak sops-nix;
+          inherit niri nix-flatpak sops-nix vicinae;
         };
         inherit permittedInsecurePackages;
         desktopConfig = {
@@ -712,7 +713,7 @@
         };
       extraSpecialArgs = {
         inputs = {
-          inherit niri nix-flatpak sops-nix;
+          inherit niri nix-flatpak sops-nix vicinae;
         };
         inherit permittedInsecurePackages;
         desktopConfig = {

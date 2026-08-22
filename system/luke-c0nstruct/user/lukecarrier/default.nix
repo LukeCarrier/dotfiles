@@ -14,6 +14,7 @@ in
     inputs.niri.homeModules.niri
     inputs.nix-flatpak.homeManagerModules.nix-flatpak
     inputs.sops-nix.homeManagerModules.sops
+    inputs.vicinae.homeManagerModules.default
     ../../../../employer/emed/emed.nix
     ../../../../component/docker/docker.nix
     ../../../../component/shell-essential/shell-essential.nix
@@ -21,7 +22,7 @@ in
     ../../../../component/readline/readline.nix
     ../../../../component/kanshi/kanshi.nix
     ../../../../component/gnome-headless/gnome-headless.nix
-    ../../../../component/wofi/wofi.nix
+    ../../../../component/vicinae/vicinae.nix
     ../../../../component/ashell/ashell.nix
     ../../../../component/swayidle/swayidle.nix
     ../../../../component/swaylock/swaylock.nix
