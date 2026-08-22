@@ -277,6 +277,10 @@ in
     nix.source = ./skills/nix/SKILL.md;
     pr-check-failure.source = ./skills/pr-check-failure/SKILL.md;
     toon.source = ./skills/toon/SKILL.md;
+    wireframing = {
+      source = ./skills/wireframing/SKILL.md;
+      fixtures."grammar.md" = ./skills/wireframing/grammar.md;
+    };
     writing-skills.source = ./skills/writing-skills/SKILL.md;
   };
 
