@@ -67,6 +67,27 @@ let
         mv "$tmp_file" "$md_file"
       fi
 
+      # Render {{wireloom: <file>}} references as SVG images
+      if grep -q '{{wireloom: ' "$md_file" 2>/dev/null; then
+        tmp_file=$(mktemp)
+        while IFS= read -r line || [[ -n "$line" ]]; do
+          if [[ "$line" =~ \{\{wireloom:\ ([^}]+)\}\} ]]; then
+            wl_file="$ADR_DIR/''${BASH_REMATCH[1]}"
+            if [[ -f "$wl_file" ]]; then
+              wl_name="$(basename "$wl_file" .wireloom)"
+              wl_slug="$(printf '%s' "$wl_name" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g')"
+              wireloom-render "$wl_file" -o "$ADR_DIR" --no-index >/dev/null
+              printf '\n![%s](%s.svg)\n' "$wl_name" "$wl_slug" >> "$tmp_file"
+            else
+              echo "<!-- wireloom: file not found: ''${BASH_REMATCH[1]} -->" >> "$tmp_file"
+            fi
+          else
+            printf '%s\n' "$line" >> "$tmp_file"
+          fi
+        done < "$md_file"
+        mv "$tmp_file" "$md_file"
+      fi
+
       echo "✓ $md_file"
       rendered=$((rendered + 1))
     done
@@ -219,7 +240,7 @@ let
       }
     ''} $out/retro.schema.json
     chmod +x $out/build.sh
-    wrapProgram $out/build.sh --prefix PATH : "${lib.makeBinPath (with pkgs; [ toon-cli jq check-jsonschema ])}"
+    wrapProgram $out/build.sh --prefix PATH : "${lib.makeBinPath (with pkgs; [ toon-cli jq check-jsonschema wireloom-cli ])}"
   '';
   adrFixtures = {
     "build.sh" = "${adrDir}/build.sh";
