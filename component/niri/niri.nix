@@ -523,6 +523,16 @@ in
             ];
             block-out-from = "screencast";
           }
+          # Vicinae's launcher is a layer-shell surface (USE_LAYER_SHELL=1);
+          # window-rules don't match it.
+          {
+            matches = [
+              { namespace = "^vicinae$"; }
+            ];
+            background-effect = {
+              blur = true;
+            };
+          }
         ];
         window-rules = [
           {
