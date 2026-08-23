@@ -29,6 +29,7 @@ in
 {
   programs.vicinae = {
     enable = true;
+    enableFirefoxIntegration = true;
 
     systemd = {
       enable = true;
