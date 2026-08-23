@@ -93,6 +93,7 @@
             nix-flatpak
             sops-nix
             lanzaboote
+            vicinae
             ;
         };
         desktopConfig.background = desktopBackground;
@@ -162,6 +163,7 @@
             nix-flatpak
             sops-nix
             lanzaboote
+            vicinae
             ;
         };
         desktopConfig.background = desktopBackground;
@@ -183,6 +185,7 @@
             nix-flatpak
             sops-nix
             lanzaboote
+            vicinae
             ;
         };
         desktopConfig.background = desktopBackground;

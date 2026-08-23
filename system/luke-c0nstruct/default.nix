@@ -11,6 +11,7 @@
     inputs.falcon-sensor.nixosModules.default
     inputs.nix-flatpak.nixosModules.nix-flatpak
     inputs.sops-nix.nixosModules.sops
+    inputs.vicinae.nixosModules.default
     inputs.nixos-hardware.nixosModules.apple-t2
     ../../platform/nixos/common.nix
     ../../platform/nixos/region/en-gb.nix

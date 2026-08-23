@@ -10,6 +10,7 @@
     ./hardware-configuration.nix
     inputs.nix-flatpak.nixosModules.nix-flatpak
     inputs.sops-nix.nixosModules.sops
+    inputs.vicinae.nixosModules.default
     ../../platform/nixos/common.nix
     ../../platform/nixos/region/en-gb.nix
     inputs.lanzaboote.nixosModules.lanzaboote

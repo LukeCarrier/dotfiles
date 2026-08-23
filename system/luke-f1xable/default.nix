@@ -13,6 +13,7 @@ in
     inputs.nixos-hardware.nixosModules.framework-13-7040-amd
     inputs.nix-flatpak.nixosModules.nix-flatpak
     inputs.sops-nix.nixosModules.sops
+    inputs.vicinae.nixosModules.default
     ../../hw/framework-13-amd.nix
     ../../platform/nixos/common.nix
     ../../platform/nixos/region/en-gb.nix
