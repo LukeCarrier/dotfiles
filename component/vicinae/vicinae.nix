@@ -22,6 +22,8 @@ let
       };
     };
     launcher_window.opacity = 0.85;
+    encrypt_sensitive_data = true;
+    telemetry.system_info = false;
   });
 in
 {
