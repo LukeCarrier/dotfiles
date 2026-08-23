@@ -45,7 +45,6 @@
     ../../../../component/git/git.nix
     ../../../../component/jj/jj.nix
     ../../../../component/zoxide/zoxide.nix
-    ../../../../component/espanso/espanso.nix
     ../../../../component/ghostty/ghostty.nix
     ../../../../component/rust/cargo.nix
     ../../../../component/aws/aws.nix
