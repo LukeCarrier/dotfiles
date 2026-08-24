@@ -1,10 +1,11 @@
 { config, pkgs, lib, ... }:
 let
   inherit (pkgs) stdenv;
+  inherit (stdenv.hostPlatform) isDarwin;
 
   mergeConfig = import ../../lib/merge-json-config.nix { inherit pkgs; };
 
-  osStore = if stdenv.isDarwin then "osxkeychain" else "secretservice";
+  osStore = if isDarwin then "osxkeychain" else "secretservice";
   realStore = lib.getExe' pkgs.docker-credential-helpers "docker-credential-${osStore}";
 
   # docker credential-helper name -> binary; extend as credHelpers grows.
@@ -50,7 +51,7 @@ ${credHelperCases}
 
   # Helm's default registry config path (unset HELM_CONFIG_HOME/XDG_CONFIG_HOME).
   registryConfig =
-    if stdenv.isDarwin then
+    if isDarwin then
       "${config.home.homeDirectory}/Library/Preferences/helm/registry/config.json"
     else
       "${config.xdg.configHome}/helm/registry/config.json";

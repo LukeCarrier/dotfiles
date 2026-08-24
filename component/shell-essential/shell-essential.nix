@@ -1,4 +1,7 @@
 { pkgs, ... }:
+let
+  inherit (pkgs.stdenv.hostPlatform) isLinux;
+in
 {
   home.packages =
     with pkgs;
@@ -17,7 +20,7 @@
       tree
     ]
     ++ (
-      if pkgs.stdenv.isLinux then
+      if isLinux then
         with pkgs;
         [
           # Hardware introspection

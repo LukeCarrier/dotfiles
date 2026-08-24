@@ -1,8 +1,9 @@
 { pkgs, ... }:
 let
   inherit (pkgs) stdenv;
+  inherit (stdenv.hostPlatform) isDarwin isLinux;
   socketPath =
-    if stdenv.isDarwin then
+    if isDarwin then
       "Library/Containers/com.bitwarden.desktop/Data/.bitwarden-ssh-agent.sock"
     else
       ".bitwarden/ssh-agent.sock";
@@ -14,7 +15,7 @@ in
       bitwarden-cli
       bw-cli-tools
     ]
-    ++ (if stdenv.isLinux then [ pkgs.bitwarden-desktop ] else [ ]);
+    ++ (if isLinux then [ pkgs.bitwarden-desktop ] else [ ]);
 
   home.sessionVariables = {
     BITWARDEN_SSH_AUTH_SOCK = "$HOME/${socketPath}";
@@ -22,7 +23,7 @@ in
   };
 
   launchd.agents."family.carrier.luke.bitwarden-env" =
-    if stdenv.isDarwin then
+    if isDarwin then
       {
         enable = true;
         config = {

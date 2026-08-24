@@ -18,10 +18,11 @@ let
     };
   };
   inherit (pkgs) lib stdenv;
+  inherit (stdenv.hostPlatform) isDarwin;
   inherit (lib) mkDefault;
 in
 {
-  home.packages = (if !stdenv.isDarwin then [ firefoxpwa ] else [ ]) ++ [ pkgs.mozlz4a ];
+  home.packages = (if !isDarwin then [ firefoxpwa ] else [ ]) ++ [ pkgs.mozlz4a ];
 
   xdg.mimeApps.defaultApplications =
     let
@@ -68,7 +69,7 @@ in
         "en-US"
       ];
 
-      nativeMessagingHosts = lib.mkIf (!stdenv.isDarwin) [ firefoxpwa ];
+      nativeMessagingHosts = lib.mkIf (!isDarwin) [ firefoxpwa ];
 
       profiles.default = {
         isDefault = true;
@@ -94,7 +95,7 @@ in
             vimium
             zotero-connector
           ]
-          ++ (if stdenv.isDarwin then [ ] else [ pwas-for-firefox ]))
+           ++ (if isDarwin then [ ] else [ pwas-for-firefox ]))
           ++ [ openUrlInContainer ]
         );
         search = {

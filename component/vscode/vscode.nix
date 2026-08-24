@@ -1,6 +1,7 @@
 { config, lib, pkgs, ... }:
 let
   inherit (config.fonts.fontconfig.defaultFonts) monospace;
+  inherit (pkgs.stdenv.hostPlatform) isDarwin isLinux;
 in
 {
   xdg.mimeApps.defaultApplications =
@@ -19,7 +20,7 @@ in
         "crash-reporter-id" = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa";
 
         # Default to GNOME/Seahorse via libsecret for credential storage on Linux.
-        "password-store" = lib.mkIf pkgs.stdenv.isLinux "gnome-libsecret";
+        "password-store" = lib.mkIf isLinux "gnome-libsecret";
       };
     in
     builtins.toJSON attrs;
@@ -268,7 +269,7 @@ in
     in
     {
       enable = true;
-      package = (if pkgs.stdenv.isDarwin then pkgs.vscodium else pkgs.vscodium-fhs);
+      package = (if isDarwin then pkgs.vscodium else pkgs.vscodium-fhs);
       profiles = {
         default = {
           extensions = globalExtensions;
@@ -327,7 +328,7 @@ in
       };
     };
 
-  home.packages = lib.mkIf pkgs.stdenv.isLinux [ pkgs.vscode-insiders ];
+  home.packages = lib.mkIf isLinux [ pkgs.vscode-insiders ];
 }
 
 # Dart

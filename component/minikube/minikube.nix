@@ -6,6 +6,7 @@
 }:
 let
   inherit (pkgs) stdenv;
+  inherit (stdenv.hostPlatform) isLinux;
 
   minikube' = pkgs.symlinkJoin {
     name = "minikube-${pkgs.minikube.version}";
@@ -18,7 +19,7 @@ in
 {
   home.packages = with pkgs; [
     minikube'
-  ] ++ lib.optionals stdenv.isLinux [
+  ] ++ lib.optionals isLinux [
     libvirt
   ];
 

@@ -1,4 +1,7 @@
 { pkgs, ... }:
+let
+  inherit (pkgs.stdenv.hostPlatform) isDarwin;
+in
 {
   programs.wezterm = {
     enable = true;
@@ -6,7 +9,7 @@
     # Homebrew cask or manually. Lots of things seem broken using the nixpkgs
     # executable, and it's harder to launch.
     package = (
-      if pkgs.stdenv.isDarwin then
+      if isDarwin then
         (pkgs.runCommand "wezterm-darwin"
           {
           }

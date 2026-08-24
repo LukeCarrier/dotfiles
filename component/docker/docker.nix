@@ -1,10 +1,11 @@
 { config, pkgs, lib, ... }:
 let
   inherit (pkgs) stdenv;
+  inherit (stdenv.hostPlatform) isDarwin;
 
   mergeConfig = import ../../lib/merge-json-config.nix { inherit pkgs; };
 
-  credsStore = if stdenv.isDarwin then "osxkeychain" else "secretservice";
+  credsStore = if isDarwin then "osxkeychain" else "secretservice";
 
   baseConfig = pkgs.writeText "docker-config.json" (
     builtins.toJSON ({ inherit credsStore; } // config.programs.docker-cli.settings)
