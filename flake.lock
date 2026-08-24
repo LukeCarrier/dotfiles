@@ -882,16 +882,15 @@
         ]
       },
       "locked": {
-        "lastModified": 1765849717,
-        "narHash": "sha256-ZAawNY4IDtKzos59wvr7efLo3UP7L6CMxwvBE+4d7gI=",
-        "owner": "LukeCarrier",
+        "lastModified": 1787536108,
+        "narHash": "sha256-x7anlJMh2xZoluQRsXihJAKFSWgarDyKJN4dkv66l9E=",
+        "owner": "nix-community",
         "repo": "nix-vscode-extensions",
-        "rev": "1b3a91ad02c49acb6e5eeab10ce67d209d9f001d",
+        "rev": "974dcf027535c5e791cece0aa37aaec2fe8137fa",
         "type": "github"
       },
       "original": {
-        "owner": "LukeCarrier",
-        "ref": "unpack-phase",
+        "owner": "nix-community",
         "repo": "nix-vscode-extensions",
         "type": "github"
       }
@@ -910,7 +909,6 @@
       },
       "original": {
         "owner": "NixOS",
-        "ref": "master",
         "repo": "nixos-hardware",
         "type": "github"
       }

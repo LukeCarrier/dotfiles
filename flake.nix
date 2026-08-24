@@ -108,7 +108,7 @@
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     nixos-hardware = {
-      url = "github:NixOS/nixos-hardware/master";
+      url = "github:NixOS/nixos-hardware";
     };
     nix-flatpak.url = "github:gmodena/nix-flatpak/main";
     nix-rosetta-builder = {
@@ -117,7 +117,7 @@
     };
     nix-std.url = "github:chessai/nix-std";
     nix-vscode-extensions = {
-      url = "github:LukeCarrier/nix-vscode-extensions/unpack-phase";
+      url = "github:nix-community/nix-vscode-extensions";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     nixpkgs-unstable.url = "github:NixOS/nixpkgs";
@@ -348,6 +348,7 @@
           ];
 
           mergedConfig = config // {
+            allowAliases = false;
             allowUnfreePredicate =
               pkg:
               builtins.elem (pkgs.lib.getName pkg) flakeUnfree || (config.allowUnfreePredicate or (_: false)) pkg;
