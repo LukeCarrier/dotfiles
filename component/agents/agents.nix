@@ -277,7 +277,7 @@ in
     command = lib.getExe pkgs.github-mcp-server;
     args = [
       "stdio"
-      "--toolsets=default,actions"
+      "--toolsets=default,actions,dependabot"
     ];
     env.GITHUB_PERSONAL_ACCESS_TOKEN = "@github-mcp-token@";
   };
@@ -302,6 +302,7 @@ in
       source = ./skills/wireframing/SKILL.md;
       fixtures."grammar.md" = ./skills/wireframing/grammar.md;
     };
+    resolve-dependabot-alert.source = ./skills/resolve-dependabot-alert/SKILL.md;
     writing-skills.source = ./skills/writing-skills/SKILL.md;
   };
 
