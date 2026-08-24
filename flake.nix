@@ -216,6 +216,7 @@
             "obsbot-sdk"
           ];
           overlays = [
+
             agentkit.overlays.default
             claude-code.overlays.default
             code-insiders.overlays.default
@@ -348,7 +349,6 @@
           ];
 
           mergedConfig = config // {
-            allowAliases = false;
             allowUnfreePredicate =
               pkg:
               builtins.elem (pkgs.lib.getName pkg) flakeUnfree || (config.allowUnfreePredicate or (_: false)) pkg;
