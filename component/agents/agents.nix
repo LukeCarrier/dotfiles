@@ -303,6 +303,7 @@ in
       fixtures."grammar.md" = ./skills/wireframing/grammar.md;
     };
     resolve-dependabot-alert.source = ./skills/resolve-dependabot-alert/SKILL.md;
+    update-node-deps.source = ./skills/update-node-deps/SKILL.md;
     writing-skills.source = ./skills/writing-skills/SKILL.md;
   };
 
