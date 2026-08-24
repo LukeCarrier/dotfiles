@@ -190,44 +190,44 @@ in
       url = "https://mcp.atlassian.com/v1/mcp";
     };
 
-    coralogix-uk-nonprod = {
-      command = "mcp-remote";
-      args = [
-        "https://api.eu2.coralogix.com/mgmt/api/v1/mcp"
-        "--header"
-        "Authorization: Bearer @coralogix-uk-nonprod-api-key@"
-      ];
-    };
-    coralogix-uk-prod = {
-      command = "mcp-remote";
-      args = [
-        "https://api.eu2.coralogix.com/mgmt/api/v1/mcp"
-        "--header"
-        "Authorization: Bearer @coralogix-uk-prod-api-key@"
-      ];
-    };
-    coralogix-us-nonprod = {
-      command = "mcp-remote";
-      args = [
-        "https://api.us1.coralogix.com/mgmt/api/v1/mcp"
-        "--header"
-        "Authorization: Bearer @coralogix-us-nonprod-api-key@"
-      ];
-    };
-    coralogix-us-prod = {
-      command = "mcp-remote";
-      args = [
-        "https://api.us1.coralogix.com/mgmt/api/v1/mcp"
-        "--header"
-        "Authorization: Bearer @coralogix-us-prod-api-key@"
-      ];
-    };
+    coralogix-uk-nonprod.command = lib.getExe (pkgs.writeShellApplication {
+      name = "mcp-coralogix-uk-nonprod";
+      runtimeInputs = [ pkgs.mcp-remote ];
+      text = ''
+        exec mcp-remote https://api.eu2.coralogix.com/mgmt/api/v1/mcp \
+          --header "Authorization: Bearer $(cat ${lib.escapeShellArg config.sops.secrets.coralogix-uk-nonprod-api-key.path})"
+      '';
+    });
+    coralogix-uk-prod.command = lib.getExe (pkgs.writeShellApplication {
+      name = "mcp-coralogix-uk-prod";
+      runtimeInputs = [ pkgs.mcp-remote ];
+      text = ''
+        exec mcp-remote https://api.eu2.coralogix.com/mgmt/api/v1/mcp \
+          --header "Authorization: Bearer $(cat ${lib.escapeShellArg config.sops.secrets.coralogix-uk-prod-api-key.path})"
+      '';
+    });
+    coralogix-us-nonprod.command = lib.getExe (pkgs.writeShellApplication {
+      name = "mcp-coralogix-us-nonprod";
+      runtimeInputs = [ pkgs.mcp-remote ];
+      text = ''
+        exec mcp-remote https://api.us1.coralogix.com/mgmt/api/v1/mcp \
+          --header "Authorization: Bearer $(cat ${lib.escapeShellArg config.sops.secrets.coralogix-us-nonprod-api-key.path})"
+      '';
+    });
+    coralogix-us-prod.command = lib.getExe (pkgs.writeShellApplication {
+      name = "mcp-coralogix-us-prod";
+      runtimeInputs = [ pkgs.mcp-remote ];
+      text = ''
+        exec mcp-remote https://api.us1.coralogix.com/mgmt/api/v1/mcp \
+          --header "Authorization: Bearer $(cat ${lib.escapeShellArg config.sops.secrets.coralogix-us-prod-api-key.path})"
+      '';
+    });
 
     grafana-cloud = {
       command = getExe pkgs.mcp-grafana;
       env = {
-        GRAFANA_URL = "@grafana-cloud-url@";
-        GRAFANA_SERVICE_ACCOUNT_TOKEN = "@grafana-cloud-service-account-token@";
+        GRAFANA_URL.file = config.sops.secrets.grafana-cloud-url.path;
+        GRAFANA_SERVICE_ACCOUNT_TOKEN.file = config.sops.secrets.grafana-cloud-service-account-token.path;
       };
     };
 

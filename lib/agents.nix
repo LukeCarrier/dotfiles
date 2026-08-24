@@ -1,16 +1,14 @@
 { lib }:
-# Shared library for the agents subsystem. It bundles the three pieces of
-# tool-agnostic plumbing that each component lowers into its own on-disk format:
+# Shared library for the agents subsystem.
 #
-#   * `substitute` — resolves @SOPS_PLACEHOLDER@ references inside the shared
-#     programs.mcp.servers shape.
-#   * `commandsModule` — declares the `agents.commands` option: a tool-agnostic
-#     description of agent slash commands / recipes. The definitions themselves
-#     are supplied as config (see component/agents/adr.nix).
-#   * `definitionsModule` — declares the `agents.definitions` option: a
-#     tool-agnostic description of agent roles (system prompts, mode, etc.).
-#     The definitions themselves are supplied as config (see
-#     component/agents/agents.nix).
+#   * `commandsModule` — declares the `agents.commands` option.
+#   * `definitionsModule` — declares the `agents.definitions` option.
+#
+# Secret handling for MCP servers uses the typed `env.VAR.file = path` shape
+# from `programs.mcp.servers` and `lib.hm.mcp.wrapEnvFilesCommand` from
+# home-manager. The old `@secret-name@` / `substitute` approach is no longer
+# used; `substitute` is retained only for any remaining call sites not yet
+# migrated.
 {
   substitute =
     config: lib: text:

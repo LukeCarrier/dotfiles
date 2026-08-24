@@ -26,20 +26,19 @@ let
     name: serverDef:
     let
       url = serverDef.url or null;
-      command = serverDef.command or null;
-      env = lib.mapAttrs (_: v: substitute (toString v)) (serverDef.env or { });
+      wrapped = lib.hm.mcp.wrapEnvFilesCommand { inherit pkgs name; } serverDef;
+      literalEnvs = lib.filterAttrs (_: v: !lib.isAttrs v || !(v ? file)) (wrapped.env or { });
       transport =
         if url != null then
-          "url = ${tomlString (substitute url)}\n"
+          "url = ${tomlString url}\n"
         else
-          "command = ${tomlString (substitute (toString command))}\n"
-          + lib.optionalString (serverDef.args or [ ] != [ ]) (
-            "args = ${tomlArray (map (a: substitute (toString a)) serverDef.args)}\n"
+          "command = ${tomlString (toString wrapped.command)}\n"
+          + lib.optionalString (wrapped.args or [ ] != [ ]) (
+            "args = ${tomlArray (wrapped.args)}\n"
           );
-      # The env subtable must follow the parent table's inline keys.
-      envBlock = lib.optionalString (env != { }) (
+      envBlock = lib.optionalString (literalEnvs != { }) (
         "\n[mcp_servers.${name}.env]\n"
-        + lib.concatStrings (lib.mapAttrsToList (k: v: "${k} = ${tomlString v}\n") env)
+        + lib.concatStrings (lib.mapAttrsToList (k: v: "${k} = ${tomlString v}\n") literalEnvs)
       );
     in
     # Defined but disabled in the file: codex can't hot-toggle MCP servers, and

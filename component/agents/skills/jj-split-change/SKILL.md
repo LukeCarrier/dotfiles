@@ -9,6 +9,12 @@ When a single jj change contains multiple logical concerns and needs to be decom
 
 ## Analyse before acting
 
+In jj, there is no staging area. Most jj commands snapshot the working copy
+before operating unless explicitly told not to. Do not describe checkout
+contents as "unstaged" or "pending in a staging area". Inspect `@` and its
+parent directly; if the user says to split the latest changeset and `@` is the
+latest revision, `@` is the revision to split.
+
 Read the full diff before proposing anything:
 
 ```bash
@@ -40,7 +46,7 @@ Do **not** batch steps 4 across multiple commits — rebase after every commit s
 
 ## Keeping the tail connected
 
-After `jj new <parent>`, the working copy (`@`) is a new branch off `<parent>`. The original change's descendants still point at the original. Until you rebase them, history is forked. Run `jj rebase -s <first-descendant> -d @` after each commit to keep one linear chain.
+After `jj new <parent>`, `@` is a new revision on top of `<parent>`. The original change's descendants still point at the original. Until you rebase them, history is forked. Run `jj rebase -s <first-descendant> -d @` after each commit to keep one linear chain.
 
 Identify the first descendant of the original change before starting:
 

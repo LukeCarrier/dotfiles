@@ -17,43 +17,37 @@ let
   inherit (lib) getExe getExe';
 
   # Lower one entry of the shared programs.mcp.servers shape into Claude Code's
-  # mcpServers schema.
+  # mcpServers schema. File-ref env vars are resolved via a wrapper script.
   buildClaudeMcp =
-    serverDef:
+    name: serverDef:
     let
+      wrapped = lib.hm.mcp.wrapEnvFilesCommand { inherit pkgs name; } serverDef;
+      literalEnvs = lib.filterAttrs (_: v: !lib.isAttrs v || !(v ? file)) (wrapped.env or { });
       url = serverDef.url or null;
-      command = serverDef.command or null;
-      env = lib.mapAttrs (_: v: substitute (toString v)) (serverDef.env or { });
     in
     if url != null then
-      {
-        type = "http";
-        url = substitute url;
-      }
+      { type = "http"; inherit url; }
     else
       {
         type = "stdio";
-        command = substitute (toString command);
+        command = toString wrapped.command;
       }
-      // lib.optionalAttrs (serverDef.args or [ ] != [ ]) {
-        args = map (a: substitute (toString a)) serverDef.args;
-      }
-      // lib.optionalAttrs (env != { }) { inherit env; };
+      // lib.optionalAttrs (wrapped.args or [ ] != [ ]) { args = wrapped.args; }
+      // lib.optionalAttrs (literalEnvs != { }) { env = literalEnvs; };
 
   # Claude Code has no per-server `enabled` flag and no in-session toggle: a
   # server baked into ~/.claude.json is always active. The shared `enabled`
   # field the other tools honour therefore has no equivalent here. Instead we
-  # render EVERY server to its own --mcp-config file and pick which to load at
+  # render EVERY server to its own config file and pick which to load at
   # launch time (see selectClaudeMcp below) — that's Claude Code's only
   # mechanism for default-off, opt-in-per-session servers.
   mcpDir = "${config.home.homeDirectory}/.config/claude-code/mcp";
 
-  # Secrets are resolved by sops-nix at activation, so each per-server file is a
-  # sops template; `substitute` has already turned @refs@ into sops placeholders.
+  # Wrappers handle secret env vars at runtime; no sops templates needed.
   mcpTemplates = lib.mapAttrs' (
     name: serverDef:
     lib.nameValuePair "claude-code-mcp-${name}.json" {
-      content = builtins.toJSON { mcpServers.${name} = buildClaudeMcp serverDef; };
+      content = builtins.toJSON { mcpServers.${name} = buildClaudeMcp name serverDef; };
       path = "${mcpDir}/${name}.json";
     }
   ) config.programs.mcp.servers;
@@ -91,11 +85,13 @@ in
     selectClaudeMcp
   ];
 
-  sops = {
-    # One --mcp-config file per server, with secrets resolved. selectClaudeMcp
-    # picks among these at launch; nothing is merged into ~/.claude.json.
-    templates = mcpTemplates;
-  };
+  # One config file per server; wrappers handle secrets at runtime.
+  # selectClaudeMcp picks among these at launch; nothing merged into ~/.claude.json.
+  home.file = lib.mapAttrs' (
+    _: tmpl: lib.nameValuePair tmpl.path {
+      text = tmpl.content;
+    }
+  ) mcpTemplates;
 
   # Copy the built configuration to ~/.claude during activation
   home.activation.claudeCodeConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''

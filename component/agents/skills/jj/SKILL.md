@@ -44,12 +44,12 @@ jj bookmark list --all   # includes remote-tracking bookmarks
 jj describe -m "feat: my feature description"
 ```
 
-The working copy is always a change. `jj new` starts a fresh change on top; re-running `jj describe -m` amends the current one.
+jj has no Git-style staging area. Most jj commands snapshot the working copy before operating, unless explicitly told not to. `@` names the current revision, while the working copy is the checkout that jj snapshots. `jj new` starts a fresh change on top; re-running `jj describe -m` amends the current one. Treat a request to split the latest change as a request to split `@` when that is the latest revision.
 
 ### Rebase
 ```bash
 jj rebase -d main -r <change-id>   # a specific change
-jj rebase -d main                   # the working copy
+jj rebase -d main                   # the current revision
 ```
 
 ### Push and fetch

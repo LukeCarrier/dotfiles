@@ -1,4 +1,5 @@
 {
+  config,
   lib,
   pkgs,
   ...
@@ -279,7 +280,7 @@ in
       "stdio"
       "--toolsets=default,actions,dependabot"
     ];
-    env.GITHUB_PERSONAL_ACCESS_TOKEN = "@github-mcp-token@";
+    env.GITHUB_PERSONAL_ACCESS_TOKEN.file = config.sops.secrets.github-mcp-token.path;
   };
 
   agents.skills = {

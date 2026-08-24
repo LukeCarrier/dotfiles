@@ -28,30 +28,34 @@ let
       acc: cmd: acc // lib.mapAttrs' (fname: fpath: lib.nameValuePair "${commandsBase}/${fname}" fpath) (cmd.fixtures or { })
     ) { } (builtins.attrValues config.agents.commands);
 
-  buildMcpConfig =
-    _: mcpDef:
+  # Opencode's schema is a discriminated union on `type: "local" | "remote"`
+  # (not the generic "stdio"/"http" from lib.hm.mcp.addType) and requires
+  # `enabled` to always be present, so it needs its own transform rather than
+  # the generic one.
+  toOpencodeShape =
+    server:
     let
-      url = mcpDef.url or null;
-      command = mcpDef.command or null;
-      mcpType = if url != null then "remote" else "local";
-      enabled = mcpDef.enabled or false;
-      baseMcp = {
-        type = mcpType;
-        enabled = if enabled == null then false else enabled;
-      };
-      mcpWithUrl = if url != null then baseMcp // { inherit url; } else baseMcp;
-      mcpWithCommand =
-        if command != null then
-          mcpWithUrl // { command = map substitute ([ command ] ++ (mcpDef.args or [ ])); }
-        else
-          mcpWithUrl;
-      mcpWithEnv =
-        if (mcpDef.env or { }) != { } then
-          mcpWithCommand // { environment = lib.mapAttrs (_: substitute) mcpDef.env; }
-        else
-          mcpWithCommand;
+      isRemote = server ? url && server.url != null;
     in
-    mcpWithEnv;
+    server
+    // {
+      type = if isRemote then "remote" else "local";
+      enabled = if (server.enabled or null) == null then false else server.enabled;
+    }
+    // lib.optionalAttrs (!isRemote && (server.command or null) != null) {
+      command = [ server.command ] ++ (server.args or [ ]);
+    };
+
+  buildMcpConfig =
+    name: mcpDef:
+    lib.hm.mcp.transformMcpServer {
+      server = mcpDef;
+      extraTransforms = [ toOpencodeShape ];
+      # Opencode understands {file:...} natively; use it for file-ref env vars.
+      mkFileRef = path: "{file:${path}}";
+      # Opencode uses `command` as a list (command + args combined).
+      exclude = [ "args" ];
+    };
 
   mcpConfigurations = lib.mapAttrs buildMcpConfig config.programs.mcp.servers;
 

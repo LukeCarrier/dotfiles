@@ -32,9 +32,10 @@ let
     name: serverDef:
     let
       url = serverDef.url or null;
-      command = serverDef.command or null;
       isRemote = url != null;
-      envs = lib.mapAttrs (_: v: substitute (toString v)) (serverDef.env or { });
+      # Apply wrapper for file-ref env vars; resolves to a wrapper script when needed.
+      wrapped = lib.hm.mcp.wrapEnvFilesCommand { inherit pkgs name; } serverDef;
+      literalEnvs = lib.filterAttrs (_: v: !lib.isAttrs v || !(v ? file)) (wrapped.env or { });
       base =
         {
           inherit name;
@@ -42,20 +43,15 @@ let
           timeout = 300;
           bundled = false;
         }
-        // lib.optionalAttrs (envs != { }) { inherit envs; };
+        // lib.optionalAttrs (literalEnvs != { }) { envs = literalEnvs; };
     in
     if isRemote then
-      base
-      // {
-        type = "streamable_http";
-        uri = substitute url;
-      }
+      base // { type = "streamable_http"; uri = url; }
     else
-      base
-      // {
+      base // {
         type = "stdio";
-        cmd = substitute (toString command);
-        args = map (a: substitute (toString a)) (serverDef.args or [ ]);
+        cmd = toString wrapped.command;
+        args = wrapped.args or [ ];
       };
 
   gooseMcpServers = lib.mapAttrs buildGooseMcpConfig config.programs.mcp.servers;
