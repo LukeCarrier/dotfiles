@@ -43,6 +43,7 @@ in
     ../../../../component/zoxide/zoxide.nix
     ../../../../component/espanso/espanso.nix
     ../../../../component/ghostty/ghostty.nix
+    ../../../../component/ghostty/default.nix
     ../../../../component/aws/aws.nix
     ../../../../component/docker/docker.nix
     ../../../../component/helm/helm.nix

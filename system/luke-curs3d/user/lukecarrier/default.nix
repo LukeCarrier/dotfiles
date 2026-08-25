@@ -46,6 +46,7 @@
     ../../../../component/jj/jj.nix
     ../../../../component/zoxide/zoxide.nix
     ../../../../component/ghostty/ghostty.nix
+    ../../../../component/ghostty/default.nix
     ../../../../component/rust/cargo.nix
     ../../../../component/aws/aws.nix
     ../../../../component/docker/docker.nix

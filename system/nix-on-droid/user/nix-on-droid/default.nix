@@ -15,6 +15,7 @@
     ../../../../component/starship/starship.nix
     ../../../../component/git/git.nix
     ../../../../component/helix/helix.nix
+    ../../../../component/ghostty/default.nix
   ];
 
   home = {
