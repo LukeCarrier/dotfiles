@@ -46,6 +46,22 @@ jj describe -m "feat: my feature description"
 
 jj has no Git-style staging area. Most jj commands snapshot the working copy before operating, unless explicitly told not to. `@` names the current revision, while the working copy is the checkout that jj snapshots. `jj new` starts a fresh change on top; re-running `jj describe -m` amends the current one. Treat a request to split the latest change as a request to split `@` when that is the latest revision.
 
+### `describe` is not `commit`
+
+`jj describe` sets a message on `@` and **leaves `@` open**. It is not the end of a unit of work. Every edit made afterwards is snapshotted into that same described change, silently mixing the next piece of work into a commit that already reads as finished.
+
+When building a stack of commits, close each one before starting the next:
+
+```bash
+jj commit -m "<msg>"   # describe @ AND start a fresh empty change
+# or
+jj describe -m "<msg>" && jj new
+```
+
+`jj commit` is `describe` + `new` in one step, so prefer it when writing a series. Reach for bare `jj describe` only when amending the message of a change you intend to keep working in.
+
+Symptom of getting this wrong: `jj diff --stat` on a change you thought was finished lists files belonging to the following commit. Recover with `jj split` rather than starting over — see the `jj-split-change` skill.
+
 ### Rebase
 ```bash
 jj rebase -d main -r <change-id>   # a specific change
@@ -80,3 +96,4 @@ Walks the range bisecting on exit code: 0 = good, non-0 = bad. Prints the first 
 - **Bookmarks don't auto-track.** Push explicitly with `--bookmark`; after a rebase the local and remote bookmark diverge until you push.
 - **Undo is cheap.** A wrong mutation is recoverable via `jj undo` / `jj op restore` — prefer fixing forward over aborting.
 - **`jj squash` opens an editor by default.** Pass `--message` to avoid it: `jj squash --into <rev> --message "<msg>"`.
+- **Anything that writes a description may open an editor.** `jj split`, `jj squash` and `jj describe` all do. Pass `-m/--message` where the command accepts it. Where it does not, set `EDITOR=true` — a bare command name resolved on `PATH`, *not* `/bin/true`, which does not exist on every system. Without a TTY the editor panics (`reader source not set`) and jj rolls the whole operation back, so the command appears to do nothing.

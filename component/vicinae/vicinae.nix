@@ -85,6 +85,7 @@ in
   programs.niri.workspacePicker = [
     (getExe vicinae)
     "dmenu"
+    "--query"
   ];
 
   wayland.windowManager.hyprland.settings = {

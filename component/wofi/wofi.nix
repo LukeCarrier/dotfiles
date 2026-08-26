@@ -18,6 +18,7 @@ let
     "--dmenu"
     "--lines"
     "1"
+    "--search"
   ];
 in
 {

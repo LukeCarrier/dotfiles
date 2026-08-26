@@ -15,7 +15,9 @@ let
   xwaylandSatelliteDisplay = ":1";
   workspaceRename = pkgs.writeShellScriptBin "niri-workspace-rename" ''
     niri="${niri}"
-    name="$(${lib.concatStringsSep " " (map (entry: ''"${entry}"'') config.programs.niri.workspacePicker)} </dev/null)"
+    jq="${getExe' pkgs.jq "jq"}"
+    current="$("$niri" msg --json workspaces | "$jq" -r '.[] | select(.is_focused) | .name // ""')"
+    name="$(${lib.concatStringsSep " " (map (entry: ''"${entry}"'') config.programs.niri.workspacePicker)} "$current" </dev/null)"
     if [[ "$name" == "" ]]; then
       "$niri" msg action unset-workspace-name
     else
@@ -44,7 +46,7 @@ in
     workspacePicker = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [ ];
-      description = "Command to prompt for a workspace name (reads nothing from stdin). Set by the launcher component.";
+      description = "Command to prompt for a workspace name (reads nothing from stdin). Receives the current workspace name, possibly empty, as its final argument. Set by the launcher component.";
     };
   };
 
