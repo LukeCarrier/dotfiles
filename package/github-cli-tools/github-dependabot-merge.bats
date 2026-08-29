@@ -5,9 +5,12 @@
 # exercised end-to-end; the sleep-poll waiters are thin wrappers around the
 # predicates tested here.
 
-load '.github/workflows/test_helper/common'
-
 bats_require_minimum_version 1.5.0
+
+# Folded from .github/workflows/test_helper/common — was a no-op shim to make
+# `nix run nixpkgs#bats` work without flake's BATS_LIB_PATH. Keep tests
+# self-contained; no external lib needed.
+_common_setup() { :; }
 
 SCRIPT="${BATS_TEST_DIRNAME}/github-dependabot-merge.sh"
 
@@ -21,6 +24,9 @@ setup() {
 	_common_setup
 	FAKE="$BATS_TEST_TMPDIR/fake"
 	mkdir -p "$FAKE"
+	# file-backed regen budget lives in STATE_DIR; point it at the per-test fake
+	# dir so tests are isolated and don't touch /regen-*.
+	export STATE_DIR="$FAKE"
 
 	# bats sources this file from inside one of its own functions, so the
 	# script's top-level `declare -A` maps end up as transient locals. Restore
@@ -33,7 +39,7 @@ setup() {
 		local -a a=("$@") i prog=""
 		for i in "${!a[@]}"; do
 			case "${a[$i]}" in
-				--jq) prog="${a[$((i + 1))]}" ;;
+				--jq|-q) prog="${a[$((i + 1))]}" ;;
 			esac
 		done
 		if [[ -n "$prog" ]]; then
@@ -52,7 +58,15 @@ setup() {
 	}
 
 	_stub_api() {
-		local path="${1#repos/test/repo/}"
+		local arg path=""
+		for arg in "$@"; do
+			case "$arg" in
+				repos/*|graphql) path="$arg"; break ;;
+			esac
+		done
+		# fall back to $1 for backwards compat
+		[[ -z "$path" ]] && path="$1"
+		path="${path#repos/test/repo/}"
 		case "$path" in
 			pulls/*/files)
 				local num="${path#pulls/}"; num="${num%%/*}"
@@ -64,6 +78,25 @@ setup() {
 			pulls/*/commits)
 				local num="${path#pulls/}"; num="${num%%/*}"
 				_emit "$FAKE/commits-$num.json" "${@:2}" ;;
+			actions/runs/*/approve)
+				# POST .../actions/runs/<id>/approve
+				echo "$path" >>"$FAKE/approved.log"
+				printf '{}' | _emit /dev/stdin "${@:2}" ;;
+			git/refs/heads/*)
+				# base-tip check: return main-tip-sha unless overridden by fixture
+				if [[ -f "$FAKE/tip-${path##*/}.json" ]]; then
+					_emit "$FAKE/tip-${path##*/}.json" "${@:2}"
+				else
+					# default tip differs from pr base so pr_base_is_tip is false
+					printf '{"object": {"sha": "main-tip-sha-not-base"}}' | _emit /dev/stdin "${@:2}"
+				fi ;;
+			actions/runs*)
+				# approve_pending_workflows: no pending runs by default
+				if [[ -f "$FAKE/runs.json" ]]; then
+					_emit "$FAKE/runs.json" "${@:2}"
+				else
+					printf '{"workflow_runs": []}' | _emit /dev/stdin "${@:2}"
+				fi ;;
 			pulls/*)
 				local num="${path#pulls/}"; num="${num%%/*}"
 				_emit "$FAKE/pr-$num.json" "${@:2}" ;;
@@ -76,6 +109,14 @@ setup() {
 	_stub_pr() {
 		case "$1" in
 			list) _emit "$FAKE/pr-list.json" "${@:2}" ;;
+			view)
+				# approve_pending_workflows needs headRefName
+				local num="$2" branch="dependabot/branch-$num"
+				if [[ -f "$FAKE/branch-$num" ]]; then
+					branch=$(cat "$FAKE/branch-$num")
+				fi
+				# honour --json / -q plumbing from caller via _emit
+				printf '{"headRefName": "%s"}' "$branch" | _emit /dev/stdin "${@:3}" ;;
 			comment)
 				local -a cargs=("$@") i body=""
 				for i in "${!cargs[@]}"; do
@@ -92,14 +133,16 @@ setup() {
 
 fixture() { printf '%s' "$2" >"$FAKE/$1"; }
 
-# pr_fixture NUM STATE MERGEABLE_STATE HEAD [MERGED_AT]
+# pr_fixture NUM STATE MERGEABLE_STATE HEAD [MERGED_AT] [BASE_REF] [BASE_SHA]
 # STATE: open | closed (merged_at non-null implies merged)
 # MERGEABLE_STATE: clean | dirty | blocked | behind | unstable | unknown | draft
 pr_fixture() {
 	local num=$1 state=$2 ms=$3 sha=${4:-abc0000000000000000000000000000000000001}
 	local merged_at=${5:-null}
+	local base_ref=${6:-main}
+	local base_sha=${7:-base-sha-not-tip}
 	fixture "pr-$num.json" \
-		"{\"number\": $num, \"state\": \"$state\", \"merged_at\": $merged_at, \"mergeable_state\": \"$ms\", \"head\": {\"sha\": \"$sha\"}, \"title\": \"PR $num\"}"
+		"{\"number\": $num, \"state\": \"$state\", \"merged_at\": $merged_at, \"mergeable_state\": \"$ms\", \"head\": {\"sha\": \"$sha\"}, \"base\": {\"ref\": \"$base_ref\", \"sha\": \"$base_sha\"}, \"title\": \"PR $num\"}"
 }
 
 branch_commits_fixture() { # NUM LOGIN...   'null' -> unknown login
@@ -251,4 +294,25 @@ EOF
 	run --separate-stderr drive_pr 147
 	[[ $stderr == *"would enqueue into merge queue"* ]]
 	[[ ! -e "$FAKE/merges.log" ]]
+}
+
+@test "comment_regen is no-op when base is already tip of main" {
+	# base sha equals tip so rebase would not touch content
+	pr_fixture 200 open blocked abc200 null main main-tip-sha-not-base
+	fixture "tip-main.json" '{"object": {"sha": "main-tip-sha-not-base"}}'
+	branch_commits_fixture 200 dependabot[bot]
+	run --separate-stderr drive_pr 200
+	[[ $stderr == *"base already at tip"* ]]
+	[[ ! -e "$FAKE/regen.log" ]]
+}
+
+@test "approve_pending_workflows is called after file-touching transitions" {
+	# clean PR triggers approval before enqueue; blocked with base tip also triggers approval path
+	pr_fixture 202 open clean abc202
+	branch_commits_fixture 202 dependabot[bot]
+	fixture "runs.json" '{"workflow_runs": [{"id": 123, "event": "pull_request"}]}'
+	run --separate-stderr drive_pr 202
+	[[ $stderr == *"approving workflow run 123"* ]]
+	[[ -f "$FAKE/approved.log" ]]
+	grep -q "123/approve" "$FAKE/approved.log"
 }
