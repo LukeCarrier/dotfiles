@@ -132,15 +132,65 @@ let
     name: path: lib.nameValuePair "recipes/${name}" path
   ) (buildCommandFixtures "");
 
+  mkGooseProvider =
+    provId: prov: engine:
+    let
+      models = lib.mapAttrsToList (
+        modelId: m: {
+          name = modelId;
+          context_limit = m.contextLimit;
+          input_token_cost = null;
+          output_token_cost = null;
+          currency = null;
+          supports_cache_control = null;
+        }
+      ) prov.models;
+    in
+    pkgs.writeText "custom_${provId}_${engine}.json" (
+      builtins.toJSON {
+        name = "custom_${provId}_${engine}";
+        engine = engine;
+        display_name = "${prov.name} (${if engine == "openai" then "OpenAI" else "Anthropic"})";
+        description = "${prov.name} deployment";
+        api_key_env = "";
+        base_url = prov.baseUrl;
+        models = models;
+        headers = { };
+        timeout_seconds = null;
+        supports_streaming = true;
+        requires_auth = false;
+        catalog_provider_id = null;
+        base_path = null;
+        env_vars = null;
+        dynamic_models = null;
+        skip_canonical_filtering = false;
+        fast_model = null;
+      }
+    );
+
+  gooseProviderFiles = lib.foldl' (
+    acc: provId:
+    let
+      prov = config.agents.providers.${provId};
+    in
+    if prov.type == "openai" then
+      acc
+      // {
+        "custom_providers/custom_${provId}_openai.json" = mkGooseProvider provId prov "openai";
+        "custom_providers/custom_${provId}_anthropic.json" = mkGooseProvider provId prov "anthropic";
+      }
+    else
+      acc
+  ) { } (builtins.attrNames config.agents.providers);
+
   gooseConfigFiles =
     {
       "config.yaml" = pkgs.writeText "config.yaml" (builtins.toJSON baseConfig);
       "adversary.md" = ../../component/goose/adversary.md;
-      "custom_providers/custom_peacehaven_llama-swap_anthropic.json" = ../../component/goose/custom_providers/custom_peacehaven_llama-swap_anthropic.json;
-      "custom_providers/custom_peacehaven_llama-swap_openai.json" = ../../component/goose/custom_providers/custom_peacehaven_llama-swap_openai.json;
       "recipes/adr.yaml" = adrYaml;
       "recipes/adr/housekeeping.sh" = ../../component/agents/adr/housekeeping.sh;
     }
+    // gooseProviderFiles
     // agentRecipeFiles
     // recipePathFiles
     // fixtureFiles;

@@ -281,7 +281,42 @@ in
   imports = [
     (import ../../lib/agents.nix { inherit lib; }).commandsModule
     (import ../../lib/agents.nix { inherit lib; }).definitionsModule
+    (import ../../lib/agents.nix { inherit lib; }).providersModule
   ];
+
+  agents.providers = {
+    peacehaven_llama-swap = {
+      type = "openai";
+      name = "Peacehaven llama-swap";
+      baseUrl = "https://llama-swap.peacehaven.carrier.family/v1";
+      models = {
+        "gemma4-26b-bf16-256k" = {
+          name = "gemma4-26b-bf16-256k";
+          contextLimit = 262144;
+        };
+        "glm4.7-flash-30b-q8-200k" = {
+          name = "glm4.7-flash-30b-q8-200k";
+          contextLimit = 204800;
+        };
+        "nemotron3-120b-nvfp4-128k" = {
+          name = "nemotron3-120b-nvfp4-128k";
+          contextLimit = 131072;
+        };
+        "qwen3-30b-bf16-40k" = {
+          name = "qwen3-30b-bf16-40k";
+          contextLimit = 40960;
+        };
+        "qwen3-30b-fp8-128k" = {
+          name = "qwen3-30b-fp8-128k";
+          contextLimit = 131072;
+        };
+        "qwen3.6-35b-nvfp4-256k" = {
+          name = "qwen3.6-35b-nvfp4-256k";
+          contextLimit = 262144;
+        };
+      };
+    };
+  };
 
   sops.secrets.github-mcp-token = {
     format = "yaml";

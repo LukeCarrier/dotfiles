@@ -194,4 +194,59 @@
         description = "Skills available to agents, keyed by skill name.";
       };
     };
+
+  providersModule =
+    { lib, ... }:
+    let
+      inherit (lib) mkOption types;
+
+      modelType = types.submodule {
+        options = {
+          name = mkOption {
+            type = types.nullOr types.str;
+            default = null;
+            description = "Display name for the model; defaults to model ID when null.";
+          };
+          contextLimit = mkOption {
+            type = types.nullOr types.ints.positive;
+            default = 262144;
+            description = "Context window for the model.";
+          };
+        };
+      };
+
+      providerType = types.submodule {
+        options = {
+          type = mkOption {
+            type = types.enum [ "openai" ];
+            default = "openai";
+            description = "Provider API type. Only openai (OpenAI-compatible) is supported for now.";
+          };
+          name = mkOption {
+            type = types.str;
+            description = "Display name for the provider.";
+          };
+          baseUrl = mkOption {
+            type = types.str;
+            description = "Base URL for the provider API (e.g. https://example.com/v1).";
+          };
+          models = mkOption {
+            type = types.attrsOf modelType;
+            default = { };
+            description = "Models exposed by this provider, keyed by model ID.";
+          };
+        };
+      };
+    in
+    {
+      options.agents.providers = mkOption {
+        type = types.attrsOf providerType;
+        default = { };
+        description = ''
+          Shared LLM providers, keyed by provider ID. Each harness lowers this
+          into its native format (Goose custom_providers, opencode provider,
+          pi models.json) — same pattern as agents.skills / agents.commands.
+        '';
+      };
+    };
 }

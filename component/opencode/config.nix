@@ -14,10 +14,17 @@ let
       let
         skill = config.agents.skills.${name};
         prefix = "${basePath}/${name}";
+        fixturesDir =
+          if name == "toon" then
+            "${config.home.homeDirectory}/.config/opencode/commands"
+          else
+            "${config.home.homeDirectory}/.config/opencode/skills/${name}";
+        rawContent = builtins.readFile skill.source;
+        substituted = lib.replaceStrings [ "\${FIXTURES_DIR}" ] [ fixturesDir ] rawContent;
       in
       acc
       // {
-        "${prefix}/SKILL.md" = skill.source;
+        "${prefix}/SKILL.md" = pkgs.writeText "SKILL.md" substituted;
       }
       // lib.mapAttrs' (fname: fpath: lib.nameValuePair "${prefix}/${fname}" fpath) skill.fixtures
     ) { } (builtins.attrNames config.agents.skills);
@@ -62,6 +69,8 @@ let
   buildOpencodeCommand =
     cmd:
     let
+      fixturesDir = "${config.home.homeDirectory}/.config/opencode/commands";
+      body' = lib.replaceStrings [ "\${FIXTURES_DIR}" ] [ fixturesDir ] cmd.body;
       frontmatter =
         [
           "description: ${cmd.description}"
@@ -74,7 +83,7 @@ let
       ${lib.concatStringsSep "\n" frontmatter}
       ---
 
-    '' + cmd.body;
+    '' + body';
 
   commandFiles = lib.mapAttrs' (
     name: cmd:
@@ -101,6 +110,8 @@ let
               "${indent}${quoteIfNeeded k}: ${v}"
           ) attrs
         );
+      fixturesDir = "${config.home.homeDirectory}/.config/opencode/commands";
+      body' = lib.replaceStrings [ "\${FIXTURES_DIR}" ] [ fixturesDir ] agent.body;
     in
     ''
       ---
@@ -117,15 +128,42 @@ let
       ---
 
     ''
-    + agent.body;
+    + body';
 
   agentFiles = lib.mapAttrs' (
     name: agent:
     lib.nameValuePair "agent/${name}.md" (pkgs.writeText "${name}.md" (buildOpencodeAgent name agent))
   ) config.agents.definitions;
 
+  opencodeProviders = lib.mapAttrs (
+    provId: prov:
+    if prov.type == "openai" then
+      {
+        npm = "@ai-sdk/openai-compatible";
+        name = prov.name;
+        options.baseURL = prov.baseUrl;
+        models = lib.mapAttrs (
+          modelId: m:
+          {
+            name = if m.name != null then m.name else modelId;
+          }
+          // lib.optionalAttrs (m.contextLimit != null) {
+            limit = {
+              context = m.contextLimit;
+              output = 32000;
+            };
+          }
+        ) prov.models;
+      }
+    else
+      { }
+  ) config.agents.providers;
+
   baseConfig = builtins.fromJSON (builtins.readFile ./opencode.json);
-  fullConfig = lib.recursiveUpdate baseConfig { mcp = mcpConfigurations; };
+  fullConfig = lib.recursiveUpdate baseConfig {
+    mcp = mcpConfigurations;
+    provider = opencodeProviders;
+  };
 
   skillFiles = buildSkillFiles "skills";
   fixtureFiles = buildCommandFixtures "commands";
