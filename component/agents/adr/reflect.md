@@ -21,7 +21,7 @@ Write a retrospective in TOON format. This is an optional final step after imple
 2. Reflect on what went well, what didn't, and what could be improved.
 3. Write the retrospective to `adrs/<YYYY-MM-DD>-<feature-slug>/retro.toon` with the TOON schema below.
 4. Validate: `toon --decode adrs/<YYYY-MM-DD>-<feature-slug>/retro.toon | check-jsonschema --schemafile ${FIXTURES_DIR}/retro.schema.json /dev/stdin`. Fix any validation errors.
-5. Run `bash ${FIXTURES_DIR}/build.sh adrs/<YYYY-MM-DD>-<feature-slug>` to generate `retro.md`.
+5. Run `bash ${FIXTURES_DIR}/adr.build.sh adrs/<YYYY-MM-DD>-<feature-slug>` to generate `retro.md`.
 
 ## TOON Schema
 

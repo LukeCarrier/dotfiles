@@ -21,7 +21,7 @@ Create an ADR specification in TOON format. This is the first stage of the ADR p
 2. Check whether an existing ADR already covers this topic — if so, tell the user and stop.
 3. Write a specification file at `adrs/<YYYY-MM-DD>-<feature-slug>/spec.toon` with the TOON schema below.
 4. Validate the TOON structure against the schema: `toon --decode adrs/<YYYY-MM-DD>-<feature-slug>/spec.toon | check-jsonschema --schemafile ${FIXTURES_DIR}/spec.schema.json /dev/stdin`. Fix any validation errors.
-5. Run `bash ${FIXTURES_DIR}/build.sh adrs/<YYYY-MM-DD>-<feature-slug>` to generate `spec.md`.
+5. Run `bash ${FIXTURES_DIR}/adr.build.sh adrs/<YYYY-MM-DD>-<feature-slug>` to generate `spec.md`.
 
 ## TOON Schema
 
@@ -70,11 +70,11 @@ Slugs are stable identifiers (lowercase-kebab-case) used for canonical addressin
 
 ### Diagrams
 
-Reference external Mermaid `.mmd` files in the `context` field via `{{mermaid: <file>}}`. Place `.mmd` files alongside the `.toon` file; `build.sh` inlines them as ` ```mermaid ` blocks at render time.
+Reference external Mermaid `.mmd` files in the `context` field via `{{mermaid: <file>}}`. Place `.mmd` files alongside the `.toon` file; `adr.build.sh` inlines them as ` ```mermaid ` blocks at render time.
 
 ### Wireframes
 
-When a requirement describes a user-facing screen, sketch it rather than describing the layout in prose. Author one `.wireloom` file per screen under a `screens/` subdirectory (grammar in the `wireframing` skill), then reference it from that requirement's `description` or the `context` field via `{{wireloom: <file>}}`. Validate by rendering first — `wireloom-render adrs/<dir>/screens/*.wireloom -o /tmp/wireframes` must exit without parse errors — then run `build.sh`, which inlines each reference as an SVG image.
+When a requirement describes a user-facing screen, sketch it rather than describing the layout in prose. Author one `.wireloom` file per screen under a `screens/` subdirectory (grammar in the `wireframing` skill), then reference it from that requirement's `description` or the `context` field via `{{wireloom: <file>}}`. Validate by rendering first — `wireloom-render adrs/<dir>/screens/*.wireloom -o /tmp/wireframes` must exit without parse errors — then run `adr.build.sh`, which inlines each reference as an SVG image.
 
 ## Output
 

@@ -21,7 +21,7 @@ Create a technical plan in TOON format. This must happen after `specify`.
 2. Determine the appropriate implementation approach and architecture.
 3. Write the plan to `adrs/<YYYY-MM-DD>-<feature-slug>/plan.toon` with the TOON schema below.
 4. Validate: `toon --decode adrs/<YYYY-MM-DD>-<feature-slug>/plan.toon | check-jsonschema --schemafile ${FIXTURES_DIR}/plan.schema.json /dev/stdin`. Fix any validation errors.
-5. Run `bash ${FIXTURES_DIR}/build.sh adrs/<YYYY-MM-DD>-<feature-slug>` to generate `plan.md`.
+5. Run `bash ${FIXTURES_DIR}/adr.build.sh adrs/<YYYY-MM-DD>-<feature-slug>` to generate `plan.md`.
 
 ## TOON Schema
 
@@ -49,9 +49,9 @@ architecture:
   {{mermaid: architecture.mmd}}
 ```
 
-Place the `.mmd` file alongside the `.toon` file. At build time, `build.sh` inlines the Mermaid source as a ` ```mermaid ` code block — no pre-rendering or external tooling required.
+Place the `.mmd` file alongside the `.toon` file. At build time, `adr.build.sh` inlines the Mermaid source as a ` ```mermaid ` code block — no pre-rendering or external tooling required.
 
-UI screens proposed by the plan are sketched as wireframes: author one `.wireloom` file per screen under `screens/` (grammar in the `wireframing` skill) and reference them from any free-text field via `{{wireloom: <file>}}`. `build.sh` renders them inline as images.
+UI screens proposed by the plan are sketched as wireframes: author one `.wireloom` file per screen under `screens/` (grammar in the `wireframing` skill) and reference them from any free-text field via `{{wireloom: <file>}}`. `adr.build.sh` renders them inline as images.
 
 ## Output
 

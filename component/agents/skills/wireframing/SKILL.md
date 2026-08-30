@@ -30,7 +30,7 @@ Wireframes are authored as `.wireloom` files — a small indentation-based DSL (
    {{wireloom: screens/login.wireloom}}
    ```
 
-   `build.sh` renders it to `<slug>.svg` beside the document and inlines it as an image.
+    `adr.build.sh` renders it to `<slug>.svg` beside the document and inlines it as an image.
 
 ## Grammar essentials
 

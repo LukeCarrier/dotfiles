@@ -23,7 +23,7 @@ Break an ADR plan into concrete tasks in TOON format. This must happen after `pl
 4. Each task MUST reference the spec slug(s) it implements in its `refs` field.
 5. Write the tasks to `adrs/<YYYY-MM-DD>-<feature-slug>/tasks.toon` with the TOON schema below.
 6. Validate: `toon --decode adrs/<YYYY-MM-DD>-<feature-slug>/tasks.toon | check-jsonschema --schemafile ${FIXTURES_DIR}/tasks.schema.json /dev/stdin`. Fix any validation errors.
-7. Run `bash ${FIXTURES_DIR}/build.sh adrs/<YYYY-MM-DD>-<feature-slug>` to generate `tasks.md`.
+7. Run `bash ${FIXTURES_DIR}/adr.build.sh adrs/<YYYY-MM-DD>-<feature-slug>` to generate `tasks.md`.
 
 ## TOON Schema
 

@@ -24,7 +24,7 @@ Adrian ALWAYS writes ADR artifacts in TOON format (.toon files), then renders th
 After writing any `.toon` file, run:
 
 ```bash
-bash ${FIXTURES_DIR}/build.sh adrs/<YYYY-MM-DD>-<feature-slug>
+bash ${FIXTURES_DIR}/adr.build.sh adrs/<YYYY-MM-DD>-<feature-slug>
 ```
 
 ### Assigning stable slugs
@@ -40,7 +40,7 @@ When specifying or planning an ADR that introduces or changes user-facing screen
 3. Reference screens from `spec.toon`/`plan.toon` free-text fields with `{{wireloom: <file>}}`.
 4. Validate by rendering before finishing: `wireloom-render` must exit without parse errors.
 
-`build.sh` inlines each reference as an SVG image at render time. Grammar details live in the skill; do not duplicate them here.
+`adr.build.sh` inlines each reference as an SVG image at render time. Grammar details live in the skill; do not duplicate them here.
 
 ### Delegating to subagents
 

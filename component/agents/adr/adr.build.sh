@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Validates and renders ADR .toon files to human-readable .md files.
-# Usage: ./build.sh <adr-directory>
+# Usage: ./adr.build.sh <adr-directory>
 # Requires: toon (from toon-cli), jq, check-jsonschema
 
 set -euo pipefail
@@ -38,7 +38,7 @@ for artifact in spec plan tasks retro; do
 
   # Inline {{mermaid: <file>}} references as fenced code blocks.
   # Author writes {{mermaid: architecture.mmd}} in TOON free-text fields;
-  # build.sh replaces the entire line with the .mmd content wrapped in ```mermaid.
+  # adr.build.sh replaces the entire line with the .mmd content wrapped in ```mermaid.
   if grep -q '{{mermaid: ' "$md_file" 2>/dev/null; then
     tmp_file=$(mktemp)
     while IFS= read -r line || [[ -n "$line" ]]; do

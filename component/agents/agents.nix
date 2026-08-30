@@ -102,7 +102,7 @@ let
     nativeBuildInputs = [ pkgs.makeWrapper ];
   } ''
     mkdir $out
-    cp ${adrBuildSh} $out/build.sh
+    cp ${adrBuildSh} $out/adr.build.sh
     cp ${./adr/spec.jq} $out/spec.jq
     cp ${pkgs.writeText "spec.schema.json" ''
       {
@@ -240,11 +240,11 @@ let
         }
       }
     ''} $out/retro.schema.json
-    chmod +x $out/build.sh
-    wrapProgram $out/build.sh --prefix PATH : "${lib.makeBinPath (with pkgs; [ toon-cli jq check-jsonschema wireloom-cli ])}"
+    chmod +x $out/adr.build.sh
+    wrapProgram $out/adr.build.sh --prefix PATH : "${lib.makeBinPath (with pkgs; [ toon-cli jq check-jsonschema wireloom-cli ])}"
   '';
   adrFixtures = {
-    "build.sh" = "${adrDir}/build.sh";
+    "adr.build.sh" = "${adrDir}/adr.build.sh";
     "spec.jq" = "${adrDir}/spec.jq";
     "spec.schema.json" = "${adrDir}/spec.schema.json";
     "plan.jq" = "${adrDir}/plan.jq";
@@ -375,7 +375,7 @@ in
       permission = {
         bash = {
           "*" = "deny";
-          "bash *build.sh *" = "allow";
+          "bash *adr.build.sh *" = "allow";
         };
         edit = {
           "*" = "ask";

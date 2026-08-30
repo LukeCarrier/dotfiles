@@ -80,6 +80,6 @@ Skills are installed by each harness into the agent's config directory. The shar
 
 **Housekeeping script**: `adr/housekeeping.sh` synchronises the ADR README index from `spec.toon` files. Harnesses copy it into their config tree.
 
-**ADR TOON pipeline**: All ADR artifacts (spec, plan, tasks, retro) are authored in TOON format and built to human-readable markdown via `adr/build.sh`, which validates each `.toon` against its JSON Schema then renders with jq. The `.toon` file is the source of truth; `.md` files are generated.
+**ADR TOON pipeline**: All ADR artifacts (spec, plan, tasks, retro) are authored in TOON format and built to human-readable markdown via `adr/adr.build.sh` (exposed as `commands/adr.build.sh` in the fixtures), which validates each `.toon` against its JSON Schema then renders with jq. The `.toon` file is the source of truth; `.md` files are generated.
 
 **AGENTS.md**: `AGENTS.md` contains ground-rules shared across all harnesses. Each component links it into its config directory.
