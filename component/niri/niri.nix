@@ -10,6 +10,7 @@ let
   niri = getExe' config.programs.niri.package "niri";
   niri-float-sticky = getExe pkgs.niri-float-sticky;
   systemctl = getExe' pkgs.systemd "systemctl";
+  dbusUpdateActivationEnvironment = getExe' pkgs.dbus "dbus-update-activation-environment";
   xwaylandSatellite = getExe pkgs.xwayland-satellite;
   xwaylandSatelliteDisplay = ":1";
   workspaceRename = pkgs.writeShellScriptBin "niri-workspace-rename" ''
@@ -105,7 +106,9 @@ in
         Unit.Description = "Xwayland Satellite";
         Install.WantedBy = [ "graphical-session.target" ];
         Service = {
+          Environment = "DISPLAY=${xwaylandSatelliteDisplay}";
           ExecStart = "${xwaylandSatellite} ${xwaylandSatelliteDisplay}";
+          ExecStartPost = "${pkgs.bash}/bin/bash -c '${dbusUpdateActivationEnvironment} --systemd DISPLAY; ${systemctl} --user set-environment DISPLAY=${xwaylandSatelliteDisplay}'";
           Restart = "on-failure";
           RestartSec = "2";
           Type = "notify";
@@ -149,6 +152,23 @@ in
               "WAYLAND_DISPLAY"
               "XDG_CURRENT_DESKTOP"
               "NIRI_SOCKET"
+            ];
+          }
+          {
+            command = [
+              systemctl
+              "--user"
+              "set-environment"
+              "DISPLAY=${xwaylandSatelliteDisplay}"
+            ];
+          }
+          {
+            command = [
+              dbusUpdateActivationEnvironment
+              "--systemd"
+              "DISPLAY=${xwaylandSatelliteDisplay}"
+              "WAYLAND_DISPLAY"
+              "XDG_CURRENT_DESKTOP"
             ];
           }
           {
