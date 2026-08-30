@@ -255,6 +255,20 @@ let
     "retro.schema.json" = "${adrDir}/retro.schema.json";
   };
 
+  codeReviewDir = pkgs.runCommand "code-review-fixtures" {
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+  } ''
+    mkdir -p $out
+    cp ${./skills/code-review/report.sh} $out/code-review.report.sh
+    cp ${./skills/code-review/report.jq} $out/report.jq
+    chmod +x $out/code-review.report.sh
+    wrapProgram $out/code-review.report.sh --prefix PATH : "${lib.makeBinPath (with pkgs; [ toon-cli jq ])}"
+  '';
+  codeReviewFixtures = {
+    "code-review.report.sh" = "${codeReviewDir}/code-review.report.sh";
+    "report.jq" = "${codeReviewDir}/report.jq";
+  };
+
   # Review subagents: read-only on codebase, return findings via Task tool.
   reviewPermissions = {
     bash = "deny";
@@ -287,10 +301,7 @@ in
     align.source = ./skills/align/SKILL.md;
     code-review = {
       source = ./skills/code-review/SKILL.md;
-      fixtures = {
-        "report.sh" = ./skills/code-review/report.sh;
-        "report.jq" = ./skills/code-review/report.jq;
-      };
+      fixtures = codeReviewFixtures;
     };
     "command-not-found".source = ./skills/command-not-found/SKILL.md;
     jj.source = ./skills/jj/SKILL.md;

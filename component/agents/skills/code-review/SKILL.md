@@ -106,10 +106,10 @@ agents[N]{name,role,findingsCount}:
 
 ### Step 6: Generate report
 
-Do NOT summarise or format the findings yourself. Instead, run the report script:
+Do NOT summarise or format the findings yourself. Instead, run the report script (vendored at `${FIXTURES_DIR}/code-review.report.sh` — same fixture mechanism as `adr.build.sh`):
 
 ```bash
-report.sh .agents/forge/code-review/<run-id>/consolidated.toon > .agents/forge/code-review/<run-id>/report.md
+bash ${FIXTURES_DIR}/code-review.report.sh .agents/forge/code-review/<run-id>/consolidated.toon > .agents/forge/code-review/<run-id>/report.md
 ```
 
 The script validates the TOON and emits a markdown report with summary table and per-finding details. Show the user the path to the report.
