@@ -56,7 +56,7 @@
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     emed-nix = {
-      url = "git+ssh://git@github.com/emed-labs/nix";
+      url = "git+ssh://git@github.com/emed-labs/nix?ref=sync-dotfiles";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     flake-utils = {

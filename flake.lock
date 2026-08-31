@@ -324,14 +324,18 @@
         "systems": "systems_3"
       },
       "locked": {
-        "lastModified": 1787396341,
-        "narHash": "sha256-L5KUBonTBio+OaGARlkT6lZVIAODC4s/it5kqV2cRE4=",
-        "path": "/home/lukecarrier/Code/emed-labs/nix",
-        "type": "path"
+        "lastModified": 1790886741,
+        "narHash": "sha256-AM9vwLqf1YoM+L66opbgvHgkGJGQE4gmy589Tvij1wI=",
+        "ref": "sync-dotfiles",
+        "rev": "50fcdbbb46dc90b75ffbecf3e2004c2e201fa2b9",
+        "revCount": 17,
+        "type": "git",
+        "url": "ssh://git@github.com/emed-labs/nix"
       },
       "original": {
-        "path": "/home/lukecarrier/Code/emed-labs/nix",
-        "type": "path"
+        "ref": "sync-dotfiles",
+        "type": "git",
+        "url": "ssh://git@github.com/emed-labs/nix"
       }
     },
     "encore": {
