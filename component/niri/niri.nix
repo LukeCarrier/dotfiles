@@ -363,6 +363,10 @@ in
               action = spawn [ terminal ];
               hotkey-overlay.title = "Open a terminal";
             };
+            "XF86Assistant" = {
+              action = spawn [ terminal ];
+              hotkey-overlay.title = "Open a terminal";
+            };
             # The `EC takes care of this on the Framework 13 AMD:
             # Display key sends Super+L, not XF86Display, for some reason
             # XF86RFKill is done for us
