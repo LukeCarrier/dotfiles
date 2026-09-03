@@ -105,12 +105,18 @@ in
       };
 
       niri-xwayland-satellite = {
-        Unit.Description = "Xwayland Satellite";
+        Unit = {
+          Description = "Xwayland Satellite";
+          # Wait for niri's socket; avoids the NoCompositor crash that skips Post.
+          After = [ "niri.service" ];
+          # Finish (incl. Post) before the target consumers wait on.
+          Before = [ "graphical-session.target" ];
+        };
         Install.WantedBy = [ "graphical-session.target" ];
         Service = {
           Environment = "DISPLAY=${xwaylandSatelliteDisplay}";
           ExecStart = "${xwaylandSatellite} ${xwaylandSatelliteDisplay}";
-          ExecStartPost = "${pkgs.bash}/bin/bash -c '${dbusUpdateActivationEnvironment} --systemd DISPLAY; ${systemctl} --user set-environment DISPLAY=${xwaylandSatelliteDisplay}'";
+          ExecStartPost = "${pkgs.bash}/bin/bash -c '${dbusUpdateActivationEnvironment} --systemd DISPLAY=${xwaylandSatelliteDisplay}; ${systemctl} --user set-environment DISPLAY=${xwaylandSatelliteDisplay}'";
           Restart = "on-failure";
           RestartSec = "2";
           Type = "notify";
@@ -151,24 +157,16 @@ in
               systemctl
               "--user"
               "import-environment"
+              "NIRI_SOCKET"
               "WAYLAND_DISPLAY"
               "XDG_CURRENT_DESKTOP"
-              "NIRI_SOCKET"
-            ];
-          }
-          {
-            command = [
-              systemctl
-              "--user"
-              "set-environment"
-              "DISPLAY=${xwaylandSatelliteDisplay}"
             ];
           }
           {
             command = [
               dbusUpdateActivationEnvironment
               "--systemd"
-              "DISPLAY=${xwaylandSatelliteDisplay}"
+              "NIRI_SOCKET"
               "WAYLAND_DISPLAY"
               "XDG_CURRENT_DESKTOP"
             ];
