@@ -231,6 +231,8 @@ in
       };
     };
 
+    miro.url = "https://mcp.miro.com";
+
     scalr.url = "https://emed.scalr.io/mcp";
 
     slack.url = "https://mcp.slack.com/mcp";
