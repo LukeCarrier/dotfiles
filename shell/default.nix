@@ -98,6 +98,7 @@ in
         git
         gnumake
         helix
+        just
         home-manager
         hydra-check
         jjui
@@ -149,6 +150,7 @@ in
           hydra-check
           jjui
           jujutsu
+          just
           nh
           nil
           nixd
