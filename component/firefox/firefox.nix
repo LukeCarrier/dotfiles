@@ -17,6 +17,18 @@ let
       homepage = "https://github.com/honsiorovskyi/open-url-in-container";
     };
   };
+  vicinae = pkgs.nur.repos.rycee.firefox-addons.buildFirefoxXpiAddon {
+    pname = "vicinae";
+    version = "1.0.0";
+    addonId = "{1611850d-5d57-4c8a-80b2-a45669a87a2f}";
+    url = "https://addons.mozilla.org/firefox/downloads/file/4839406/vicinae-1.0.0.xpi";
+    sha256 = "sha256-mWwFbVVr6cnJdJRANnJGMReXPn0b/BD62fcZ+MB9lCY=";
+    meta = with lib; {
+      description = "Connects to the Vicinae desktop app to search and switch browser tabs from the launcher";
+      license = licenses.mit;
+      homepage = "https://github.com/vicinaehq/vicinae/tree/main/src/browser-extension";
+    };
+  };
   inherit (pkgs) lib stdenv;
   inherit (stdenv.hostPlatform) isDarwin;
   inherit (lib) mkDefault;
@@ -96,7 +108,10 @@ in
             zotero-connector
           ]
            ++ (if isDarwin then [ ] else [ pwas-for-firefox ]))
-          ++ [ openUrlInContainer ]
+          ++ [
+            openUrlInContainer
+            vicinae
+          ]
         );
         search = {
           force = true;
