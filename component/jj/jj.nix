@@ -5,35 +5,58 @@
 }:
 {
   home.packages = with pkgs; [
-    jjui
     jujutsu
+    tuicr
   ];
 
-  programs.jujutsu = {
-    enable = true;
-    settings = {
-      user = {
-        name = "Luke Carrier";
-        email = "luke@carrier.family";
-      };
+  programs = {
+    jjui = {
+      enable = true;
+      settings = {
+        actions = [
+          {
+            name = "revisions.diff";
+            lua = ''
+              exec_shell("tuicr tui --revisions " .. context.commit_id())
+            '';
+          }
 
-      signing = {
-        behavior = "own";
-        backend = "ssh";
-        key = jjConfig.signing.key;
+          {
+            name = "revisions.details.diff";
+            lua = ''
+              exec_shell("tuicr tui --revisions " .. context.commit_id() .. " --path " .. context.file())
+            '';
+          }
+        ];
       };
+    };
 
-      ui = {
-        show-cryptographic-signatures = true;
-      };
+    jujutsu = {
+      enable = true;
+      settings = {
+        user = {
+          name = "Luke Carrier";
+          email = "luke@carrier.family";
+        };
 
-      "template-aliases" = {
-        "format_short_cryptographic_signature(sig)" = ''
-          if(sig,
-            sig.status(),
-            "(no sig)",
-          )
-        '';
+        signing = {
+          behavior = "own";
+          backend = "ssh";
+          key = jjConfig.signing.key;
+        };
+
+        ui = {
+          show-cryptographic-signatures = true;
+        };
+
+        "template-aliases" = {
+          "format_short_cryptographic_signature(sig)" = ''
+            if(sig,
+              sig.status(),
+              "(no sig)",
+            )
+          '';
+        };
       };
     };
   };
