@@ -5,8 +5,8 @@
 }:
 {
   home.packages = with pkgs; [
-    # gitu
     meld
+    tuicr
   ];
 
   home.shellAliases = {
