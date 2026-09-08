@@ -43,14 +43,18 @@ let
     server:
     let
       isRemote = server ? url && server.url != null;
+      renderedEnv = lib.hm.mcp.renderEnv (p: "{file:${p}}") (server.env or { });
     in
-    server
+    builtins.removeAttrs server [ "env" "args" ]
     // {
       type = if isRemote then "remote" else "local";
       enabled = if (server.enabled or null) == null then false else server.enabled;
     }
     // lib.optionalAttrs (!isRemote && (server.command or null) != null) {
       command = [ server.command ] ++ (server.args or [ ]);
+    }
+    // lib.optionalAttrs (!isRemote && renderedEnv != { }) {
+      environment = renderedEnv;
     };
 
   buildMcpConfig =
@@ -60,8 +64,12 @@ let
       extraTransforms = [ toOpencodeShape ];
       # Opencode understands {file:...} natively; use it for file-ref env vars.
       mkFileRef = path: "{file:${path}}";
-      # Opencode uses `command` as a list (command + args combined).
-      exclude = [ "args" ];
+      # Opencode uses `command` as a list (command + args combined) and
+      # `environment` (not `env`) for local server env vars.
+      exclude = [
+        "args"
+        "env"
+      ];
     };
 
   mcpConfigurations = lib.mapAttrs buildMcpConfig config.programs.mcp.servers;
