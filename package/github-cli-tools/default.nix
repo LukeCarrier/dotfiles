@@ -6,6 +6,9 @@ let
   githubDependabotMerge = pkgs.writeShellScriptBin "github-dependabot-merge" (
     builtins.readFile ./github-dependabot-merge.sh
   );
+  githubSyncStack = pkgs.writeShellScriptBin "github-sync-stack" (
+    builtins.readFile ./github-sync-stack.sh
+  );
   githubWorkflowsReferencing = pkgs.writeShellScriptBin "github-workflows-referencing" (
     builtins.readFile ./github-workflows-referencing.sh
   );
@@ -16,9 +19,11 @@ pkgs.symlinkJoin {
   paths = [
     githubCloneMany
     githubDependabotMerge
+    githubSyncStack
     githubWorkflowsReferencing
   ]
   ++ (with pkgs; [
+    coreutils
     findutils
     gh
     gh-dash
