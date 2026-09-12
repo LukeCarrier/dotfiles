@@ -63,6 +63,8 @@ in
 
         mako
         libnotify
+
+        floww
       ]
     );
 
