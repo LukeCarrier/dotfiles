@@ -229,6 +229,12 @@
             tardy.overlays.default
             wpaperd.overlays.default
             (final: prev: {
+              wpaperd = prev.wpaperd.overrideAttrs (old: {
+                cargoBuildFlags = (old.cargoBuildFlags or [ ]) ++ [ "--features" "wpaperd/avif" ];
+                buildInputs = (old.buildInputs or [ ]) ++ [ prev.dav1d ];
+              });
+            })
+            (final: prev: {
               fwupd = prev.fwupd.overrideAttrs (old: {
                 mesonFlags = (old.mesonFlags or []) ++ [ "-Defi_app_location=/run/fwupd-efi" ];
               });
@@ -342,9 +348,7 @@
                 obsbot-camera-control-gui = (obsbot-camera-control.override { }).obsbot-camera-control-gui;
 
                 niri-float-sticky = niri-float-sticky.packages.${system}.niri-float-sticky;
-
                 shanocast = shanocast.packages.${system}.default;
-
                 wezterm = wezterm.packages.${system}.default;
               }
             )
