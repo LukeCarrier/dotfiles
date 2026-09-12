@@ -38,6 +38,8 @@ rec {
 
   excalidraw-mcp-app = callPackage ./excalidraw-mcp-app { };
 
+  floww = callPackage ./floww { };
+
   ghidra-mcp = callPackage ./ghidra-mcp { };
   ghidra-mcp-plugin = (callPackage ./ghidra-mcp { }).ghidraPlugin;
 

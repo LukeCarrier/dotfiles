@@ -287,6 +287,7 @@
                 dotfiles-meta = callPackage' ./package/dotfiles-meta { };
                 eww-niri-workspaces = callPackage' ./package/eww-niri-workspaces { };
                 excalidraw-mcp-app = callPackage' ./package/excalidraw-mcp-app { };
+                floww = callPackage' ./package/floww { };
                 ghidra-mcp = callPackage' ./package/ghidra-mcp { };
                 ghidra-mcp-plugin = (callPackage' ./package/ghidra-mcp { }).ghidraPlugin;
                 goose-cli = callPackage' ./package/goose/goose.nix { };
@@ -306,35 +307,39 @@
                 wireloom-cli = callPackage' ./package/wireloom-cli { };
               in
               {
-                aws-cli-tools = aws-cli-tools;
-                buzz-cli = buzz-cli;
-                buzz-desktop = buzz-desktop;
-                buzz-relay = buzz-relay;
-                bw-cli-tools = bw-cli-tools;
-                docker-cli-tools = docker-cli-tools;
-                github-cli-tools = github-cli-tools;
-                dotfiles-meta = dotfiles-meta;
-                eww-niri-workspaces = eww-niri-workspaces;
-                excalidraw-mcp-app = excalidraw-mcp-app;
-                ghidra-mcp = ghidra-mcp;
-                ghidra-mcp-plugin = ghidra-mcp-plugin;
-                goose-cli = goose-cli;
-                goose-desktop = goose-desktop;
-                grafana-mcp = grafana-mcp;
-                hibiki = hibiki;
-                kubernetes-client-tools = kubernetes-client-tools;
-                mcp-remote = mcp-remote;
-                monaspace-fonts = monaspace-fonts;
+                inherit
+                  aws-cli-tools
+                  buzz-cli
+                  buzz-desktop
+                  buzz-relay
+                  bw-cli-tools
+                  docker-cli-tools
+                  github-cli-tools
+                  dotfiles-meta
+                  eww-niri-workspaces
+                  excalidraw-mcp-app
+                  floww
+                  ghidra-mcp
+                  ghidra-mcp-plugin
+                  goose-cli
+                  goose-desktop
+                  grafana-mcp
+                  hibiki
+                  kubernetes-client-tools
+                  mcp-remote
+                  monaspace-fonts
+                  ocu
+                  onepassword-tools
+                  rift
+                  spec-kit
+                  stklos
+                  toon-cli
+                  wireloom-cli
+                  ;
+
                 obsbot-camera-control-obsbot-sdk = (obsbot-camera-control.override { }).obsbot-sdk;
                 obsbot-camera-control-cli = (obsbot-camera-control.override { }).obsbot-camera-control-cli;
                 obsbot-camera-control-gui = (obsbot-camera-control.override { }).obsbot-camera-control-gui;
-                ocu = ocu;
-                onepassword-tools = onepassword-tools;
-                rift = rift;
-                spec-kit = spec-kit;
-                stklos = stklos;
-                toon-cli = toon-cli;
-                wireloom-cli = wireloom-cli;
 
                 niri-float-sticky = niri-float-sticky.packages.${system}.niri-float-sticky;
 
