@@ -29,6 +29,18 @@ let
       homepage = "https://github.com/vicinaehq/vicinae/tree/main/src/browser-extension";
     };
   };
+  windowTitler = pkgs.nur.repos.rycee.firefox-addons.buildFirefoxXpiAddon {
+    pname = "window-titler";
+    version = "3.0";
+    addonId = "{35dd5f9a-ca89-4643-b107-f07d09cc94b5}";
+    url = "https://addons.mozilla.org/firefox/downloads/file/3365362/window_titler-3.0.xpi";
+    sha256 = "sha256-mxvhzk/cwlUEpsJp8eaG9om+9Zm33KzJsGuJPI6hHKY=";
+    meta = with lib; {
+      description = "Label your windows and profiles using custom window titles";
+      license = licenses.mit;
+      homepage = "https://github.com/tpamula/webextension-window-titler";
+    };
+  };
   inherit (pkgs) lib stdenv;
   inherit (stdenv.hostPlatform) isDarwin;
   inherit (lib) mkDefault;
@@ -111,6 +123,7 @@ in
           ++ [
             openUrlInContainer
             vicinae
+            windowTitler
           ]
         );
         search = {
