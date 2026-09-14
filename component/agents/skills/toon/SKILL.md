@@ -95,6 +95,42 @@ toon --decode retro.toon | check-jsonschema --schemafile ${FIXTURES_DIR}/retro.s
 
 If decode fails, fix the syntax errors — see the table below.
 
+## Counting rows and files
+
+**Always count before you write.** The decoder rejects a mismatch between the declared length and the actual item count with `Expected N items, but got M`. Two traps:
+
+- `filesChanged[N]` — count the comma-separated paths; they are easy to miscount when copied from a shell command.
+- `findings[N]` — count the data rows only; the `agents[N]` block that follows is a separate array, not part of findings.
+
+The safest approach: write the rows first, count them, then fill in the `[N]`.
+
+## Commas inside quoted values
+
+Quoting a value is necessary but not sufficient when the value contains commas. Even inside a quoted string, a bare comma is parsed as a column separator in a tabular row. Two rules:
+
+1. Quote any value containing a comma.
+2. Replace commas inside the quoted string with semicolons or reword to remove them.
+
+```toon
+# BAD — comma inside quoted value breaks column parsing
+findings[1]{id,recommendation}:
+  my-finding,"Add a test: runExecutor({environment:'dev'},ctx()) and assert"
+
+# GOOD — comma removed by rewording
+findings[1]{id,recommendation}:
+  my-finding,"Add a test calling runExecutor with no deployableSha and assert a loud failure"
+```
+
+## Validate immediately
+
+Run the decoder as soon as you write the file — before passing it to any report script or downstream tool:
+
+```bash
+toon --decode <file.toon> > /dev/null
+```
+
+The error message names the offending line and column. Fix the first error and re-run; errors cascade.
+
 ## Common mistakes
 
 | Mistake | Fix |
@@ -102,6 +138,8 @@ If decode fails, fix the syntax errors — see the table below.
 | `key:value` (no space after colon) | `key: value` |
 | `items[2]{a,b}: val1,val2,val3` (wrong field count) | Match row columns to `{fields}` count |
 | `thing: value with , comma` (bare comma) | Quote: `"value with , comma"` |
+| Comma inside a quoted tabular value | Replace with semicolon or reword |
+| Declared length does not match row count | Count rows first; fill in `[N]` last |
 | Value continued onto indented lines | Join into one quoted string with `\n` escapes |
 | Mixed tab/space indentation | Use 2 spaces only |
 | Trailing whitespace on lines | Strip it |
