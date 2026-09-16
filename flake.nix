@@ -266,13 +266,10 @@
               });
               niri = niri.packages.${system}.niri-unstable.overrideAttrs (old: {
                 patches = (old.patches or [ ]) ++ [
-                  # niri-wm/niri#1791: SHM screencast fallback, needed for
-                  # GStreamer pipewiresrc (GNOME Network Displays) to negotiate
-                  # a buffer format at all under niri's DMA-BUF-only export.
-                  ./package/niri/pr-1791.patch
-                  # niri-wm/niri#4382: column navigation with trackpoint
-                  # swipe gestures.
+                  # niri-wm/niri#4382: column navigation with trackpoint swipe gestures.
                   ./package/niri/pr-4382.patch
+                  # niri-wm/niri#1791: Reuse SHM mappings and download texture storage across frames
+                  ./package/niri/pr-4588.patch
                 ];
               });
             })
