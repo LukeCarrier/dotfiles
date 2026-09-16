@@ -9,24 +9,13 @@
 let
   inherit (lib) getExe optionalString;
   inherit (pkgs) electron fetchPnpmDeps makeDesktopItem;
-  version = "1.43.0";
+  version = "1.50.1";
 
-  # nodejs 24.16.0 (pulled in by a nixpkgs-unstable bump) regressed electron-forge's
-  # `package` step: the plugin-vite process-exit handler fires mid "Finalizing
-  # package", so the packaged app is never written to out/ and the install phase's
-  # `mv out/Goose-*` finds nothing. Packaging runs under nodejs — electron is only
-  # bundled, never executed here — so pin the build toolchain's node to the last
-  # known-good 24.15.0. Revisit when a newer node no longer exhibits the race.
-  nodejsPinned =
-    (import (fetchTarball {
-      url = "https://github.com/NixOS/nixpkgs/archive/de51b6369f3e5dae8e71ac179f04cf1f42ba936d.tar.gz";
-      sha256 = "sha256-jGEYnI9HPEjIV3mwEGJs10IzrMgDaJdXLcWEO9lq2Z4=";
-    }) { inherit (stdenv.hostPlatform) system; }).nodejs;
   rawSrc = fetchFromGitHub {
     owner = "aaif-goose";
     repo = "goose";
     tag = "v${version}";
-    hash = "sha256-lmeS+iOyZ262H9NykK3GFIEA7ipOnqnurRKPY8xbwKw=";
+    hash = "sha256-n4jslrK5VrhcwzgvLdy2MaL0feQ8+rX+i202UwpAdHE=";
   };
   src = stdenv.mkDerivation (finalAttrs: {
     pname = "goose-desktop";
@@ -39,21 +28,6 @@ let
       find $out -type l ! -exec test -e {} \; -delete
     '';
   });
-
-  pnpm = pkgs.pnpm_11.overrideAttrs (_: {
-    version = "11.5.2";
-    src = pkgs.fetchurl {
-      url = "https://registry.npmjs.org/pnpm/-/pnpm-11.5.2.tgz";
-      hash = "sha256-dJ3FT709zenkFLquMsF3yoR3DT/NaciBbVea3D5qLJk=";
-    };
-    # Mitigate NixOS/nixpkgs#525627
-    postPatch = ''
-      substituteInPlace dist/pnpm.mjs \
-        --replace-fail \
-          'resourceLimits: this._workerResourceLimits' \
-          'resourceLimits: this._workerResourceLimits, trackUnmanagedFds: false'
-    '';
-  });
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "goose-desktop";
@@ -62,23 +36,21 @@ stdenv.mkDerivation (finalAttrs: {
   pnpmRoot = "ui";
   pnpmDeps = fetchPnpmDeps {
     pname = finalAttrs.pname;
-    inherit version pnpm;
+    inherit version;
     src = "${src}/ui";
     fetcherVersion = 4;
-    hash = "sha256-yagfbfR8laTr4Vp0mylfJ6FVwQgGAFXQdoFtv+zlE9A=";
+    hash = "sha256-05JD7Fcw/XNLstk2F1pqn4iTHYVKmxcdw1CdDmCc0Kc=";
   };
 
-  nativeBuildInputs = [
-    pnpm
-    nodejsPinned
-  ]
-  ++ (with pkgs; [
-    pnpmConfigHook
-    zip
+  nativeBuildInputs = with pkgs; [
+    asar
     copyDesktopItems
     makeWrapper
-    asar
-  ]);
+    nodejs_24
+    pnpm
+    pnpmConfigHook
+    zip
+  ];
 
   ELECTRON_SKIP_BINARY_DOWNLOAD = "1";
 
@@ -107,8 +79,11 @@ stdenv.mkDerivation (finalAttrs: {
     popd
     rm -r electron-dist
 
-    pushd sdk
-    pnpm run build
+    # Unrolled the upstream `build` script (npm run generate && npm run build:ts);
+    # pnpm resolves tsx/tsc from node_modules/.bin.
+    pushd goose-acp-client
+    pnpm run generate
+    pnpm run build:ts
     popd
 
     pushd desktop
