@@ -4,38 +4,37 @@
   stdenv,
 }:
 let
-  inherit (pkgs) fetchFromGitHub fetchPnpmDeps makeWrapper nodejs pnpmConfigHook;
-  pnpm = pkgs.pnpm_11.overrideAttrs (old: {
-    postPatch = (old.postPatch or "") + ''
-      substituteInPlace dist/pnpm.mjs \
-        --replace-fail \
-          'resourceLimits: this._workerResourceLimits' \
-          'resourceLimits: this._workerResourceLimits, trackUnmanagedFds: false'
-    '';
-  });
+  inherit (pkgs)
+    fetchFromGitHub
+    fetchPnpmDeps
+    makeWrapper
+    nodejs
+    pnpm
+    pnpmConfigHook
+    ;
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "toon-cli";
-  version = "2.3.1";
+  version = "4.1.1";
 
   src = fetchFromGitHub {
     owner = "toon-format";
     repo = "toon";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-PTv7qTOjGmDAfSS4wFB22W3rV4XBPvwX7tSfreTNY2E=";
+    hash = "sha256-jTr5YSRdIDRC2lSwRp5iZGG3O7OAutZNag5MgZQHUr4=";
   };
 
   pnpmDeps = fetchPnpmDeps {
     inherit (finalAttrs) pname version src;
     fetcherVersion = 4;
-    hash = "sha256-wEQY1v3fzMmt7farhbz3J1q41ACamrVicg5wHVvh7qU=";
+    hash = "sha256-1UzOVz6uaU2eHPYGhIfkooZf8SPpV5SIzg8cfga158Q=";
   };
 
   nativeBuildInputs = [
+    makeWrapper
+    nodejs
     pnpm
     pnpmConfigHook
-    nodejs
-    makeWrapper
   ];
 
   buildPhase = ''
