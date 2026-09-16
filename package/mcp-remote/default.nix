@@ -4,30 +4,68 @@
   stdenv,
 }:
 let
-  inherit (pkgs) fetchFromGitHub stdenv;
-  nodeLib = import ../../lib/node.nix { inherit pkgs stdenv; };
-  inherit (nodeLib) buildPnpmPackage;
+  inherit (pkgs)
+    fetchFromGitHub
+    fetchPnpmDeps
+    makeWrapper
+    nodejs
+    pnpm
+    pnpmConfigHook
+    ;
 in
-buildPnpmPackage rec {
+stdenv.mkDerivation (finalAttrs: rec {
   pname = "mcp-remote";
-  version = "0.1.30";
+  version = "0.14.2";
 
   src = fetchFromGitHub {
-    owner = "geelen";
+    owner = "punkpeye";
     repo = "mcp-remote";
     rev = "v${version}";
-    hash = "sha256-EQuiz/lygmynJjBrcAkX5MTrqYKWpD4OP4mvWZfO87s=";
+    hash = "sha256-b3IEAVwxTb2c/2ENRgQqluuZ5BE3alXsqProDwWQ1eA=";
   };
 
-  pnpmDepsFetcherVersion = 4;
-  pnpmDepsHash = "sha256-a9hc2U1bKWsqsEUpYvw2IY/mcy4d7iPVgl/tUHUg1rk=";
+  pnpmDeps = fetchPnpmDeps {
+    inherit (finalAttrs) pname version src;
+    fetcherVersion = 4;
+    hash = "sha256-pqZIsJos1thOuLoJtRDYPNldhAaaLDlqjdfQ0ntKA/4=";
+  };
 
-  pnpmBuildScript = "build";
+  nativeBuildInputs = [
+    makeWrapper
+    nodejs
+    pnpm
+    pnpmConfigHook
+  ];
+
+  buildPhase = ''
+    runHook preBuild
+    pnpm run build
+    runHook postBuild
+  '';
+
+  installPhase = ''
+    runHook preInstall
+
+    targetDir=$out/lib/node_modules/${finalAttrs.pname}
+    mkdir -p "$targetDir"
+
+    cp -r dist "$targetDir/"
+    cp package.json "$targetDir/"
+
+    cp -rL node_modules "$targetDir/"
+
+    makeWrapper ${nodejs}/bin/node $out/bin/mcp-remote-client \
+      --add-flags "$targetDir/bin/client.js"
+    makeWrapper ${nodejs}/bin/node $out/bin/mcp-remote-proxy \
+      --add-flags "$targetDir/bin/proxy.js"
+
+    runHook postInstall
+  '';
 
   meta = with lib; {
     description = "Local proxy to connect local MCP clients to remote MCP servers";
-    homepage = "https://github.com/geelen/mcp-remote";
+    homepage = "https://github.com/punkpeye/mcp-remote";
     license = licenses.mit;
     platforms = platforms.all;
   };
-}
+})
