@@ -31,7 +31,7 @@ let
     hash = "sha256-Q9Y+TpD0W0CdFYrDNfi5CvF9crViCiSzc+nJUBh6MGI=";
   };
 
-  obsbot-sdk = stdenv.mkDerivation rec {
+  obsbot-sdk = stdenv.mkDerivation {
     pname = "obsbot-sdk";
     version = "1.3.0";
 
@@ -57,7 +57,7 @@ let
     };
   };
 
-  build = stdenv.mkDerivation rec {
+  build = stdenv.mkDerivation {
     pname = "obsbot-camera-control";
     version = "1.3.0";
 
@@ -89,9 +89,9 @@ let
     '';
   };
 in
-rec {
+{
   inherit obsbot-sdk;
-  obsbot-camera-control-cli = stdenv.mkDerivation rec {
+  obsbot-camera-control-cli = stdenv.mkDerivation {
     pname = "obsbot-camera-control-cli";
     version = "1.3.0";
 
@@ -109,12 +109,12 @@ rec {
     meta = with lib; {
       description = "CLI application for OBSBOT camera control";
       license = licenses.mit;
-      maintainers = with maintainers; [ ];
+      maintainers = [ ];
       mainProgram = "obsbot-cli";
     };
   };
 
-  obsbot-camera-control-gui = stdenv.mkDerivation rec {
+  obsbot-camera-control-gui = stdenv.mkDerivation {
     pname = "obsbot-camera-control-gui";
     version = "1.3.0";
 
@@ -155,7 +155,7 @@ rec {
     meta = with lib; {
       description = "Native Linux GUI control app for OBSBOT cameras";
       license = licenses.mit;
-      maintainers = with maintainers; [ ];
+      maintainers = [ ];
       mainProgram = "obsbot-gui";
     };
   };
