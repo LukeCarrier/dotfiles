@@ -2,7 +2,6 @@
   lib,
   python3Packages,
   fetchFromGitHub,
-  makeWrapper,
   callPackage,
 }:
 
@@ -13,42 +12,21 @@ in
 
 python3Packages.buildPythonApplication rec {
   pname = "ghidra-mcp";
-  version = "4.3.0";
-  pyproject = false;
+  version = "6.0.0";
+  pyproject = true;
 
   src = fetchFromGitHub {
     owner = "bethington";
     repo = "ghidra-mcp";
     rev = "v${version}";
-    hash = "sha256-+37kC6Iji0Vb3NMVNdxsPbZMd6AWUX5vNqru9yooUvs=";
+    hash = "sha256-LnhhJwycO8NQV+YaTP7ZoxGkoGLkc14BwY66wczbpp0=";
   };
 
-  nativeBuildInputs = [ makeWrapper ];
+  build-system = with python3Packages; [ hatchling ];
 
-  propagatedBuildInputs = with python3Packages; [
-    mcp
-    requests
-  ];
-
-  installPhase = ''
-    runHook preInstall
-
-    mkdir -p $out/bin $out/lib/${pname}
-
-    # Install the Python bridge
-    cp bridge_mcp_ghidra.py $out/lib/${pname}/
-
-    # Install helper scripts if present
-    [ -d ghidra_scripts ] && cp -r ghidra_scripts $out/lib/${pname}/ || true
-    [ -d docs ] && mkdir -p $out/share/doc/${pname} && cp -r docs $out/share/doc/${pname}/ || true
-
-    # Create the main executable
-    makeWrapper ${python3Packages.python.interpreter} $out/bin/ghidra-mcp-bridge \
-      --add-flags "$out/lib/${pname}/bridge_mcp_ghidra.py" \
-      --prefix PYTHONPATH : "$out/lib/${pname}:$PYTHONPATH"
-
-    runHook postInstall
-  '';
+  # The bridge talks to Ghidra over stdlib http.client; `requests` is only
+  # needed by the unshipped subsystems (fun-doc, tests).
+  dependencies = with python3Packages; [ mcp ];
 
   # Note: The Ghidra plugin (Java component) is not built by this package.
   # Users need to build and install the plugin separately using Maven and Ghidra.
@@ -84,11 +62,11 @@ python3Packages.buildPythonApplication rec {
       Installation:
       1. Install plugin: See ghidra-mcp-plugin-info for instructions
       2. Start Ghidra and enable plugin via Tools > GhidraMCP > Start MCP Server
-      3. Run: ghidra-mcp-bridge
+      3. Run: bridge-mcp-ghidra
     '';
     homepage = "https://github.com/bethington/ghidra-mcp";
     license = licenses.asl20;
     maintainers = [ ];
-    mainProgram = "ghidra-mcp-bridge";
+    mainProgram = "bridge-mcp-ghidra";
   };
 }

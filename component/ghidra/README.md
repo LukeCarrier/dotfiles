@@ -72,7 +72,7 @@ The Python MCP bridge is installed separately (see `system/*/user/*/default.nix`
 Once Ghidra is running with the plugin HTTP server started:
 
 ```bash
-ghidra-mcp-bridge
+bridge-mcp-ghidra
 ```
 
 This connects AI tools to Ghidra's 193 reverse engineering capabilities via MCP protocol.
@@ -97,7 +97,7 @@ The server will then be available at `http://127.0.0.1:8089`.
 ```mermaid
 graph LR
     aiTools["AI Tools<br/>(Claude/OpenCode)"]
-    mcpBridge["MCP Bridge<br/>(ghidra-mcp-bridge)"]
+    mcpBridge["MCP Bridge<br/>(bridge-mcp-ghidra)"]
     ghidraMcpPlugin["GhidraMCP Plugin<br/>(HTTP Server)"]
     ghidraCore["Ghidra Core<br/>(Reverse Engineering)"]
 

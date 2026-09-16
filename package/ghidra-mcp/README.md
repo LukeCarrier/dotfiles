@@ -65,13 +65,13 @@ Now you can start the MCP bridge:
 
 ```bash
 # Run with stdio transport (recommended for AI tools like Claude)
-ghidra-mcp-bridge
+bridge-mcp-ghidra
 
 # Run with SSE transport (for web/HTTP clients)
-ghidra-mcp-bridge --transport sse --mcp-host 127.0.0.1 --mcp-port 8081
+bridge-mcp-ghidra --transport sse --mcp-host 127.0.0.1 --mcp-port 8081
 
 # Connect to Ghidra on a different port
-ghidra-mcp-bridge --ghidra-server http://127.0.0.1:9000
+bridge-mcp-ghidra --ghidra-server http://127.0.0.1:9000
 ```
 
 The bridge will connect to the Ghidra HTTP server and expose 193 MCP tools for binary analysis.

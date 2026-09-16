@@ -12,13 +12,13 @@ let
 in
 stdenv.mkDerivation rec {
   pname = "ghidra-mcp-plugin";
-  version = "4.3.0";
+  version = "6.0.0";
 
   src = fetchFromGitHub {
     owner = "bethington";
     repo = "ghidra-mcp";
     rev = "v${version}";
-    hash = "sha256-+37kC6Iji0Vb3NMVNdxsPbZMd6AWUX5vNqru9yooUvs=";
+    hash = "sha256-LnhhJwycO8NQV+YaTP7ZoxGkoGLkc14BwY66wczbpp0=";
   };
 
   nativeBuildInputs = [
@@ -33,7 +33,7 @@ stdenv.mkDerivation rec {
   postPatch = ''
     # Update pom.xml to match the Ghidra version from nixpkgs
     substituteInPlace pom.xml \
-      --replace-fail '<ghidra.version>12.0.3</ghidra.version>' \
+      --replace-fail '<ghidra.version>12.1</ghidra.version>' \
                      '<ghidra.version>${ghidra.version}</ghidra.version>'
   '';
 
