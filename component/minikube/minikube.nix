@@ -1,10 +1,10 @@
 {
-  config,
   lib,
   pkgs,
   ...
 }:
 let
+  inherit (lib) getExe;
   inherit (pkgs) stdenv;
   inherit (stdenv.hostPlatform) isLinux;
 
@@ -14,6 +14,7 @@ let
     postBuild = ''
       rm -f "$out/bin/kubectl"
     '';
+    passthru.mainProgram = "minikube";
   };
 in
 {
@@ -24,6 +25,6 @@ in
   ];
 
   home.activation.minikubeConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    $DRY_RUN_CMD ${lib.getExe minikube'} config set driver kvm2
+    $DRY_RUN_CMD ${getExe minikube'} config set driver kvm2
   '';
 }
