@@ -250,7 +250,7 @@
               # NixOS/nixpkgs#535887
               cantarell-fonts =
                 prev.cantarell-fonts.overrideAttrs (old: {
-                  nativeBuildInputs = builtins.map (
+                  nativeBuildInputs = map (
                     drv:
                     if (drv.pname or null) == "afdko" then
                       prev.python3.pkgs.afdko
