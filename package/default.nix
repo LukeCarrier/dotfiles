@@ -47,8 +47,6 @@ rec {
 
   rift = callPackage ./rift { };
 
-  spec-kit = callPackage ./spec-kit { };
-
   stklos = callPackage ./stklos { };
 
   toon-cli = callPackage ./toon-cli { };

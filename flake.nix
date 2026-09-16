@@ -296,7 +296,6 @@
                 obsbot-camera-control = callPackage' ./package/obsbot-camera-control { };
                 onepassword-tools = callPackage' ./package/onepassword-tools { };
                 rift = callPackage' ./package/rift { };
-                spec-kit = callPackage' ./package/spec-kit { };
                 stklos = callPackage' ./package/stklos { };
                 toon-cli = callPackage' ./package/toon-cli { };
                 wireloom-cli = callPackage' ./package/wireloom-cli { };
@@ -322,7 +321,6 @@
                   monaspace-fonts
                   onepassword-tools
                   rift
-                  spec-kit
                   stklos
                   toon-cli
                   wireloom-cli
