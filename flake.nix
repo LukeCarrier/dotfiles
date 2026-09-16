@@ -216,7 +216,10 @@
             "obsbot-sdk"
           ];
           overlays = [
-
+            # Mic92/sops-nix#983
+            (final: prev: {
+              buildGo125Module = prev.buildGoModule;
+            })
             agentkit.overlays.default
             claude-code.overlays.default
             code-insiders.overlays.default
