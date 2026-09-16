@@ -63,8 +63,6 @@ rec {
     obsbot-camera-control-cli
     obsbot-camera-control-gui;
 
-  ocu = callPackage ./ocu { };
-
   onepassword-tools = callPackage ./onepassword-tools { };
 
   openwarp = callPackage ./openwarp { };

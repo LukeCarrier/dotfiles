@@ -304,7 +304,6 @@
                 mcp-remote = callPackage' ./package/mcp-remote { };
                 monaspace-fonts = callPackage' ./package/monaspace-fonts { };
                 obsbot-camera-control = callPackage' ./package/obsbot-camera-control { };
-                ocu = callPackage' ./package/ocu { };
                 onepassword-tools = callPackage' ./package/onepassword-tools { };
                 rift = callPackage' ./package/rift { };
                 spec-kit = callPackage' ./package/spec-kit { };
@@ -334,7 +333,6 @@
                   kubernetes-client-tools
                   mcp-remote
                   monaspace-fonts
-                  ocu
                   onepassword-tools
                   rift
                   spec-kit
