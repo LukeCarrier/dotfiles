@@ -3,7 +3,7 @@
   home.packages = with pkgs; [
     libsecret
     seahorse
-    gcr
+    gcr_4
 
     bibata-cursors
   ];
