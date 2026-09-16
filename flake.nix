@@ -187,7 +187,6 @@
       nix-flatpak,
       nix-on-droid,
       nix-rosetta-builder,
-      nix-std,
       nix-vscode-extensions,
       nixpkgs-unstable,
       nur,
