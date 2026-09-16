@@ -1,29 +1,27 @@
 {
   lib,
   pkgs,
-  stdenv,
 }:
 let
   inherit (pkgs) buildNpmPackage fetchFromGitHub;
-  nodeLib = import ../../lib/node.nix { inherit pkgs stdenv; };
-  inherit (nodeLib);
 in
 buildNpmPackage rec {
   pname = "excalidraw-mcp-app";
   version = "0.2.0";
 
   src = fetchFromGitHub {
-    owner = "antonpk1";
-    repo = "excalidraw-mcp-app";
-    rev = "v0.2.0";
-    hash = "sha256-VkVNfV0EYh9FxL7F/JD3r49vXlnE4dnu9EsRjjW3yyY=";
+    owner = "excalidraw";
+    repo = "excalidraw-mcp";
+    rev = "v0.3.2";
+    hash = "sha256-Uh/sfRNnwUb1sy/PwGxyrTy/7g0cpCx9eSmwU49rFnc=";
   };
 
-  npmDepsHash = "sha256-VgVUc4n+XXy+XxNm9dIX4Pq8bb59SexIBycgDbFx1HY=";
+  patches = [ ./package-lock-upgrade.patch ];
 
-  # XXX: why?
+  npmDepsHash = "sha256-sal8OWngt1yQ7LtZAzgVegKM9vGwHaz8NndbsWqr6m4=";
+
   nativeBuildInputs = [ pkgs.bun ];
-  makeCacheWritable = true;
+  # makeCacheWritable = true;
   npmFlags = [ "--legacy-peer-deps" ];
 
   installPhase = ''
