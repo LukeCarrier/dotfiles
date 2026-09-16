@@ -42,10 +42,6 @@ in
   networking = {
     hostName = "luke-f1xable";
     domain = "peacehaven.carrier.family";
-
-    extraHosts = ''
-      127.0.0.1 buzz.throw.party
-    '';
   };
 
   boot.initrd.luks.devices."luks-d0d2e346-4317-481e-98cc-3a1d879f3b2a".device =
