@@ -268,8 +268,6 @@
                 patches = (old.patches or [ ]) ++ [
                   # niri-wm/niri#4382: column navigation with trackpoint swipe gestures.
                   ./package/niri/pr-4382.patch
-                  # niri-wm/niri#1791: Reuse SHM mappings and download texture storage across frames
-                  ./package/niri/pr-4588.patch
                 ];
               });
             })
