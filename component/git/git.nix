@@ -25,7 +25,6 @@
       };
 
       branch.sort = "-committerdate";
-      core.excludesfile = "~/.gitignore";
       init.defaultBranch = "main";
       interactive.singleKey = true;
       pull.ff = "only";
@@ -71,5 +70,11 @@
         wc = "whatchanged";
       };
     };
+
+    ignores = [
+      # Editors and IDEs
+      ".idea/"
+      ".zed/"
+    ];
   };
 }
