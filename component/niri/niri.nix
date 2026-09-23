@@ -557,6 +557,7 @@ in
             ];
             background-effect = {
               blur = true;
+              xray = false;
             };
           }
         ];
@@ -653,8 +654,25 @@ in
           }
           # Blur behind every window
           {
+            matches = [
+              {
+                is-floating = false;
+              }
+            ];
             background-effect = {
               blur = true;
+              xray = true;
+            };
+          }
+          {
+            matches = [
+              {
+                is-floating = true;
+              }
+            ];
+            background-effect = {
+              blur = true;
+              xray = false;
             };
           }
         ];
