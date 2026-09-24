@@ -38,6 +38,8 @@ rec {
 
   inherit (pkgs) niri;
 
+  nx-tools = callPackage ./nx-tools { };
+
   inherit (obsbot-camera-control)
     obsbot-sdk
     obsbot-camera-control-cli

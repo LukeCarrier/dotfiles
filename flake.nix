@@ -292,6 +292,7 @@
                 kubernetes-client-tools = callPackage' ./package/kubernetes-client-tools { };
                 mcp-remote = callPackage' ./package/mcp-remote { };
                 monaspace-fonts = callPackage' ./package/monaspace-fonts { };
+                nx-tools = callPackage' ./package/nx-tools { };
                 obsbot-camera-control = callPackage' ./package/obsbot-camera-control { };
                 onepassword-tools = callPackage' ./package/onepassword-tools { };
                 rift = callPackage' ./package/rift { };
@@ -318,6 +319,7 @@
                   kubernetes-client-tools
                   mcp-remote
                   monaspace-fonts
+                  nx-tools
                   onepassword-tools
                   rift
                   stklos
