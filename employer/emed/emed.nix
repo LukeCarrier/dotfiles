@@ -82,6 +82,7 @@ in
   ]
   ++ (with pkgs; [
     github-cli-tools
+    nx-tools
 
     crane
     skopeo
