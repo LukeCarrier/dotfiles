@@ -130,6 +130,9 @@ in
       enable = true;
       package = pkgs.niri;
       settings = {
+        # Nodes niri-flake can't express yet (niri fork features); niri merges
+        # them into the generated config via include.
+        includes = [ "${./focus-ring-anim.kdl}" ];
         input = {
           mod-key = mainMod;
           keyboard = {
@@ -527,8 +530,15 @@ in
           border.enable = false;
           focus-ring = {
             enable = true;
-            width = 2;
-            active.color = "#ffffff";
+            width = 3;
+            # Tokyo Night blue -> pink. Window-relative keeps the full colour
+            # range on every ring (and makes gradient-spin visibly cycle).
+            active.gradient = {
+              from = "#7aa2f7";
+              to = "#f7768e";
+              angle = 135;
+              relative-to = "window";
+            };
             urgent.color = urgent-color;
           };
           shadow.enable = true;

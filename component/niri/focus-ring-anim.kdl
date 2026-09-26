@@ -1,0 +1,27 @@
+// Focus ring decoration animation settings from the niri fork.
+// niri-flake's typed options don't know these nodes yet; they reach config.kdl
+// via programs.niri.settings.includes and merge under the main config's
+// animations {} / layout.focus-ring {} sections.
+
+animations {
+    focus-ring-fade {
+        duration-ms 500
+        curve "ease-out-cubic"
+    }
+
+    // Travel of the ring between windows on focus changes. With `off`, focus
+    // changes fall back to the focus-ring-fade crossfade instead. Delete the
+    // `off` line to restore the travel (duration below is kept for that).
+    focus-ring-morph {
+        off;
+        duration-ms 250
+        curve "ease-out-cubic"
+    }
+}
+
+layout {
+    focus-ring {
+        // Idle gradient drift, degrees per second while the ring is active.
+        gradient-spin-speed 30
+    }
+}

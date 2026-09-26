@@ -1,0 +1,3348 @@
+From ef7fd96fef651e78ebe3530ebcaadd9beab641b4 Mon Sep 17 00:00:00 2001
+From: Luke Carrier <luke@carrier.family>
+Date: Sun, 27 Sep 2026 03:23:01 +0100
+Subject: [PATCH] feat(focus ring): better styling
+
+---
+ docs/wiki/Configuration:-Animations.md        |  79 ++++
+ docs/wiki/Configuration:-Layout.md            |  37 ++
+ niri-config/src/animations.rs                 | 116 ++++++
+ niri-config/src/appearance.rs                 |  28 ++
+ niri-config/src/lib.rs                        |  58 +++
+ niri-visual-tests/src/cases/gradient_angle.rs |  31 +-
+ niri-visual-tests/src/cases/gradient_area.rs  |  35 +-
+ niri-visual-tests/src/cases/gradient_oklab.rs |  31 +-
+ .../src/cases/gradient_oklab_alpha.rs         |  31 +-
+ .../src/cases/gradient_oklch_alpha.rs         |  31 +-
+ .../src/cases/gradient_oklch_decreasing.rs    |  31 +-
+ .../src/cases/gradient_oklch_increasing.rs    |  31 +-
+ .../src/cases/gradient_oklch_longer.rs        |  31 +-
+ .../src/cases/gradient_oklch_shorter.rs       |  31 +-
+ niri-visual-tests/src/cases/gradient_srgb.rs  |  31 +-
+ .../src/cases/gradient_srgb_alpha.rs          |  31 +-
+ .../src/cases/gradient_srgblinear.rs          |  31 +-
+ .../src/cases/gradient_srgblinear_alpha.rs    |  31 +-
+ niri-visual-tests/src/cases/layout.rs         |   2 +
+ niri-visual-tests/src/cases/tile.rs           |   1 +
+ plan.md                                       | 236 ++++++++++++
+ resources/default-config.kdl                  |  30 ++
+ src/layout/floating.rs                        |  36 +-
+ src/layout/focus_ring.rs                      | 104 +++--
+ src/layout/focus_ring_morph.rs                | 173 +++++++++
+ src/layout/insert_hint_element.rs             |   9 +-
+ src/layout/mod.rs                             |   6 +-
+ src/layout/monitor.rs                         | 182 +++++++++
+ src/layout/scrolling.rs                       |  54 ++-
+ src/layout/tab_indicator.rs                   |  25 +-
+ src/layout/tile.rs                            | 357 ++++++++++++++++--
+ src/layout/workspace.rs                       |  46 ++-
+ src/render_helpers/border.rs                  | 130 +++----
+ src/render_helpers/shaders/border.frag        |  26 +-
+ src/render_helpers/shaders/mod.rs             |   7 +-
+ src/ui/mru.rs                                 |  36 +-
+ src/window/mapped.rs                          |  31 +-
+ 37 files changed, 1812 insertions(+), 404 deletions(-)
+ create mode 100644 plan.md
+ create mode 100644 src/layout/focus_ring_morph.rs
+
+diff --git a/docs/wiki/Configuration:-Animations.md b/docs/wiki/Configuration:-Animations.md
+index f62dab3b..bf8f5453 100644
+--- a/docs/wiki/Configuration:-Animations.md
++++ b/docs/wiki/Configuration:-Animations.md
+@@ -62,6 +62,27 @@ animations {
+     recent-windows-close {
+         spring damping-ratio=1.0 stiffness=800 epsilon=0.001
+     }
++
++    // Focus ring color crossfade on focus changes.
++    // Disabled by default; set a duration to enable.
++    // focus-ring-fade {
++    //     duration-ms 500
++    //     curve "ease-out-cubic"
++    // }
++
++    // Border color crossfade on focus changes.
++    // Disabled by default; set a duration to enable.
++    // border-fade {
++    //     duration-ms 500
++    //     curve "ease-out-cubic"
++    // }
++
++    // Focus ring morph between windows on the same workspace.
++    // Disabled by default; set a duration to enable.
++    // focus-ring-morph {
++    //     duration-ms 250
++    //     curve "ease-out-cubic"
++    // }
+ }
+ ```
+ 
+@@ -440,6 +461,64 @@ animations {
+ }
+ ```
+ 
++#### `focus-ring-fade`
++
++<sup>Since: next release</sup>
++
++Crossfade of focus ring colors between inactive and active when focus changes.
++
++This animation also drives how quickly the focus ring fades out from one window and in around
++another when focus jumps between them, for example across workspaces.
++
++Disabled by default; set a duration to enable.
++
++```kdl
++animations {
++    focus-ring-fade {
++        duration-ms 500
++        curve "ease-out-cubic"
++    }
++}
++```
++
++#### `border-fade`
++
++<sup>Since: next release</sup>
++
++Crossfade of border colors between inactive and active when focus changes.
++
++Disabled by default; set a duration to enable.
++
++```kdl
++animations {
++    border-fade {
++        duration-ms 500
++        curve "ease-out-cubic"
++    }
++}
++```
++
++#### `focus-ring-morph`
++
++<sup>Since: next release</sup>
++
++When focus moves to another window on the same workspace, the focus ring slides from the old
++window to the new one instead of fading out and in.
++
++If the target is on another workspace, or the window is closing or going fullscreen, the ring
++falls back to the `focus-ring-fade` animation.
++
++Disabled by default; set a duration to enable.
++
++```kdl
++animations {
++    focus-ring-morph {
++        duration-ms 250
++        curve "ease-out-cubic"
++    }
++}
++```
++
+ ### Specifying `custom-shader` by Path
+ 
+ <sup>Since: next release</sup>
+diff --git a/docs/wiki/Configuration:-Layout.md b/docs/wiki/Configuration:-Layout.md
+index 5e5e2a5c..5fec2409 100644
+--- a/docs/wiki/Configuration:-Layout.md
++++ b/docs/wiki/Configuration:-Layout.md
+@@ -290,6 +290,9 @@ layout {
+ 
+         // active-gradient from="#ffbb66" to="#ffc880" angle=45 relative-to="workspace-view"
+         // inactive-gradient from="#505050" to="#808080" angle=45 relative-to="workspace-view" in="srgb-linear"
++
++        // Rotate the gradient slowly, in degrees per second.
++        // gradient-spin-speed 45
+     }
+ }
+ ```
+@@ -379,6 +382,40 @@ layout {
+ }
+ ```
+ 
++#### Gradient spin
++
++<sup>Since: next release</sup>
++
++`gradient-spin-speed` rotates the gradient slowly, in degrees per second.
++Defaults to `0`, which keeps gradients static.
++The gradient rotates while the focus ring / border is showing active colors.
++
++```kdl
++layout {
++    border {
++        active-gradient from="#ffbb66" to="#ffc880" angle=45 relative-to="workspace-view"
++        gradient-spin-speed 45
++    }
++}
++```
++
++#### Focus ring morph
++
++<sup>Since: next release</sup>
++
++With the [`focus-ring-morph` animation](./Configuration:-Animations.md#focus-ring-morph) enabled, the focus ring slides from the old window to the new one when focus moves between windows on the same workspace.
++
++While sliding, the ring is drawn over window content.
++Set `morph-behind-windows` in `focus-ring` to draw it behind windows instead.
++
++```kdl
++layout {
++    focus-ring {
++        morph-behind-windows
++    }
++}
++```
++
+ ### `shadow`
+ 
+ <sup>Since: 25.02</sup>
+diff --git a/niri-config/src/animations.rs b/niri-config/src/animations.rs
+index d50f4495..9e749c08 100644
+--- a/niri-config/src/animations.rs
++++ b/niri-config/src/animations.rs
+@@ -24,6 +24,9 @@ pub struct Animations {
+     pub screenshot_ui_open: ScreenshotUiOpenAnim,
+     pub overview_open_close: OverviewOpenCloseAnim,
+     pub recent_windows_close: RecentWindowsCloseAnim,
++    pub focus_ring_fade: FocusRingFadeAnim,
++    pub border_fade: BorderFadeAnim,
++    pub focus_ring_morph: FocusRingMorphAnim,
+ }
+ 
+ impl Default for Animations {
+@@ -42,6 +45,9 @@ impl Default for Animations {
+             screenshot_ui_open: Default::default(),
+             overview_open_close: Default::default(),
+             recent_windows_close: Default::default(),
++            focus_ring_fade: Default::default(),
++            border_fade: Default::default(),
++            focus_ring_morph: Default::default(),
+         }
+     }
+ }
+@@ -76,6 +82,12 @@ pub struct AnimationsPart {
+     pub overview_open_close: Option<OverviewOpenCloseAnim>,
+     #[knuffel(child)]
+     pub recent_windows_close: Option<RecentWindowsCloseAnim>,
++    #[knuffel(child)]
++    pub focus_ring_fade: Option<FocusRingFadeAnim>,
++    #[knuffel(child)]
++    pub border_fade: Option<BorderFadeAnim>,
++    #[knuffel(child)]
++    pub focus_ring_morph: Option<FocusRingMorphAnim>,
+ }
+ 
+ impl MergeWith<AnimationsPart> for Animations {
+@@ -102,6 +114,9 @@ impl MergeWith<AnimationsPart> for Animations {
+             screenshot_ui_open,
+             overview_open_close,
+             recent_windows_close,
++            focus_ring_fade,
++            border_fade,
++            focus_ring_morph,
+         );
+     }
+ }
+@@ -382,6 +397,62 @@ impl Default for RecentWindowsCloseAnim {
+     }
+ }
+ 
++/// Fade of the focus ring on focus changes: color crossfade between active and inactive colors,
++/// and alpha fade when the ring appears or disappears around a window.
++///
++/// A zero duration (the default) disables the fade, making focus changes instant.
++#[derive(Debug, Clone, Copy, PartialEq)]
++pub struct FocusRingFadeAnim(pub Animation);
++
++impl Default for FocusRingFadeAnim {
++    fn default() -> Self {
++        Self(Animation {
++            off: false,
++            kind: Kind::Easing(EasingParams {
++                duration_ms: 0,
++                curve: Curve::EaseOutCubic,
++            }),
++        })
++    }
++}
++
++/// Crossfade of border colors between active and inactive on focus changes.
++///
++/// A zero duration (the default) disables the fade, making focus changes instant.
++#[derive(Debug, Clone, Copy, PartialEq)]
++pub struct BorderFadeAnim(pub Animation);
++
++impl Default for BorderFadeAnim {
++    fn default() -> Self {
++        Self(Animation {
++            off: false,
++            kind: Kind::Easing(EasingParams {
++                duration_ms: 0,
++                curve: Curve::EaseOutCubic,
++            }),
++        })
++    }
++}
++
++/// Travel of the focus ring between the previously and the newly focused window within a
++/// workspace.
++///
++/// A zero duration (the default) disables the morph, making focus changes instant.
++#[derive(Debug, Clone, Copy, PartialEq)]
++pub struct FocusRingMorphAnim(pub Animation);
++
++impl Default for FocusRingMorphAnim {
++    fn default() -> Self {
++        Self(Animation {
++            off: false,
++            kind: Kind::Easing(EasingParams {
++                duration_ms: 0,
++                curve: Curve::EaseOutCubic,
++            }),
++        })
++    }
++}
++
+ impl<S> knuffel::Decode<S> for WorkspaceSwitchAnim
+ where
+     S: knuffel::traits::ErrorSpan,
+@@ -592,6 +663,51 @@ where
+     }
+ }
+ 
++impl<S> knuffel::Decode<S> for FocusRingFadeAnim
++where
++    S: knuffel::traits::ErrorSpan,
++{
++    fn decode_node(
++        node: &knuffel::ast::SpannedNode<S>,
++        ctx: &mut knuffel::decode::Context<S>,
++    ) -> Result<Self, DecodeError<S>> {
++        let default = Self::default().0;
++        Ok(Self(Animation::decode_node(node, ctx, default, |_, _| {
++            Ok(false)
++        })?))
++    }
++}
++
++impl<S> knuffel::Decode<S> for BorderFadeAnim
++where
++    S: knuffel::traits::ErrorSpan,
++{
++    fn decode_node(
++        node: &knuffel::ast::SpannedNode<S>,
++        ctx: &mut knuffel::decode::Context<S>,
++    ) -> Result<Self, DecodeError<S>> {
++        let default = Self::default().0;
++        Ok(Self(Animation::decode_node(node, ctx, default, |_, _| {
++            Ok(false)
++        })?))
++    }
++}
++
++impl<S> knuffel::Decode<S> for FocusRingMorphAnim
++where
++    S: knuffel::traits::ErrorSpan,
++{
++    fn decode_node(
++        node: &knuffel::ast::SpannedNode<S>,
++        ctx: &mut knuffel::decode::Context<S>,
++    ) -> Result<Self, DecodeError<S>> {
++        let default = Self::default().0;
++        Ok(Self(Animation::decode_node(node, ctx, default, |_, _| {
++            Ok(false)
++        })?))
++    }
++}
++
+ impl Animation {
+     pub fn new_off() -> Self {
+         Self {
+diff --git a/niri-config/src/appearance.rs b/niri-config/src/appearance.rs
+index a1c83271..c365041f 100644
+--- a/niri-config/src/appearance.rs
++++ b/niri-config/src/appearance.rs
+@@ -238,6 +238,12 @@ pub struct FocusRing {
+     pub active_gradient: Option<Gradient>,
+     pub inactive_gradient: Option<Gradient>,
+     pub urgent_gradient: Option<Gradient>,
++    /// Rotation speed of the gradient angle while the ring shows active colors, in degrees per
++    /// second. Zero (the default) disables the rotation.
++    pub gradient_spin_speed: f64,
++    /// Draw the focus ring behind window content while it morphs between windows; by default it
++    /// travels over window content. Only relevant while the morph animation is enabled.
++    pub morph_behind_windows: bool,
+ }
+ 
+ impl Default for FocusRing {
+@@ -251,6 +257,8 @@ impl Default for FocusRing {
+             active_gradient: None,
+             inactive_gradient: None,
+             urgent_gradient: None,
++            gradient_spin_speed: 0.,
++            morph_behind_windows: false,
+         }
+     }
+ }
+@@ -265,6 +273,11 @@ pub struct Border {
+     pub active_gradient: Option<Gradient>,
+     pub inactive_gradient: Option<Gradient>,
+     pub urgent_gradient: Option<Gradient>,
++    /// Rotation speed of the gradient angle while the border shows active colors, in degrees per
++    /// second. Zero (the default) disables the rotation.
++    pub gradient_spin_speed: f64,
++    /// Unused for borders; kept so that `FocusRing` <-> `Border` conversions are lossless.
++    pub morph_behind_windows: bool,
+ }
+ 
+ impl Default for Border {
+@@ -278,6 +291,8 @@ impl Default for Border {
+             active_gradient: None,
+             inactive_gradient: None,
+             urgent_gradient: None,
++            gradient_spin_speed: 0.,
++            morph_behind_windows: false,
+         }
+     }
+ }
+@@ -293,6 +308,8 @@ impl From<Border> for FocusRing {
+             active_gradient: value.active_gradient,
+             inactive_gradient: value.inactive_gradient,
+             urgent_gradient: value.urgent_gradient,
++            gradient_spin_speed: value.gradient_spin_speed,
++            morph_behind_windows: value.morph_behind_windows,
+         }
+     }
+ }
+@@ -308,6 +325,8 @@ impl From<FocusRing> for Border {
+             active_gradient: value.active_gradient,
+             inactive_gradient: value.inactive_gradient,
+             urgent_gradient: value.urgent_gradient,
++            gradient_spin_speed: value.gradient_spin_speed,
++            morph_behind_windows: value.morph_behind_windows,
+         }
+     }
+ }
+@@ -327,6 +346,11 @@ impl MergeWith<BorderRule> for Border {
+             (inactive_color, inactive_gradient),
+             (urgent_color, urgent_gradient),
+         );
++
++        if let Some(speed) = part.gradient_spin_speed {
++            self.gradient_spin_speed = speed.0;
++        }
++        self.morph_behind_windows |= part.morph_behind_windows;
+     }
+ }
+ 
+@@ -642,6 +666,10 @@ pub struct BorderRule {
+     pub inactive_gradient: Option<Gradient>,
+     #[knuffel(child)]
+     pub urgent_gradient: Option<Gradient>,
++    #[knuffel(child, unwrap(argument))]
++    pub gradient_spin_speed: Option<FloatOrInt<0, 3600>>,
++    #[knuffel(child)]
++    pub morph_behind_windows: bool,
+ }
+ 
+ #[derive(knuffel::Decode, Debug, Default, Clone, Copy, PartialEq)]
+diff --git a/niri-config/src/lib.rs b/niri-config/src/lib.rs
+index 22e0d3db..bf2f1d55 100644
+--- a/niri-config/src/lib.rs
++++ b/niri-config/src/lib.rs
+@@ -788,11 +788,14 @@ mod tests {
+                     active-color 0 100 200 255
+                     inactive-color 255 200 100 0
+                     active-gradient from="rgba(10, 20, 30, 1.0)" to="#0080ffff" relative-to="workspace-view"
++                    gradient-spin-speed 90
++                    morph-behind-windows
+                 }
+ 
+                 border {
+                     width 3
+                     inactive-color "rgba(255, 200, 100, 0.0)"
++                    gradient-spin-speed 45
+                 }
+ 
+                 shadow {
+@@ -881,6 +884,20 @@ mod tests {
+                 recent-windows-close {
+                     off
+                 }
++
++                focus-ring-fade {
++                    duration-ms 500
++                    curve "ease-out-cubic"
++                }
++
++                border-fade {
++                    duration-ms 400
++                }
++
++                focus-ring-morph {
++                    duration-ms 250
++                    curve "ease-out-expo"
++                }
+             }
+ 
+             gestures {
+@@ -1350,6 +1367,8 @@ mod tests {
+                     ),
+                     inactive_gradient: None,
+                     urgent_gradient: None,
++                    gradient_spin_speed: 90.0,
++                    morph_behind_windows: true,
+                 },
+                 border: Border {
+                     off: false,
+@@ -1375,6 +1394,8 @@ mod tests {
+                     active_gradient: None,
+                     inactive_gradient: None,
+                     urgent_gradient: None,
++                    gradient_spin_speed: 45.0,
++                    morph_behind_windows: false,
+                 },
+                 shadow: Shadow {
+                     on: false,
+@@ -1671,6 +1692,39 @@ mod tests {
+                         ),
+                     },
+                 ),
++                focus_ring_fade: FocusRingFadeAnim(
++                    Animation {
++                        off: false,
++                        kind: Easing(
++                            EasingParams {
++                                duration_ms: 500,
++                                curve: EaseOutCubic,
++                            },
++                        ),
++                    },
++                ),
++                border_fade: BorderFadeAnim(
++                    Animation {
++                        off: false,
++                        kind: Easing(
++                            EasingParams {
++                                duration_ms: 400,
++                                curve: EaseOutCubic,
++                            },
++                        ),
++                    },
++                ),
++                focus_ring_morph: FocusRingMorphAnim(
++                    Animation {
++                        off: false,
++                        kind: Easing(
++                            EasingParams {
++                                duration_ms: 250,
++                                curve: EaseOutExpo,
++                            },
++                        ),
++                    },
++                ),
+             },
+             blur: Blur {
+                 off: false,
+@@ -1847,6 +1901,8 @@ mod tests {
+                         active_gradient: None,
+                         inactive_gradient: None,
+                         urgent_gradient: None,
++                        gradient_spin_speed: None,
++                        morph_behind_windows: false,
+                     },
+                     border: BorderRule {
+                         off: false,
+@@ -1862,6 +1918,8 @@ mod tests {
+                         active_gradient: None,
+                         inactive_gradient: None,
+                         urgent_gradient: None,
++                        gradient_spin_speed: None,
++                        morph_behind_windows: false,
+                     },
+                     shadow: ShadowRule {
+                         off: false,
+diff --git a/niri-visual-tests/src/cases/gradient_angle.rs b/niri-visual-tests/src/cases/gradient_angle.rs
+index 6cf666c1..0f121340 100644
+--- a/niri-visual-tests/src/cases/gradient_angle.rs
++++ b/niri-visual-tests/src/cases/gradient_angle.rs
+@@ -1,7 +1,7 @@
+ use std::f32::consts::{FRAC_PI_2, PI};
+ use std::time::Duration;
+ 
+-use niri::render_helpers::border::BorderRenderElement;
++use niri::render_helpers::border::{BorderRenderElement, BorderRenderParams};
+ use niri_config::{Color, CornerRadius, GradientInterpolation};
+ use smithay::backend::renderer::element::RenderElement;
+ use smithay::backend::renderer::gles::GlesRenderer;
+@@ -52,19 +52,22 @@ impl TestCase for GradientAngle {
+         let size = (size.w - a * 2, size.h - b * 2);
+         let area = Rectangle::new(Point::from((a, b)), Size::from(size)).to_f64();
+ 
+-        [BorderRenderElement::new(
+-            area.size,
+-            Rectangle::from_size(area.size),
+-            GradientInterpolation::default(),
+-            Color::new_unpremul(1., 0., 0., 1.),
+-            Color::new_unpremul(0., 1., 0., 1.),
+-            self.angle - FRAC_PI_2,
+-            Rectangle::from_size(area.size),
+-            0.,
+-            CornerRadius::default(),
+-            1.,
+-            1.,
+-        )
++        [BorderRenderElement::new(BorderRenderParams {
++            size: area.size,
++            gradient_area: Rectangle::from_size(area.size),
++            gradient_format: GradientInterpolation::default(),
++            color_from: Color::new_unpremul(1., 0., 0., 1.),
++            color_to: Color::new_unpremul(0., 1., 0., 1.),
++            color_from_inactive: Color::new_unpremul(1., 0., 0., 1.),
++            color_to_inactive: Color::new_unpremul(0., 1., 0., 1.),
++            fade: 1.,
++            angle: self.angle - FRAC_PI_2,
++            geometry: Rectangle::from_size(area.size),
++            border_width: 0.,
++            corner_radius: CornerRadius::default(),
++            scale: 1.,
++            alpha: 1.,
++        })
+         .with_location(area.loc)]
+         .into_iter()
+         .map(|elem| Box::new(elem) as _)
+diff --git a/niri-visual-tests/src/cases/gradient_area.rs b/niri-visual-tests/src/cases/gradient_area.rs
+index f92f8504..1119d627 100644
+--- a/niri-visual-tests/src/cases/gradient_area.rs
++++ b/niri-visual-tests/src/cases/gradient_area.rs
+@@ -2,7 +2,7 @@ use std::f32::consts::{FRAC_PI_4, PI};
+ use std::time::Duration;
+ 
+ use niri::layout::focus_ring::FocusRing;
+-use niri::render_helpers::border::BorderRenderElement;
++use niri::render_helpers::border::{BorderRenderElement, BorderRenderParams};
+ use niri_config::{Color, CornerRadius, GradientInterpolation};
+ use smithay::backend::renderer::element::RenderElement;
+ use smithay::backend::renderer::gles::GlesRenderer;
+@@ -27,6 +27,8 @@ impl GradientArea {
+             active_gradient: None,
+             inactive_gradient: None,
+             urgent_gradient: None,
++            gradient_spin_speed: 0.,
++            morph_behind_windows: false,
+         });
+ 
+         Self {
+@@ -88,24 +90,29 @@ impl TestCase for GradientArea {
+             CornerRadius::default(),
+             1.,
+             1.,
++            1.,
++            0.,
+         );
+         self.border
+             .render(renderer, g_loc, &mut |elem| rv.push(Box::new(elem) as _));
+ 
+         rv.extend(
+-            [BorderRenderElement::new(
+-                area.size,
+-                g_area,
+-                GradientInterpolation::default(),
+-                Color::new_unpremul(1., 0., 0., 1.),
+-                Color::new_unpremul(0., 1., 0., 1.),
+-                FRAC_PI_4,
+-                Rectangle::from_size(rect_size).to_f64(),
+-                0.,
+-                CornerRadius::default(),
+-                1.,
+-                1.,
+-            )
++            [BorderRenderElement::new(BorderRenderParams {
++                size: area.size,
++                gradient_area: g_area,
++                gradient_format: GradientInterpolation::default(),
++                color_from: Color::new_unpremul(1., 0., 0., 1.),
++                color_to: Color::new_unpremul(0., 1., 0., 1.),
++                color_from_inactive: Color::new_unpremul(1., 0., 0., 1.),
++                color_to_inactive: Color::new_unpremul(0., 1., 0., 1.),
++                fade: 1.,
++                angle: FRAC_PI_4,
++                geometry: Rectangle::from_size(rect_size).to_f64(),
++                border_width: 0.,
++                corner_radius: CornerRadius::default(),
++                scale: 1.,
++                alpha: 1.,
++            })
+             .with_location(area.loc)]
+             .into_iter()
+             .map(|elem| Box::new(elem) as _),
+diff --git a/niri-visual-tests/src/cases/gradient_oklab.rs b/niri-visual-tests/src/cases/gradient_oklab.rs
+index c933d278..2c8c657e 100644
+--- a/niri-visual-tests/src/cases/gradient_oklab.rs
++++ b/niri-visual-tests/src/cases/gradient_oklab.rs
+@@ -1,4 +1,4 @@
+-use niri::render_helpers::border::BorderRenderElement;
++use niri::render_helpers::border::{BorderRenderElement, BorderRenderParams};
+ use niri_config::{
+     Color, CornerRadius, GradientColorSpace, GradientInterpolation, HueInterpolation,
+ };
+@@ -33,19 +33,22 @@ impl TestCase for GradientOklab {
+         let size = (size.w - a * 2, size.h - b * 2);
+         let area = Rectangle::new(Point::from((a, b)), Size::from(size)).to_f64();
+ 
+-        [BorderRenderElement::new(
+-            area.size,
+-            Rectangle::from_size(area.size),
+-            self.gradient_format,
+-            Color::new_unpremul(1., 0., 0., 1.),
+-            Color::new_unpremul(0., 1., 0., 1.),
+-            0.,
+-            Rectangle::from_size(area.size),
+-            0.,
+-            CornerRadius::default(),
+-            1.,
+-            1.,
+-        )
++        [BorderRenderElement::new(BorderRenderParams {
++            size: area.size,
++            gradient_area: Rectangle::from_size(area.size),
++            gradient_format: self.gradient_format,
++            color_from: Color::new_unpremul(1., 0., 0., 1.),
++            color_to: Color::new_unpremul(0., 1., 0., 1.),
++            color_from_inactive: Color::new_unpremul(1., 0., 0., 1.),
++            color_to_inactive: Color::new_unpremul(0., 1., 0., 1.),
++            fade: 1.,
++            angle: 0.,
++            geometry: Rectangle::from_size(area.size),
++            border_width: 0.,
++            corner_radius: CornerRadius::default(),
++            scale: 1.,
++            alpha: 1.,
++        })
+         .with_location(area.loc)]
+         .into_iter()
+         .map(|elem| Box::new(elem) as _)
+diff --git a/niri-visual-tests/src/cases/gradient_oklab_alpha.rs b/niri-visual-tests/src/cases/gradient_oklab_alpha.rs
+index a0d65f92..5f9f278c 100644
+--- a/niri-visual-tests/src/cases/gradient_oklab_alpha.rs
++++ b/niri-visual-tests/src/cases/gradient_oklab_alpha.rs
+@@ -1,4 +1,4 @@
+-use niri::render_helpers::border::BorderRenderElement;
++use niri::render_helpers::border::{BorderRenderElement, BorderRenderParams};
+ use niri_config::{Color, CornerRadius, GradientColorSpace, GradientInterpolation};
+ use smithay::backend::renderer::element::RenderElement;
+ use smithay::backend::renderer::gles::GlesRenderer;
+@@ -31,19 +31,22 @@ impl TestCase for GradientOklabAlpha {
+         let size = (size.w - a * 2, size.h - b * 2);
+         let area = Rectangle::new(Point::from((a, b)), Size::from(size)).to_f64();
+ 
+-        [BorderRenderElement::new(
+-            area.size,
+-            Rectangle::from_size(area.size),
+-            self.gradient_format,
+-            Color::new_unpremul(1., 0., 0., 1.),
+-            Color::new_unpremul(0., 1., 0., 0.),
+-            0.,
+-            Rectangle::from_size(area.size),
+-            0.,
+-            CornerRadius::default(),
+-            1.,
+-            1.,
+-        )
++        [BorderRenderElement::new(BorderRenderParams {
++            size: area.size,
++            gradient_area: Rectangle::from_size(area.size),
++            gradient_format: self.gradient_format,
++            color_from: Color::new_unpremul(1., 0., 0., 1.),
++            color_to: Color::new_unpremul(0., 1., 0., 0.),
++            color_from_inactive: Color::new_unpremul(1., 0., 0., 1.),
++            color_to_inactive: Color::new_unpremul(0., 1., 0., 0.),
++            fade: 1.,
++            angle: 0.,
++            geometry: Rectangle::from_size(area.size),
++            border_width: 0.,
++            corner_radius: CornerRadius::default(),
++            scale: 1.,
++            alpha: 1.,
++        })
+         .with_location(area.loc)]
+         .into_iter()
+         .map(|elem| Box::new(elem) as _)
+diff --git a/niri-visual-tests/src/cases/gradient_oklch_alpha.rs b/niri-visual-tests/src/cases/gradient_oklch_alpha.rs
+index ebcfb09a..7408f1f0 100644
+--- a/niri-visual-tests/src/cases/gradient_oklch_alpha.rs
++++ b/niri-visual-tests/src/cases/gradient_oklch_alpha.rs
+@@ -1,4 +1,4 @@
+-use niri::render_helpers::border::BorderRenderElement;
++use niri::render_helpers::border::{BorderRenderElement, BorderRenderParams};
+ use niri_config::{
+     Color, CornerRadius, GradientColorSpace, GradientInterpolation, HueInterpolation,
+ };
+@@ -33,19 +33,22 @@ impl TestCase for GradientOklchAlpha {
+         let size = (size.w - a * 2, size.h - b * 2);
+         let area = Rectangle::new(Point::from((a, b)), Size::from(size)).to_f64();
+ 
+-        [BorderRenderElement::new(
+-            area.size,
+-            Rectangle::from_size(area.size),
+-            self.gradient_format,
+-            Color::new_unpremul(1., 0., 0., 1.),
+-            Color::new_unpremul(0., 1., 0., 0.),
+-            0.,
+-            Rectangle::from_size(area.size),
+-            0.,
+-            CornerRadius::default(),
+-            1.,
+-            1.,
+-        )
++        [BorderRenderElement::new(BorderRenderParams {
++            size: area.size,
++            gradient_area: Rectangle::from_size(area.size),
++            gradient_format: self.gradient_format,
++            color_from: Color::new_unpremul(1., 0., 0., 1.),
++            color_to: Color::new_unpremul(0., 1., 0., 0.),
++            color_from_inactive: Color::new_unpremul(1., 0., 0., 1.),
++            color_to_inactive: Color::new_unpremul(0., 1., 0., 0.),
++            fade: 1.,
++            angle: 0.,
++            geometry: Rectangle::from_size(area.size),
++            border_width: 0.,
++            corner_radius: CornerRadius::default(),
++            scale: 1.,
++            alpha: 1.,
++        })
+         .with_location(area.loc)]
+         .into_iter()
+         .map(|elem| Box::new(elem) as _)
+diff --git a/niri-visual-tests/src/cases/gradient_oklch_decreasing.rs b/niri-visual-tests/src/cases/gradient_oklch_decreasing.rs
+index fb604fae..b571afdb 100644
+--- a/niri-visual-tests/src/cases/gradient_oklch_decreasing.rs
++++ b/niri-visual-tests/src/cases/gradient_oklch_decreasing.rs
+@@ -1,4 +1,4 @@
+-use niri::render_helpers::border::BorderRenderElement;
++use niri::render_helpers::border::{BorderRenderElement, BorderRenderParams};
+ use niri_config::{
+     Color, CornerRadius, GradientColorSpace, GradientInterpolation, HueInterpolation,
+ };
+@@ -33,19 +33,22 @@ impl TestCase for GradientOklchDecreasing {
+         let size = (size.w - a * 2, size.h - b * 2);
+         let area = Rectangle::new(Point::from((a, b)), Size::from(size)).to_f64();
+ 
+-        [BorderRenderElement::new(
+-            area.size,
+-            Rectangle::from_size(area.size),
+-            self.gradient_format,
+-            Color::new_unpremul(1., 0., 0., 1.),
+-            Color::new_unpremul(0., 1., 0., 1.),
+-            0.,
+-            Rectangle::from_size(area.size),
+-            0.,
+-            CornerRadius::default(),
+-            1.,
+-            1.,
+-        )
++        [BorderRenderElement::new(BorderRenderParams {
++            size: area.size,
++            gradient_area: Rectangle::from_size(area.size),
++            gradient_format: self.gradient_format,
++            color_from: Color::new_unpremul(1., 0., 0., 1.),
++            color_to: Color::new_unpremul(0., 1., 0., 1.),
++            color_from_inactive: Color::new_unpremul(1., 0., 0., 1.),
++            color_to_inactive: Color::new_unpremul(0., 1., 0., 1.),
++            fade: 1.,
++            angle: 0.,
++            geometry: Rectangle::from_size(area.size),
++            border_width: 0.,
++            corner_radius: CornerRadius::default(),
++            scale: 1.,
++            alpha: 1.,
++        })
+         .with_location(area.loc)]
+         .into_iter()
+         .map(|elem| Box::new(elem) as _)
+diff --git a/niri-visual-tests/src/cases/gradient_oklch_increasing.rs b/niri-visual-tests/src/cases/gradient_oklch_increasing.rs
+index 776b0d51..8fdf3d97 100644
+--- a/niri-visual-tests/src/cases/gradient_oklch_increasing.rs
++++ b/niri-visual-tests/src/cases/gradient_oklch_increasing.rs
+@@ -1,4 +1,4 @@
+-use niri::render_helpers::border::BorderRenderElement;
++use niri::render_helpers::border::{BorderRenderElement, BorderRenderParams};
+ use niri_config::{
+     Color, CornerRadius, GradientColorSpace, GradientInterpolation, HueInterpolation,
+ };
+@@ -33,19 +33,22 @@ impl TestCase for GradientOklchIncreasing {
+         let size = (size.w - a * 2, size.h - b * 2);
+         let area = Rectangle::new(Point::from((a, b)), Size::from(size)).to_f64();
+ 
+-        [BorderRenderElement::new(
+-            area.size,
+-            Rectangle::from_size(area.size),
+-            self.gradient_format,
+-            Color::new_unpremul(1., 0., 0., 1.),
+-            Color::new_unpremul(0., 1., 0., 1.),
+-            0.,
+-            Rectangle::from_size(area.size),
+-            0.,
+-            CornerRadius::default(),
+-            1.,
+-            1.,
+-        )
++        [BorderRenderElement::new(BorderRenderParams {
++            size: area.size,
++            gradient_area: Rectangle::from_size(area.size),
++            gradient_format: self.gradient_format,
++            color_from: Color::new_unpremul(1., 0., 0., 1.),
++            color_to: Color::new_unpremul(0., 1., 0., 1.),
++            color_from_inactive: Color::new_unpremul(1., 0., 0., 1.),
++            color_to_inactive: Color::new_unpremul(0., 1., 0., 1.),
++            fade: 1.,
++            angle: 0.,
++            geometry: Rectangle::from_size(area.size),
++            border_width: 0.,
++            corner_radius: CornerRadius::default(),
++            scale: 1.,
++            alpha: 1.,
++        })
+         .with_location(area.loc)]
+         .into_iter()
+         .map(|elem| Box::new(elem) as _)
+diff --git a/niri-visual-tests/src/cases/gradient_oklch_longer.rs b/niri-visual-tests/src/cases/gradient_oklch_longer.rs
+index 870b1175..90c131e0 100644
+--- a/niri-visual-tests/src/cases/gradient_oklch_longer.rs
++++ b/niri-visual-tests/src/cases/gradient_oklch_longer.rs
+@@ -1,4 +1,4 @@
+-use niri::render_helpers::border::BorderRenderElement;
++use niri::render_helpers::border::{BorderRenderElement, BorderRenderParams};
+ use niri_config::{
+     Color, CornerRadius, GradientColorSpace, GradientInterpolation, HueInterpolation,
+ };
+@@ -33,19 +33,22 @@ impl TestCase for GradientOklchLonger {
+         let size = (size.w - a * 2, size.h - b * 2);
+         let area = Rectangle::new(Point::from((a, b)), Size::from(size)).to_f64();
+ 
+-        [BorderRenderElement::new(
+-            area.size,
+-            Rectangle::from_size(area.size),
+-            self.gradient_format,
+-            Color::new_unpremul(1., 0., 0., 1.),
+-            Color::new_unpremul(0., 1., 0., 1.),
+-            0.,
+-            Rectangle::from_size(area.size),
+-            0.,
+-            CornerRadius::default(),
+-            1.,
+-            1.,
+-        )
++        [BorderRenderElement::new(BorderRenderParams {
++            size: area.size,
++            gradient_area: Rectangle::from_size(area.size),
++            gradient_format: self.gradient_format,
++            color_from: Color::new_unpremul(1., 0., 0., 1.),
++            color_to: Color::new_unpremul(0., 1., 0., 1.),
++            color_from_inactive: Color::new_unpremul(1., 0., 0., 1.),
++            color_to_inactive: Color::new_unpremul(0., 1., 0., 1.),
++            fade: 1.,
++            angle: 0.,
++            geometry: Rectangle::from_size(area.size),
++            border_width: 0.,
++            corner_radius: CornerRadius::default(),
++            scale: 1.,
++            alpha: 1.,
++        })
+         .with_location(area.loc)]
+         .into_iter()
+         .map(|elem| Box::new(elem) as _)
+diff --git a/niri-visual-tests/src/cases/gradient_oklch_shorter.rs b/niri-visual-tests/src/cases/gradient_oklch_shorter.rs
+index 5622ac35..ec0b2e71 100644
+--- a/niri-visual-tests/src/cases/gradient_oklch_shorter.rs
++++ b/niri-visual-tests/src/cases/gradient_oklch_shorter.rs
+@@ -1,4 +1,4 @@
+-use niri::render_helpers::border::BorderRenderElement;
++use niri::render_helpers::border::{BorderRenderElement, BorderRenderParams};
+ use niri_config::{
+     Color, CornerRadius, GradientColorSpace, GradientInterpolation, HueInterpolation,
+ };
+@@ -33,19 +33,22 @@ impl TestCase for GradientOklchShorter {
+         let size = (size.w - a * 2, size.h - b * 2);
+         let area = Rectangle::new(Point::from((a, b)), Size::from(size)).to_f64();
+ 
+-        [BorderRenderElement::new(
+-            area.size,
+-            Rectangle::from_size(area.size),
+-            self.gradient_format,
+-            Color::new_unpremul(1., 0., 0., 1.),
+-            Color::new_unpremul(0., 1., 0., 1.),
+-            0.,
+-            Rectangle::from_size(area.size),
+-            0.,
+-            CornerRadius::default(),
+-            1.,
+-            1.,
+-        )
++        [BorderRenderElement::new(BorderRenderParams {
++            size: area.size,
++            gradient_area: Rectangle::from_size(area.size),
++            gradient_format: self.gradient_format,
++            color_from: Color::new_unpremul(1., 0., 0., 1.),
++            color_to: Color::new_unpremul(0., 1., 0., 1.),
++            color_from_inactive: Color::new_unpremul(1., 0., 0., 1.),
++            color_to_inactive: Color::new_unpremul(0., 1., 0., 1.),
++            fade: 1.,
++            angle: 0.,
++            geometry: Rectangle::from_size(area.size),
++            border_width: 0.,
++            corner_radius: CornerRadius::default(),
++            scale: 1.,
++            alpha: 1.,
++        })
+         .with_location(area.loc)]
+         .into_iter()
+         .map(|elem| Box::new(elem) as _)
+diff --git a/niri-visual-tests/src/cases/gradient_srgb.rs b/niri-visual-tests/src/cases/gradient_srgb.rs
+index 4afc69b6..68c5409b 100644
+--- a/niri-visual-tests/src/cases/gradient_srgb.rs
++++ b/niri-visual-tests/src/cases/gradient_srgb.rs
+@@ -1,4 +1,4 @@
+-use niri::render_helpers::border::BorderRenderElement;
++use niri::render_helpers::border::{BorderRenderElement, BorderRenderParams};
+ use niri_config::{
+     Color, CornerRadius, GradientColorSpace, GradientInterpolation, HueInterpolation,
+ };
+@@ -33,19 +33,22 @@ impl TestCase for GradientSrgb {
+         let size = (size.w - a * 2, size.h - b * 2);
+         let area = Rectangle::new(Point::from((a, b)), Size::from(size)).to_f64();
+ 
+-        [BorderRenderElement::new(
+-            area.size,
+-            Rectangle::from_size(area.size),
+-            self.gradient_format,
+-            Color::new_unpremul(1., 0., 0., 1.),
+-            Color::new_unpremul(0., 1., 0., 1.),
+-            0.,
+-            Rectangle::from_size(area.size),
+-            0.,
+-            CornerRadius::default(),
+-            1.,
+-            1.,
+-        )
++        [BorderRenderElement::new(BorderRenderParams {
++            size: area.size,
++            gradient_area: Rectangle::from_size(area.size),
++            gradient_format: self.gradient_format,
++            color_from: Color::new_unpremul(1., 0., 0., 1.),
++            color_to: Color::new_unpremul(0., 1., 0., 1.),
++            color_from_inactive: Color::new_unpremul(1., 0., 0., 1.),
++            color_to_inactive: Color::new_unpremul(0., 1., 0., 1.),
++            fade: 1.,
++            angle: 0.,
++            geometry: Rectangle::from_size(area.size),
++            border_width: 0.,
++            corner_radius: CornerRadius::default(),
++            scale: 1.,
++            alpha: 1.,
++        })
+         .with_location(area.loc)]
+         .into_iter()
+         .map(|elem| Box::new(elem) as _)
+diff --git a/niri-visual-tests/src/cases/gradient_srgb_alpha.rs b/niri-visual-tests/src/cases/gradient_srgb_alpha.rs
+index 1cb602fa..0043a22b 100644
+--- a/niri-visual-tests/src/cases/gradient_srgb_alpha.rs
++++ b/niri-visual-tests/src/cases/gradient_srgb_alpha.rs
+@@ -1,4 +1,4 @@
+-use niri::render_helpers::border::BorderRenderElement;
++use niri::render_helpers::border::{BorderRenderElement, BorderRenderParams};
+ use niri_config::{Color, CornerRadius, GradientColorSpace, GradientInterpolation};
+ use smithay::backend::renderer::element::RenderElement;
+ use smithay::backend::renderer::gles::GlesRenderer;
+@@ -31,19 +31,22 @@ impl TestCase for GradientSrgbAlpha {
+         let size = (size.w - a * 2, size.h - b * 2);
+         let area = Rectangle::new(Point::from((a, b)), Size::from(size)).to_f64();
+ 
+-        [BorderRenderElement::new(
+-            area.size,
+-            Rectangle::from_size(area.size),
+-            self.gradient_format,
+-            Color::new_unpremul(1., 0., 0., 1.),
+-            Color::new_unpremul(0., 1., 0., 0.),
+-            0.,
+-            Rectangle::from_size(area.size),
+-            0.,
+-            CornerRadius::default(),
+-            1.,
+-            1.,
+-        )
++        [BorderRenderElement::new(BorderRenderParams {
++            size: area.size,
++            gradient_area: Rectangle::from_size(area.size),
++            gradient_format: self.gradient_format,
++            color_from: Color::new_unpremul(1., 0., 0., 1.),
++            color_to: Color::new_unpremul(0., 1., 0., 0.),
++            color_from_inactive: Color::new_unpremul(1., 0., 0., 1.),
++            color_to_inactive: Color::new_unpremul(0., 1., 0., 0.),
++            fade: 1.,
++            angle: 0.,
++            geometry: Rectangle::from_size(area.size),
++            border_width: 0.,
++            corner_radius: CornerRadius::default(),
++            scale: 1.,
++            alpha: 1.,
++        })
+         .with_location(area.loc)]
+         .into_iter()
+         .map(|elem| Box::new(elem) as _)
+diff --git a/niri-visual-tests/src/cases/gradient_srgblinear.rs b/niri-visual-tests/src/cases/gradient_srgblinear.rs
+index 5c24275f..3f2bed90 100644
+--- a/niri-visual-tests/src/cases/gradient_srgblinear.rs
++++ b/niri-visual-tests/src/cases/gradient_srgblinear.rs
+@@ -1,4 +1,4 @@
+-use niri::render_helpers::border::BorderRenderElement;
++use niri::render_helpers::border::{BorderRenderElement, BorderRenderParams};
+ use niri_config::{
+     Color, CornerRadius, GradientColorSpace, GradientInterpolation, HueInterpolation,
+ };
+@@ -33,19 +33,22 @@ impl TestCase for GradientSrgbLinear {
+         let size = (size.w - a * 2, size.h - b * 2);
+         let area = Rectangle::new(Point::from((a, b)), Size::from(size)).to_f64();
+ 
+-        [BorderRenderElement::new(
+-            area.size,
+-            Rectangle::from_size(area.size),
+-            self.gradient_format,
+-            Color::new_unpremul(1., 0., 0., 1.),
+-            Color::new_unpremul(0., 1., 0., 1.),
+-            0.,
+-            Rectangle::from_size(area.size),
+-            0.,
+-            CornerRadius::default(),
+-            1.,
+-            1.,
+-        )
++        [BorderRenderElement::new(BorderRenderParams {
++            size: area.size,
++            gradient_area: Rectangle::from_size(area.size),
++            gradient_format: self.gradient_format,
++            color_from: Color::new_unpremul(1., 0., 0., 1.),
++            color_to: Color::new_unpremul(0., 1., 0., 1.),
++            color_from_inactive: Color::new_unpremul(1., 0., 0., 1.),
++            color_to_inactive: Color::new_unpremul(0., 1., 0., 1.),
++            fade: 1.,
++            angle: 0.,
++            geometry: Rectangle::from_size(area.size),
++            border_width: 0.,
++            corner_radius: CornerRadius::default(),
++            scale: 1.,
++            alpha: 1.,
++        })
+         .with_location(area.loc)]
+         .into_iter()
+         .map(|elem| Box::new(elem) as _)
+diff --git a/niri-visual-tests/src/cases/gradient_srgblinear_alpha.rs b/niri-visual-tests/src/cases/gradient_srgblinear_alpha.rs
+index 59b8fbce..ea9f570e 100644
+--- a/niri-visual-tests/src/cases/gradient_srgblinear_alpha.rs
++++ b/niri-visual-tests/src/cases/gradient_srgblinear_alpha.rs
+@@ -1,4 +1,4 @@
+-use niri::render_helpers::border::BorderRenderElement;
++use niri::render_helpers::border::{BorderRenderElement, BorderRenderParams};
+ use niri_config::{Color, CornerRadius, GradientColorSpace, GradientInterpolation};
+ use smithay::backend::renderer::element::RenderElement;
+ use smithay::backend::renderer::gles::GlesRenderer;
+@@ -31,19 +31,22 @@ impl TestCase for GradientSrgbLinearAlpha {
+         let size = (size.w - a * 2, size.h - b * 2);
+         let area = Rectangle::new(Point::from((a, b)), Size::from(size)).to_f64();
+ 
+-        [BorderRenderElement::new(
+-            area.size,
+-            Rectangle::from_size(area.size),
+-            self.gradient_format,
+-            Color::new_unpremul(1., 0., 0., 1.),
+-            Color::new_unpremul(0., 1., 0., 0.),
+-            0.,
+-            Rectangle::from_size(area.size),
+-            0.,
+-            CornerRadius::default(),
+-            1.,
+-            1.,
+-        )
++        [BorderRenderElement::new(BorderRenderParams {
++            size: area.size,
++            gradient_area: Rectangle::from_size(area.size),
++            gradient_format: self.gradient_format,
++            color_from: Color::new_unpremul(1., 0., 0., 1.),
++            color_to: Color::new_unpremul(0., 1., 0., 0.),
++            color_from_inactive: Color::new_unpremul(1., 0., 0., 1.),
++            color_to_inactive: Color::new_unpremul(0., 1., 0., 0.),
++            fade: 1.,
++            angle: 0.,
++            geometry: Rectangle::from_size(area.size),
++            border_width: 0.,
++            corner_radius: CornerRadius::default(),
++            scale: 1.,
++            alpha: 1.,
++        })
+         .with_location(area.loc)]
+         .into_iter()
+         .map(|elem| Box::new(elem) as _)
+diff --git a/niri-visual-tests/src/cases/layout.rs b/niri-visual-tests/src/cases/layout.rs
+index 81a936d1..b3af6779 100644
+--- a/niri-visual-tests/src/cases/layout.rs
++++ b/niri-visual-tests/src/cases/layout.rs
+@@ -66,6 +66,8 @@ impl Layout {
+                     active_gradient: None,
+                     inactive_gradient: None,
+                     urgent_gradient: None,
++                    gradient_spin_speed: 0.,
++                    morph_behind_windows: false,
+                 },
+                 ..Default::default()
+             },
+diff --git a/niri-visual-tests/src/cases/tile.rs b/niri-visual-tests/src/cases/tile.rs
+index d023ff8c..50dbe7e7 100644
+--- a/niri-visual-tests/src/cases/tile.rs
++++ b/niri-visual-tests/src/cases/tile.rs
+@@ -117,6 +117,7 @@ impl TestCase for Tile {
+         let location = Point::from((size.w - tile_size.w, size.h - tile_size.h)).downscale(2.);
+ 
+         self.tile.update_render_elements(
++            true,
+             true,
+             Rectangle::new(Point::from((-location.x, -location.y)), size.to_logical(1.)),
+         );
+diff --git a/plan.md b/plan.md
+new file mode 100644
+index 00000000..890b229d
+--- /dev/null
++++ b/plan.md
+@@ -0,0 +1,236 @@
++# Plan: shader-side focus ring fade, gradient drift, and morph
++
++Reimplements the *features* of niri-wm/niri#3577 (focus ring fade + gradient rotation), plus an
++Excel-style morph, with the animation math living in the decoration shader (`border.frag`) rather
++than CPU-side layer hacks. Prod/upstreamable bar.
++
++## Status
++
++- **Phase 1: complete.** Config (`niri-config`: animations + appearance fields + tests), shader
++  (`border.frag` crossfade + in-shader projection, `BorderRenderParams` bundle), layout (tile fade
++  anims, ownership alpha, `GradientSpin`, render gates, ongoing scheduling), call sites, docs
++  (wiki Animations + Layout, `resources/default-config.kdl`). Verified: `cargo fmt --all -- --check`,
++  `cargo clippy --all --all-targets`, `cargo test --all`, and all `ci.yml` `cargo check`
++  feature-combination jobs pass.
++- **Phase 2: complete.** `src/layout/focus_ring_morph.rs` element (rect+radius lerp,
++  retarget-from-current, gradient spin reuse), monitor integration (`update_focus_ring_morph`
++  before tile updates: same-workspace/fullscreen/eligibility gating, source+target ring
++  suppression via `Tile::ring_suppressed`, settle-on-completion handoff via `settle_ring_alpha`),
++  render at insert-hint slot (pass 1, over) or pass 0 (behind, per `morph-behind-windows`), joined
++  `Monitor::are_animations_ongoing`. Docs were written with Phase 1.
++- **Code review: done** (self-review of the full uncommitted diff; no subagents per user). Two
++  defects found and fixed:
++  1. *Cross-lane fade-out cut:* when focus moved floating↔tiling, the outgoing lane's ring
++     ownership fade started but never rendered (workspace lane gate was purely lane-active) →
++     ring vanished instantly. Fixed with `ScrollingSpace/FloatingSpace::any_ring_fading()` ORed
++     into the workspace lane gates (workspace.rs `render_scrolling`/`render_floating`).
++  2. *Morph on inactive monitors:* the morph ring rendered with hardcoded active colors on
++     inactive monitors, and `last_active_window` could go stale while inactive (risking a start
++     from a stale rect on activation). Fixed: `update_focus_ring_morph` early-returns when
++     `!is_active` — cancels any morph without settling (tile color fades take over) and resyncs
++     `last_active_window` via the new `active_window_snapshot()` helper.
++- **Verified (post-review):** `cargo fmt --all -- --check`, `cargo clippy --workspace
++  --all-targets`, `cargo test --workspace` (205+19+wiki+ipc all green), and the full `ci.yml`
++  `cargo check` feature matrix (`--no-default-features` [+ dbus / systemd / dinit /
++  xdp-gnome-screencast], plain).
++- **Remaining:** manual eyeball run (nested/winit; can't do headless), PR #3577 test-plan
++  reconciliation (Verification section below).
++
++### Review findings accepted as-is (documented limitations, not fixed)
++
++- Representative gradient for mid-fade comes from the `show_active` side; if active/inactive
++  gradients differ in `relative-to`/angle, the gradient area snaps once when the fade completes
++  (asymmetric configs only; invisible in practice).
++- Gradient spin freezes wherever the ring/border shows inactive colors (inactive monitors,
++  unfocused borders) — matches the documented "rotates while showing active colors".
++- The morph element uses the global `layout { focus-ring { ... } }` config, ignoring per-window
++  focus-ring rule overrides for its duration.
++- Rule-level `morph-behind-windows` can only be turned on from a `window-rule` (knuffel bool,
++  absent == false, merged with `|=`), not off.
++- `clear_ring_suppressions` walks all tiles every monitor update — same order as
++  `update_render_elements` itself, negligible.
++- No automated tests introspect the new render-element state (layout tests assert
++  focus/geometry only); visual behavior is covered by the manual test plan only.
++
++### Phase 1 implementation notes (deviations / refinements)
++
++- `BorderRule` **does** carry `gradient_spin_speed` + `morph_behind_windows` (shared kdl parse type
++  for `focus-ring {}` / `border {}`; MergeWith rounds them through). This supersedes the "no
++  BorderRule changes / not rule-overridable" line below.
++- Anim retarget starts `from` = currently displayed value (not the opposite endpoint), so a focus
++  change mid-fade doesn't jump.
++- Ring render has two axes: `ring_fade` (active colors, crossfade) and `ring_alpha` (ownership,
++  fades the ring out when another window takes it — today's inactive ring stays visible). Render
++  gate: `(focus_ring || tile.is_ring_fading()) && expanded_progress < 1.`; ownership loses the
++  workspace-level gate (`focus_ring && (first || fading)` / floating equivalent), and each lane
++  additionally stays open while *that lane* has any ring fading
++  (`any_ring_fading()`, so cross-lane floating↔tiling handoffs fade instead of cutting).
++- `GradientSpin` uses a staleness cutoff (250 ms) instead of an explicit stop flag: a tile that
++  stops being updated stops advancing and drops out of `are_animations_ongoing`.
++- Unmap snapshots call `Tile::settle_decoration_fades()` first (unfocused look, no restart of fades
++  on the still-live tile).
++- `is_active` remains the representative-color selector (`show_active = is_active || fade > 0.`).
++
++## Decision log (settled)
++
++| # | Decision | Choice |
++|---|----------|--------|
++| Q1 | Scope / sequencing | Same branch, sequenced: **Phase 1 = fade + idle drift**, **Phase 2 = morph** on top |
++| Q2 | Idle drift semantics | Continuous slow angle drift while the ring is visible; policy is CPU-side (shader only paints uniforms); no input-idle subsystem |
++| Q3' | Fade + morph together | **Complementary lanes**: morph slides the ring (same workspace); fade crossfades *border* colors always and owns the ring wherever morph can't run; no double-stacked animations on one element |
++| Q4 | Morph eligibility | **Same workspace only**; everything else (cross-workspace, cross-monitor, fullscreen target) falls back to fade |
++| Q5 | Feature spread | Fade + drift on **both** `focus-ring {}` and `border {}`; morph is focus-ring only |
++| Q6 | Travel z-order | **Over content** (insert-hint slot: above tiling, below floating), **configurable** via option to go behind |
++| Q7 | Config shape | **niri convention**: timing + curves under `animations {}` (inherits `off` + `slowdown`); rates/flags under `focus-ring {}` / `border {}` |
++| Q2 bar | Quality | Prod / upstreamable: docs, parse tests, clippy clean |
++
++### Edge-case policies (assumed unless objected)
++
++- Mid-morph refocus: retarget from the ring's *current* animated rect.
++- Target closes / goes fullscreen mid-morph: remaining travel collapses to a short fade-out.
++- Urgency: urgent color wins immediately (fade factor neutralised, both color pairs = urgent).
++- No per-window-rule overrides of fade/morph *timing* (timing lives under `animations {}` only).
++  Appearance fields (`gradient-spin-speed`, `morph-behind-windows`) do live on `BorderRule`, so they
++  *are* rule-overridable (supersedes the earlier "no BorderRule changes" note; BorderRule is the
++  shared kdl parse type for both blocks).
++- Shader-unavailable fallback: solid-colour path still fades (alpha) and morphs (rect resize);
++  drift is a no-op on flat colour.
++- Drift continues during fade/morph (it's the idle state, not an ended animation).
++- Drift angle is absolute (`now * speed`): config change mid-run may jump — accepted.
++
++## Config surface (final)
++
++```kdl
++animations {
++    focus-ring-fade { duration-ms 500 curve "ease-out-cubic" }   // default duration 0 = off
++    border-fade     { duration-ms 500 curve "ease-out-cubic" }   // default duration 0 = off
++    focus-ring-morph { duration-ms 250 curve "ease-out-cubic" }  // default duration 0 = off
++}
++
++layout {
++    focus-ring {
++        gradient-spin-speed 90      // deg/sec, default 0 = off
++        // morph-behind-windows     // bare flag: travel behind windows instead of over
++    }
++    border {
++        gradient-spin-speed 90
++    }
++}
++```
++
++## Phase 1 — shader-side fade + idle drift
++
++### 1a. Config (`niri-config`)
++
++- `src/animations.rs`: add `focus_ring_fade`, `border_fade` (`Animation`/`EasingParams` wrappers like
++  `HorizontalViewMovementAnim`), to `Animations` + `AnimationsPart` + `Default`, plus parse arms in
++  the existing `duration-ms`/`curve` node loop.
++- `src/appearance.rs`: add `gradient_spin_speed: f64` to `FocusRing` and `Border` (default 0.);
++  `morph_behind_windows: bool` to `FocusRing` only (bare kdl flag). Update
++  `From<Border> for FocusRing` / `From<FocusRing> for Border`.
++- **No** `BorderRule` / `FocusRingRule` changes (no per-window overrides).
++- `src/lib.rs`: parse tests for the new nodes (success + defaults + duplicate handling).
++
++### 1b. Shader (`src/render_helpers`)
++
++- `shaders/border.frag`:
++  - New uniforms: `color_from_inactive`, `color_to_inactive` (vec4), `fade` (float). Effective
++    endpoints = `color_mix(active_pair, inactive_pair, fade)` per endpoint, then existing
++    `gradient_color()` — **colorspace-correct crossfade** (srgb/oklab/oklch) that PR #3577's
++    alpha-over overlay cannot do.
++  - Gradient direction in-shader: replace CPU-computed `grad_vec` with `grad_angle` + `grad_area_size`
++    (vec2); move the diagonal-sign/projection math from `BorderRenderElement::update_inner` into GLSL.
++    Drift then uploads one plain f32 per frame.
++- `shaders/mod.rs`: keep the Border `UniformName` list exactly in sync (missing name →
++  `UnknownUniform` at draw; optimised-out uniforms are fine — location -1 is a GL no-op).
++- `border.rs`: `Parameters` + `update()` gain inactive color pair + `fade`; `angle` now uploaded as
++  `grad_angle` (drift offset folded into it by caller). Consider bundling the ever-growing
++  `update()` arguments into a small params struct (prod cleanliness).
++
++### 1c. Layout (`src/layout`)
++
++- `focus_ring.rs`:
++  - `update_render_elements` gains `fade: f32` and `gradient_angle_offset: f32` (bundle to avoid
++    another `too_many_arguments`). Chooses active/inactive color+gradient pairs from config; urgent
++    → both pairs = urgent; forces `use_border_shader` while `fade ∉ {0, 1}` (instant cut if shader
++    unavailable = today's behaviour).
++  - Angle: `((gradient.angle - 90. + offset)` per current code (`focus_ring.rs:189,208`).
++- `tile.rs`:
++  - State: `border_fade_anim`, `ring_fade_anim: Option<Animation>`, `was_border_active`,
++    `was_ring_active` (PR's pattern **minus** the `border_overlay` second-layer hack).
++  - `update_render_elements`: start/restart `Animation` from
++    `self.options.animations.{border,focus_ring}_fade` on active change; compute fade factor;
++    compute drift offset from `self.clock.now()` when ring visible && speed > 0.
++  - Render gating: draw focus ring while fade-out is in progress (`focus_ring || fade_ongoing`,
++    the PR's second-commit fix).
++  - Ongoing/redraw scheduling: fade + drift conditions must reach
++    `Tile::are_animations_ongoing` → `Monitor` → `Layout::are_animations_ongoing(output)` →
++    `niri.rs:4759 unfinished_animations_remain`. **Checkpoint**: verify which chain
++    (`are_animations_ongoing` vs `are_transitions_ongoing`) feeds workspace garbage collection —
++    drift must not block workspace cleanup; prefer the animations chain.
++- `insert_hint_element.rs`, `ui/mru.rs`: struct-literal + call-site updates (new fields; pass
++  `fade = 1.`, `angle_offset = 0.`).
++- Hot reload: new fields flow via existing `update_options` / `update_config` paths.
++
++### 1d. Docs (Phase 1)
++
++- `docs/wiki/Configuration:-Animations.md`: the two new animation entries (follow
++  `Development:-Documenting-niri.md` conventions; `Since:` tag with next release version TBD).
++- `docs/wiki/Configuration:-Layout.md`: `gradient-spin-speed` under focus-ring/border with an honest
++  note: enabled = the ring re-renders every frame while a window is focused (design-principles
++  tension, opt-in).
++
++## Phase 2 — morph
++
++### 2a. Element
++
++- New `src/layout/focus_ring_morph.rs`: monitor-level struct owning a `FocusRing` (reuses
++  gradient/radius/shader support wholesale) + `Animation` + from/to rects. Modelled on
++  `InsertHintElement` (`src/layout/insert_hint_element.rs`).
++
++### 2b. Monitor integration (`src/layout/monitor.rs`)
++
++- In `update_render_elements` (`monitor.rs:1088`): track `last_active_window` id + a rect snapshot
++  (via `Workspace::active_window_visual_rectangle`, `workspace.rs:1642`) per update. On change:
++  - both windows on the active workspace, morph duration > 0, ring eligible (not expanded/fullscreen,
++    focus-ring not off, width > 0) → start morph;
++  - else → no transition; Phase 1 per-tile fade handles it (complementary lanes).
++- Suppression: while the transition ring owns the ring, suppress the source/target tiles' own rings
++  (flag threaded monitor → workspace → tile render) — no double ring.
++- Render: push at the insert-hint slot inside `render_workspaces` (pass 1, `monitor.rs:1783`) =
++  **over**; if `morph-behind-windows`, push at the bottom of the stack instead. Wrap with the same
++  `push!()` crop + `scale_relocate` machinery (overview zoom correct for free).
++- `gradient relative-to="workspace-view"`: pass view_rect through as per-tile rings do.
++- Ongoing: morph animation joins `Monitor::are_animations_ongoing` (`monitor.rs:1073`).
++- Edge policies per the assumed list (retarget from current rect; collapse to fade-out on
++  close/fullscreen).
++
++### 2c. Docs (Phase 2)
++
++- `Configuration:-Animations.md`: `focus-ring-morph`.
++- `Configuration:-Layout.md`: `morph-behind-windows`, same-workspace-only scope, fallback behaviour.
++
++## Verification
++
++1. Read `.github/workflows` first and run exactly what CI runs (fmt, clippy, tests).
++2. `cargo test` — niri-config parse tests, layout tests (`src/layout/tests.rs`, `tests/binds`).
++3. Config validation: `niri msg validate-config` (or equivalent — confirm command at impl time).
++4. Manual: check `Development:-Developing-niri.md` for a nested/winit run path; if available,
++   eyeball Phase 1 (fade colors incl. oklch gradient, drift, `animations { off }` kills both) and
++   Phase 2 (adjacent/non-adjacent/same-size/different-size windows, refocus mid-morph, close
++   mid-morph, cross-workspace fallback, over/behind flag, overview zoom).
++5. Re-read PR #3577's test plan and confirm every item is covered or deliberately superseded.
++
++## Risks (upstream)
++
++- **Drift = permanent per-frame redraw while focused** — against the "long-running shaders must not
++  damage every frame" design principle; opt-in + rate 0 default is the mitigation. May still draw
++  reviewer objection.
++- **Over-content travel** — transient decoration over surfaces; default + escape-hatch flag.
++- Uniform-list sync between `border.frag` / `shaders/mod.rs` / `border.rs`.
++- The `are_transitions_ongoing` workspace-GC checkpoint.
++
++## Sequencing (user handles VCS)
++
++Phase 1: config → shader uniforms → tile fade state → drift + scheduling → docs.
++Phase 2: morph element → monitor integration + suppression → z-order flag → docs.
+diff --git a/resources/default-config.kdl b/resources/default-config.kdl
+index 1c4fc0e5..a6346a80 100644
+--- a/resources/default-config.kdl
++++ b/resources/default-config.kdl
+@@ -190,6 +190,14 @@ layout {
+         // To do that, set relative-to="workspace-view".
+         //
+         // inactive-gradient from="#505050" to="#808080" angle=45 relative-to="workspace-view"
++
++        // Rotate the gradient slowly, in degrees per second.
++        // gradient-spin-speed 45
++
++        // With the focus-ring-morph animation enabled (see below), the focus ring slides
++        // between windows over their content by default. Set this flag to draw it behind
++        // windows instead.
++        // morph-behind-windows
+     }
+ 
+     // You can also add a border. It's similar to the focus ring, but always visible.
+@@ -211,6 +219,9 @@ layout {
+         // active-gradient from="#e5989b" to="#ffb4a2" angle=45 relative-to="workspace-view" in="oklch longer hue"
+ 
+         // inactive-gradient from="#505050" to="#808080" angle=45 relative-to="workspace-view"
++
++        // Rotate the gradient slowly, in degrees per second.
++        // gradient-spin-speed 45
+     }
+ 
+     // You can enable drop shadows for windows.
+@@ -303,6 +314,25 @@ animations {
+ 
+     // Slow down all animations by this factor. Values below 1 speed them up instead.
+     // slowdown 3.0
++
++    // Crossfade focus ring / border colors when focus changes.
++    // Disabled by default; set a duration to enable.
++    // focus-ring-fade {
++    //     duration-ms 500
++    //     curve "ease-out-cubic"
++    // }
++    //
++    // border-fade {
++    //     duration-ms 500
++    //     curve "ease-out-cubic"
++    // }
++
++    // Slide the focus ring between windows on the same workspace instead of fading.
++    // Disabled by default; set a duration to enable.
++    // focus-ring-morph {
++    //     duration-ms 250
++    //     curve "ease-out-cubic"
++    // }
+ }
+ 
+ // Window rules let you adjust behavior for individual windows.
+diff --git a/src/layout/floating.rs b/src/layout/floating.rs
+index 5fe1d29a..9993a4a6 100644
+--- a/src/layout/floating.rs
++++ b/src/layout/floating.rs
+@@ -269,6 +269,7 @@ impl<W: LayoutElement> FloatingSpace<W> {
+     pub fn update_render_elements(
+         &mut self,
+         is_active: bool,
++        ring_owned: bool,
+         view_rect: Rectangle<f64, Logical>,
+         layer: RenderLayer,
+     ) {
+@@ -281,10 +282,11 @@ impl<W: LayoutElement> FloatingSpace<W> {
+ 
+             let id = tile.window().id();
+             let is_active = is_active && Some(id) == active.as_ref();
++            let ring_owned = ring_owned && Some(id) == active.as_ref();
+ 
+             let mut tile_view_rect = view_rect;
+             tile_view_rect.loc -= offset + tile.render_offset();
+-            tile.update_render_elements(is_active, tile_view_rect);
++            tile.update_render_elements(is_active, ring_owned, tile_view_rect);
+         }
+     }
+ 
+@@ -296,6 +298,32 @@ impl<W: LayoutElement> FloatingSpace<W> {
+         self.tiles.iter_mut()
+     }
+ 
++    pub fn set_ring_suppressed(&mut self, window: &W::Id, suppressed: bool) {
++        for tile in self.tiles_mut() {
++            if tile.window().id() == window {
++                tile.ring_suppressed = suppressed;
++            }
++        }
++    }
++
++    pub fn clear_ring_suppressions(&mut self) {
++        for tile in self.tiles_mut() {
++            tile.ring_suppressed = false;
++        }
++    }
++
++    pub fn settle_ring_alpha(&mut self, window: &W::Id) {
++        for tile in self.tiles_mut() {
++            if tile.window().id() == window {
++                tile.settle_ring_alpha();
++            }
++        }
++    }
++
++    pub fn any_ring_fading(&self) -> bool {
++        self.tiles.iter().any(|tile| tile.is_ring_fading())
++    }
++
+     pub fn tiles_with_offsets(&self) -> impl Iterator<Item = (&Tile<W>, Point<f64, Logical>)> + '_ {
+         let offsets = self.data.iter().map(|d| d.logical_pos);
+         zip(&self.tiles, offsets)
+@@ -1093,8 +1121,10 @@ impl<W: LayoutElement> FloatingSpace<W> {
+                 continue;
+             }
+ 
+-            // For the active tile, draw the focus ring.
+-            let focus_ring = focus_ring && Some(tile.window().id()) == active.as_ref();
++            // For the active tile, draw the focus ring. Tiles that are mid-fade keep rendering
++            // their ring even after losing ownership.
++            let focus_ring = focus_ring
++                && (Some(tile.window().id()) == active.as_ref() || tile.is_ring_fading());
+ 
+             let xray_pos = xray_pos.offset(tile_pos);
+             tile.render(ctx.r(), tile_pos, xray_pos, focus_ring, &mut |elem| {
+diff --git a/src/layout/focus_ring.rs b/src/layout/focus_ring.rs
+index b53a5df8..7d369da0 100644
+--- a/src/layout/focus_ring.rs
++++ b/src/layout/focus_ring.rs
+@@ -5,7 +5,7 @@ use smithay::backend::renderer::element::{Element as _, Kind};
+ use smithay::utils::{Logical, Point, Rectangle, Size};
+ 
+ use crate::niri_render_elements;
+-use crate::render_helpers::border::BorderRenderElement;
++use crate::render_helpers::border::{BorderRenderElement, BorderRenderParams};
+ use crate::render_helpers::renderer::NiriRenderer;
+ use crate::render_helpers::solid_color::{SolidColorBuffer, SolidColorRenderElement};
+ 
+@@ -65,14 +65,20 @@ impl FocusRing {
+         radius: CornerRadius,
+         scale: f64,
+         alpha: f32,
++        fade: f32,
++        gradient_angle_offset: f32,
+     ) {
+         let width = self.config.width;
+         self.full_size = win_size + Size::from((width, width)).upscale(2.);
+         self.is_border = is_border;
+ 
++        // During a fade-out, keep showing active colors until the fade completes; this also
++        // matches what the solid-color fallback path renders while the border shader is missing.
++        let show_active = is_active || fade > 0.;
++
+         let color = if is_urgent {
+             self.config.urgent_color
+-        } else if is_active {
++        } else if show_active {
+             self.config.active_color
+         } else {
+             self.config.inactive_color
+@@ -84,18 +90,40 @@ impl FocusRing {
+ 
+         let radius = radius.fit_to(self.full_size.w as f32, self.full_size.h as f32);
+ 
+-        let gradient = if is_urgent {
+-            self.config.urgent_gradient
+-        } else if is_active {
+-            self.config.active_gradient
++        // The two color pairs that the shader crossfades between. Urgent wins immediately:
++        // both pairs become the urgent colors, neutralizing the fade.
++        let active = self
++            .config
++            .active_gradient
++            .unwrap_or_else(|| Gradient::from(self.config.active_color));
++        let inactive = self
++            .config
++            .inactive_gradient
++            .unwrap_or_else(|| Gradient::from(self.config.inactive_color));
++        let urgent = self
++            .config
++            .urgent_gradient
++            .unwrap_or_else(|| Gradient::from(self.config.urgent_color));
++        let (active, inactive) = if is_urgent {
++            (urgent, urgent)
+         } else {
+-            self.config.inactive_gradient
++            (active, inactive)
+         };
+ 
+-        self.use_border_shader = radius != CornerRadius::default() || gradient.is_some();
++        // The representative gradient determines the gradient area, interpolation, and base
++        // angle for this frame. Steady states pick the corresponding pair exactly; mid-fade
++        // the pairs may differ in these properties, which is invisible in practice.
++        let gradient = if show_active { active } else { inactive };
++        let has_user_gradient = if show_active {
++            self.config.active_gradient.is_some()
++        } else {
++            self.config.inactive_gradient.is_some()
++        };
+ 
+-        // Set the defaults for solid color + rounded corners.
+-        let gradient = gradient.unwrap_or_else(|| Gradient::from(color));
++        // Use the border shader for gradients, rounded corners, or an in-progress crossfade.
++        // If the shader is missing, the solid-color path renders an instant cut instead.
++        self.use_border_shader =
++            radius != CornerRadius::default() || has_user_gradient || (fade != 0. && fade != 1.);
+ 
+         let full_rect = Rectangle::new(Point::from((-width, -width)), self.full_size);
+         let gradient_area = match gradient.relative_to {
+@@ -121,6 +149,25 @@ impl FocusRing {
+         // * We do not divide anything, only add, subtract and multiply by integers.
+         // * At rendering time, tile positions are rounded to physical pixels.
+ 
++        let angle = ((gradient.angle as f32) - 90.).to_radians() + gradient_angle_offset;
++
++        let params = BorderRenderParams {
++            size: Default::default(),
++            gradient_area: Rectangle::new(gradient_area.loc, gradient_area.size),
++            gradient_format: gradient.in_,
++            color_from: active.from,
++            color_to: active.to,
++            color_from_inactive: inactive.from,
++            color_to_inactive: inactive.to,
++            fade,
++            angle,
++            geometry: Default::default(),
++            border_width: rounded_corner_border_width,
++            corner_radius: radius,
++            scale: scale as f32,
++            alpha,
++        };
++
+         if is_border {
+             let top_left = f64::max(width, ceil(f64::from(radius.top_left)));
+             let top_right = f64::min(
+@@ -180,38 +227,25 @@ impl FocusRing {
+             }
+ 
+             for (border, (loc, size)) in zip(&mut self.borders, zip(self.locations, self.sizes)) {
+-                border.update(
++                border.update(BorderRenderParams {
+                     size,
+-                    Rectangle::new(gradient_area.loc - loc, gradient_area.size),
+-                    gradient.in_,
+-                    gradient.from,
+-                    gradient.to,
+-                    ((gradient.angle as f32) - 90.).to_radians(),
+-                    Rectangle::new(full_rect.loc - loc, full_rect.size),
+-                    rounded_corner_border_width,
+-                    radius,
+-                    scale as f32,
+-                    alpha,
+-                );
++                    gradient_area: Rectangle::new(gradient_area.loc - loc, gradient_area.size),
++                    geometry: Rectangle::new(full_rect.loc - loc, full_rect.size),
++                    ..params
++                });
+             }
+         } else {
+             self.sizes[0] = self.full_size;
+             self.buffers[0].resize(self.sizes[0]);
+             self.locations[0] = Point::from((-width, -width));
+ 
+-            self.borders[0].update(
+-                self.sizes[0],
+-                Rectangle::new(gradient_area.loc - self.locations[0], gradient_area.size),
+-                gradient.in_,
+-                gradient.from,
+-                gradient.to,
+-                ((gradient.angle as f32) - 90.).to_radians(),
+-                Rectangle::new(full_rect.loc - self.locations[0], full_rect.size),
+-                rounded_corner_border_width,
+-                radius,
+-                scale as f32,
+-                alpha,
+-            );
++            let loc = self.locations[0];
++            self.borders[0].update(BorderRenderParams {
++                size: self.sizes[0],
++                gradient_area: Rectangle::new(gradient_area.loc - loc, gradient_area.size),
++                geometry: Rectangle::new(full_rect.loc - loc, full_rect.size),
++                ..params
++            });
+         }
+     }
+ 
+diff --git a/src/layout/focus_ring_morph.rs b/src/layout/focus_ring_morph.rs
+new file mode 100644
+index 00000000..22491f2a
+--- /dev/null
++++ b/src/layout/focus_ring_morph.rs
+@@ -0,0 +1,173 @@
++use niri_config::CornerRadius;
++use smithay::utils::{Logical, Point, Rectangle, Size};
++
++use super::focus_ring::{FocusRing, FocusRingRenderElement};
++use super::tile::GradientSpin;
++use crate::animation::{Animation, Clock};
++use crate::render_helpers::renderer::NiriRenderer;
++
++/// The focus ring travelling between two windows on the same workspace.
++///
++/// While the morph is in progress, the source and target tiles suppress their own focus rings so
++/// that only this element is visible.
++#[derive(Debug)]
++pub struct FocusRingMorphElement {
++    ring: FocusRing,
++    anim: Option<Animation>,
++    spin: GradientSpin,
++    from: Rectangle<f64, Logical>,
++    to: Rectangle<f64, Logical>,
++    from_radius: CornerRadius,
++    to_radius: CornerRadius,
++    render_rect: Rectangle<f64, Logical>,
++}
++
++pub type FocusRingMorphRenderElement = FocusRingRenderElement;
++
++fn lerp(a: f64, b: f64, p: f64) -> f64 {
++    a + (b - a) * p
++}
++
++fn lerp_rect(
++    from: Rectangle<f64, Logical>,
++    to: Rectangle<f64, Logical>,
++    p: f64,
++) -> Rectangle<f64, Logical> {
++    Rectangle::new(
++        Point::from((lerp(from.loc.x, to.loc.x, p), lerp(from.loc.y, to.loc.y, p))),
++        Size::from((
++            lerp(from.size.w, to.size.w, p),
++            lerp(from.size.h, to.size.h, p),
++        )),
++    )
++}
++
++fn lerp_radius(from: CornerRadius, to: CornerRadius, p: f64) -> CornerRadius {
++    let f = |a: f32, b: f32| lerp(f64::from(a), f64::from(b), p) as f32;
++    CornerRadius {
++        top_left: f(from.top_left, to.top_left),
++        top_right: f(from.top_right, to.top_right),
++        bottom_right: f(from.bottom_right, to.bottom_right),
++        bottom_left: f(from.bottom_left, to.bottom_left),
++    }
++}
++
++impl FocusRingMorphElement {
++    pub fn new(config: niri_config::FocusRing) -> Self {
++        Self {
++            ring: FocusRing::new(config),
++            anim: None,
++            spin: GradientSpin::default(),
++            from: Rectangle::default(),
++            to: Rectangle::default(),
++            from_radius: CornerRadius::default(),
++            to_radius: CornerRadius::default(),
++            render_rect: Rectangle::default(),
++        }
++    }
++
++    pub fn update_config(&mut self, config: niri_config::FocusRing) {
++        self.ring.update_config(config);
++    }
++
++    pub fn update_shaders(&mut self) {
++        self.ring.update_shaders();
++    }
++
++    pub fn is_ongoing(&self) -> bool {
++        self.anim.as_ref().is_some_and(|anim| !anim.is_done())
++    }
++
++    pub fn clear(&mut self) {
++        self.anim = None;
++        self.spin = GradientSpin::default();
++    }
++
++    /// The ring's currently displayed rectangle (what to retarget from on a mid-morph refocus).
++    pub fn current_rect(&self) -> Rectangle<f64, Logical> {
++        match &self.anim {
++            Some(anim) => lerp_rect(self.from, self.to, anim.clamped_value()),
++            None => self.to,
++        }
++    }
++
++    pub fn current_radius(&self) -> CornerRadius {
++        match &self.anim {
++            Some(anim) => lerp_radius(self.from_radius, self.to_radius, anim.clamped_value()),
++            None => self.to_radius,
++        }
++    }
++
++    /// Starts a morph from one rectangle to another.
++    pub fn start(
++        &mut self,
++        clock: &Clock,
++        from: Rectangle<f64, Logical>,
++        to: Rectangle<f64, Logical>,
++        from_radius: CornerRadius,
++        to_radius: CornerRadius,
++        config: niri_config::Animation,
++    ) {
++        self.from = from;
++        self.to = to;
++        self.from_radius = from_radius;
++        self.to_radius = to_radius;
++        self.anim = Some(Animation::new(clock.clone(), 0., 1., 0., config));
++        self.spin = GradientSpin::default();
++    }
++
++    /// Changes the destination rect mid-morph (e.g. the target window resized).
++    pub fn set_target(&mut self, to: Rectangle<f64, Logical>, to_radius: CornerRadius) {
++        self.to = to;
++        self.to_radius = to_radius;
++    }
++
++    pub fn update_render_elements(
++        &mut self,
++        view_size: Size<f64, Logical>,
++        scale: f64,
++        is_urgent: bool,
++        gradient_spin_speed: f64,
++        clock: &Clock,
++    ) {
++        let Some(anim) = &self.anim else {
++            return;
++        };
++
++        let progress = anim.clamped_value();
++        let rect = lerp_rect(self.from, self.to, progress);
++        let radius = lerp_radius(self.from_radius, self.to_radius, progress);
++
++        // Round to physical pixels, same as the insert hint.
++        let rect = rect.to_physical_precise_round(scale).to_logical(scale);
++        self.render_rect = rect;
++
++        let spin = self.spin.update(
++            clock,
++            gradient_spin_speed,
++            !clock.should_complete_instantly() && gradient_spin_speed > 0.,
++        );
++
++        let view_rect = Rectangle::new(rect.loc.upscale(-1.), view_size);
++        self.ring.update_render_elements(
++            rect.size,
++            /* is_active */ true,
++            /* is_border */ true,
++            is_urgent,
++            view_rect,
++            radius,
++            scale,
++            1.,
++            1.,
++            spin,
++        );
++    }
++
++    pub fn render(
++        &self,
++        renderer: &mut impl NiriRenderer,
++        push: &mut dyn FnMut(FocusRingMorphRenderElement),
++    ) {
++        self.ring.render(renderer, self.render_rect.loc, push)
++    }
++}
+diff --git a/src/layout/insert_hint_element.rs b/src/layout/insert_hint_element.rs
+index 97bbf2d5..6cec6e48 100644
+--- a/src/layout/insert_hint_element.rs
++++ b/src/layout/insert_hint_element.rs
+@@ -23,6 +23,8 @@ impl InsertHintElement {
+                 active_gradient: config.gradient,
+                 inactive_gradient: config.gradient,
+                 urgent_gradient: config.gradient,
++                gradient_spin_speed: 0.,
++                morph_behind_windows: false,
+             }),
+         }
+     }
+@@ -37,6 +39,8 @@ impl InsertHintElement {
+             active_gradient: config.gradient,
+             inactive_gradient: config.gradient,
+             urgent_gradient: config.gradient,
++            gradient_spin_speed: 0.,
++            morph_behind_windows: false,
+         });
+     }
+ 
+@@ -51,8 +55,9 @@ impl InsertHintElement {
+         radius: CornerRadius,
+         scale: f64,
+     ) {
+-        self.inner
+-            .update_render_elements(size, true, false, false, view_rect, radius, scale, 1.);
++        self.inner.update_render_elements(
++            size, true, false, false, view_rect, radius, scale, 1., 1., 0.,
++        );
+     }
+ 
+     pub fn render(
+diff --git a/src/layout/mod.rs b/src/layout/mod.rs
+index 97f917a9..63fb79c2 100644
+--- a/src/layout/mod.rs
++++ b/src/layout/mod.rs
+@@ -78,6 +78,7 @@ use crate::window::ResolvedWindowRules;
+ pub mod closing_window;
+ pub mod floating;
+ pub mod focus_ring;
++pub mod focus_ring_morph;
+ pub mod insert_hint_element;
+ pub mod monitor;
+ pub mod opening_window;
+@@ -2818,7 +2819,7 @@ impl<W: LayoutElement> Layout<W> {
+                     Rectangle::new(pos_within_output.upscale(-1.), output_size(&move_.output))
+                         .downscale(zoom);
+ 
+-                move_.tile.update_render_elements(true, view_rect);
++                move_.tile.update_render_elements(true, true, view_rect);
+             }
+         }
+ 
+@@ -4700,7 +4701,8 @@ impl<W: LayoutElement> Layout<W> {
+                 let view_rect =
+                     Rectangle::new(pos_within_output.upscale(-1.), output_size(&move_.output))
+                         .downscale(zoom);
+-                move_.tile.update_render_elements(false, view_rect);
++                move_.tile.settle_decoration_fades();
++                move_.tile.update_render_elements(false, false, view_rect);
+ 
+                 move_.tile.store_unmap_snapshot_if_empty(
+                     renderer,
+diff --git a/src/layout/monitor.rs b/src/layout/monitor.rs
+index 761d226b..8a28622b 100644
+--- a/src/layout/monitor.rs
++++ b/src/layout/monitor.rs
+@@ -10,6 +10,7 @@ use smithay::backend::renderer::element::utils::{
+ use smithay::output::Output;
+ use smithay::utils::{Logical, Point, Rectangle, Size};
+ 
++use super::focus_ring_morph::FocusRingMorphElement;
+ use super::insert_hint_element::{InsertHintElement, InsertHintRenderElement};
+ use super::scrolling::{Column, ColumnWidth};
+ use super::tile::Tile;
+@@ -77,6 +78,12 @@ pub struct Monitor<W: LayoutElement> {
+     insert_hint_element: InsertHintElement,
+     /// Location to render the insert hint element.
+     insert_hint_render_loc: Option<InsertHintRenderLoc>,
++    /// Focus ring morph element for rendering.
++    focus_ring_morph: FocusRingMorphElement,
++    /// Source and target window ids of the in-progress focus ring morph.
++    focus_ring_morph_ids: Option<(W::Id, W::Id)>,
++    /// The active window as of the previous render update, for morph detection.
++    last_active_window: Option<ActiveWindowSnapshot<W::Id>>,
+     /// Whether the overview is open.
+     pub(super) overview_open: bool,
+     /// Progress of the overview zoom animation, 1 is fully in overview.
+@@ -153,6 +160,18 @@ struct InsertHintRenderLoc {
+     location: Point<f64, Logical>,
+ }
+ 
++/// The active window as of the previous render update, used to detect focus changes for the
++/// focus ring morph.
++#[derive(Debug, Clone)]
++struct ActiveWindowSnapshot<WId> {
++    workspace: WorkspaceId,
++    id: WId,
++    rect: Rectangle<f64, Logical>,
++    radius: CornerRadius,
++    fullscreen: bool,
++    urgent: bool,
++}
++
+ #[derive(Debug)]
+ pub(super) enum OverviewProgress {
+     Animation(Animation),
+@@ -340,6 +359,9 @@ impl<W: LayoutElement> Monitor<W> {
+             insert_hint: None,
+             insert_hint_element: InsertHintElement::new(options.layout.insert_hint),
+             insert_hint_render_loc: None,
++            focus_ring_morph: FocusRingMorphElement::new(options.layout.focus_ring),
++            focus_ring_morph_ids: None,
++            last_active_window: None,
+             overview_open: false,
+             overview_progress: None,
+             workspace_switch: None,
+@@ -1075,6 +1097,7 @@ impl<W: LayoutElement> Monitor<W> {
+             .as_ref()
+             .is_some_and(|s| s.is_animation_ongoing())
+             || self.workspaces.iter().any(|ws| ws.are_animations_ongoing())
++            || self.focus_ring_morph.is_ongoing()
+     }
+ 
+     pub fn are_transitions_ongoing(&self) -> bool {
+@@ -1086,6 +1109,8 @@ impl<W: LayoutElement> Monitor<W> {
+     }
+ 
+     pub fn update_render_elements(&mut self, is_active: bool) {
++        self.update_focus_ring_morph(is_active);
++
+         let mut insert_hint_ws_geo = None;
+         let insert_hint_ws_id = self
+             .insert_hint
+@@ -1184,6 +1209,145 @@ impl<W: LayoutElement> Monitor<W> {
+         }
+     }
+ 
++    fn active_window_snapshot(&self) -> Option<ActiveWindowSnapshot<W::Id>> {
++        let ws = self.active_workspace_ref();
++        ws.active_window().and_then(|win| {
++            let rect = ws.active_window_visual_rectangle()?;
++            Some(ActiveWindowSnapshot {
++                workspace: ws.id(),
++                id: win.id().clone(),
++                rect,
++                radius: win.geometry_corner_radius(),
++                fullscreen: win.pending_sizing_mode().is_fullscreen(),
++                urgent: win.is_urgent(),
++            })
++        })
++    }
++
++    /// Detects focus changes on the active workspace and drives the focus ring morph.
++    ///
++    /// Runs before workspace render elements are updated, so that the source and target tiles can
++    /// be told to suppress their own focus rings for the duration of the morph.
++    fn update_focus_ring_morph(&mut self, is_active: bool) {
++        // Clear ring suppressions from the previous update; reapply below while a morph is
++        // ongoing.
++        for ws in &mut self.workspaces {
++            ws.clear_ring_suppressions();
++        }
++
++        if !is_active {
++            // On inactive monitors the per-tile fades own the ring (with inactive colors);
++            // there is nothing to morph. Drop any morph in progress without settling so the
++            // tiles' color fades take over, and track the active window so that focusing the
++            // monitor later doesn't start a morph from a stale rect.
++            self.focus_ring_morph.clear();
++            self.focus_ring_morph_ids = None;
++            self.last_active_window = self.active_window_snapshot();
++            return;
++        }
++
++        let ring_config = self.options.layout.focus_ring;
++        let morph_anim = self.options.animations.focus_ring_morph.0;
++        let spin_speed = ring_config.gradient_spin_speed;
++        let ring_eligible = !ring_config.off && ring_config.width > 0.;
++
++        let current = self.active_window_snapshot();
++
++        let was_ongoing = self.focus_ring_morph.is_ongoing();
++        let previous = std::mem::replace(&mut self.last_active_window, current.clone());
++
++        let focus_changed = match (&previous, &current) {
++            (Some(prev), Some(cur)) => prev.id != cur.id || prev.workspace != cur.workspace,
++            (Some(_), None) => true,
++            _ => false,
++        };
++
++        if focus_changed {
++            let prev_source = self
++                .focus_ring_morph_ids
++                .as_ref()
++                .map(|(src, _)| src.clone());
++            // Mid-morph refocus: travel from the currently displayed rect.
++            let mid_flight = was_ongoing.then(|| {
++                (
++                    self.focus_ring_morph.current_rect(),
++                    self.focus_ring_morph.current_radius(),
++                )
++            });
++            self.focus_ring_morph.clear();
++            self.focus_ring_morph_ids = None;
++
++            if let (Some(prev), Some(cur)) = (&previous, &current) {
++                // Same workspace only; targets that are (going) fullscreen fall back to the
++                // per-tile fade instead.
++                let eligible = ring_eligible
++                    && prev.workspace == cur.workspace
++                    && !prev.fullscreen
++                    && !cur.fullscreen;
++
++                if eligible {
++                    let (from, from_radius) = mid_flight.unwrap_or((prev.rect, prev.radius));
++                    self.focus_ring_morph.start(
++                        &self.clock,
++                        from,
++                        cur.rect,
++                        from_radius,
++                        cur.radius,
++                        morph_anim,
++                    );
++
++                    if self.focus_ring_morph.is_ongoing() {
++                        // Keep the original source of the travel suppressed across retargets.
++                        let source = prev_source.unwrap_or_else(|| prev.id.clone());
++                        self.focus_ring_morph_ids = Some((source, cur.id.clone()));
++                    }
++                }
++            }
++        } else if was_ongoing {
++            // No focus change; keep the morph going towards the window's current rect. Cancel
++            // if the ring got disabled or the target goes fullscreen mid-morph; the per-tile
++            // fade takes over from there.
++            if !ring_eligible || current.as_ref().is_some_and(|c| c.fullscreen) {
++                self.focus_ring_morph.clear();
++                self.focus_ring_morph_ids = None;
++            } else if let Some(cur) = &current {
++                self.focus_ring_morph.set_target(cur.rect, cur.radius);
++            }
++        } else {
++            // Morph finished (or never ran). Hand the ring back to the tiles with settled
++            // ownership fades so the handoff is seamless.
++            if let Some((source, target)) = self.focus_ring_morph_ids.take() {
++                if let Some(cur) = &current {
++                    if let Some(idx) = self.idx_of_ws(cur.workspace) {
++                        self.workspaces[idx].settle_ring_alpha(&source);
++                        self.workspaces[idx].settle_ring_alpha(&target);
++                    }
++                }
++            }
++            self.focus_ring_morph.clear();
++        }
++
++        // Suppress the source and target tiles' own focus rings, and drive the morph ring's
++        // render elements.
++        if let (Some((source, target)), Some(cur)) = (&self.focus_ring_morph_ids, &current) {
++            if let Some(idx) = self.idx_of_ws(cur.workspace) {
++                self.workspaces[idx].set_ring_suppressed(source, true);
++                self.workspaces[idx].set_ring_suppressed(target, true);
++            }
++
++            let ws = self.active_workspace_ref();
++            let scale = ws.scale().fractional_scale();
++            let view_size = ws.view_size();
++            self.focus_ring_morph.update_render_elements(
++                view_size,
++                scale,
++                cur.urgent,
++                spin_speed,
++                &self.clock,
++            );
++        }
++    }
++
+     pub fn update_config(&mut self, base_options: Rc<Options>) {
+         let options =
+             Rc::new(Options::clone(&base_options).with_merged_layout(self.layout_config.as_ref()));
+@@ -1206,6 +1370,8 @@ impl<W: LayoutElement> Monitor<W> {
+ 
+         self.insert_hint_element
+             .update_config(options.layout.insert_hint);
++        self.focus_ring_morph
++            .update_config(options.layout.focus_ring);
+ 
+         self.base_options = base_options;
+         self.options = options;
+@@ -1228,6 +1394,7 @@ impl<W: LayoutElement> Monitor<W> {
+         }
+ 
+         self.insert_hint_element.update_shaders();
++        self.focus_ring_morph.update_shaders();
+     }
+ 
+     pub fn update_output_size(&mut self) {
+@@ -1694,6 +1861,10 @@ impl<W: LayoutElement> Monitor<W> {
+             .insert_hint_render_loc
+             .filter(|_| !self.options.layout.insert_hint.off);
+ 
++        let morph_render = self.focus_ring_morph_ids.is_some();
++        let morph_ws_id = morph_render.then(|| self.active_workspace_ref().id());
++        let morph_behind = self.options.layout.focus_ring.morph_behind_windows;
++
+         let scale_relocate = move |geo: Rectangle<f64, Logical>, elem| {
+             let elem = RescaleRenderElement::from_element(elem, Point::from((0, 0)), zoom);
+             RelocateRenderElement::from_element(
+@@ -1763,6 +1934,12 @@ impl<W: LayoutElement> Monitor<W> {
+ 
+                 match pass {
+                     0 => {
++                        // When requested, the morph ring travels behind window content: draw it
++                        // at the very bottom of this workspace's stack.
++                        if morph_behind && morph_ws_id == Some(ws.id()) {
++                            self.focus_ring_morph.render(ctx.renderer, push!());
++                        }
++
+                         ws.render_floating(
+                             ctx.r(),
+                             xray_pos,
+@@ -1789,6 +1966,11 @@ impl<W: LayoutElement> Monitor<W> {
+                                 );
+                             }
+                         }
++
++                        // The insert-hint slot: over window content by default.
++                        if !morph_behind && morph_ws_id == Some(ws.id()) {
++                            self.focus_ring_morph.render(ctx.renderer, push!());
++                        }
+                     }
+                     2 => {
+                         ws.render_scrolling(
+diff --git a/src/layout/scrolling.rs b/src/layout/scrolling.rs
+index c7d94c54..df02504e 100644
+--- a/src/layout/scrolling.rs
++++ b/src/layout/scrolling.rs
+@@ -426,7 +426,12 @@ impl<W: LayoutElement> ScrollingSpace<W> {
+             || !self.closing_windows.is_empty()
+     }
+ 
+-    pub fn update_render_elements(&mut self, is_active: bool, layer: RenderLayer) {
++    pub fn update_render_elements(
++        &mut self,
++        is_active: bool,
++        ring_owned: bool,
++        layer: RenderLayer,
++    ) {
+         let view_pos = Point::from((self.view_pos(), 0.));
+         let view_size = self.view_size;
+         let active_idx = self.active_column_idx;
+@@ -437,10 +442,11 @@ impl<W: LayoutElement> ScrollingSpace<W> {
+             }
+ 
+             let is_active = is_active && col_idx == active_idx;
++            let ring_owned = ring_owned && col_idx == active_idx;
+             let col_off = Point::from((col_x, 0.));
+             let col_pos = view_pos - col_off - col.render_offset();
+             let view_rect = Rectangle::new(col_pos, view_size);
+-            col.update_render_elements(is_active, view_rect);
++            col.update_render_elements(is_active, ring_owned, view_rect);
+         }
+     }
+ 
+@@ -452,6 +458,35 @@ impl<W: LayoutElement> ScrollingSpace<W> {
+         self.columns.iter_mut().flat_map(|col| col.tiles.iter_mut())
+     }
+ 
++    pub fn set_ring_suppressed(&mut self, window: &W::Id, suppressed: bool) {
++        for tile in self.tiles_mut() {
++            if tile.window().id() == window {
++                tile.ring_suppressed = suppressed;
++            }
++        }
++    }
++
++    pub fn clear_ring_suppressions(&mut self) {
++        for tile in self.tiles_mut() {
++            tile.ring_suppressed = false;
++        }
++    }
++
++    pub fn settle_ring_alpha(&mut self, window: &W::Id) {
++        for tile in self.tiles_mut() {
++            if tile.window().id() == window {
++                tile.settle_ring_alpha();
++            }
++        }
++    }
++
++    pub fn any_ring_fading(&self) -> bool {
++        self.columns
++            .iter()
++            .flat_map(|col| col.tiles.iter())
++            .any(|tile| tile.is_ring_fading())
++    }
++
+     pub fn is_empty(&self) -> bool {
+         self.columns.is_empty()
+     }
+@@ -2990,8 +3025,9 @@ impl<W: LayoutElement> ScrollingSpace<W> {
+ 
+                 // And now the drawing logic.
+ 
+-                // For the active tile (which comes first), draw the focus ring.
+-                let focus_ring = focus_ring && first;
++                // For the active tile (which comes first), draw the focus ring. Tiles that are
++                // mid-fade keep rendering their ring even after losing ownership.
++                let focus_ring = focus_ring && (first || tile.is_ring_fading());
+                 first = false;
+ 
+                 // In the scrolling layout, we currently use visible only for hidden tabs in the
+@@ -4180,14 +4216,20 @@ impl<W: LayoutElement> Column<W> {
+                 .any(|tile| tile.is_moving_between_workspaces())
+     }
+ 
+-    pub fn update_render_elements(&mut self, is_active: bool, view_rect: Rectangle<f64, Logical>) {
++    pub fn update_render_elements(
++        &mut self,
++        is_active: bool,
++        ring_owned: bool,
++        view_rect: Rectangle<f64, Logical>,
++    ) {
+         let active_idx = self.active_tile_idx;
+         for (tile_idx, (tile, tile_off)) in self.tiles_mut().enumerate() {
+             let is_active = is_active && tile_idx == active_idx;
++            let ring_owned = ring_owned && tile_idx == active_idx;
+ 
+             let mut tile_view_rect = view_rect;
+             tile_view_rect.loc -= tile_off + tile.render_offset();
+-            tile.update_render_elements(is_active, tile_view_rect);
++            tile.update_render_elements(is_active, ring_owned, tile_view_rect);
+         }
+ 
+         let config = self.tab_indicator.config();
+diff --git a/src/layout/tab_indicator.rs b/src/layout/tab_indicator.rs
+index e7d9a3df..04f6acd8 100644
+--- a/src/layout/tab_indicator.rs
++++ b/src/layout/tab_indicator.rs
+@@ -8,7 +8,7 @@ use super::tile::Tile;
+ use super::LayoutElement;
+ use crate::animation::{Animation, Clock};
+ use crate::niri_render_elements;
+-use crate::render_helpers::border::BorderRenderElement;
++use crate::render_helpers::border::{BorderRenderElement, BorderRenderParams};
+ use crate::render_helpers::renderer::NiriRenderer;
+ use crate::utils::{
+     floor_logical_in_physical_max1, round_logical_in_physical, round_logical_in_physical_max1,
+@@ -253,19 +253,22 @@ impl TabIndicator {
+             let radius = radius.fit_to(rect.size.w as f32, rect.size.h as f32);
+             tabs_left -= 1;
+ 
+-            shader.update(
+-                rect.size,
++            shader.update(BorderRenderParams {
++                size: rect.size,
+                 gradient_area,
+-                tab.gradient.in_,
++                gradient_format: tab.gradient.in_,
+                 color_from,
+                 color_to,
+-                ((tab.gradient.angle as f32) - 90.).to_radians(),
+-                Rectangle::from_size(rect.size),
+-                0.,
+-                radius,
+-                scale as f32,
+-                1.,
+-            );
++                color_from_inactive: color_from,
++                color_to_inactive: color_to,
++                fade: 1.,
++                angle: ((tab.gradient.angle as f32) - 90.).to_radians(),
++                geometry: Rectangle::from_size(rect.size),
++                border_width: 0.,
++                corner_radius: radius,
++                scale: scale as f32,
++                alpha: 1.,
++            });
+         }
+     }
+ 
+diff --git a/src/layout/tile.rs b/src/layout/tile.rs
+index db8ce678..b5fe7a33 100644
+--- a/src/layout/tile.rs
++++ b/src/layout/tile.rs
+@@ -1,5 +1,6 @@
+ use core::f64;
+ use std::rc::Rc;
++use std::time::Duration;
+ 
+ use niri_config::utils::MergeWith as _;
+ use niri_config::{Color, CornerRadius, GradientInterpolation};
+@@ -19,7 +20,7 @@ use crate::animation::{Animation, Clock};
+ use crate::layout::SizingMode;
+ use crate::niri_render_elements;
+ use crate::render_helpers::background_effect::BackgroundEffectElement;
+-use crate::render_helpers::border::BorderRenderElement;
++use crate::render_helpers::border::{BorderRenderElement, BorderRenderParams};
+ use crate::render_helpers::clipped_surface::{ClippedSurfaceRenderElement, RoundedCornerDamage};
+ use crate::render_helpers::damage::ExtraDamage;
+ use crate::render_helpers::offscreen::{OffscreenBuffer, OffscreenRenderElement};
+@@ -96,6 +97,33 @@ pub struct Tile<W: LayoutElement> {
+     /// The animation of the tile's opacity.
+     pub(super) alpha_animation: Option<AlphaAnimation>,
+ 
++    /// Whether this tile's focus ring is the visible one within its workspace.
++    ring_owned: bool,
++
++    /// Whether the border showed active colors on the last render update.
++    was_border_active: bool,
++
++    /// Whether the focus ring showed active colors on the last render update.
++    was_ring_active: bool,
++
++    /// The crossfade animation of the border between inactive and active colors.
++    border_color_anim: Option<Animation>,
++
++    /// The crossfade animation of the focus ring between inactive and active colors.
++    ring_color_anim: Option<Animation>,
++
++    /// The appearance (alpha) animation of the focus ring when it gains or loses ownership.
++    ring_alpha_anim: Option<Animation>,
++
++    /// Gradient rotation state of the border.
++    border_spin: GradientSpin,
++
++    /// Gradient rotation state of the focus ring.
++    ring_spin: GradientSpin,
++
++    /// Temporarily hides the focus ring (e.g. while the monitor-level morph ring owns it).
++    pub(super) ring_suppressed: bool,
++
+     /// Offset during the initial interactive move rubberband.
+     pub(super) interactive_move_offset: Point<f64, Logical>,
+ 
+@@ -178,6 +206,47 @@ pub(super) struct AlphaAnimation {
+     offscreen: OffscreenBuffer,
+ }
+ 
++/// A tile is considered stale if it hasn't been rendered recently. This bounds how long a
++/// gradient spin on a hidden tile can keep the redraw loop going after the tile disappears.
++const SPIN_STALE: Duration = Duration::from_millis(250);
++
++/// Accumulated gradient rotation driven by `gradient-spin-speed`.
++#[derive(Debug, Default, Clone, Copy)]
++pub(super) struct GradientSpin {
++    /// Accumulated rotation in radians.
++    offset: f64,
++    /// When the spin was last advanced by a render update; `None` while not spinning.
++    last_update: Option<Duration>,
++}
++
++impl GradientSpin {
++    /// Starts or stops the spin, advancing the accumulated angle by the elapsed time, and
++    /// returns the current angle offset in radians.
++    pub(super) fn update(&mut self, clock: &Clock, speed_deg: f64, should_spin: bool) -> f32 {
++        let now = clock.now();
++
++        if should_spin && speed_deg > 0. {
++            if let Some(last) = self.last_update {
++                let delta = now.saturating_sub(last).as_secs_f64();
++                if delta <= SPIN_STALE.as_secs_f64() {
++                    self.offset += delta * speed_deg.to_radians();
++                    self.offset = self.offset.rem_euclid(f64::consts::TAU);
++                }
++            }
++            self.last_update = Some(now);
++        } else {
++            self.last_update = None;
++        }
++
++        self.offset as f32
++    }
++
++    fn is_spinning(&self, now: Duration) -> bool {
++        self.last_update
++            .is_some_and(|last| now.saturating_sub(last) <= SPIN_STALE)
++    }
++}
++
+ impl<W: LayoutElement> Tile<W> {
+     pub fn new(
+         window: W,
+@@ -209,6 +278,15 @@ impl<W: LayoutElement> Tile<W> {
+             move_x_animation: None,
+             move_y_animation: None,
+             alpha_animation: None,
++            ring_owned: false,
++            was_border_active: false,
++            was_ring_active: false,
++            border_color_anim: None,
++            ring_color_anim: None,
++            ring_alpha_anim: None,
++            border_spin: Default::default(),
++            ring_spin: Default::default(),
++            ring_suppressed: false,
+             interactive_move_offset: Point::from((0., 0.)),
+             unmap_snapshot: None,
+             rounded_corner_damage: Default::default(),
+@@ -446,7 +524,22 @@ impl<W: LayoutElement> Tile<W> {
+     }
+ 
+     pub fn are_animations_ongoing(&self) -> bool {
+-        self.are_transitions_ongoing() || self.window.rules().baba_is_float == Some(true)
++        self.are_transitions_ongoing()
++            || self.window.rules().baba_is_float == Some(true)
++            || self
++                .border_color_anim
++                .as_ref()
++                .is_some_and(|anim| !anim.is_done())
++            || self
++                .ring_color_anim
++                .as_ref()
++                .is_some_and(|anim| !anim.is_done())
++            || self
++                .ring_alpha_anim
++                .as_ref()
++                .is_some_and(|anim| !anim.is_done())
++            || self.border_spin.is_spinning(self.clock.now())
++            || self.ring_spin.is_spinning(self.clock.now())
+     }
+ 
+     pub fn are_transitions_ongoing(&self) -> bool {
+@@ -470,7 +563,12 @@ impl<W: LayoutElement> Tile<W> {
+                 .is_some_and(|anim| anim.is_between_workspaces)
+     }
+ 
+-    pub fn update_render_elements(&mut self, is_active: bool, view_rect: Rectangle<f64, Logical>) {
++    pub fn update_render_elements(
++        &mut self,
++        is_active: bool,
++        ring_owned: bool,
++        view_rect: Rectangle<f64, Logical>,
++    ) {
+         let rules = self.window.rules();
+         let animated_tile_size = self.animated_tile_size();
+         let expanded_progress = self.expanded_progress();
+@@ -504,18 +602,76 @@ impl<W: LayoutElement> Tile<W> {
+             .geometry_corner_radius()
+             .expanded_by(border_width as f32)
+             .scaled_by(1. - expanded_progress as f32);
++
++        let base_alpha = 1. - expanded_progress as f32;
++        let border_view_rect = Rectangle::new(
++            view_rect.loc - Point::from((border_width, border_width)),
++            view_rect.size,
++        );
++
++        // Animate the border colors between inactive and active on focus changes.
++        let border_enabled = !self.border.is_off();
++        if border_enabled {
++            if is_active != self.was_border_active {
++                // Retarget from the currently displayed value to avoid a jump mid-fade.
++                let from = self
++                    .border_color_anim
++                    .as_ref()
++                    .map_or(if self.was_border_active { 1. } else { 0. }, |anim| {
++                        anim.clamped_value()
++                    });
++                self.border_color_anim = Some(Animation::new(
++                    self.clock.clone(),
++                    from,
++                    if is_active { 1. } else { 0. },
++                    0.,
++                    self.options.animations.border_fade.0,
++                ));
++                self.was_border_active = is_active;
++            }
++        } else {
++            self.border_color_anim = None;
++            self.was_border_active = is_active;
++        }
++
++        let border_fade = if border_enabled {
++            match &self.border_color_anim {
++                Some(anim) if !anim.is_done() => anim.clamped_value() as f32,
++                _ => {
++                    self.border_color_anim = None;
++                    if is_active {
++                        1.
++                    } else {
++                        0.
++                    }
++                }
++            }
++        } else if is_active {
++            1.
++        } else {
++            0.
++        };
++
++        let border_spin = self.border_spin.update(
++            &self.clock,
++            self.border.config().gradient_spin_speed,
++            border_enabled
++                && !self.clock.should_complete_instantly()
++                && border_fade > 0.
++                && base_alpha > 0.,
++        );
++
+         self.border.update_render_elements(
+             border_window_size,
+             is_active,
+             !draw_border_with_background,
+             self.window.is_urgent(),
+-            Rectangle::new(
+-                view_rect.loc - Point::from((border_width, border_width)),
+-                view_rect.size,
+-            ),
++            border_view_rect,
+             radius,
+             self.scale,
+-            1. - expanded_progress as f32,
++            base_alpha,
++            border_fade,
++            border_spin,
+         );
+ 
+         let radius = if self.visual_border_width().is_some() {
+@@ -530,7 +686,7 @@ impl<W: LayoutElement> Tile<W> {
+             is_active,
+             radius,
+             self.scale,
+-            1. - expanded_progress as f32,
++            base_alpha,
+         );
+ 
+         let draw_focus_ring_with_background = if self.border.is_off() {
+@@ -539,6 +695,97 @@ impl<W: LayoutElement> Tile<W> {
+             false
+         };
+         let radius = radius.expanded_by(self.focus_ring.width() as f32);
++
++        // Animate the focus ring: colors crossfade on focus changes, while alpha fades the ring
++        // in and out as it gains or loses ownership within the workspace.
++        let ring_enabled = !self.focus_ring.is_off();
++        if ring_enabled {
++            if is_active != self.was_ring_active {
++                // Retarget from the currently displayed value to avoid a jump mid-fade.
++                let from = self
++                    .ring_color_anim
++                    .as_ref()
++                    .map_or(if self.was_ring_active { 1. } else { 0. }, |anim| {
++                        anim.clamped_value()
++                    });
++                self.ring_color_anim = Some(Animation::new(
++                    self.clock.clone(),
++                    from,
++                    if is_active { 1. } else { 0. },
++                    0.,
++                    self.options.animations.focus_ring_fade.0,
++                ));
++                self.was_ring_active = is_active;
++            }
++
++            if ring_owned != self.ring_owned {
++                // Retarget from the currently displayed value to avoid a jump mid-fade.
++                let from = self
++                    .ring_alpha_anim
++                    .as_ref()
++                    .map_or(if self.ring_owned { 1. } else { 0. }, |anim| {
++                        anim.clamped_value()
++                    });
++                self.ring_alpha_anim = Some(Animation::new(
++                    self.clock.clone(),
++                    from,
++                    if ring_owned { 1. } else { 0. },
++                    0.,
++                    self.options.animations.focus_ring_fade.0,
++                ));
++                self.ring_owned = ring_owned;
++            }
++        } else {
++            self.ring_color_anim = None;
++            self.ring_alpha_anim = None;
++            self.was_ring_active = is_active;
++            self.ring_owned = ring_owned;
++        }
++
++        let ring_fade = if ring_enabled {
++            match &self.ring_color_anim {
++                Some(anim) if !anim.is_done() => anim.clamped_value() as f32,
++                _ => {
++                    self.ring_color_anim = None;
++                    if is_active {
++                        1.
++                    } else {
++                        0.
++                    }
++                }
++            }
++        } else if is_active {
++            1.
++        } else {
++            0.
++        };
++
++        let ring_alpha = if ring_enabled {
++            match &self.ring_alpha_anim {
++                Some(anim) if !anim.is_done() => anim.clamped_value() as f32,
++                _ => {
++                    self.ring_alpha_anim = None;
++                    if ring_owned {
++                        1.
++                    } else {
++                        0.
++                    }
++                }
++            }
++        } else {
++            0.
++        };
++        let ring_alpha = ring_alpha * base_alpha;
++
++        let ring_spin = self.ring_spin.update(
++            &self.clock,
++            self.focus_ring.config().gradient_spin_speed,
++            ring_enabled
++                && !self.clock.should_complete_instantly()
++                && ring_fade > 0.
++                && ring_alpha > 0.,
++        );
++
+         self.focus_ring.update_render_elements(
+             animated_tile_size,
+             is_active,
+@@ -547,12 +794,45 @@ impl<W: LayoutElement> Tile<W> {
+             view_rect,
+             radius,
+             self.scale,
+-            1. - expanded_progress as f32,
++            ring_alpha,
++            ring_fade,
++            ring_spin,
+         );
+ 
+         self.fullscreen_backdrop.resize(animated_tile_size);
+     }
+ 
++    /// Settles all decoration fade animations to the unfocused state without animating.
++    ///
++    /// This is used before capturing an unmap snapshot, so that the snapshot shows the tile as
++    /// unfocused (matching how snapshots looked before fades existed) without restarting fades
++    /// if the tile keeps rendering afterwards.
++    pub fn settle_decoration_fades(&mut self) {
++        self.was_border_active = false;
++        self.was_ring_active = false;
++        self.ring_owned = false;
++        self.border_color_anim = None;
++        self.ring_color_anim = None;
++        self.ring_alpha_anim = None;
++        self.border_spin.last_update = None;
++        self.ring_spin.last_update = None;
++    }
++
++    /// Whether the focus ring is currently fading in or out.
++    pub fn is_ring_fading(&self) -> bool {
++        self.ring_alpha_anim
++            .as_ref()
++            .is_some_and(|anim| !anim.is_done())
++    }
++
++    /// Settles the focus ring ownership fade to its final value without animating.
++    ///
++    /// Used to hand the ring back from the monitor-level morph element: the morph ring is drawn
++    /// at full opacity, so the tile's own ring must appear or disappear instantly to match.
++    pub fn settle_ring_alpha(&mut self) {
++        self.ring_alpha_anim = None;
++    }
++
+     pub fn scale(&self) -> f64 {
+         self.scale
+     }
+@@ -1237,19 +1517,22 @@ impl<W: LayoutElement> Tile<W> {
+                     // user-provided radius, so our blocked-out rendering should match that
+                     // radius.
+                     if radius != CornerRadius::default() && has_border_shader {
+-                        return BorderRenderElement::new(
+-                            geo.size,
+-                            Rectangle::from_size(geo.size),
+-                            GradientInterpolation::default(),
+-                            Color::from_color32f(elem.color()),
+-                            Color::from_color32f(elem.color()),
+-                            0.,
+-                            Rectangle::from_size(geo.size),
+-                            0.,
+-                            radius,
+-                            scale.x as f32,
+-                            1.,
+-                        )
++                        return BorderRenderElement::new(BorderRenderParams {
++                            size: geo.size,
++                            gradient_area: Rectangle::from_size(geo.size),
++                            gradient_format: GradientInterpolation::default(),
++                            color_from: Color::from_color32f(elem.color()),
++                            color_to: Color::from_color32f(elem.color()),
++                            color_from_inactive: Color::from_color32f(elem.color()),
++                            color_to_inactive: Color::from_color32f(elem.color()),
++                            fade: 1.,
++                            angle: 0.,
++                            geometry: Rectangle::from_size(geo.size),
++                            border_width: 0.,
++                            corner_radius: radius,
++                            scale: scale.x as f32,
++                            alpha: 1.,
++                        })
+                         .with_location(geo.loc)
+                         .into();
+                     }
+@@ -1291,19 +1574,22 @@ impl<W: LayoutElement> Tile<W> {
+ 
+                 let size = self.fullscreen_backdrop.size();
+                 let color = self.fullscreen_backdrop.color();
+-                let elem = BorderRenderElement::new(
++                let elem = BorderRenderElement::new(BorderRenderParams {
+                     size,
+-                    Rectangle::from_size(size),
+-                    GradientInterpolation::default(),
+-                    Color::from_color32f(color),
+-                    Color::from_color32f(color),
+-                    0.,
+-                    Rectangle::from_size(size),
+-                    0.,
+-                    radius,
+-                    scale.x as f32,
++                    gradient_area: Rectangle::from_size(size),
++                    gradient_format: GradientInterpolation::default(),
++                    color_from: Color::from_color32f(color),
++                    color_to: Color::from_color32f(color),
++                    color_from_inactive: Color::from_color32f(color),
++                    color_to_inactive: Color::from_color32f(color),
++                    fade: 1.,
++                    angle: 0.,
++                    geometry: Rectangle::from_size(size),
++                    border_width: 0.,
++                    corner_radius: radius,
++                    scale: scale.x as f32,
+                     alpha,
+-                )
++                })
+                 .with_location(location);
+                 push(elem.into());
+             } else {
+@@ -1329,7 +1615,8 @@ impl<W: LayoutElement> Tile<W> {
+         // being outside the monitor or obscured by a solid colored bar, but it is visible under
+         // semitransparent bars in maximized state (which is a bit weird) and in the overview (also
+         // a bit weird).
+-        if focus_ring && expanded_progress < 1. {
++        if !self.ring_suppressed && (focus_ring || self.is_ring_fading()) && expanded_progress < 1.
++        {
+             self.focus_ring
+                 .render(ctx.renderer, location, &mut |elem| push(elem.into()));
+         }
+diff --git a/src/layout/workspace.rs b/src/layout/workspace.rs
+index 8851a92f..ecc2a151 100644
+--- a/src/layout/workspace.rs
++++ b/src/layout/workspace.rs
+@@ -379,12 +379,18 @@ impl<W: LayoutElement> Workspace<W> {
+     }
+ 
+     pub fn update_render_elements(&mut self, is_active: bool, layer: RenderLayer) {
+-        self.scrolling
+-            .update_render_elements(is_active && !self.floating_is_active.get(), layer);
++        let floating_is_active = self.floating_is_active.get();
++
++        self.scrolling.update_render_elements(
++            is_active && !floating_is_active,
++            !floating_is_active,
++            layer,
++        );
+ 
+         let view_rect = Rectangle::from_size(self.view_size);
+         self.floating.update_render_elements(
+-            is_active && self.floating_is_active.get(),
++            is_active && floating_is_active,
++            floating_is_active,
+             view_rect,
+             layer,
+         );
+@@ -1647,6 +1653,27 @@ impl<W: LayoutElement> Workspace<W> {
+         }
+     }
+ 
++    pub fn set_ring_suppressed(&mut self, window: &W::Id, suppressed: bool) {
++        if self.floating.has_window(window) {
++            self.floating.set_ring_suppressed(window, suppressed);
++        } else {
++            self.scrolling.set_ring_suppressed(window, suppressed);
++        }
++    }
++
++    pub fn clear_ring_suppressions(&mut self) {
++        self.floating.clear_ring_suppressions();
++        self.scrolling.clear_ring_suppressions();
++    }
++
++    pub fn settle_ring_alpha(&mut self, window: &W::Id) {
++        if self.floating.has_window(window) {
++            self.floating.settle_ring_alpha(window);
++        } else {
++            self.scrolling.settle_ring_alpha(window);
++        }
++    }
++
+     pub fn popup_target_rect(&self, window: &W::Id) -> Option<Rectangle<f64, Logical>> {
+         if self.floating.has_window(window) {
+             self.floating.popup_target_rect(window)
+@@ -1663,7 +1690,12 @@ impl<W: LayoutElement> Workspace<W> {
+         layer: RenderLayer,
+         push: &mut dyn FnMut(WorkspaceRenderElement<R>),
+     ) {
+-        let scrolling_focus_ring = focus_ring && !self.floating_is_active();
++        // Allow the lane that is fading out a tile which just lost ring ownership to keep
++        // rendering it even when the other lane is the active one (e.g. focus moved from a
++        // floating window to a tiled one).
++        let floating_is_active = self.floating_is_active.get();
++        let scrolling_focus_ring =
++            focus_ring && (!floating_is_active || self.scrolling.any_ring_fading());
+         self.scrolling
+             .render(ctx, xray_pos, scrolling_focus_ring, layer, &mut |elem| {
+                 push(elem.into())
+@@ -1683,7 +1715,8 @@ impl<W: LayoutElement> Workspace<W> {
+         }
+ 
+         let view_rect = Rectangle::from_size(self.view_size);
+-        let floating_focus_ring = focus_ring && self.floating_is_active();
++        let floating_focus_ring =
++            focus_ring && (self.floating_is_active() || self.floating.any_ring_fading());
+         self.floating.render(
+             ctx,
+             xray_pos,
+@@ -1736,7 +1769,8 @@ impl<W: LayoutElement> Workspace<W> {
+             if tile.window().id() == window {
+                 let view_pos = Point::from((-tile_pos.x, -tile_pos.y));
+                 let view_rect = Rectangle::new(view_pos, view_size);
+-                tile.update_render_elements(false, view_rect);
++                tile.settle_decoration_fades();
++                tile.update_render_elements(false, false, view_rect);
+                 let xray_pos = xray_pos.offset(tile_pos);
+                 tile.store_unmap_snapshot_if_empty(
+                     renderer,
+diff --git a/src/render_helpers/border.rs b/src/render_helpers/border.rs
+index 923066ef..2796a684 100644
+--- a/src/render_helpers/border.rs
++++ b/src/render_helpers/border.rs
+@@ -27,57 +27,38 @@ use crate::render_helpers::renderer::AsGlesFrame as _;
+ #[derive(Debug, Clone)]
+ pub struct BorderRenderElement {
+     inner: ShaderRenderElement,
+-    params: Parameters,
++    params: BorderRenderParams,
+ }
+ 
++/// Rendering parameters for a [`BorderRenderElement`].
+ #[derive(Debug, Clone, Copy, PartialEq)]
+-struct Parameters {
+-    size: Size<f64, Logical>,
+-    gradient_area: Rectangle<f64, Logical>,
+-    gradient_format: GradientInterpolation,
+-    color_from: Color,
+-    color_to: Color,
+-    angle: f32,
+-    geometry: Rectangle<f64, Logical>,
+-    border_width: f32,
+-    corner_radius: CornerRadius,
++pub struct BorderRenderParams {
++    pub size: Size<f64, Logical>,
++    pub gradient_area: Rectangle<f64, Logical>,
++    pub gradient_format: GradientInterpolation,
++    /// Active-state gradient endpoint colors.
++    pub color_from: Color,
++    pub color_to: Color,
++    /// Inactive-state gradient endpoint colors.
++    pub color_from_inactive: Color,
++    pub color_to_inactive: Color,
++    /// Crossfade factor between the inactive and active color pairs.
++    ///
++    /// 0 = fully inactive, 1 = fully active.
++    pub fade: f32,
++    pub angle: f32,
++    pub geometry: Rectangle<f64, Logical>,
++    pub border_width: f32,
++    pub corner_radius: CornerRadius,
+     // Should only be used for visual improvements, i.e. corner radius anti-aliasing.
+-    scale: f32,
+-    alpha: f32,
++    pub scale: f32,
++    pub alpha: f32,
+ }
+ 
+ impl BorderRenderElement {
+-    #[allow(clippy::too_many_arguments)]
+-    pub fn new(
+-        size: Size<f64, Logical>,
+-        gradient_area: Rectangle<f64, Logical>,
+-        gradient_format: GradientInterpolation,
+-        color_from: Color,
+-        color_to: Color,
+-        angle: f32,
+-        geometry: Rectangle<f64, Logical>,
+-        border_width: f32,
+-        corner_radius: CornerRadius,
+-        scale: f32,
+-        alpha: f32,
+-    ) -> Self {
++    pub fn new(params: BorderRenderParams) -> Self {
+         let inner = ShaderRenderElement::empty(ProgramType::Border, Kind::Unspecified);
+-        let mut rv = Self {
+-            inner,
+-            params: Parameters {
+-                size,
+-                gradient_area,
+-                gradient_format,
+-                color_from,
+-                color_to,
+-                angle,
+-                geometry,
+-                border_width,
+-                corner_radius,
+-                scale,
+-                alpha,
+-            },
+-        };
++        let mut rv = Self { inner, params };
+         rv.update_inner();
+         rv
+     }
+@@ -86,12 +67,15 @@ impl BorderRenderElement {
+         let inner = ShaderRenderElement::empty(ProgramType::Border, Kind::Unspecified);
+         Self {
+             inner,
+-            params: Parameters {
++            params: BorderRenderParams {
+                 size: Default::default(),
+                 gradient_area: Default::default(),
+                 gradient_format: GradientInterpolation::default(),
+                 color_from: Default::default(),
+                 color_to: Default::default(),
++                color_from_inactive: Default::default(),
++                color_to_inactive: Default::default(),
++                fade: 1.,
+                 angle: 0.,
+                 geometry: Default::default(),
+                 border_width: 0.,
+@@ -106,34 +90,7 @@ impl BorderRenderElement {
+         self.inner.damage_all();
+     }
+ 
+-    #[allow(clippy::too_many_arguments)]
+-    pub fn update(
+-        &mut self,
+-        size: Size<f64, Logical>,
+-        gradient_area: Rectangle<f64, Logical>,
+-        gradient_format: GradientInterpolation,
+-        color_from: Color,
+-        color_to: Color,
+-        angle: f32,
+-        geometry: Rectangle<f64, Logical>,
+-        border_width: f32,
+-        corner_radius: CornerRadius,
+-        scale: f32,
+-        alpha: f32,
+-    ) {
+-        let params = Parameters {
+-            size,
+-            gradient_area,
+-            gradient_format,
+-            color_from,
+-            color_to,
+-            angle,
+-            geometry,
+-            border_width,
+-            corner_radius,
+-            scale,
+-            alpha,
+-        };
++    pub fn update(&mut self, params: BorderRenderParams) {
+         if self.params == params {
+             return;
+         }
+@@ -143,12 +100,15 @@ impl BorderRenderElement {
+     }
+ 
+     fn update_inner(&mut self) {
+-        let Parameters {
++        let BorderRenderParams {
+             size,
+             gradient_area,
+             gradient_format,
+             color_from,
+             color_to,
++            color_from_inactive,
++            color_to_inactive,
++            fade,
+             angle,
+             geometry,
+             border_width,
+@@ -160,19 +120,7 @@ impl BorderRenderElement {
+         let grad_offset = geometry.loc - gradient_area.loc;
+         let grad_offset = Vec2::new(grad_offset.x as f32, grad_offset.y as f32);
+ 
+-        let grad_dir = Vec2::from_angle(angle);
+-
+-        let (w, h) = (gradient_area.size.w as f32, gradient_area.size.h as f32);
+-
+-        let mut grad_area_diag = Vec2::new(w, h);
+-        if (grad_dir.x < 0. && 0. <= grad_dir.y) || (0. <= grad_dir.x && grad_dir.y < 0.) {
+-            grad_area_diag.x = -w;
+-        }
+-
+-        let mut grad_vec = grad_area_diag.project_onto(grad_dir);
+-        if grad_dir.y < 0. {
+-            grad_vec = -grad_vec;
+-        }
++        let grad_area_size = Vec2::new(gradient_area.size.w as f32, gradient_area.size.h as f32);
+ 
+         let area_size = Vec2::new(size.w as f32, size.h as f32);
+ 
+@@ -206,9 +154,15 @@ impl BorderRenderElement {
+                 Uniform::new("hue_interpolation", hue_interpolation),
+                 Uniform::new("color_from", color_from.to_array_unpremul()),
+                 Uniform::new("color_to", color_to.to_array_unpremul()),
++                Uniform::new(
++                    "color_from_inactive",
++                    color_from_inactive.to_array_unpremul(),
++                ),
++                Uniform::new("color_to_inactive", color_to_inactive.to_array_unpremul()),
++                Uniform::new("fade", fade),
+                 Uniform::new("grad_offset", grad_offset.to_array()),
+-                Uniform::new("grad_width", w),
+-                Uniform::new("grad_vec", grad_vec.to_array()),
++                Uniform::new("grad_angle", angle),
++                Uniform::new("grad_area_size", grad_area_size.to_array()),
+                 mat3_uniform("input_to_geo", input_to_geo),
+                 Uniform::new("geo_size", geo_size.to_array()),
+                 Uniform::new("outer_radius", <[f32; 4]>::from(corner_radius)),
+diff --git a/src/render_helpers/shaders/border.frag b/src/render_helpers/shaders/border.frag
+index ed0e0887..e5da663e 100644
+--- a/src/render_helpers/shaders/border.frag
++++ b/src/render_helpers/shaders/border.frag
+@@ -14,9 +14,12 @@ uniform float colorspace;
+ uniform float hue_interpolation;
+ uniform vec4 color_from;
+ uniform vec4 color_to;
++uniform vec4 color_from_inactive;
++uniform vec4 color_to_inactive;
++uniform float fade;
+ uniform vec2 grad_offset;
+-uniform float grad_width;
+-uniform vec2 grad_vec;
++uniform float grad_angle;
++uniform vec2 grad_area_size;
+ 
+ uniform mat3 input_to_geo;
+ uniform vec2 geo_size;
+@@ -196,8 +199,19 @@ vec4 color_mix(vec4 color1, vec4 color2, float color_ratio) {
+ vec4 gradient_color(vec2 coords) {
+     coords = coords + grad_offset;
+ 
++    // Project the gradient area diagonal onto the gradient direction, mirroring what the CPU
++    // used to compute and upload as grad_vec.
++    vec2 grad_dir = vec2(cos(grad_angle), sin(grad_angle));
++    vec2 grad_area_diag = grad_area_size;
++    if ((grad_dir.x < 0.0 && 0.0 <= grad_dir.y) || (0.0 <= grad_dir.x && grad_dir.y < 0.0))
++        grad_area_diag.x = -grad_area_size.x;
++
++    vec2 grad_vec = grad_dir * (dot(grad_area_diag, grad_dir) / dot(grad_dir, grad_dir));
++    if (grad_dir.y < 0.0)
++        grad_vec = -grad_vec;
++
+     if ((grad_vec.x < 0.0 && 0.0 <= grad_vec.y) || (0.0 <= grad_vec.x && grad_vec.y < 0.0))
+-        coords.x -= grad_width;
++        coords.x -= grad_area_size.x;
+ 
+     float frac = dot(coords, grad_vec) / dot(grad_vec, grad_vec);
+ 
+@@ -205,7 +219,11 @@ vec4 gradient_color(vec2 coords) {
+         frac += 1.0;
+ 
+     frac = clamp(frac, 0.0, 1.0);
+-    return color_mix(color_from, color_to, frac);
++
++    // Crossfade the gradient endpoints between the inactive and active color pairs.
++    vec4 from = color_mix(color_from_inactive, color_from, fade);
++    vec4 to = color_mix(color_to_inactive, color_to, fade);
++    return color_mix(from, to, frac);
+ }
+ 
+ float niri_rounding_alpha(vec2 coords, vec2 size, vec4 corner_radius);
+diff --git a/src/render_helpers/shaders/mod.rs b/src/render_helpers/shaders/mod.rs
+index 7be9b159..59fdfa86 100644
+--- a/src/render_helpers/shaders/mod.rs
++++ b/src/render_helpers/shaders/mod.rs
+@@ -47,9 +47,12 @@ impl Shaders {
+                 UniformName::new("hue_interpolation", UniformType::_1f),
+                 UniformName::new("color_from", UniformType::_4f),
+                 UniformName::new("color_to", UniformType::_4f),
++                UniformName::new("color_from_inactive", UniformType::_4f),
++                UniformName::new("color_to_inactive", UniformType::_4f),
++                UniformName::new("fade", UniformType::_1f),
+                 UniformName::new("grad_offset", UniformType::_2f),
+-                UniformName::new("grad_width", UniformType::_1f),
+-                UniformName::new("grad_vec", UniformType::_2f),
++                UniformName::new("grad_angle", UniformType::_1f),
++                UniformName::new("grad_area_size", UniformType::_2f),
+                 UniformName::new("input_to_geo", UniformType::Matrix3x3),
+                 UniformName::new("geo_size", UniformType::_2f),
+                 UniformName::new("outer_radius", UniformType::_4f),
+diff --git a/src/ui/mru.rs b/src/ui/mru.rs
+index d8ec6de1..df1b9010 100644
+--- a/src/ui/mru.rs
++++ b/src/ui/mru.rs
+@@ -28,7 +28,7 @@ use crate::layout::focus_ring::{FocusRing, FocusRingRenderElement};
+ use crate::layout::{Layout, LayoutElement as _, LayoutElementRenderElement};
+ use crate::niri::Niri;
+ use crate::niri_render_elements;
+-use crate::render_helpers::border::BorderRenderElement;
++use crate::render_helpers::border::{BorderRenderElement, BorderRenderParams};
+ use crate::render_helpers::clipped_surface::ClippedSurfaceRenderElement;
+ use crate::render_helpers::gradient_fade_texture::GradientFadeTextureRenderElement;
+ use crate::render_helpers::offscreen::{OffscreenBuffer, OffscreenRenderElement};
+@@ -401,19 +401,23 @@ impl Thumbnail {
+                 // user-provided radius, so our blocked-out rendering should match that
+                 // radius.
+                 if radius != CornerRadius::default() && has_border_shader {
+-                    return BorderRenderElement::new(
+-                        geo.size,
+-                        Rectangle::from_size(geo.size),
+-                        GradientInterpolation::default(),
+-                        Color::from_color32f(elem.color()),
+-                        Color::from_color32f(elem.color()),
+-                        0.,
+-                        Rectangle::from_size(geo.size),
+-                        0.,
+-                        radius,
+-                        scale as f32,
+-                        1.,
+-                    )
++                    let color = Color::from_color32f(elem.color());
++                    return BorderRenderElement::new(BorderRenderParams {
++                        size: geo.size,
++                        gradient_area: Rectangle::from_size(geo.size),
++                        gradient_format: GradientInterpolation::default(),
++                        color_from: color,
++                        color_to: color,
++                        color_from_inactive: color,
++                        color_to_inactive: color,
++                        fade: 1.,
++                        angle: 0.,
++                        geometry: Rectangle::from_size(geo.size),
++                        border_width: 0.,
++                        corner_radius: radius,
++                        scale: scale as f32,
++                        alpha: 1.,
++                    })
+                     .into();
+                 }
+ 
+@@ -538,6 +542,8 @@ impl Thumbnail {
+                 radius,
+                 scale,
+                 0.5,
++                1.,
++                0.,
+             );
+             background.render(ctx.renderer, loc, &mut |elem| {
+                 push(WindowMruUiRenderElement::FocusRing(elem))
+@@ -559,6 +565,8 @@ impl Thumbnail {
+                 radius.expanded_by(config.width as f32),
+                 scale,
+                 1.,
++                1.,
++                0.,
+             );
+ 
+             border.render(ctx.renderer, loc, &mut |elem| {
+diff --git a/src/window/mapped.rs b/src/window/mapped.rs
+index 3db1f66c..7276e237 100644
+--- a/src/window/mapped.rs
++++ b/src/window/mapped.rs
+@@ -29,7 +29,7 @@ use crate::layout::{
+ };
+ use crate::niri_render_elements;
+ use crate::render_helpers::background_effect::BackgroundEffectElement;
+-use crate::render_helpers::border::BorderRenderElement;
++use crate::render_helpers::border::{BorderRenderElement, BorderRenderParams};
+ use crate::render_helpers::offscreen::OffscreenData;
+ use crate::render_helpers::renderer::NiriRenderer;
+ use crate::render_helpers::snapshot::RenderSnapshot;
+@@ -522,19 +522,22 @@ impl Mapped {
+                 // match that radius.
+                 if radius != CornerRadius::default() && has_border_shader {
+                     let geo = elem.geo();
+-                    return BorderRenderElement::new(
+-                        geo.size,
+-                        Rectangle::from_size(geo.size),
+-                        GradientInterpolation::default(),
+-                        Color::from_color32f(elem.color()),
+-                        Color::from_color32f(elem.color()),
+-                        0.,
+-                        Rectangle::from_size(geo.size),
+-                        0.,
+-                        radius,
+-                        scale.x as f32,
+-                        1.,
+-                    )
++                    return BorderRenderElement::new(BorderRenderParams {
++                        size: geo.size,
++                        gradient_area: Rectangle::from_size(geo.size),
++                        gradient_format: GradientInterpolation::default(),
++                        color_from: Color::from_color32f(elem.color()),
++                        color_to: Color::from_color32f(elem.color()),
++                        color_from_inactive: Color::from_color32f(elem.color()),
++                        color_to_inactive: Color::from_color32f(elem.color()),
++                        fade: 1.,
++                        angle: 0.,
++                        geometry: Rectangle::from_size(geo.size),
++                        border_width: 0.,
++                        corner_radius: radius,
++                        scale: scale.x as f32,
++                        alpha: 1.,
++                    })
+                     .with_location(geo.loc)
+                     .into();
+                 }
+-- 
+2.55.0
+

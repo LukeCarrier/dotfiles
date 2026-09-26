@@ -267,6 +267,7 @@
               niri = niri.packages.${system}.niri-unstable.overrideAttrs (old: {
                 patches = (old.patches or [ ]) ++ [
                   # niri-wm/niri#4382: column navigation with trackpoint swipe gestures.
+                  ./package/niri/focus-ring-shaders.patch
                   ./package/niri/pr-4382.patch
                 ];
               });
