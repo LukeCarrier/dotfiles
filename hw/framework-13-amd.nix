@@ -26,6 +26,11 @@ let
   '';
 in
 {
+  imports = [
+    ../component/bolt/nixos.nix
+    ../component/fwupd/nixos.nix
+  ];
+
   boot = {
     kernelPackages = pkgs.linuxPackages_latest;
     kernelParams = [
@@ -57,19 +62,13 @@ in
     };
   };
 
-  services.fwupd = {
-    enable = true;
-    # FIXME: consider dropping this once Goodix fingerprint reader
-    # firmware 01000334 lands in stable.
-    extraRemotes = [ "lvfs-testing" ];
-  };
+  # FIXME: consider dropping this once Goodix fingerprint reader
+  # firmware 01000334 lands in stable.
+  services.fwupd.extraRemotes = [ "lvfs-testing" ];
 
   services.power-profiles-daemon.enable = true;
 
   services.fprintd.enable = true;
   security.pam.services.login.fprintAuth = true;
 
-  services.hardware.bolt = {
-    enable = true;
-  };
 }

@@ -3,16 +3,17 @@ let
   inherit (lib) getExe;
 in
 {
+  imports = [
+    ../component/bolt/nixos.nix
+    ../component/fwupd/nixos.nix
+  ];
+
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
   services.acpid.enable = true;
 
-  services.fwupd = {
-    enable = true;
-    extraRemotes = [ "lvfs-testing" ];
-  };
+  services.fwupd.extraRemotes = [ "lvfs-testing" ];
 
   services.power-profiles-daemon.enable = true;
 
-  services.hardware.bolt.enable = true;
 }

@@ -1,5 +1,10 @@
 { lib, pkgs, ... }:
 {
+  imports = [
+    ../component/bolt/nixos.nix
+    ../component/fwupd/nixos.nix
+  ];
+
   boot = {
     kernelPackages = pkgs.linuxPackages_latest;
     kernelParams = [ ];
@@ -8,8 +13,6 @@
   services.acpid = {
     enable = true;
   };
-
-  services.fwupd.enable = true;
 
   # Without a daemon owning the ACPI platform profile, DYTC leaves it at
   # low-power indefinitely, which clamps the package to a 10W PL1 via the MMIO
@@ -30,5 +33,4 @@
     ACTION=="add", SUBSYSTEM=="power_supply", ENV{POWER_SUPPLY_NAME}=="BAT0", ATTR{charge_control_end_threshold}="80"
   '';
 
-  services.hardware.bolt.enable = true;
 }
