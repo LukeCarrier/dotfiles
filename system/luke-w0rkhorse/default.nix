@@ -1,16 +1,19 @@
 {
+  config,
+  homeActivationPackage,
   lib,
   inputs,
   modulesPath,
+  pkgs,
   ...
 }:
 {
   imports = [
     ./disk-config.nix
+    ./disk-config-test.nix
     (modulesPath + "/installer/scan/not-detected.nix")
     inputs.disko.nixosModules.disko
     inputs.emed-nix.nixosModules.aws-cvpn
-    inputs.emed-nix.nixosModules.emed-cloud
     inputs.emed-nix.nixosModules.emed-security-baseline
     inputs.lanzaboote.nixosModules.lanzaboote
     inputs.nix-flatpak.nixosModules.nix-flatpak
@@ -54,6 +57,58 @@
   networking = {
     hostName = "luke-w0rkhorse";
     domain = "peacehaven.carrier.family";
+    hostId = "facd967a";
+  };
+
+  boot.zfs = {
+    forceImportRoot = false;
+    unsafeAllowHibernation = true;
+  };
+
+  # Resume must inspect the LUKS-backed swap LV before ZFS changes disk state.
+  boot.initrd.systemd.services.zfs-import-w0rkhorse = {
+    after = [ "systemd-hibernate-resume.service" ];
+    script = lib.mkAfter ''
+      ${config.boot.zfs.package}/sbin/zfs rollback -r w0rkhorse/root@blank
+    '';
+  };
+
+  dotfiles.persistence = {
+    enable = true;
+    root = "/persist";
+  };
+
+  services = {
+    upower = {
+      criticalPowerAction = "PowerOff";
+      percentageAction = 5;
+    };
+    zfs.autoScrub = {
+      enable = true;
+      pools = [ "w0rkhorse" ];
+    };
+  };
+
+  systemd.services.home-manager-lukecarrier-first-boot = {
+    description = "Activate the initial Home Manager generation for lukecarrier";
+    after = [ "local-fs.target" ];
+    wantedBy = [ "multi-user.target" ];
+    unitConfig.ConditionPathExists = "!/home/lukecarrier/.local/state/nix/profiles/home-manager";
+    environment = {
+      HOME = "/home/lukecarrier";
+      USER = "lukecarrier";
+      LOGNAME = "lukecarrier";
+      XDG_DATA_DIRS = "${pkgs.dconf}/share:/home/lukecarrier/.nix-profile/share:/run/current-system/sw/share";
+    };
+    serviceConfig = {
+      Type = "oneshot";
+      User = "lukecarrier";
+    };
+    script = ''
+      export PATH=${lib.makeBinPath [ config.nix.package ]}:$PATH
+      command -v nix-env >/dev/null
+      exec ${homeActivationPackage}/activate
+    '';
   };
 
   boot.loader = {
@@ -81,6 +136,7 @@
 
   users.users.lukecarrier = {
     isNormalUser = true;
+    uid = 1000;
     initialPassword = "nixos";
     description = "Luke Carrier";
     extraGroups = [
@@ -91,6 +147,11 @@
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family"
     ];
+  };
+
+  services.openssh.settings = {
+    KbdInteractiveAuthentication = false;
+    PasswordAuthentication = false;
   };
 
   programs._1password-gui.polkitPolicyOwners = [ "lukecarrier" ];

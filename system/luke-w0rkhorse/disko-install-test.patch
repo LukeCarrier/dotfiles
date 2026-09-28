@@ -1,0 +1,214 @@
+diff --git a/lib/tests.nix b/lib/tests.nix
+--- a/lib/tests.nix
++++ b/lib/tests.nix
+@@ -119,6 +119,6 @@
+         testConfigBooted = testLib.prepareDiskoConfig diskoConfigWithArgs testLib.devices;
+ 
+-        tsp-generator = pkgs.callPackage ../. { checked = true; };
++        tsp-generator = pkgs.callPackage ../. { checked = false; };
+         tsp-format = (tsp-generator._cliFormat testConfigInstall) pkgs;
+         tsp-mount = (tsp-generator._cliMount testConfigInstall) pkgs;
+         tsp-unmount = (tsp-generator._cliUnmount testConfigInstall) pkgs;
+@@ -184,17 +184,6 @@
+                   boot.loader.grub.efiSupport = efi;
+                   boot.loader.systemd-boot.graceful = true;
+ 
+-                  # we always want the bind-mounted nix store. otherwise tests take forever
+-                  fileSystems."/nix/store" = lib.mkForce {
+-                    device = "nix-store";
+-                    fsType = "9p";
+-                    neededForBoot = true;
+-                    options = [
+-                      "trans=virtio"
+-                      "version=9p2000.L"
+-                      "cache=loose"
+-                    ];
+-                  };
+                   # /dev/disk-by-id is empty in QEMU VMs, /dev/disk/by-uuid only shows one entry
+                   # per ZFS pool as members use the pool's GUID, /dev/disk/by-partuuid only shows
+                   # partitions so LVM backed members are missed. /dev is the only thing that catches all.
+@@ -222,6 +211,11 @@
+               )
+             ];
+           }).config.system.build.toplevel;
++        installedClosureInfo = pkgs.closureInfo { rootPaths = [ installedTopLevel ]; };
++        installedClosureArchive = pkgs.runCommand "installed-system-closure.tar.zst" { } ''
++          ${pkgs.gnutar}/bin/tar --create --file=- --files-from=${installedClosureInfo}/store-paths \
++            | ${pkgs.zstd}/bin/zstd -T4 -3 > $out
++        '';
+ 
+       in
+       makeTest' {
+@@ -302,6 +296,8 @@
+ 
+             virtualisation = {
++              memorySize = 2048;
++              cores = 4;
+-              emptyDiskImages = builtins.genList (_: 4096) num-disks;
++              emptyDiskImages = builtins.genList (_: 131072) num-disks;
+               qemu.options = lib.mkIf enableCanokey [
+                 "-device pci-ohci,id=usb-bus"
+                 "-device canokey,bus=usb-bus.0,file=/tmp/canokey-file"
+@@ -309,6 +305,7 @@
+ 
+               # REMOVEME when Canokey support is enabled upstream
+               qemu.package = lib.mkForce qemuPkg;
++              additionalPaths = [ installedClosureArchive ];
+             };
+             # useful for debugging via repl
+             system.build.systemToInstall = installed-system-eval;
+@@ -320,5 +317,12 @@
+           ''
+             import shlex
++            import os
++            import shutil
++            import subprocess
++            import time
++            import atexit
++
++            disk_image_paths: list[str] = []
+ 
+             def disks(oldmachine, num_disks):
+                 disk_flags = []
+@@ -331,6 +335,49 @@
+                     ]
+                 return disk_flags
+ 
++            def start_swtpm():
++                tpm_dir = os.path.join(os.environ["NIX_BUILD_TOP"], "swtpm")
++                socket_path = os.path.join(tpm_dir, "socket")
++                os.makedirs(tpm_dir, exist_ok=True)
++                if os.path.lexists(socket_path):
++                    os.unlink(socket_path)
++                process = subprocess.Popen([
++                    "${pkgs.swtpm}/bin/swtpm", "socket",
++                    "--tpmstate", f"dir={tpm_dir}",
++                    "--ctrl", f"type=unixio,path={socket_path}",
++                    "--tpm2",
++                    "--log", f"file={tpm_dir}/stdout,level=6",
++                ])
++                deadline = time.monotonic() + 5
++                while not os.path.exists(socket_path):
++                    exit_code = process.poll()
++                    if exit_code is not None:
++                        raise RuntimeError(f"swtpm exited with code {exit_code}")
++                    if time.monotonic() >= deadline:
++                        stop_swtpm(process)
++                        raise TimeoutError("timed out waiting for swtpm socket")
++                    time.sleep(0.05)
++                if process.poll() is not None:
++                    raise RuntimeError(f"swtpm exited with code {process.returncode}")
++                atexit.register(stop_swtpm, process)
++                return process
++
++            def stop_swtpm(process):
++                if process.poll() is not None:
++                    return
++                process.terminate()
++                try:
++                    process.wait(timeout=5)
++                except subprocess.TimeoutExpired:
++                    process.kill()
++                    process.wait(timeout=5)
++
++            def restart_swtpm(process, reset_state=False):
++                stop_swtpm(process)
++                if reset_state:
++                    shutil.rmtree(os.path.join(os.environ["NIX_BUILD_TOP"], "swtpm"))
++                return start_swtpm()
++
+             def create_test_machine(
+                 oldmachine=None, **kwargs
+             ):  # taken from <nixpkgs/nixos/tests/installer.nix>
+@@ -341,9 +388,14 @@
+                     "-m",
+-                    "1024",
++                    "2048",
++                    "-smp",
++                    "4",
+-                    "-virtfs",
+-                    "local,path=/nix/store,security_model=none,mount_tag=nix-store",
+                     *disks(oldmachine, ${toString num-disks})
+                 ]
++                start_command += [
++                  "-chardev", "socket,id=chrtpm,path=$NIX_BUILD_TOP/swtpm/socket",
++                  "-tpmdev", "emulator,id=tpm0,chardev=chrtpm",
++                  "-device", "tpm-tis,tpmdev=tpm0",
++                ]
+                 ${lib.optionalString efi ''
+                   start_command += ["-drive",
+                     "if=pflash,format=raw,unit=0,readonly=on,file=${pkgs.OVMF.firmware}",
+@@ -349,5 +401,5 @@
+                     "-drive",
+-                    "if=pflash,format=raw,unit=1,readonly=on,file=${pkgs.OVMF.variables}"
++                    "if=pflash,format=raw,unit=1,file=$NIX_EFI_VARS"
+                   ]
+                 ''}
+                 ${lib.optionalString enableCanokey ''
+@@ -356,5 +408,8 @@
+                   ]
+                 ''}
++                assert oldmachine is not None
++                global disk_image_paths
++                disk_image_paths = [f"{oldmachine.state_dir}/empty{i}.qcow2" for i in range(${toString num-disks})]
+                 machine = create_machine(start_command=" ".join(start_command), **kwargs)
+                 driver.machines_qemu.append(machine)
+                 return machine
+@@ -362,2 +417,3 @@
++            swtpm_process = start_swtpm()
+             machine.start()
+             machine.succeed("echo -n 'additionalSecret' > /tmp/additionalSecret.key")
+@@ -365,14 +421,14 @@
+             ${lib.optionalString (testMode == "direct") ''
+               # running direct mode
+-              machine.succeed("${lib.getExe tsp-format}")
+-              machine.succeed("${lib.getExe tsp-mount}")
+-              machine.succeed("${lib.getExe tsp-mount}") # verify that mount is idempotent
+-              machine.succeed("${lib.getExe tsp-unmount}")
+-              machine.succeed("${lib.getExe tsp-unmount}") # verify that umount is idempotent
+-              machine.succeed("${lib.getExe tsp-mount}") # verify that mount is idempotent
+-              machine.succeed("${lib.getExe tsp-disko} --yes-wipe-all-disks") # verify that we can destroy and recreate
++              machine.succeed("IN_DISKO_TEST=1 ${lib.getExe tsp-format}")
++              machine.succeed("IN_DISKO_TEST=1 ${lib.getExe tsp-mount}")
++              machine.succeed("IN_DISKO_TEST=1 ${lib.getExe tsp-mount}") # verify that mount is idempotent
++              machine.succeed("IN_DISKO_TEST=1 ${lib.getExe tsp-unmount}")
++              machine.succeed("IN_DISKO_TEST=1 ${lib.getExe tsp-unmount}") # verify that umount is idempotent
++              machine.succeed("IN_DISKO_TEST=1 ${lib.getExe tsp-mount}") # verify that mount is idempotent
++              machine.succeed("IN_DISKO_TEST=1 ${lib.getExe tsp-disko} --yes-wipe-all-disks") # verify that we can destroy and recreate
+               machine.succeed("mkdir -p /mnt/home")
+               machine.succeed("touch /mnt/home/testfile")
+-              machine.succeed("${lib.getExe tsp-format}") # verify that format is idempotent
++              machine.succeed("IN_DISKO_TEST=1 ${lib.getExe tsp-format}") # verify that format is idempotent
+               machine.succeed("test -e /mnt/home/testfile")
+             ''}
+@@ -393,15 +449,12 @@
+ 
+             ${postDisko}
+ 
+             ${lib.optionalString testBoot ''
+               # mount nix-store in /mnt
+               machine.succeed("mkdir -p /mnt/nix/store")
+-              machine.succeed("mount --bind /nix/store /mnt/nix/store")
+-
+-              machine.succeed("nix-store --load-db < ${
+-                pkgs.closureInfo { rootPaths = [ installedTopLevel ]; }
+-              }/registration")
++              machine.succeed("${pkgs.zstd}/bin/zstd --decompress --stdout ${installedClosureArchive} | tar --extract --directory=/mnt")
++              machine.succeed("nix-store --store /mnt --load-db < ${installedClosureInfo}/registration")
+ 
+               # fix "this is not a NixOS installation"
+               machine.succeed("mkdir -p /mnt/etc")
+               machine.succeed("touch /mnt/etc/NIXOS")
+@@ -409,2 +462,2 @@
+               machine.succeed("mkdir -p /mnt/nix/var/nix/profiles")
+-              machine.succeed("nix-env -p /mnt/nix/var/nix/profiles/system --set ${installedTopLevel}")
++              machine.succeed("nix-env --store /mnt -p /mnt/nix/var/nix/profiles/system --set ${installedTopLevel}")
+@@ -413,6 +466,8 @@
+               machine.shutdown()
+ 
+               machine = create_test_machine(oldmachine=machine, name="booted_machine")
++              shutil.copyfile("${pkgs.OVMF.variables}", machine.efi_vars_path)
++              swtpm_process = restart_swtpm(swtpm_process)
+               machine.start()
+               ${bootCommands}
+               machine.wait_for_unit("local-fs.target")

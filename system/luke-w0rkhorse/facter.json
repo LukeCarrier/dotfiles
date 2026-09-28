@@ -304,7 +304,7 @@
         "sysfs_iommu_group_id": 15,
         "detail": {
           "function": 0,
-          "command": 1031,
+          "command": 1027,
           "header_type": 0,
           "secondary_bus": 0,
           "prog_if": 0
@@ -1258,6 +1258,7 @@
         "fpu_exception": false,
         "cpuid_level": 35,
         "write_protect": false,
+        "tlb_size": 32708,
         "clflush_size": 64,
         "cache_alignment": 64,
         "address_sizes": {
@@ -1295,39 +1296,38 @@
           "value": 0
         },
         "vendor": {
-          "hex": "144d",
-          "value": 5197
+          "hex": "c0a9",
+          "value": 49321
         },
         "sub_vendor": {
-          "hex": "144d",
-          "value": 5197
+          "hex": "c0a9",
+          "value": 49321
         },
         "device": {
-          "hex": "a808",
-          "name": "PM981 NVMe Samsung 256GB",
-          "value": 43016
+          "hex": "2263",
+          "name": "CT1000P1SSD8",
+          "value": 8803
         },
         "sub_device": {
-          "hex": "a801",
-          "value": 43009
+          "hex": "2263",
+          "value": 8803
         },
-        "serial": "S443NX0KB02177",
-        "model": "PM981 NVMe Samsung 256GB",
+        "serial": "1842E1D2135A",
+        "model": "CT1000P1SSD8",
         "sysfs_id": "/class/block/nvme0n1",
         "sysfs_bus_id": "nvme0",
         "sysfs_device_link": "/devices/pci0000:00/0000:00:1c.0/0000:04:00.0/nvme/nvme0",
         "unix_device_names": [
-          "/dev/disk/by-id/nvme-PM981_NVMe_Samsung_256GB__S443NX0KB02177",
-          "/dev/disk/by-id/nvme-PM981_NVMe_Samsung_256GB_______S443NX0KB02177",
-          "/dev/disk/by-id/nvme-PM981_NVMe_Samsung_256GB_______S443NX0KB02177_1",
-          "/dev/disk/by-id/nvme-eui.343433304bb021770025385800000001",
+          "/dev/disk/by-id/nvme-CT1000P1SSD8_1842E1D2135A",
+          "/dev/disk/by-id/nvme-CT1000P1SSD8_1842E1D2135A_1",
+          "/dev/disk/by-id/nvme-nvme.c0a9-313834324531443231333541-435431303030503153534438-00000001",
           "/dev/disk/by-path/pci-0000:04:00.0-nvme-1",
           "/dev/nvme0n1"
         ],
         "resources": [
           {
             "type": "disk_geo",
-            "cylinders": 244198,
+            "cylinders": 953869,
             "heads": 64,
             "sectors": 32,
             "size": "0x0",
@@ -1336,7 +1336,7 @@
           {
             "type": "size",
             "unit": "sectors",
-            "value_1": 500118192,
+            "value_1": 1953525168,
             "value_2": 512
           }
         ],
@@ -1528,7 +1528,7 @@
         },
         "vendor": {
           "hex": "1d6b",
-          "name": "Linux 7.1.5 xhci-hcd",
+          "name": "Linux 7.2.7 xhci-hcd",
           "value": 7531
         },
         "device": {
@@ -1538,11 +1538,11 @@
         },
         "revision": {
           "hex": "0000",
-          "name": "7.01",
+          "name": "7.02",
           "value": 0
         },
         "serial": "0000:00:14.0",
-        "model": "Linux 7.1.5 xhci-hcd xHCI Host Controller",
+        "model": "Linux 7.2.7 xhci-hcd xHCI Host Controller",
         "sysfs_id": "/devices/pci0000:00/0000:00:14.0/usb3/3-0:1.0",
         "sysfs_bus_id": "3-0:1.0",
         "resources": [
@@ -1590,7 +1590,7 @@
         "driver_modules": [
           "usbcore"
         ],
-        "module_alias": "usb:v1D6Bp0002d0701dc09dsc00dp01ic09isc00ip00in00"
+        "module_alias": "usb:v1D6Bp0002d0702dc09dsc00dp01ic09isc00ip00in00"
       },
       {
         "index": 50,
@@ -1615,7 +1615,7 @@
         },
         "vendor": {
           "hex": "1d6b",
-          "name": "Linux 7.1.5 xhci-hcd",
+          "name": "Linux 7.2.7 xhci-hcd",
           "value": 7531
         },
         "device": {
@@ -1625,11 +1625,11 @@
         },
         "revision": {
           "hex": "0000",
-          "name": "7.01",
+          "name": "7.02",
           "value": 0
         },
         "serial": "0000:00:14.0",
-        "model": "Linux 7.1.5 xhci-hcd xHCI Host Controller",
+        "model": "Linux 7.2.7 xhci-hcd xHCI Host Controller",
         "sysfs_id": "/devices/pci0000:00/0000:00:14.0/usb4/4-0:1.0",
         "sysfs_bus_id": "4-0:1.0",
         "detail": {
@@ -1667,7 +1667,7 @@
         "driver_modules": [
           "usbcore"
         ],
-        "module_alias": "usb:v1D6Bp0003d0701dc09dsc00dp03ic09isc00ip00in00"
+        "module_alias": "usb:v1D6Bp0003d0702dc09dsc00dp03ic09isc00ip00in00"
       },
       {
         "index": 52,
@@ -1692,7 +1692,7 @@
         },
         "vendor": {
           "hex": "1d6b",
-          "name": "Linux 7.1.5 xhci-hcd",
+          "name": "Linux 7.2.7 xhci-hcd",
           "value": 7531
         },
         "device": {
@@ -1702,11 +1702,11 @@
         },
         "revision": {
           "hex": "0000",
-          "name": "7.01",
+          "name": "7.02",
           "value": 0
         },
         "serial": "0000:00:0d.0",
-        "model": "Linux 7.1.5 xhci-hcd xHCI Host Controller",
+        "model": "Linux 7.2.7 xhci-hcd xHCI Host Controller",
         "sysfs_id": "/devices/pci0000:00/0000:00:0d.0/usb1/1-0:1.0",
         "sysfs_bus_id": "1-0:1.0",
         "resources": [
@@ -1754,7 +1754,7 @@
         "driver_modules": [
           "usbcore"
         ],
-        "module_alias": "usb:v1D6Bp0002d0701dc09dsc00dp01ic09isc00ip00in00"
+        "module_alias": "usb:v1D6Bp0002d0702dc09dsc00dp01ic09isc00ip00in00"
       },
       {
         "index": 57,
@@ -1779,7 +1779,7 @@
         },
         "vendor": {
           "hex": "1d6b",
-          "name": "Linux 7.1.5 xhci-hcd",
+          "name": "Linux 7.2.7 xhci-hcd",
           "value": 7531
         },
         "device": {
@@ -1789,11 +1789,11 @@
         },
         "revision": {
           "hex": "0000",
-          "name": "7.01",
+          "name": "7.02",
           "value": 0
         },
         "serial": "0000:00:0d.0",
-        "model": "Linux 7.1.5 xhci-hcd xHCI Host Controller",
+        "model": "Linux 7.2.7 xhci-hcd xHCI Host Controller",
         "sysfs_id": "/devices/pci0000:00/0000:00:0d.0/usb2/2-0:1.0",
         "sysfs_bus_id": "2-0:1.0",
         "detail": {
@@ -1831,7 +1831,7 @@
         "driver_modules": [
           "usbcore"
         ],
-        "module_alias": "usb:v1D6Bp0003d0701dc09dsc00dp03ic09isc00ip00in00"
+        "module_alias": "usb:v1D6Bp0003d0702dc09dsc00dp03ic09isc00ip00in00"
       }
     ],
     "memory": [
@@ -1995,7 +1995,7 @@
         },
         "sysfs_id": "/devices/pci0000:00/0000:00:15.0/i2c_designware.0/i2c-1/i2c-ELAN06D8:00/0018:04F3:3195.0001/input/input13",
         "unix_device_names": [
-          "/dev/input/event6",
+          "/dev/input/event8",
           "/dev/input/ + handler"
         ]
       }
@@ -3108,20 +3108,24 @@
           "value": 2
         },
         "vendor": {
-          "hex": "144d",
-          "value": 5197
+          "hex": "c0a9",
+          "value": 49321
         },
         "sub_vendor": {
-          "hex": "144d",
-          "value": 5197
+          "hex": "c0a9",
+          "value": 49321
         },
         "device": {
-          "hex": "a808",
-          "value": 43016
+          "hex": "2263",
+          "value": 8803
         },
         "sub_device": {
-          "hex": "a801",
-          "value": 43009
+          "hex": "2263",
+          "value": 8803
+        },
+        "revision": {
+          "hex": "0003",
+          "value": 3
         },
         "model": "Mass storage controller",
         "sysfs_id": "/devices/pci0000:00/0000:00:1c.0/0000:04:00.0",
@@ -3142,7 +3146,7 @@
         "driver_modules": [
           "nvme"
         ],
-        "module_alias": "pci:v0000144Dd0000A808sv0000144Dsd0000A801bc01sc08i02"
+        "module_alias": "pci:v0000C0A9d00002263sv0000C0A9sd00002263bc01sc08i02"
       }
     ],
     "system": {
@@ -3523,10 +3527,10 @@
   },
   "smbios": {
     "bios": {
-      "handle": 21,
+      "handle": 22,
       "vendor": "LENOVO",
-      "version": "R2SET33W (1.09 )",
-      "date": "03/31/2026",
+      "version": "R2SET37W (1.13 )",
+      "date": "06/24/2026",
       "features": [
         "PCI supported",
         "PnP supported",
@@ -3549,7 +3553,7 @@
       "rom_size": 16777216
     },
     "board": {
-      "handle": 23,
+      "handle": 24,
       "manufacturer": "LENOVO",
       "product": "21S7S7M201",
       "version": "SDK0T76530 WIN",
@@ -3563,11 +3567,11 @@
         "Replaceable"
       ],
       "location": "Not Available",
-      "chassis": 24
+      "chassis": 25
     },
     "cache": [
       {
-        "handle": 12,
+        "handle": 13,
         "socket": "L1 Cache",
         "size_max": 96,
         "size_current": 96,
@@ -3608,7 +3612,7 @@
         ]
       },
       {
-        "handle": 13,
+        "handle": 14,
         "socket": "L1 Cache",
         "size_max": 128,
         "size_current": 128,
@@ -3649,7 +3653,7 @@
         ]
       },
       {
-        "handle": 14,
+        "handle": 15,
         "socket": "L2 Cache",
         "size_max": 4096,
         "size_current": 4096,
@@ -3690,7 +3694,7 @@
         ]
       },
       {
-        "handle": 15,
+        "handle": 16,
         "socket": "L3 Cache",
         "size_max": 12288,
         "size_current": 12288,
@@ -3731,7 +3735,7 @@
         ]
       },
       {
-        "handle": 16,
+        "handle": 17,
         "socket": "L1 Cache",
         "size_max": 320,
         "size_current": 320,
@@ -3772,7 +3776,7 @@
         ]
       },
       {
-        "handle": 17,
+        "handle": 18,
         "socket": "L1 Cache",
         "size_max": 640,
         "size_current": 640,
@@ -3813,7 +3817,7 @@
         ]
       },
       {
-        "handle": 18,
+        "handle": 19,
         "socket": "L2 Cache",
         "size_max": 6144,
         "size_current": 6144,
@@ -3854,7 +3858,7 @@
         ]
       },
       {
-        "handle": 19,
+        "handle": 20,
         "socket": "L3 Cache",
         "size_max": 12288,
         "size_current": 12288,
@@ -3897,7 +3901,7 @@
     ],
     "chassis": [
       {
-        "handle": 24,
+        "handle": 25,
         "manufacturer": "LENOVO",
         "version": "None",
         "chassis_type": {
@@ -3930,11 +3934,11 @@
       }
     ],
     "config": {
-      "handle": 42
+      "handle": 43
     },
     "group_associations": [
       {
-        "handle": 52,
+        "handle": 53,
         "power": {
           "hex": "0000",
           "name": "Disabled",
@@ -3957,7 +3961,7 @@
         }
       },
       {
-        "handle": 54,
+        "handle": 55,
         "name": "$MEI",
         "handles": [
           0
@@ -3966,7 +3970,7 @@
     ],
     "language": [
       {
-        "handle": 43,
+        "handle": 44,
         "languages": [
           "en-US"
         ]
@@ -3974,7 +3978,7 @@
     ],
     "memory_array": [
       {
-        "handle": 2,
+        "handle": 3,
         "location": {
           "hex": "0003",
           "name": "Motherboard",
@@ -3997,8 +4001,8 @@
     ],
     "memory_array_mapped_address": [
       {
-        "handle": 5,
-        "array_handle": 2,
+        "handle": 6,
+        "array_handle": 3,
         "start_address": "0x0",
         "end_address": "0x800000000",
         "part_width": 1
@@ -4006,12 +4010,12 @@
     ],
     "memory_device": [
       {
-        "handle": 3,
+        "handle": 4,
         "location": "Controller0-ChannelA-DIMM0",
         "bank_location": "BANK 0",
         "manufacturer": "",
         "part_number": "",
-        "array_handle": 2,
+        "array_handle": 3,
         "error_handle": 65534,
         "width": 0,
         "ecc_bits": 0,
@@ -4031,12 +4035,12 @@
         "speed": 0
       },
       {
-        "handle": 4,
+        "handle": 5,
         "location": "Controller1-ChannelA-DIMM0",
         "bank_location": "BANK 0",
         "manufacturer": "SK Hynix",
         "part_number": "HMCG88AGBSA095N",
-        "array_handle": 2,
+        "array_handle": 3,
         "error_handle": 65534,
         "width": 64,
         "ecc_bits": 0,
@@ -4060,7 +4064,7 @@
     ],
     "memory_error": [
       {
-        "handle": 56,
+        "handle": 57,
         "error_type": {
           "hex": "0003",
           "name": "OK",
@@ -4084,7 +4088,7 @@
     ],
     "pointing_device": [
       {
-        "handle": 57,
+        "handle": 58,
         "mouse_type": {
           "hex": "0005",
           "name": "Track Point",
@@ -4098,7 +4102,7 @@
         "buttons": 3
       },
       {
-        "handle": 58,
+        "handle": 59,
         "mouse_type": {
           "hex": "0007",
           "name": "Touch Pad",
@@ -4114,7 +4118,7 @@
     ],
     "port_connector": [
       {
-        "handle": 25,
+        "handle": 26,
         "port_type": {
           "hex": "0010",
           "name": "USB",
@@ -4129,7 +4133,7 @@
         "external_reference_designator": "USB 1"
       },
       {
-        "handle": 26,
+        "handle": 27,
         "port_type": {
           "hex": "0010",
           "name": "USB",
@@ -4144,7 +4148,7 @@
         "external_reference_designator": "USB 2"
       },
       {
-        "handle": 27,
+        "handle": 28,
         "port_type": {
           "hex": "0010",
           "name": "USB",
@@ -4159,7 +4163,7 @@
         "external_reference_designator": "USB 3"
       },
       {
-        "handle": 28,
+        "handle": 29,
         "port_type": {
           "hex": "0010",
           "name": "USB",
@@ -4174,7 +4178,7 @@
         "external_reference_designator": "USB 4"
       },
       {
-        "handle": 35,
+        "handle": 36,
         "port_type": {
           "hex": "001c",
           "name": "Video Port",
@@ -4189,7 +4193,7 @@
         "external_reference_designator": "Hdmi1"
       },
       {
-        "handle": 39,
+        "handle": 40,
         "port_type": {
           "hex": "001d",
           "name": "Audio Port",
@@ -4206,7 +4210,7 @@
     ],
     "processor": [
       {
-        "handle": 20,
+        "handle": 21,
         "socket": "U3E1",
         "socket_type": {
           "hex": "0053",
@@ -4234,14 +4238,14 @@
         },
         "clock_ext": 100,
         "clock_max": 4900,
-        "cache_handle_l1": 17,
-        "cache_handle_l2": 18,
-        "cache_handle_l3": 19
+        "cache_handle_l1": 18,
+        "cache_handle_l2": 19,
+        "cache_handle_l3": 20
       }
     ],
     "slot": [
       {
-        "handle": 41,
+        "handle": 42,
         "designation": "SimCard Slot",
         "slot_type": {
           "hex": "0001",
@@ -4267,7 +4271,7 @@
       }
     ],
     "system": {
-      "handle": 22,
+      "handle": 23,
       "manufacturer": "LENOVO",
       "product": "21S7S7M201",
       "version": "ThinkPad L14 Gen 6",
