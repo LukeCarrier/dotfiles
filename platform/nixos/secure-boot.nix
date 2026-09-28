@@ -1,5 +1,7 @@
-{ lib, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 {
+  dotfiles.persistence.directories = lib.optional config.boot.lanzaboote.enable config.boot.lanzaboote.pkiBundle;
+
   environment.systemPackages = [ pkgs.sbctl ];
 
   boot.loader.systemd-boot.enable = lib.mkForce false;
