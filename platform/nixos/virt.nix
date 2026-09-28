@@ -1,4 +1,6 @@
-{ pkgs, ... }: {
+{ config, lib, pkgs, ... }: {
+  dotfiles.persistence.directories = lib.optional config.virtualisation.libvirtd.enable "/var/lib/libvirt";
+
   virtualisation.libvirtd = {
     enable = true;
     qemu.swtpm.enable = true;
