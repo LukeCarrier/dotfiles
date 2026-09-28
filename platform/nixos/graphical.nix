@@ -1,5 +1,14 @@
 { config, lib, pkgs, ... }:
 {
+  dotfiles.persistence.directories =
+    lib.optionals config.networking.networkmanager.enable [
+      "/etc/NetworkManager/system-connections"
+      "/var/lib/NetworkManager"
+    ]
+    ++ lib.optional config.hardware.bluetooth.enable "/var/lib/bluetooth"
+    ++ lib.optional config.services.colord.enable "/var/lib/colord"
+    ++ lib.optional config.services.flatpak.enable "/var/lib/flatpak";
+
   environment.systemPackages = with pkgs; [
     # System management
     home-manager
