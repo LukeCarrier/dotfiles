@@ -6,7 +6,7 @@ keys:
   - &fatman age1tsypj2vpuy6dnlx3le2225l39knhm43xzsxqm57wdwh29t5vj3vq70h0c7
   - &employer_emed age14ddy9t7d0dnlmrumefw45ft9jqvzwz6l9d2th8hfd738xhjluckskuhe7p
   - &employer_emed_b-4653 age1jklllmcjlj8ln8jfrdmp2scg2q93tkk3msnsc5jxcjsamwp5vdgshwr7my
-  - &w0rkhorse age1uuc0r56ntwucfe7nlrw7qr28fa7jeuc98084ljl7lfkcz7mxggksmlffx0
+  - &w0rkhorse age1epgrkrtn8twdn2k3zzft4ml6qe5p06mktu49falkxd3gq3nwhugsvgvtga
 recipients:
   - &emed
     - *employer_emed

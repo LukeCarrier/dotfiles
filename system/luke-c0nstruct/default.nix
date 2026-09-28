@@ -24,6 +24,7 @@
     ../../component/niri/nixos.nix
     ../../component/librepods/nixos.nix
     ../../component/1password/nixos.nix
+    ../../component/bolt/nixos.nix
   ];
 
   system.stateVersion = "26.05";
@@ -53,8 +54,6 @@
       EnablePixelShift = true;
     };
   };
-
-  services.hardware.bolt.enable = true;
 
   # Cap battery charge at 80% to reduce wear. On this T2 Mac the limit is an
   # SMC key (BCLM) exposed by the applesmc driver, not the standard

@@ -11,6 +11,7 @@ let
 in
 {
   imports = [
+    inputs.emed-nix.homeManagerModules.emed-cloud
     inputs.niri.homeModules.niri
     inputs.nirivana.homeManagerModules.default
     inputs.vicinae.homeManagerModules.default
@@ -104,7 +105,7 @@ in
     inherit permittedInsecurePackages;
   };
 
-  sops.age.keyFile = "${config.home.homeDirectory}/Code/LukeCarrier/dotfiles/.sops/keys";
+  sops.age.keyFile = lib.mkForce "${config.home.homeDirectory}/.config/sops/age/keys.txt";
 
   programs.mcp.servers.excalidraw = {
     command = getExe' pkgs.excalidraw-mcp-app "excalidraw-mcp-app";
