@@ -1,5 +1,18 @@
 { config, lib, ... }:
 {
+  imports = [ ./persistence.nix ];
+
+  dotfiles.persistence = {
+    directories = [
+      "/var/lib/nixos"
+      "/var/log"
+    ];
+    files = [
+      "/etc/machine-id"
+      "/var/lib/systemd/credential.secret"
+    ] ++ lib.optionals config.services.openssh.enable (lib.concatMap (key: [ key.path "${key.path}.pub" ]) config.services.openssh.hostKeys);
+  };
+
   networking = {
     nftables.enable = true;
     firewall = {
