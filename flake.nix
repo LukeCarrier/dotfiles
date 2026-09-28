@@ -74,6 +74,10 @@
       url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
+    impermanence = {
+      url = "github:nix-community/impermanence";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
     lanzaboote = {
       url = "github:nix-community/lanzaboote/master";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
@@ -103,6 +107,12 @@
       url = "github:nix-community/nix-on-droid/release-24.05";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
+    nixos-images = {
+      url = "github:nix-community/nixos-images/079349fa2e5bbb103eb0226cb27915cf1c0d6f05";
+      inputs.nixos-stable.follows = "nixpkgs-unstable";
+      inputs.nixos-unstable.follows = "nixpkgs-unstable";
+    };
+    nixpkgs-kexec.url = "github:NixOS/nixpkgs/62a6469796b0f4dbeb575f2dd056197c92b7a12f";
     nixos-hardware = {
       url = "github:NixOS/nixos-hardware";
     };
@@ -175,6 +185,7 @@
       flake-utils,
       handy,
       home-manager,
+      impermanence,
       lanzaboote,
       niri,
       nirivana,
@@ -184,6 +195,8 @@
       nix-on-droid,
       nix-rosetta-builder,
       nix-vscode-extensions,
+      nixos-images,
+      nixpkgs-kexec,
       nixpkgs-unstable,
       nur,
       rust-overlay,
@@ -364,10 +377,10 @@
       {
         devShells = import ./shell {
           lib = pkgs.lib // lib;
-          inherit pkgs;
+          inherit nixos-images nixpkgs-kexec pkgs;
         };
 
-        packages = import ./package { inherit pkgs; };
+        packages = import ./package { inherit nixos-images nixpkgs-kexec pkgs; };
       }
     )
     // (import ./system {
@@ -376,6 +389,7 @@
         disko
         emed-nix
         home-manager
+        impermanence
         lanzaboote
         niri
         nirivana

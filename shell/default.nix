@@ -1,4 +1,9 @@
-{ lib, pkgs }:
+{
+  lib,
+  nixos-images,
+  nixpkgs-kexec,
+  pkgs,
+}:
 let
   inherit (pkgs) stdenv;
   inherit (lib) getExe getExe';
@@ -90,7 +95,12 @@ in
 {
   default =
     let
-      inherit (lib) getExe getExe' optionals optionalString;
+      inherit (lib)
+        getExe
+        getExe'
+        optionals
+        optionalString
+        ;
       inherit (pkgs.stdenv.hostPlatform) isLinux;
       inherit (pkgs)
         age
@@ -113,57 +123,58 @@ in
         sops
         treefmt
         ;
-      toolVersionsCmds =
-        ''
-          printf "age %s\n" "$(${getExe age} --version 2>&1 | head -n 1)"
-          ${getExe git} --version
-          ${getExe helix} --version
-          ${getExe jjui} --version
-          ${getExe jujutsu} --version
-          printf "home-manager %s\n" "$(${getExe home-manager} --version)"
-          ${getExe nh} --version
-          ${getExe gnumake} --version | head -n 1
-          ${getExe hydra-check} --version
-          ${getExe nil} --version 2>&1 | head -n 1
-          ${getExe nixd} --version 2>&1 | head -n 1
-          ${getExe' nix-index "nix-locate"} --version 2>&1 | head -n 1
-          ${getExe nixfmt} --version 2>&1 | head -n 1
-          ${getExe sops} --version 2>&1 | head -n 1
-          ${getExe treefmt} --version 2>&1 | head -n 1
-        ''
-        + (optionalString isLinux ''
-          ${getExe cntr} --version
-        '');
+      inherit (import ../package { inherit nixos-images nixpkgs-kexec pkgs; }) nixos-anywhere;
+      toolVersionsCmds = ''
+        printf "age %s\n" "$(${getExe age} --version 2>&1 | head -n 1)"
+        ${getExe git} --version
+        ${getExe helix} --version
+        ${getExe jjui} --version
+        ${getExe jujutsu} --version
+        printf "home-manager %s\n" "$(${getExe home-manager} --version)"
+        ${getExe nh} --version
+        ${getExe gnumake} --version | head -n 1
+        ${getExe hydra-check} --version
+        ${getExe nil} --version 2>&1 | head -n 1
+        ${getExe nixd} --version 2>&1 | head -n 1
+        ${getExe' nix-index "nix-locate"} --version 2>&1 | head -n 1
+        printf "nixos-anywhere %s\n" "${nixos-anywhere.version}"
+        ${getExe nixfmt} --version 2>&1 | head -n 1
+        ${getExe sops} --version 2>&1 | head -n 1
+        ${getExe treefmt} --version 2>&1 | head -n 1
+      ''
+      + (optionalString isLinux ''
+        ${getExe cntr} --version
+      '');
       toolVersions = mkToolVersions "default" toolVersionsCmds;
     in
     pkgs.mkShell {
       shellHook = ''
         cat ${toolVersions}
       '';
-      nativeBuildInputs =
-        [
-          age
-          git
-          gnumake
-          helix
-          home-manager
-          hydra-check
-          jjui
-          jujutsu
-          just
-          nh
-          nil
-          nixd
-          nix-index
-          nixfmt
-          ssh-to-age
-          sops
-          treefmt
-        ]
-        ++ (optionals isLinux [
-          cntr
-          sbctl
-        ]);
+      nativeBuildInputs = [
+        age
+        git
+        gnumake
+        helix
+        home-manager
+        hydra-check
+        jjui
+        jujutsu
+        just
+        nh
+        nil
+        nixd
+        nix-index
+        nixos-anywhere
+        nixfmt
+        ssh-to-age
+        sops
+        treefmt
+      ]
+      ++ (optionals isLinux [
+        cntr
+        sbctl
+      ]);
     };
 
   cuda =
@@ -332,7 +343,7 @@ in
         rustup
         ;
 
-    toolVersions = mkToolVersions "rustDev" ''
+      toolVersions = mkToolVersions "rustDev" ''
         ${getExe' default "cargo"} --version
         ${getExe' default "rustc"} --version
         ${getExe lldb_19} --version | head -n 1

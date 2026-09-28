@@ -3,6 +3,7 @@
   disko,
   emed-nix,
   home-manager,
+  impermanence,
   lanzaboote,
   niri,
   nirivana,
@@ -17,15 +18,14 @@
   desktopBackground,
   permittedInsecurePackages,
 }:
-{
+rec {
   darwinConfigurations = {
     b-4653 = darwin.lib.darwinSystem {
       system = "aarch64-darwin";
-      pkgs =
-        pkgsForSystem {
-          system = "aarch64-darwin";
-          pkgs = nixpkgs-unstable;
-        };
+      pkgs = pkgsForSystem {
+        system = "aarch64-darwin";
+        pkgs = nixpkgs-unstable;
+      };
       modules = [ ./b-4653 ];
       specialArgs = {
         inputs = {
@@ -36,11 +36,10 @@
 
     luke-fatman = darwin.lib.darwinSystem rec {
       system = "aarch64-darwin";
-      pkgs =
-        pkgsForSystem {
-          inherit system;
-          pkgs = nixpkgs-unstable;
-        };
+      pkgs = pkgsForSystem {
+        inherit system;
+        pkgs = nixpkgs-unstable;
+      };
       modules = [
         ./luke-fatman
       ];
@@ -54,11 +53,10 @@
 
   nixOnDroidConfigurations = {
     default = nix-on-droid.lib.nixOnDroidConfiguration {
-      pkgs =
-        pkgsForSystem {
-          system = "aarch64-linux";
-          pkgs = nixpkgs-unstable;
-        };
+      pkgs = pkgsForSystem {
+        system = "aarch64-linux";
+        pkgs = nixpkgs-unstable;
+      };
       modules = [ ./nix-on-droid ];
       extraSpecialArgs = {
         inputs = { };
@@ -69,24 +67,24 @@
   nixosConfigurations = {
     luke-c0nstruct = nixpkgs-unstable.lib.nixosSystem rec {
       system = "x86_64-linux";
-      pkgs =
-        pkgsForSystem {
-          inherit system;
-          pkgs = nixpkgs-unstable;
-          config.allowUnfreePredicate =
-            pkg:
-            builtins.elem (nixpkgs-unstable.lib.getName pkg) [
-              "1password"
-              "1password-cli"
-              "cyberhaven-unwrapped"
-              "falcon-sensor-unwrapped"
-            ];
-        };
+      pkgs = pkgsForSystem {
+        inherit system;
+        pkgs = nixpkgs-unstable;
+        config.allowUnfreePredicate =
+          pkg:
+          builtins.elem (nixpkgs-unstable.lib.getName pkg) [
+            "1password"
+            "1password-cli"
+            "cyberhaven-unwrapped"
+            "falcon-sensor-unwrapped"
+          ];
+      };
       modules = [ ./luke-c0nstruct ];
       specialArgs = {
         inputs = {
           inherit
             emed-nix
+            impermanence
             nixos-hardware
             nix-flatpak
             sops-nix
@@ -100,25 +98,25 @@
 
     luke-w0rkhorse = nixpkgs-unstable.lib.nixosSystem rec {
       system = "x86_64-linux";
-      pkgs =
-        pkgsForSystem {
-          inherit system;
-          pkgs = nixpkgs-unstable;
-          config.allowUnfreePredicate =
-            pkg:
-            builtins.elem (nixpkgs-unstable.lib.getName pkg) [
-              "1password"
-              "1password-cli"
-              "cyberhaven-unwrapped"
-              "falcon-sensor-unwrapped"
-            ];
-        };
+      pkgs = pkgsForSystem {
+        inherit system;
+        pkgs = nixpkgs-unstable;
+        config.allowUnfreePredicate =
+          pkg:
+          builtins.elem (nixpkgs-unstable.lib.getName pkg) [
+            "1password"
+            "1password-cli"
+            "cyberhaven-unwrapped"
+            "falcon-sensor-unwrapped"
+          ];
+      };
       modules = [ ./luke-w0rkhorse ];
       specialArgs = {
+        homeActivationPackage = homeConfigurations."lukecarrier@luke-w0rkhorse".activationPackage;
         inputs = {
           inherit
-            disko
             emed-nix
+            impermanence
             nirivana
             nixos-hardware
             nix-flatpak
@@ -126,6 +124,19 @@
             vicinae
             lanzaboote
             ;
+          disko = disko // {
+            nixosModules = disko.nixosModules // {
+              disko = import "${
+                pkgs.applyPatches {
+                  name = "disko-luke-w0rkhorse-${
+                    builtins.substring 0 8 (builtins.hashFile "sha256" ./luke-w0rkhorse/disko-install-test.patch)
+                  }";
+                  src = disko;
+                  patches = [ ./luke-w0rkhorse/disko-install-test.patch ];
+                }
+              }/module.nix";
+            };
+          };
         };
         desktopConfig.background = desktopBackground;
       };
@@ -133,26 +144,26 @@
 
     luke-curs3d = nixpkgs-unstable.lib.nixosSystem rec {
       system = "x86_64-linux";
-      pkgs =
-        pkgsForSystem {
-          inherit system;
-          pkgs = nixpkgs-unstable;
-          config = {
-            allowUnfreePredicate =
-              pkg:
-              builtins.elem (nixpkgs-unstable.lib.getName pkg) [
-                "cuda-merged"
-                "nvidia-x11"
-                "nvidia-settings"
-                "nvidia-persistenced"
-              ];
-            cudaSupport = true;
-          };
+      pkgs = pkgsForSystem {
+        inherit system;
+        pkgs = nixpkgs-unstable;
+        config = {
+          allowUnfreePredicate =
+            pkg:
+            builtins.elem (nixpkgs-unstable.lib.getName pkg) [
+              "cuda-merged"
+              "nvidia-x11"
+              "nvidia-settings"
+              "nvidia-persistenced"
+            ];
+          cudaSupport = true;
         };
+      };
       modules = [ ./luke-curs3d ];
       specialArgs = {
         inputs = {
           inherit
+            impermanence
             nixos-hardware
             nix-flatpak
             sops-nix
@@ -166,15 +177,15 @@
 
     luke-f1xable = nixpkgs-unstable.lib.nixosSystem {
       system = "x86_64-linux";
-      pkgs =
-        pkgsForSystem {
-          system = "x86_64-linux";
-          pkgs = nixpkgs-unstable;
-        };
+      pkgs = pkgsForSystem {
+        system = "x86_64-linux";
+        pkgs = nixpkgs-unstable;
+      };
       modules = [ ./luke-f1xable ];
       specialArgs = {
         inputs = {
           inherit
+            impermanence
             nixos-hardware
             nix-flatpak
             sops-nix
@@ -189,11 +200,10 @@
 
   homeConfigurations = {
     "luke.carrier@b-4653" = home-manager.lib.homeManagerConfiguration {
-      pkgs =
-        pkgsForSystem {
-          system = "aarch64-darwin";
-          pkgs = nixpkgs-unstable;
-        };
+      pkgs = pkgsForSystem {
+        system = "aarch64-darwin";
+        pkgs = nixpkgs-unstable;
+      };
       extraSpecialArgs = {
         inputs = {
           inherit sops-nix;
@@ -206,11 +216,10 @@
     };
 
     "nix-on-droid@" = home-manager.lib.homeManagerConfiguration {
-      pkgs =
-        pkgsForSystem {
-          system = "aarch64-linux";
-          pkgs = nixpkgs-unstable;
-        };
+      pkgs = pkgsForSystem {
+        system = "aarch64-linux";
+        pkgs = nixpkgs-unstable;
+      };
       extraSpecialArgs = {
         inputs = { };
         inherit permittedInsecurePackages;
@@ -221,11 +230,10 @@
     };
 
     "lukecarrier@luke-c0nstruct" = home-manager.lib.homeManagerConfiguration rec {
-      pkgs =
-        pkgsForSystem {
-          system = "x86_64-linux";
-          pkgs = nixpkgs-unstable;
-        };
+      pkgs = pkgsForSystem {
+        system = "x86_64-linux";
+        pkgs = nixpkgs-unstable;
+      };
       extraSpecialArgs = {
         inputs = {
           inherit
@@ -393,7 +401,7 @@
             {
               profile = {
                 name = "peacehavenMichaelDocked";
-                  outputs = [
+                outputs = [
                   {
                     criteria = "Ancor Communications Inc ASUS VS247 C8LMTF177755";
                     status = "enable";
@@ -414,15 +422,15 @@
     };
 
     "lukecarrier@luke-w0rkhorse" = home-manager.lib.homeManagerConfiguration rec {
-      pkgs =
-        pkgsForSystem {
-          system = "x86_64-linux";
-          pkgs = nixpkgs-unstable;
-        };
+      pkgs = pkgsForSystem {
+        system = "x86_64-linux";
+        pkgs = nixpkgs-unstable;
+      };
       extraSpecialArgs = {
         inputs = {
           inherit
             disko
+            emed-nix
             niri
             nirivana
             nix-flatpak
@@ -588,7 +596,7 @@
             {
               profile = {
                 name = "peacehavenMichaelDocked";
-                  outputs = [
+                outputs = [
                   {
                     criteria = "Ancor Communications Inc ASUS VS247 C8LMTF177755";
                     status = "enable";
@@ -609,15 +617,19 @@
     };
 
     "lukecarrier@luke-curs3d" = home-manager.lib.homeManagerConfiguration rec {
-      pkgs =
-        pkgsForSystem {
-          system = "x86_64-linux";
-          pkgs = nixpkgs-unstable;
-          config.cudaSupport = true;
-        };
+      pkgs = pkgsForSystem {
+        system = "x86_64-linux";
+        pkgs = nixpkgs-unstable;
+        config.cudaSupport = true;
+      };
       extraSpecialArgs = {
         inputs = {
-          inherit niri nix-flatpak sops-nix vicinae;
+          inherit
+            niri
+            nix-flatpak
+            sops-nix
+            vicinae
+            ;
         };
         inherit permittedInsecurePackages;
         desktopConfig = {
@@ -703,14 +715,18 @@
     };
 
     "lukecarrier@luke-f1xable" = home-manager.lib.homeManagerConfiguration rec {
-      pkgs =
-        pkgsForSystem {
-          system = "x86_64-linux";
-          pkgs = nixpkgs-unstable;
-        };
+      pkgs = pkgsForSystem {
+        system = "x86_64-linux";
+        pkgs = nixpkgs-unstable;
+      };
       extraSpecialArgs = {
         inputs = {
-          inherit niri nix-flatpak sops-nix vicinae;
+          inherit
+            niri
+            nix-flatpak
+            sops-nix
+            vicinae
+            ;
         };
         inherit permittedInsecurePackages;
         desktopConfig = {
@@ -870,7 +886,7 @@
             {
               profile = {
                 name = "peacehavenMichaelDocked";
-                  outputs = [
+                outputs = [
                   {
                     criteria = "Ancor Communications Inc ASUS VS247 C8LMTF177755";
                     status = "enable";
@@ -891,11 +907,10 @@
     };
 
     "lukecarrier@luke-fatman" = home-manager.lib.homeManagerConfiguration {
-      pkgs =
-        pkgsForSystem {
-          system = "aarch64-darwin";
-          pkgs = nixpkgs-unstable;
-        };
+      pkgs = pkgsForSystem {
+        system = "aarch64-darwin";
+        pkgs = nixpkgs-unstable;
+      };
       extraSpecialArgs = {
         inputs = {
           inherit sops-nix;
