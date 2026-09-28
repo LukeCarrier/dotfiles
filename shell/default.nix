@@ -209,7 +209,6 @@ in
         libXv
         libXrandr
         ;
-      toolVersions = mkToolVersions "cuda";
     in
     pkgs.mkShell {
       shellHook = ''
