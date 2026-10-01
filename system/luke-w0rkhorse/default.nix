@@ -10,6 +10,7 @@
     (modulesPath + "/installer/scan/not-detected.nix")
     inputs.disko.nixosModules.disko
     inputs.emed-nix.nixosModules.aws-cvpn
+    inputs.emed-nix.nixosModules.emed-cloud
     inputs.emed-nix.nixosModules.emed-security-baseline
     inputs.lanzaboote.nixosModules.lanzaboote
     inputs.nix-flatpak.nixosModules.nix-flatpak
