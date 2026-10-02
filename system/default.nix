@@ -98,10 +98,10 @@ rec {
               disko = import "${
                 pkgs.applyPatches {
                   name = "disko-luke-w0rkhorse-${
-                    builtins.substring 0 8 (builtins.hashFile "sha256" ./luke-w0rkhorse/disko-install-test.patch)
+                    builtins.substring 0 8 (builtins.hashFile "sha256" ./disko-install-test.patch)
                   }";
                   src = disko;
-                  patches = [ ./luke-w0rkhorse/disko-install-test.patch ];
+                  patches = [ ./disko-install-test.patch ];
                 }
               }/module.nix";
             };
