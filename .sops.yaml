@@ -6,6 +6,7 @@ keys:
   - &employer_emed age14ddy9t7d0dnlmrumefw45ft9jqvzwz6l9d2th8hfd738xhjluckskuhe7p
   - &employer_emed_b-4653 age1jklllmcjlj8ln8jfrdmp2scg2q93tkk3msnsc5jxcjsamwp5vdgshwr7my
   - &w0rkhorse age1epgrkrtn8twdn2k3zzft4ml6qe5p06mktu49falkxd3gq3nwhugsvgvtga
+  - &c0nstruct age1av5nwc8m74f9wvjh93au9rgapa90jw8exh5754e0xj4xwze4gsqq6dmh6a
 recipients:
   - &emed
     - *employer_emed
@@ -18,6 +19,7 @@ recipients:
     - *fatman
   - &throwparty
     - *me
+    - *c0nstruct
 creation_rules:
   - path_regex: ^secrets/employer-emed\.yaml$
     age: *emed

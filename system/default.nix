@@ -65,6 +65,47 @@ rec {
   };
 
   nixosConfigurations = {
+    luke-c0nstruct = nixpkgs-unstable.lib.nixosSystem rec {
+      system = "x86_64-linux";
+      pkgs = pkgsForSystem {
+        inherit system;
+        pkgs = nixpkgs-unstable;
+        config.allowUnfreePredicate =
+          pkg:
+          builtins.elem (nixpkgs-unstable.lib.getName pkg) [
+            "1password"
+            "1password-cli"
+          ];
+      };
+      modules = [ ./luke-c0nstruct ];
+      specialArgs = {
+        homeActivationPackage = homeConfigurations."lukecarrier@luke-c0nstruct".activationPackage;
+        inputs = {
+          inherit
+            impermanence
+            nix-flatpak
+            sops-nix
+            lanzaboote
+            vicinae
+            ;
+          disko = disko // {
+            nixosModules = disko.nixosModules // {
+              disko = import "${
+                pkgs.applyPatches {
+                  name = "disko-luke-c0nstruct-${
+                    builtins.substring 0 8 (builtins.hashFile "sha256" ./disko-install-test.patch)
+                  }";
+                  src = disko;
+                  patches = [ ./disko-install-test.patch ];
+                }
+              }/module.nix";
+            };
+          };
+        };
+        desktopConfig.background = desktopBackground;
+      };
+    };
+
     luke-w0rkhorse = nixpkgs-unstable.lib.nixosSystem rec {
       system = "x86_64-linux";
       pkgs = pkgsForSystem {
@@ -196,6 +237,199 @@ rec {
         jjConfig.signing.key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
       };
       modules = [ ./nix-on-droid/user/nix-on-droid ];
+    };
+
+    "lukecarrier@luke-c0nstruct" = home-manager.lib.homeManagerConfiguration rec {
+      pkgs = pkgsForSystem {
+        system = "x86_64-linux";
+        pkgs = nixpkgs-unstable;
+      };
+      extraSpecialArgs = {
+        inputs = {
+          inherit
+            niri
+            nirivana
+            nix-flatpak
+            sops-nix
+            vicinae
+            ;
+        };
+        inherit permittedInsecurePackages;
+        desktopConfig = {
+          background = desktopBackground;
+          pointerCursor = {
+            package = pkgs.bibata-cursors;
+            name = "Bibata-Modern-Classic";
+            size = 32;
+          };
+        };
+        gitConfig.user.signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
+        jjConfig.signing.key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
+        kanshiConfig =
+          let
+            exec = "systemctl restart --user ashell.service wpaper.service";
+          in
+          [
+            {
+              output = {
+                criteria = "eDP-1";
+                mode = "2880x1800@120Hz";
+                adaptiveSync = true;
+                scale = 1.5;
+                transform = null;
+              };
+            }
+            {
+              output = {
+                criteria = "Anker Innovations Limited CosmosLaser4k 0x00000001";
+                mode = "3840x2160@60Hz";
+                adaptiveSync = false;
+                scale = 1.5;
+                transform = null;
+              };
+            }
+            {
+              output = {
+                criteria = "Samsung Electric Company U32J59x HTPK702789";
+                mode = "3840x2160@60Hz";
+                adaptiveSync = false;
+                scale = 1.25;
+                transform = null;
+              };
+            }
+            {
+              output = {
+                criteria = "Samsung Electric Company U32J59x HTPK602008";
+                mode = "3840x2160@60Hz";
+                adaptiveSync = false;
+                scale = 1.25;
+                transform = null;
+              };
+            }
+            {
+              output = {
+                criteria = "Ancor Communications Inc ASUS VS247 C8LMTF177755";
+                mode = "1920x1080@60Hz";
+                adaptiveSync = false;
+                scale = 1.0;
+                transform = null;
+              };
+            }
+            {
+              profile = {
+                name = "mobile";
+                outputs = [
+                  {
+                    criteria = "eDP-1";
+                    status = "enable";
+                    position = "0,0";
+                  }
+                ];
+                inherit exec;
+              };
+            }
+            {
+              profile = {
+                name = "peacehavenLounge";
+                outputs = [
+                  {
+                    criteria = "eDP-1";
+                    status = "enable";
+                    position = "0,0";
+                  }
+                  {
+                    criteria = "Anker Innovations Limited CosmosLaser4k 0x00000001";
+                    status = "enable";
+                    position = "0,3600";
+                  }
+                ];
+                inherit exec;
+              };
+            }
+            {
+              profile = {
+                name = "peacehavenDockedClosed";
+                outputs = [
+                  {
+                    criteria = "eDP-1";
+                    status = "disable";
+                  }
+                  {
+                    criteria = "Samsung Electric Company U32J59x HTPK702789";
+                    status = "enable";
+                    position = "0,0";
+                  }
+                  {
+                    criteria = "Samsung Electric Company U32J59x HTPK602008";
+                    status = "enable";
+                    position = "3072,0";
+                  }
+                ];
+                inherit exec;
+              };
+            }
+            {
+              profile = {
+                name = "peacehavenDockedOpen";
+                outputs = [
+                  {
+                    criteria = "Samsung Electric Company U32J59x HTPK702789";
+                    status = "enable";
+                    position = "0,0";
+                  }
+                  {
+                    criteria = "Samsung Electric Company U32J59x HTPK602008";
+                    status = "enable";
+                    position = "3072,0";
+                  }
+                  {
+                    criteria = "eDP-1";
+                    status = "enable";
+                    position = "4224,1728";
+                  }
+                ];
+                inherit exec;
+              };
+            }
+            {
+              profile = {
+                name = "peacehavenSidecar";
+                outputs = [
+                  {
+                    criteria = "Samsung Electric Company U32J59x HTPK602008";
+                    status = "enable";
+                    position = "0,0";
+                  }
+                  {
+                    criteria = "eDP-1";
+                    status = "enable";
+                    position = "768,1728";
+                  }
+                ];
+                inherit exec;
+              };
+            }
+            {
+              profile = {
+                name = "peacehavenMichaelDocked";
+                outputs = [
+                  {
+                    criteria = "Ancor Communications Inc ASUS VS247 C8LMTF177755";
+                    status = "enable";
+                    position = "0,0";
+                  }
+                  {
+                    criteria = "eDP-1";
+                    status = "enable";
+                    position = "1920,540";
+                  }
+                ];
+                inherit exec;
+              };
+            }
+          ];
+      };
+      modules = [ ./luke-c0nstruct/user/lukecarrier ];
     };
 
     "lukecarrier@luke-w0rkhorse" = home-manager.lib.homeManagerConfiguration rec {
