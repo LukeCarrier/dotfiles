@@ -122,9 +122,9 @@ assets, enrols it with Microsoft trust, and completes installation. This assumes
 the firmware is already in Setup Mode as described above; enrolment fails rather
 than forcing past an incompatible firmware state.
 
-The recipe streams the host identity from `secrets/employer-emed.yaml` unless
-the host keeps it elsewhere; set `HOST_SECRETS=secrets/<file>.yaml` in that
-case.
+The recipe reads `sops.defaultSopsFile` from the host's own NixOS
+configuration, so the identity is always streamed from the secrets file the
+host is wired to use.
 
 If installation fails after Disko and identity provisioning are complete, resume
 against the running kexec installer using the same host pin and client key:

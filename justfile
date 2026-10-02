@@ -60,12 +60,13 @@ host-install config target disk known_hosts installer_key flake=flake:
 	mv "$facter_tmp" "$facter_report"; \
 	configured_disk="$(nix eval --raw "{{flake}}#nixosConfigurations.{{config}}.config.disko.devices.disk.disk1.device")"; \
 	test "$configured_disk" = "{{disk}}"; \
+	secrets="$(nix eval --raw "{{flake}}#nixosConfigurations.{{config}}.config.sops.defaultSopsFile")"; \
 	"$nixos_anywhere" -i "$installer_key" "${anywhere_options[@]}" --flake "{{flake}}#{{config}}" --target-host "root@{{target}}" --phases disko; \
 	ssh -i "$installer_key" -o IdentitiesOnly=yes "${ssh_options[@]}" "root@{{target}}" 'active_wifi_uuid="$(nmcli -t -f UUID,TYPE connection show --active | while IFS=: read -r uuid type; do if test "$type" = 802-11-wireless || test "$type" = wifi; then printf "%s\n" "$uuid"; break; fi; done)"; test -n "$active_wifi_uuid"; for connection_dir in /etc/NetworkManager/system-connections /run/NetworkManager/system-connections; do for profile in "$connection_dir"/*; do test -f "$profile" || continue; if grep -q "^uuid=$active_wifi_uuid$" "$profile"; then grep -q "^psk=" "$profile"; install -d -m 700 /mnt/persist/etc/NetworkManager/system-connections; install -m 600 "$profile" "/mnt/persist/etc/NetworkManager/system-connections/$(basename "$profile")"; exit 0; fi; done; done; exit 1'; \
 	ssh -i "$installer_key" -o IdentitiesOnly=yes "${ssh_options[@]}" "root@{{target}}" 'umask 077; install -d -m 700 -o 1000 -g 1000 /mnt/home/lukecarrier /mnt/home/lukecarrier/.config /mnt/home/lukecarrier/.config/sops /mnt/home/lukecarrier/.config/sops/age; cat > /mnt/home/lukecarrier/.config/sops/age/keys.txt; chown 1000:1000 /mnt/home/lukecarrier/.config/sops/age/keys.txt; chmod 600 /mnt/home/lukecarrier/.config/sops/age/keys.txt' < .sops/keys; \
-	sops --decrypt --extract '["ssh"]["host"]["private"]' secrets/employer-emed.yaml \
+	sops --decrypt --extract '["ssh"]["host"]["private"]' "$secrets" \
 		| ssh -i "$installer_key" -o IdentitiesOnly=yes "${ssh_options[@]}" "root@{{target}}" 'umask 077; install -d -m 700 /mnt/persist/etc/ssh; cat > /mnt/persist/etc/ssh/ssh_host_ed25519_key'; \
-	sops --decrypt --extract '["ssh"]["host"]["public"]' secrets/employer-emed.yaml \
+	sops --decrypt --extract '["ssh"]["host"]["public"]' "$secrets" \
 		| ssh -i "$installer_key" -o IdentitiesOnly=yes "${ssh_options[@]}" "root@{{target}}" 'umask 022; cat > /mnt/persist/etc/ssh/ssh_host_ed25519_key.pub'; \
 	ssh -i "$installer_key" -o IdentitiesOnly=yes "${ssh_options[@]}" "root@{{target}}" \
 		"if test -f /mnt/persist/var/lib/sbctl; then rm /mnt/persist/var/lib/sbctl; fi; install -d -m 700 /mnt/persist/var/lib/sbctl; nix --extra-experimental-features 'nix-command flakes' run '$nixpkgs_ref#sbctl' -- --disable-landlock create-keys --export /mnt/persist/var/lib/sbctl/keys --database-path /mnt/persist/var/lib/sbctl/GUID; test -f /mnt/persist/var/lib/sbctl/keys/db/db.pem; install -d -m 700 /mnt/var/lib/sbctl; mountpoint -q /mnt/var/lib/sbctl || mount --bind /mnt/persist/var/lib/sbctl /mnt/var/lib/sbctl; test -f /mnt/var/lib/sbctl/keys/db/db.pem"; \
