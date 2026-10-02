@@ -1,21 +1,21 @@
-From 03e9691a8fa9a1f6f49a747b4aaf8998ed5bb42b Mon Sep 17 00:00:00 2001
+From 197659e3919912db9d686002ce11c0c8264fd75e Mon Sep 17 00:00:00 2001
 From: Luke Carrier <luke@carrier.family>
 Date: Mon, 10 Aug 2026 21:15:17 +0100
 Subject: [PATCH] feat(custom_module): tooltips
 
 ---
- src/app.rs                   | 33 +++++++++++++++++++++-----
+ src/app.rs                   | 35 +++++++++++++++++++++++-----
  src/components/menu.rs       |  3 +++
  src/config.rs                |  2 +-
  src/modules/custom_module.rs | 45 ++++++++++++++++++++++++++++++++----
  src/modules/mod.rs           |  4 +++-
- 5 files changed, 75 insertions(+), 12 deletions(-)
+ 5 files changed, 77 insertions(+), 12 deletions(-)
 
 diff --git a/src/app.rs b/src/app.rs
-index 2823da1c..82c606c7 100644
+index d59a522a..f3c8a107 100644
 --- a/src/app.rs
 +++ b/src/app.rs
-@@ -304,13 +304,22 @@ impl App {
+@@ -313,13 +313,22 @@ impl App {
                      .close_menu(id, None, self.general_config.enable_esc_key)
              }
              Message::FinishCloseMenu(id) => self.outputs.finish_close_menu(id),
@@ -44,7 +44,7 @@ index 2823da1c..82c606c7 100644
              Message::Updates(msg) => {
                  if let Some(updates) = self.updates.as_mut() {
                      match updates.update(msg) {
-@@ -708,6 +717,18 @@ impl App {
+@@ -707,6 +716,18 @@ impl App {
                              .map(Message::Settings),
                          ui_ref,
                      ),
@@ -63,8 +63,24 @@ index 2823da1c..82c606c7 100644
                  }
              }
              Some(HasOutput::Menu(None)) => Row::new().into(),
+@@ -829,6 +850,7 @@ mod tests {
+             CustomMessage::Update(CustomListenData {
+                 alt: "critical".to_string(),
+                 text: Some("3 urgent".to_string()),
++                tooltip: None,
+             }),
+         ));
+ 
+@@ -853,6 +875,7 @@ mod tests {
+             CustomMessage::Update(CustomListenData {
+                 alt: "critical".to_string(),
+                 text: Some("stale".to_string()),
++                tooltip: None,
+             }),
+         ));
+ 
 diff --git a/src/components/menu.rs b/src/components/menu.rs
-index 4de089d8..bef1ef62 100644
+index 2ab2423b..ce46ff3f 100644
 --- a/src/components/menu.rs
 +++ b/src/components/menu.rs
 @@ -29,6 +29,7 @@ pub enum MenuType {
@@ -92,10 +108,10 @@ index 4de089d8..bef1ef62 100644
              {
                  Task::none()
 diff --git a/src/config.rs b/src/config.rs
-index 2037dcea..877d3556 100644
+index f607ae38..15cc2ae7 100644
 --- a/src/config.rs
 +++ b/src/config.rs
-@@ -1365,7 +1365,7 @@ pub struct CustomModuleDef {
+@@ -1613,7 +1613,7 @@ pub struct CustomModuleDef {
      #[serde(default)]
      pub icon: Option<String>,
  
@@ -105,7 +121,7 @@ index 2037dcea..877d3556 100644
      pub listen_cmd: Option<String>,
      /// map of regex -> icon
 diff --git a/src/modules/custom_module.rs b/src/modules/custom_module.rs
-index 12c97f12..4d072939 100644
+index 8b42120f..dce4bf8d 100644
 --- a/src/modules/custom_module.rs
 +++ b/src/modules/custom_module.rs
 @@ -1,14 +1,15 @@
@@ -144,7 +160,7 @@ index 12c97f12..4d072939 100644
  }
  
  // Define a struct for the canvas program
-@@ -116,12 +121,13 @@ impl Custom {
+@@ -135,12 +140,13 @@ impl Custom {
              Message::Update(data) => {
                  self.data = data;
              }
@@ -160,7 +176,7 @@ index 12c97f12..4d072939 100644
              crate::config::CustomModuleType::Text => self
                  .data
                  .text
-@@ -194,9 +200,40 @@ impl Custom {
+@@ -211,9 +217,40 @@ impl Custom {
                      icon_with_alert
                  }
              }
@@ -216,3 +232,6 @@ index a8a6adb3..490279d5 100644
                      action,
                  )
              }),
+-- 
+2.55.0
+
