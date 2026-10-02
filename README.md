@@ -58,7 +58,7 @@ launchd's interface somehow manages to be even more obtuse than Git's. Think Dif
 Set the machine hostname:
 
 ```console
-sudo scutil --set HostName luke-c0nstruct
+sudo scutil --set HostName <hostname>
 ```
 
 Remove some default configuration that'll get in nix-darwin's way:

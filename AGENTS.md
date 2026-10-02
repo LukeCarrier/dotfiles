@@ -51,7 +51,7 @@ Platform-specific system configurations. Contains NixOS and macOS system-level c
 Each platform directory contains:
 - `common.nix` - Shared configuration across all instances of that platform
 - `graphical.nix` - Graphical desktop environment settings (NixOS)
-- Host-specific configurations in subdirectories (e.g., `luke-c0nstruct/`)
+- Host-specific configurations in subdirectories (e.g., `luke-w0rkhorse/`)
 
 ### `/package/`
 

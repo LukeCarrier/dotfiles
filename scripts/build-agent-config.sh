@@ -7,7 +7,7 @@ shift || true
 
 # Parse optional flags
 ACTION="run"
-HOST="lukecarrier@luke-c0nstruct"
+HOST="lukecarrier@luke-f1xable"
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -34,7 +34,7 @@ Agents: opencode, goose, claude-code, codex
 
 Options:
   --build-only  Just build config and print store path (default: run agent)
-  --host HOST   Build for specific host (default: lukecarrier@luke-c0nstruct)
+  --host HOST   Build for specific host (default: lukecarrier@luke-f1xable)
 
 Examples:
   $0 opencode --build-only
