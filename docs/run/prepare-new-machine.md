@@ -21,6 +21,10 @@ We configure the system with an impermanent root with explicit exceptions.
 
 Based on the [disk configuration for luke-w0rkhorse](../../system/luke-w0rkhorse/disk-config.nix).
 
+The host must already exist in the flake — hardware profile, host directory,
+SOPS identity and both flake entries. See
+[Enrolling a new host in the tree](enrol-new-host.md) if it doesn't.
+
 After preparation and [recipient enrolment](receive-new-machine.md#enrol-the-tpm),
 the LUKS container contains three keys:
 
@@ -97,14 +101,15 @@ Ensure the target matches what is in the system's disk configuration..
 Create a dedicated installer client key on the provisioning machine. Keep it
 outside the repository so a failed install can be resumed with the same key:
 
-```shell
-ssh-keygen -t ed25519 -N '' -f ~/.ssh/luke-w0rkhorse-installer
+```fish
+set --global --export host luke-w0rkhorse
+ssh-keygen -t ed25519 -N '' -f ~/.ssh/"$host"-installer
 ```
 
 Install using the IT recovery passphrase as the initial LUKS key:
 
 ```fish
-just host-install luke-w0rkhorse 192.168.9.18 /dev/nvme0n1 ./installer-known-hosts ~/.ssh/luke-w0rkhorse-installer
+just host-install "$host" 192.168.9.18 /dev/nvme0n1 ./installer-known-hosts ~/.ssh/"$host"-installer
 ```
 
 Disko prompts for the IT recovery passphrase during formatting of the disk. The
@@ -117,11 +122,15 @@ assets, enrols it with Microsoft trust, and completes installation. This assumes
 the firmware is already in Setup Mode as described above; enrolment fails rather
 than forcing past an incompatible firmware state.
 
+The recipe streams the host identity from `secrets/employer-emed.yaml` unless
+the host keeps it elsewhere; set `HOST_SECRETS=secrets/<file>.yaml` in that
+case.
+
 If installation fails after Disko and identity provisioning are complete, resume
 against the running kexec installer using the same host pin and client key:
 
 ```fish
-just host-install-resume luke-w0rkhorse 192.168.9.18 ./installer-known-hosts ~/.ssh/luke-w0rkhorse-installer
+just host-install-resume "$host" 192.168.9.18 ./installer-known-hosts ~/.ssh/"$host"-installer
 ```
 
 The kexec installer retains the authorized client key, not the original root

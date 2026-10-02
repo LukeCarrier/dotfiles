@@ -29,7 +29,8 @@ formatter.
 ## Command
 
 ```console
-timeout --signal=INT --kill-after=15s 900s just host-vm-test luke-w0rkhorse
+export host=luke-w0rkhorse
+timeout --signal=INT --kill-after=15s 900s just host-vm-test "$host"
 ```
 
 `host-vm-test` builds and executes the selected host's Disko installation test.
