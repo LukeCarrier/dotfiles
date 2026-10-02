@@ -22,6 +22,8 @@
     wiremix
   ];
 
+  programs.vicinae.input-server.package = pkgs.vicinae;
+
   boot = {
     initrd = {
       systemd.enable = true;

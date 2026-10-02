@@ -1,13 +1,12 @@
 {
   config,
   lib,
-  inputs,
   pkgs,
   ...
 }:
 let
   inherit (lib) getExe;
-  vicinae = inputs.vicinae.packages.${pkgs.stdenv.hostPlatform.system}.default;
+  vicinae = pkgs.vicinae;
   settingsFile = "${config.xdg.configHome}/vicinae/nix.json";
   settingsJSON = pkgs.writeText "vicinae-nix.json" (builtins.toJSON {
     close_on_focus_loss = false;
@@ -29,6 +28,7 @@ in
 {
   programs.vicinae = {
     enable = true;
+    package = vicinae;
     enableFirefoxIntegration = true;
 
     systemd = {

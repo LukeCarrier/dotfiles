@@ -279,6 +279,10 @@
                   ./package/niri/pr-4382.patch
                 ];
               });
+              vicinae = vicinae.packages.${system}.default.override {
+                # Match Numen's compiler; GCC 15 cannot link its GCC 16 libstdc++ symbols.
+                gcc15Stdenv = prev.stdenv;
+              };
             })
             (
               final: prev:
