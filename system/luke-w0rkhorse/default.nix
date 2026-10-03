@@ -1,6 +1,5 @@
 {
   config,
-  homeActivationPackage,
   lib,
   inputs,
   modulesPath,
@@ -21,6 +20,7 @@
     inputs.vicinae.nixosModules.default
     ../../hw/thinkpad-l14.nix
     ../../platform/nixos/common.nix
+    ../../platform/nixos/home-manager-first-login.nix
     ../../platform/nixos/region/en-gb.nix
     ../../platform/nixos/secure-boot.nix
     ../../platform/nixos/graphical.nix
@@ -87,28 +87,6 @@
       enable = true;
       pools = [ "w0rkhorse" ];
     };
-  };
-
-  systemd.services.home-manager-lukecarrier-first-boot = {
-    description = "Activate the initial Home Manager generation for lukecarrier";
-    after = [ "local-fs.target" ];
-    wantedBy = [ "multi-user.target" ];
-    unitConfig.ConditionPathExists = "!/home/lukecarrier/.local/state/nix/profiles/home-manager";
-    environment = {
-      HOME = "/home/lukecarrier";
-      USER = "lukecarrier";
-      LOGNAME = "lukecarrier";
-      XDG_DATA_DIRS = "${pkgs.dconf}/share:/home/lukecarrier/.nix-profile/share:/run/current-system/sw/share";
-    };
-    serviceConfig = {
-      Type = "oneshot";
-      User = "lukecarrier";
-    };
-    script = ''
-      export PATH=${lib.makeBinPath [ config.nix.package ]}:$PATH
-      command -v nix-env >/dev/null
-      exec ${homeActivationPackage}/activate
-    '';
   };
 
   boot.loader = {
