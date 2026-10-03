@@ -5,11 +5,11 @@
   dotfiles.persistence = {
     directories = [
       "/var/lib/nixos"
+      "/var/lib/systemd"
       "/var/log"
     ];
     files = [
       "/etc/machine-id"
-      "/var/lib/systemd/credential.secret"
     ] ++ lib.optionals config.services.openssh.enable (lib.concatMap (key: [ key.path "${key.path}.pub" ]) config.services.openssh.hostKeys);
   };
 
