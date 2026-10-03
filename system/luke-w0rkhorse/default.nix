@@ -20,6 +20,7 @@
     inputs.vicinae.nixosModules.default
     ../../hw/thinkpad-l14.nix
     ../../platform/nixos/common.nix
+    ../../platform/nixos/accounts.nix
     ../../platform/nixos/home-manager-first-login.nix
     ../../platform/nixos/region/en-gb.nix
     ../../platform/nixos/secure-boot.nix
@@ -112,8 +113,7 @@
     ];
   };
 
-  users.users.lukecarrier = {
-    isNormalUser = true;
+  dotfiles.accounts.users.lukecarrier = {
     uid = 1000;
     initialPassword = "nixos";
     description = "Luke Carrier";
@@ -122,7 +122,7 @@
       "networkmanager"
       "wheel"
     ];
-    openssh.authorizedKeys.keys = [
+    authorizedKeys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family"
     ];
   };

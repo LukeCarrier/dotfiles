@@ -10,7 +10,8 @@
     ];
     files = [
       "/etc/machine-id"
-    ] ++ lib.optionals config.services.openssh.enable (lib.concatMap (key: [ key.path "${key.path}.pub" ]) config.services.openssh.hostKeys);
+    ] ++ lib.optional (!config.systemd.sysusers.enable) "/etc/shadow"
+      ++ lib.optionals config.services.openssh.enable (lib.concatMap (key: [ key.path "${key.path}.pub" ]) config.services.openssh.hostKeys);
   };
 
   networking = {

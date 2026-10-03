@@ -47,10 +47,13 @@
     machine.succeed("test $(findmnt -nro SOURCE --mountpoint /nix) = c0nstruct/nix")
     machine.succeed("test $(findmnt -nro SOURCE --mountpoint /home) = c0nstruct/home")
     machine.succeed("test $(findmnt -nro SOURCE --mountpoint /persist) = c0nstruct/persist")
+    machine.wait_for_unit("homed-accounts.service")
+    machine.succeed("PASSWORD=nixos homectl activate --no-ask-password lukecarrier")
     machine.succeed("systemctl start user@1000.service")
     machine.wait_until_succeeds("test -L /home/lukecarrier/.local/state/nix/profiles/home-manager")
     machine.wait_until_succeeds("test -e /home/lukecarrier/.local/state/home-manager/first-login-activated")
     home_manager_profile = machine.succeed("readlink /home/lukecarrier/.local/state/nix/profiles/home-manager").strip()
+    machine.succeed("PASSWORD=nixos NEWPASSWORD=disko-user-password homectl passwd lukecarrier")
     machine.succeed("umask 077; printf disko > /persist/it-recovery.key")
     machine.succeed("umask 077; printf userrecovery > /persist/user-recovery.key")
     machine.succeed("test $(stat -c %a /persist/it-recovery.key) = 600")
@@ -89,6 +92,8 @@
     machine.succeed("test -e /home/.persistence-test")
     machine.succeed("test -e /persist/.persistence-test")
     assert machine.succeed("cat /etc/machine-id").strip() == machine_id
+    machine.wait_for_unit("homed-accounts.service")
+    machine.succeed("PASSWORD=disko-user-password homectl activate --no-ask-password lukecarrier")
     machine.succeed("systemctl start user@1000.service")
     machine.wait_until_succeeds("systemctl --user --machine=lukecarrier@.host is-active default.target")
     assert machine.succeed("readlink /home/lukecarrier/.local/state/nix/profiles/home-manager").strip() == home_manager_profile
