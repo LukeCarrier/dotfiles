@@ -81,6 +81,19 @@ def shadow_record(name, paths):
     raise RuntimeError(f"No existing password hash found for {name}; refusing to reset it")
 
 
+def classic_account(name, config):
+    for path in (Path("/etc/passwd"), Path("/etc/shadow"), Path(config["legacyShadow"])):
+        if path.exists() and any(line.split(":")[0] == name for line in path.read_text().splitlines()):
+            return True
+    # The root rollback discards classic databases, but NixOS' persistent UID map remembers the account.
+    legacy = Path("/var/lib/nixos/uid-map")
+    return legacy.exists() and name in json.loads(legacy.read_text())
+
+
+def hash_password(password):
+    return run("mkpasswd", "--method=yescrypt", "--stdin", input=password, capture_output=True).stdout.strip()
+
+
 def assert_logged_out(uid):
     for status in Path("/proc").glob("[0-9]*/status"):
         try:
@@ -142,22 +155,28 @@ def provision(config):
                 if home.is_symlink() or image.is_symlink():
                     raise RuntimeError(f"Refusing to migrate symlinked home for {name}")
                 if not pending.exists():
-                    migration = record | shadow_record(name, [Path("/etc/shadow"), Path(config["legacyShadow"])])
+                    if classic_account(name, config):
+                        credentials = shadow_record(name, [Path("/etc/shadow"), Path(config["legacyShadow"])])
+                    else:
+                        # Installation stages files into the home before first boot; adopt it as a new account.
+                        credentials = {"privileged": {"hashedPassword": [hash_password(user["initialPassword"])]}}
+                    migration = record | credentials
                     migration["privileged"]["sshAuthorizedKeys"] = record["privileged"]["sshAuthorizedKeys"]
                     # Persist the original credentials before moving the home or removing classic records.
                     atomic_write(pending, json.dumps(migration))
                 if home.exists() and image.exists():
                     raise RuntimeError(f"Both {home} and {image} exist; resolve this before migrating")
-                if home.exists():
-                    home.rename(image)
-                if not image.is_dir():
+                if not (home.is_dir() or image.is_dir()):
                     raise RuntimeError(f"Missing backing directory {image}")
                 backup = state / name
                 backup.mkdir(mode=0o700, exist_ok=True)
                 remove_classic_account(name, backup)
+                # Register before the backing directory appears, or homed adopts it with a synthesised record.
                 run("homectl", "register", str(pending))
+                # homed rejects its own signature on some registered records once reloaded; re-signing via update doesn't.
+                run("homectl", "update", "--offline", name, "--enforce-password-policy=yes")
             else:
-                password_hash = run("mkpasswd", "--method=yescrypt", "--stdin", input=user["initialPassword"], capture_output=True).stdout.strip()
+                password_hash = hash_password(user["initialPassword"])
                 creation = record | {
                     "secret": {"password": [user["initialPassword"]]},
                     "privileged": record["privileged"] | {"hashedPassword": [password_hash]},
@@ -167,7 +186,13 @@ def provision(config):
                 run("homectl", "update", "--offline", name, "--enforce-password-policy=yes")
 
         if pending.exists():
-            # Registration is authoritative; finish the embedded identity before clearing the checkpoint.
+            # Registration is authoritative; finish the move and embedded identity before clearing the checkpoint.
+            if home.exists() and image.exists():
+                raise RuntimeError(f"Both {home} and {image} exist; resolve this before migrating")
+            if home.exists():
+                home.rename(image)
+            if not image.is_dir():
+                raise RuntimeError(f"Missing backing directory {image}")
             embedded = run("homectl", "inspect", "-E", name, capture_output=True).stdout
             atomic_write(image / ".identity", embedded, uid=record["uid"], gid=record["uid"])
             pending.unlink()

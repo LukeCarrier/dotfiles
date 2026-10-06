@@ -49,7 +49,9 @@ files before sysusers runs.
 ## First login
 
 Fresh installs automatically create the declared account with its bootstrap
-password. Home Manager activation runs as a user service on first login. A
+password. A home staged before first boot, such as the sops age key written by
+`just host-install`, is adopted with the bootstrap password when no classic
+account exists in `/etc/passwd`, either shadow file, or `/var/lib/nixos/uid-map`. Home Manager activation runs as a user service on first login. A
 completion marker is written only after activation succeeds; failures remain
 retryable. If a Home Manager profile already exists, its current generation is
 activated instead of replacing it with the bootstrap generation.
@@ -61,7 +63,8 @@ use an already activated home; an SSH key alone cannot activate it.
 
 ## Verification
 
-The focused VM test covers fresh provisioning, real PAM login and `passwd`,
+The focused VM test covers fresh provisioning, adoption of a pre-staged home
+with AccountsService enumeration, real PAM login and `passwd`,
 password persistence across reboot, metadata and key updates, logged-in migration
 refusal, interrupted migration recovery, password aging, and stable system IDs.
 

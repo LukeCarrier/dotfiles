@@ -46,6 +46,35 @@ pkgs.testers.runNixOSTest {
         authorizedKeys = lib.mkForce [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJnEY8uRHXNidhl/e5+WMDKMDbA551pOE3DN9xWg4NH0 rotated" ];
       };
     };
+    # Mirrors `just host-install`, which stages the sops age key in the home before first boot.
+    seeded = { ... }: {
+      imports = [ ./accounts.nix ./persistence.nix ];
+      dotfiles.accounts.users.lukecarrier = {
+        uid = 1000;
+        description = "Luke Carrier";
+        initialPassword = "nixos";
+        # Matches the hosts; six or more groups trip homed's signature check on registered records.
+        extraGroups = [ "input" "networkmanager" "wheel" "kvm" "libvirtd" "qemu-libvirtd" ];
+        authorizedKeys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW seeded" ];
+      };
+      services.accounts-daemon.enable = true;
+      systemd.services.seed-home = {
+        wantedBy = [ "homed-accounts.service" ];
+        before = [ "homed-accounts.service" ];
+        unitConfig = {
+          ConditionPathExists = [ "!/home/lukecarrier" "!/home/lukecarrier.homedir" ];
+          RequiresMountsFor = [ "/home" ];
+        };
+        serviceConfig.Type = "oneshot";
+        script = ''
+          umask 077
+          install -d -m 700 -o 1000 -g 1000 /home/lukecarrier /home/lukecarrier/.config /home/lukecarrier/.config/sops /home/lukecarrier/.config/sops/age
+          echo seeded-age-key > /home/lukecarrier/.config/sops/age/keys.txt
+          chown 1000:1000 /home/lukecarrier/.config/sops/age/keys.txt
+          chmod 600 /home/lukecarrier/.config/sops/age/keys.txt
+        '';
+      };
+    };
     migration = { lib, ... }: {
       users.users.lukecarrier = {
         isNormalUser = true;
@@ -62,7 +91,8 @@ pkgs.testers.runNixOSTest {
           uid = 1000;
           description = "Luke Carrier";
           initialPassword = "nixos";
-          extraGroups = [ "wheel" ];
+          # Six or more groups trip homed's signature check on registered records.
+          extraGroups = [ "input" "networkmanager" "wheel" "kvm" "libvirtd" "qemu-libvirtd" ];
         };
       };
     };
@@ -117,6 +147,25 @@ pkgs.testers.runNixOSTest {
     fresh.wait_for_unit("homed-accounts.service")
     fresh.succeed("PASSWORD=a-new-password homectl activate --no-ask-password lukecarrier")
 
+    seeded.wait_for_unit("homed-accounts.service")
+    seeded.fail("grep '^lukecarrier:' /etc/passwd")
+    seeded.succeed("test $(id -u lukecarrier) = 1000")
+    seeded.succeed("busctl call org.freedesktop.Accounts /org/freedesktop/Accounts org.freedesktop.Accounts ListCachedUsers | grep -F /org/freedesktop/Accounts/User1000")
+    seeded.wait_until_tty_matches("1", "login: ")
+    seeded.send_chars("lukecarrier\n")
+    seeded.wait_until_tty_matches("1", "Password: ")
+    seeded.send_chars("nixos\n")
+    seeded.wait_until_succeeds("pgrep -u lukecarrier -t tty1 bash")
+    seeded.succeed("grep -Fxq seeded-age-key /home/lukecarrier/.config/sops/age/keys.txt")
+    seeded.succeed("test $(stat -c %U:%a /home/lukecarrier/.config/sops/age/keys.txt) = lukecarrier:600")
+    seeded.send_chars("exit\n")
+    seeded.wait_until_succeeds("homectl inspect lukecarrier | grep 'State: inactive'")
+    seeded.shutdown()
+    seeded.start()
+    seeded.wait_for_unit("homed-accounts.service")
+    seeded.succeed("PASSWORD=nixos homectl activate --no-ask-password lukecarrier")
+    seeded.succeed("grep -Fxq seeded-age-key /home/lukecarrier/.config/sops/age/keys.txt")
+
     migration.wait_for_unit("multi-user.target")
     migration.succeed("echo important-data > /home/lukecarrier/keep-me")
     migration.succeed("echo lukecarrier:migration-password | chpasswd")
@@ -144,6 +193,14 @@ pkgs.testers.runNixOSTest {
     migration.fail("systemctl restart homed-accounts.service")
     migration.succeed("test -f /home/lukecarrier/keep-me")
     migration.succeed("test ! -e /var/lib/systemd/home-migration/lukecarrier.json")
+    # A rolled-back root loses the classic passwd entry; the legacy UID map still marks the account.
+    migration.succeed("cp /etc/passwd /run/original-passwd")
+    migration.succeed("sed -i '/^lukecarrier:/d' /etc/passwd")
+    migration.succeed("systemctl reset-failed homed-accounts.service")
+    migration.fail("systemctl restart homed-accounts.service")
+    migration.succeed("test -f /home/lukecarrier/keep-me")
+    migration.succeed("test ! -e /var/lib/systemd/home-migration/lukecarrier.json")
+    migration.succeed("cp /run/original-passwd /etc/passwd")
     migration.succeed("cp /run/original-shadow /persist/etc/shadow")
     migration.succeed("systemctl reset-failed homed-accounts.service")
     migration.succeed("mkdir /home/lukecarrier/.identity")

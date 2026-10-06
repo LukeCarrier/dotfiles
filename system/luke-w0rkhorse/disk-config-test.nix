@@ -48,7 +48,10 @@
     machine.succeed("test $(findmnt -nro SOURCE --mountpoint /home) = w0rkhorse/home")
     machine.succeed("test $(findmnt -nro SOURCE --mountpoint /persist) = w0rkhorse/persist")
     machine.wait_for_unit("homed-accounts.service")
+    machine.succeed("busctl call org.freedesktop.Accounts /org/freedesktop/Accounts org.freedesktop.Accounts ListCachedUsers | grep -F /org/freedesktop/Accounts/User1000")
     machine.succeed("PASSWORD=nixos homectl activate --no-ask-password lukecarrier")
+    machine.succeed("grep -Fxq seeded-age-key /home/lukecarrier/.config/sops/age/keys.txt")
+    machine.succeed("test $(stat -c %U:%a /home/lukecarrier/.config/sops/age/keys.txt) = lukecarrier:600")
     machine.succeed("systemctl start user@1000.service")
     machine.wait_until_succeeds("test -L /home/lukecarrier/.local/state/nix/profiles/home-manager")
     machine.wait_until_succeeds("test -e /home/lukecarrier/.local/state/home-manager/first-login-activated")
@@ -254,6 +257,24 @@
       xserver.enable = lib.mkForce false;
     };
     system.extraDependencies = [ homeActivationPackage ];
+    services.accounts-daemon.enable = lib.mkForce true;
+    # Mirrors `just host-install`, which stages the sops age key in the home before first boot.
+    systemd.services.seed-home = {
+      wantedBy = [ "homed-accounts.service" ];
+      before = [ "homed-accounts.service" ];
+      unitConfig = {
+        ConditionPathExists = [ "!/home/lukecarrier" "!/home/lukecarrier.homedir" ];
+        RequiresMountsFor = [ "/home" ];
+      };
+      serviceConfig.Type = "oneshot";
+      script = ''
+        umask 077
+        install -d -m 700 -o 1000 -g 1000 /home/lukecarrier /home/lukecarrier/.config /home/lukecarrier/.config/sops /home/lukecarrier/.config/sops/age
+        echo seeded-age-key > /home/lukecarrier/.config/sops/age/keys.txt
+        chown 1000:1000 /home/lukecarrier/.config/sops/age/keys.txt
+        chmod 600 /home/lukecarrier/.config/sops/age/keys.txt
+      '';
+    };
     virtualisation = {
       docker.rootless.enable = lib.mkForce false;
       libvirtd.enable = lib.mkForce false;
