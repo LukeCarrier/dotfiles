@@ -74,19 +74,8 @@ sudo systemctl start sshd
 At the installer's local console, obtain its SSH host public key:
 
 ```shell
-sudo cat /etc/ssh/ssh_host_ed25519_key.pub
+ssh -o UserKnownHostsFile=installer-known-hosts root@192.168.9.18
 ```
-
-On the provisioning machine, put that verified public key in a dedicated
-known-hosts file, using the target's address as the first field:
-
-```shell
-printf '%s %s\n' '192.168.9.18' 'ssh-ed25519 AAAA... installer' > installer-known-hosts
-```
-
-Copy the full key from the local console in place of the example. The kexec
-installer preserves this host key. Both installation recipes require this
-known-hosts file and reject unknown or changed host keys.
 
 Check the target disk using the same verified host identity:
 
@@ -96,7 +85,7 @@ ssh -o UserKnownHostsFile="$PWD/installer-known-hosts" \
   root@192.168.9.18 lsblk
 ```
 
-Ensure the target matches what is in the system's disk configuration..
+Ensure the target matches what is in the system's disk configuration.
 
 Create a dedicated installer client key on the provisioning machine. Keep it
 outside the repository so a failed install can be resumed with the same key:
