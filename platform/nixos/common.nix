@@ -1,6 +1,11 @@
-{ config, lib, ... }:
+{ config, lib, pkgs, ... }:
 {
   imports = [ ./persistence.nix ];
+
+  environment.systemPackages = with pkgs; [
+    nvme-cli
+    smartmontools
+  ];
 
   dotfiles.persistence = {
     directories = [
