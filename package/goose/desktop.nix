@@ -39,7 +39,7 @@ stdenv.mkDerivation (finalAttrs: {
     inherit version;
     src = "${src}/ui";
     fetcherVersion = 4;
-    hash = "sha256-+9KMmyzNmTfe/HMUAoRokU8+orZ0KYlaeZhzHW/S0Y0=";
+    hash = "sha256-6X6nz6FXqKUTENDucTlmyw8//Dnd2PlVyUdZsI3cg9U=";
   };
 
   nativeBuildInputs = with pkgs; [
