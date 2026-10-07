@@ -29,7 +29,6 @@
     ../../employer/throwparty/nixos.nix
     ../../component/niri/nixos.nix
     ../../component/librepods/nixos.nix
-    ../../component/1password/nixos.nix
     ../../component/gnome-network-displays/gnome-network-displays.nix
   ];
 
