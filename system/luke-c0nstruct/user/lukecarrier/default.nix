@@ -36,7 +36,7 @@ in
     ../../../../component/zsh/zsh.nix
     ../../../../component/direnv/direnv.nix
     ../../../../component/firefox/firefox.nix
-    ../../../../component/1password/1password.nix
+    ../../../../component/bitwarden/bitwarden.nix
     ../../../../component/handy/nixos-home.nix
     ../../../../component/goose/goose.nix
     ../../../../component/opencode/opencode.nix
@@ -86,10 +86,6 @@ in
     allowUnfreePredicate =
       let
         names = [
-          "1password"
-          "1password-cli"
-          "onepassword-password-manager"
-
           "cursor"
           "cursor-cli"
 
