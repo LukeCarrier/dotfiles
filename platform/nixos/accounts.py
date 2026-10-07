@@ -139,7 +139,18 @@ def inspect(name):
     raise RuntimeError(f"Unable to inspect existing homed account {name}: {result.stderr.strip()}")
 
 
+def write_subordinate_ids(config):
+    # newuidmap rejects symlinks, so these must be real files, not NixOS etc links.
+    for path, key, first in (("/etc/subuid", "subUidRanges", "startUid"),
+                             ("/etc/subgid", "subGidRanges", "startGid")):
+        lines = [f"{name}:{rng[first]}:{rng['count']}"
+                 for name, user in sorted(config["users"].items())
+                 for rng in user[key]]
+        atomic_write(path, "\n".join(lines) + "\n", mode=0o644)
+
+
 def provision(config):
+    write_subordinate_ids(config)
     state = Path("/var/lib/systemd/home-migration")
     state.mkdir(mode=0o700, parents=True, exist_ok=True)
     for name, user in config["users"].items():
