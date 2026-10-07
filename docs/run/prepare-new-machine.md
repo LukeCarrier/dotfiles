@@ -154,7 +154,7 @@ set LUKS_PARTITION /dev/disk/by-partlabel/disk-disk1-root
 Take a backup of the LUKS metadata:
 
 ```fish
-cryptsetup luksHeaderBackup "$LUKS_PARTITION" \
+sudo cryptsetup luksHeaderBackup "$LUKS_PARTITION" \
   --header-backup-file (hostname)-luks-header.img
 ```
 
