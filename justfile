@@ -11,22 +11,34 @@ flake := "."
 gc:
 	nh clean all
 
+[arg("op", long="op")]
+[arg("flake", long="flake")]
+[arg("user", long="user")]
+[arg("hostname", long="hostname")]
 home op=op flake=flake user=user hostname=hostname *args=args:
 	nh home "{{op}}" "{{flake}}" --configuration "{{user}}@{{hostname}}" {{args}}
 
-host:
+host *args=args:
 	@if [ "{{os}}" = "Darwin" ]; then \
-		just host-darwin; \
+		just host-darwin -- {{args}}; \
 	else \
-		just host-linux; \
+		just host-linux -- {{args}}; \
 	fi
 
+[arg("op", long="op")]
+[arg("flake", long="flake")]
 host-android op=op flake=flake *args=args:
 	nix-on-droid "{{op}}" --flake "{{flake}}" {{args}}
 
+[arg("op", long="op")]
+[arg("flake", long="flake")]
+[arg("hostname", long="hostname")]
 host-darwin op=op flake=flake hostname=hostname *args=args:
 	nh darwin "{{op}}" "{{flake}}" --hostname "{{hostname}}" {{args}}
 
+[arg("op", long="op")]
+[arg("flake", long="flake")]
+[arg("hostname", long="hostname")]
 host-linux op=op flake=flake hostname=hostname *args=args:
 	nh os "{{op}}" "{{flake}}" --hostname "{{hostname}}" {{args}}
 
@@ -97,6 +109,8 @@ host-install-resume config target known_hosts installer_key flake=flake:
 
 # Destructively formats disposable VM disks and installs the selected NixOS system.
 # Disko supplies a dummy credential inside this isolated harness.
+[arg("hostname", long="hostname")]
+[arg("flake", long="flake")]
 host-vm-test hostname=hostname flake=flake *args:
 	nix build "{{flake}}#bootstrap-kexec-network-test" --print-build-logs {{args}}
 	nix build "{{flake}}#nixosConfigurations.{{hostname}}.config.system.build.installTest" --print-build-logs {{args}}
