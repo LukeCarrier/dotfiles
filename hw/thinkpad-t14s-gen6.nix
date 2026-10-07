@@ -7,7 +7,30 @@
 
   boot = {
     kernelPackages = pkgs.linuxPackages_latest;
-    kernelParams = [ ];
+
+    # KIOXIA Exceria Basic (1e0f:003b, fw A1RA0104) has repeatedly failed with
+    # `nvme0n1: I/O Cmd ... I/O Error` + uncorrectable CmpltTO AER storms when
+    # the controller is allowed non-operational power states. PS4 advertises
+    # a 32 ms exit latency; PS3's 1.2 ms exit latency still causes completion
+    # timeouts on this platform. latency_us=0 pins the drive to PS0-PS2 and
+    # has been stable since.
+    #
+    # pcie_aspm=off disables PCIe link power management for the same reason;
+    # Data Link Layer Timeout/Rollover AER errors were present on the RP.
+    #
+    # Bisect plan, once stable long enough to rely on it:
+    #  1. Drop pcie_aspm=off, keep pcie_aspm.policy=performance + latency=0.
+    #     If stable, ASPM off may be overkill.
+    #  2. Try latency_us=2000 (PS3 allowed). If the hang returns, PS3 is the
+    #     trigger; 0 remains justified. If stable, the default 25000 default
+    #     was the only problem and ASPM off can likely go too.
+    #  3. Report an upstream NVMe quirk (NVME_QUIRK_NO_DEEPEST_PS) — the drive
+    #     is advertising legal-but-broken exit latencies.
+    kernelParams = [
+      "nvme_core.default_ps_max_latency_us=0"
+      "pcie_aspm.policy=performance"
+      "pcie_aspm=off"
+    ];
   };
 
   services.acpid = {
