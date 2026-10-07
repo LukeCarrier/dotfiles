@@ -9,13 +9,10 @@ let
       ".bitwarden/ssh-agent.sock";
 in
 {
-  home.packages =
-    with pkgs;
-    [
-      bitwarden-cli
-      bw-cli-tools
-    ]
-    ++ (if isLinux then [ pkgs.bitwarden-desktop ] else [ ]);
+  home.packages = with pkgs; [
+    bitwarden-cli
+    bw-cli-tools
+  ];
 
   home.sessionVariables = {
     BITWARDEN_SSH_AUTH_SOCK = "$HOME/${socketPath}";
