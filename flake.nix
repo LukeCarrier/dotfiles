@@ -251,6 +251,21 @@
               });
             })
             (final: prev: {
+              # accounts-servicedaemon.c:712 refuses to enumerate systemd-homed
+              # users once /etc/shadow holds MAX_LOCAL_USERS (50) entries, which
+              # this host exceeds via systemd-sysusers. Raise the cap so
+              # ListCachedUsers includes homed users (e.g. lukecarrier) for the
+              # greeter.
+              accountsservice = prev.accountsservice.overrideAttrs (old: {
+                env = (old.env or { }) // {
+                  NIX_CFLAGS_COMPILE = toString [
+                    (old.env.NIX_CFLAGS_COMPILE or "")
+                    "-DMAX_LOCAL_USERS=4096"
+                  ];
+                };
+              });
+            })
+            (final: prev: {
               asciinema = asciinema.packages.${system}.default;
               ashell = ashell.packages.${system}.default;
               # NixOS/nixpkgs#535887
