@@ -273,9 +273,9 @@ rec {
             {
               output = {
                 criteria = "eDP-1";
-                mode = "2880x1800@120Hz";
+                mode = "1920x1200@60Hz";
                 adaptiveSync = true;
-                scale = 1.25;
+                scale = 1.0;
                 transform = null;
               };
             }
