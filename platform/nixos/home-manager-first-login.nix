@@ -1,4 +1,4 @@
-{ config, homeActivationPackage, lib, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 {
   programs.dconf.enable = true;
 
@@ -22,7 +22,8 @@
       if [ -x "$profile/activate" ]; then
         "$profile/activate"
       else
-        ${homeActivationPackage}/activate
+        echo "home-manager: no home profile yet, run 'nh home switch' to activate" >&2
+        exit 0
       fi
       mkdir -p "$HOME/.local/state/home-manager"
       touch "$HOME/.local/state/home-manager/first-login-activated"

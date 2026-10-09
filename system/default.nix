@@ -79,7 +79,6 @@ rec {
       };
       modules = [ ./luke-c0nstruct ];
       specialArgs = {
-        homeActivationPackage = homeConfigurations."lukecarrier@luke-c0nstruct".activationPackage;
         inputs = {
           inherit
             impermanence
@@ -122,7 +121,6 @@ rec {
       };
       modules = [ ./luke-w0rkhorse ];
       specialArgs = {
-        homeActivationPackage = homeConfigurations."lukecarrier@luke-w0rkhorse".activationPackage;
         inputs = {
           inherit
             emed-nix
