@@ -1,6 +1,9 @@
 # direnv
 /.direnv/
 
+# Evaluation profiling artifacts
+/profile/
+
 # SOPS
 /.sops/
 

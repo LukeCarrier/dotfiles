@@ -42,6 +42,14 @@ host-darwin op=op flake=flake hostname=hostname *args=args:
 host-linux op=op flake=flake hostname=hostname *args=args:
 	nh os "{{op}}" "{{flake}}" --hostname "{{hostname}}" {{args}}
 
+# Profile a flake evaluation: nixos:<host>, darwin:<host>, home:<config>, attr:<path>
+profile target:
+	./scripts/eval-profile.sh "{{target}}"
+
+# Profile every nixos, darwin and home configuration
+profile-all:
+	./scripts/eval-profile.sh --all
+
 # Destructively installs a host after provisioning its persistent identities.
 host-install config target disk known_hosts installer_key flake=flake:
 	known_hosts="$(realpath "{{known_hosts}}")"; \

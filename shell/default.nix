@@ -105,6 +105,7 @@ in
       inherit (pkgs)
         age
         cntr
+        flamegraph
         git
         gnumake
         helix
@@ -153,6 +154,7 @@ in
       '';
       nativeBuildInputs = [
         age
+        flamegraph
         git
         gnumake
         helix
