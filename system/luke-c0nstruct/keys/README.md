@@ -12,4 +12,4 @@ The normal host key converts to this age recipient:
 age1av5nwc8m74f9wvjh93au9rgapa90jw8exh5754e0xj4xwze4gsqq6dmh6a
 ```
 
-Private material is stored in `secrets/throwparty.yaml`.
+Private material is stored in `secrets/employer-throwparty.yaml`.

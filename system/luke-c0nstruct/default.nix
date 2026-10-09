@@ -41,7 +41,7 @@
     preferStaticEmulators = true;
   };
 
-  sops.defaultSopsFile = ../../secrets/throwparty.yaml;
+  sops.defaultSopsFile = ../../secrets/employer-throwparty.yaml;
 
   boot.lanzaboote.pkiBundle = lib.mkForce "/var/lib/sbctl";
 

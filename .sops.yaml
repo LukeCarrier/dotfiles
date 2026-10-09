@@ -23,7 +23,7 @@ recipients:
 creation_rules:
   - path_regex: ^secrets/employer-emed\.yaml$
     age: *emed
+  - path_regex: ^secrets/employer-throwparty\.yaml$
+    age: *throwparty
   - path_regex: ^secrets/personal\.yaml$
     age: *personal
-  - path_regex: ^secrets/throwparty\.yaml$
-    age: *throwparty

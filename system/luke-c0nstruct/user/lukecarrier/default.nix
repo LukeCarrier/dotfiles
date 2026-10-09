@@ -80,7 +80,7 @@ in
     ];
   };
 
-  sops.defaultSopsFile = ../../../../secrets/throwparty.yaml;
+  sops.defaultSopsFile = ../../../../secrets/employer-throwparty.yaml;
 
   nixpkgs.config = {
     allowUnfreePredicate =
