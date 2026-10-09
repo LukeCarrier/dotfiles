@@ -1,11 +1,12 @@
 {
   config,
-  homeActivationPackage,
   lib,
   pkgs,
   ...
 }:
 {
+  imports = [ ../../platform/nixos/disko-install-test.nix ];
+
   assertions = [
     {
       assertion = builtins.elem "systemd-hibernate-resume.service" config.boot.initrd.systemd.services.zfs-import-w0rkhorse.after;
@@ -256,7 +257,6 @@
       printing.enable = lib.mkForce false;
       xserver.enable = lib.mkForce false;
     };
-    system.extraDependencies = [ homeActivationPackage ];
     services.accounts-daemon.enable = lib.mkForce true;
     # Mirrors `just host-install`, which stages the sops age key in the home before first boot.
     systemd.services.seed-home = {

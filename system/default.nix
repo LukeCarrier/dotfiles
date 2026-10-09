@@ -81,25 +81,13 @@ rec {
       specialArgs = {
         inputs = {
           inherit
+            disko
             impermanence
             nix-flatpak
             sops-nix
             lanzaboote
             vicinae
             ;
-          disko = disko // {
-            nixosModules = disko.nixosModules // {
-              disko = import "${
-                pkgs.applyPatches {
-                  name = "disko-luke-c0nstruct-${
-                    builtins.substring 0 8 (builtins.hashFile "sha256" ./disko-install-test.patch)
-                  }";
-                  src = disko;
-                  patches = [ ./disko-install-test.patch ];
-                }
-              }/module.nix";
-            };
-          };
         };
         desktopConfig.background = desktopBackground;
       };
@@ -123,6 +111,7 @@ rec {
       specialArgs = {
         inputs = {
           inherit
+            disko
             emed-nix
             impermanence
             nirivana
@@ -132,19 +121,6 @@ rec {
             vicinae
             lanzaboote
             ;
-          disko = disko // {
-            nixosModules = disko.nixosModules // {
-              disko = import "${
-                pkgs.applyPatches {
-                  name = "disko-luke-w0rkhorse-${
-                    builtins.substring 0 8 (builtins.hashFile "sha256" ./disko-install-test.patch)
-                  }";
-                  src = disko;
-                  patches = [ ./disko-install-test.patch ];
-                }
-              }/module.nix";
-            };
-          };
         };
         desktopConfig.background = desktopBackground;
       };
