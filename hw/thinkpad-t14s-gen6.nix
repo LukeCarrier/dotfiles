@@ -1,4 +1,22 @@
 { lib, pkgs, ... }:
+let
+  inherit (lib) getExe getExe';
+
+  powerprofilesctl = getExe' pkgs.power-profiles-daemon "powerprofilesctl";
+
+  platformProfileSync = pkgs.writeShellScriptBin "platform-profile-sync" ''
+    profile="$(${powerprofilesctl} get 2>/dev/null)" || exit 0
+    case "$profile" in
+      power-saver) profile=low-power ;;
+      balanced | performance) ;;
+      *) exit 0 ;;
+    esac
+
+    sysfs=/sys/firmware/acpi/platform_profile
+    [ -e "$sysfs" ] || exit 0
+    [ "$(cat "$sysfs")" = "$profile" ] || echo "$profile" >"$sysfs"
+  '';
+in
 {
   imports = [
     ../component/bolt/nixos.nix
@@ -41,6 +59,20 @@
   # at low-power and clamps the package indefinitely. Selecting balanced
   # restores the full power limit.
   services.power-profiles-daemon.enable = true;
+
+  # ppd only writes the ACPI platform profile when the profile *changes*; at
+  # boot it restores its saved profile without rewriting, so DYTC stays clamped
+  # at low-power until the user next switches. Re-assert it once ppd is up.
+  systemd.services.platform-profile-sync = {
+    description = "Re-assert power-profiles-daemon's profile on the ACPI platform profile";
+    wantedBy = [ "multi-user.target" ];
+    wants = [ "power-profiles-daemon.service" ];
+    after = [ "power-profiles-daemon.service" ];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = getExe platformProfileSync;
+    };
+  };
 
   # graphical.nix pins ondemand globally, but the active pstate drivers
   # (intel_pstate/active, amd-pstate/active) don't expose it. Drop the governor
