@@ -63,7 +63,7 @@
           "nixpkgs-unstable"
         ],
         "rust-overlay": [
-          "rust-overlay"
+          "rust-overlay-shim"
         ]
       },
       "locked": {
@@ -931,7 +931,7 @@
           "nixpkgs-unstable"
         ],
         "rust-overlay": [
-          "rust-overlay"
+          "rust-overlay-shim"
         ],
         "throwparty": "throwparty_3"
       },
@@ -1423,6 +1423,7 @@
         "nixpkgs-unstable": "nixpkgs-unstable",
         "nur": "nur",
         "rust-overlay": "rust-overlay_4",
+        "rust-overlay-shim": "rust-overlay-shim",
         "shanocast": "shanocast",
         "sops-nix": "sops-nix",
         "systems": "systems_4",
@@ -1470,6 +1471,17 @@
         "repo": "rust-overlay",
         "type": "github"
       }
+    },
+    "rust-overlay-shim": {
+      "locked": {
+        "path": "./package/rust-overlay-shim",
+        "type": "path"
+      },
+      "original": {
+        "path": "./package/rust-overlay-shim",
+        "type": "path"
+      },
+      "parent": []
     },
     "rust-overlay_2": {
       "inputs": {
@@ -1768,7 +1780,7 @@
           "nixpkgs-unstable"
         ],
         "rust-overlay": [
-          "rust-overlay"
+          "rust-overlay-shim"
         ],
         "throwparty": "throwparty_4"
       },
@@ -1976,7 +1988,7 @@
           "nixpkgs-unstable"
         ],
         "rust-overlay": [
-          "rust-overlay"
+          "rust-overlay-shim"
         ],
         "systems": "systems_7"
       },

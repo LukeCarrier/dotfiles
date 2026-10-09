@@ -22,7 +22,7 @@
       url = "github:MalpenZibo/ashell/main";
       inputs = {
         nixpkgs.follows = "nixpkgs-unstable";
-        rust-overlay.follows = "rust-overlay";
+        rust-overlay.follows = "rust-overlay-shim";
       };
     };
     claude-code = {
@@ -93,7 +93,7 @@
         flake-utils.follows = "flake-utils";
         home-manager.follows = "home-manager";
         nixpkgs.follows = "nixpkgs-unstable";
-        rust-overlay.follows = "rust-overlay";
+        rust-overlay.follows = "rust-overlay-shim";
       };
     };
     niri-float-sticky = {
@@ -135,6 +135,9 @@
       url = "github:oxalica/rust-overlay";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
+    rust-overlay-shim = {
+      url = "path:./package/rust-overlay-shim";
+    };
     shanocast = {
       url = "github:rgerganov/shanocast";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
@@ -152,7 +155,7 @@
       inputs = {
         flake-utils.follows = "flake-utils";
         nixpkgs.follows = "nixpkgs-unstable";
-        rust-overlay.follows = "rust-overlay";
+        rust-overlay.follows = "rust-overlay-shim";
       };
     };
     vicinae = {
@@ -166,7 +169,7 @@
     wpaperd = {
       url = "github:danyspin97/wpaperd";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
-      inputs.rust-overlay.follows = "rust-overlay";
+      inputs.rust-overlay.follows = "rust-overlay-shim";
     };
   };
 
