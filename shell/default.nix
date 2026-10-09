@@ -107,7 +107,6 @@ in
         cntr
         flamegraph
         git
-        gnumake
         helix
         just
         home-manager
@@ -133,7 +132,6 @@ in
         ${getExe jujutsu} --version
         printf "home-manager %s\n" "$(${getExe home-manager} --version)"
         ${getExe nh} --version
-        ${getExe gnumake} --version | head -n 1
         ${getExe hydra-check} --version
         ${getExe nil} --version 2>&1 | head -n 1
         ${getExe nixd} --version 2>&1 | head -n 1
@@ -156,7 +154,6 @@ in
         age
         flamegraph
         git
-        gnumake
         helix
         home-manager
         hydra-check
