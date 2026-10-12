@@ -52,12 +52,13 @@ stdenv.mkDerivation (finalAttrs: rec {
     cp -r dist "$targetDir/"
     cp package.json "$targetDir/"
 
-    cp -rL node_modules "$targetDir/"
+    cp -r node_modules "$targetDir/"
 
     makeWrapper ${nodejs}/bin/node $out/bin/mcp-remote-client \
-      --add-flags "$targetDir/bin/client.js"
+      --add-flags "$targetDir/dist/client.js"
     makeWrapper ${nodejs}/bin/node $out/bin/mcp-remote-proxy \
-      --add-flags "$targetDir/bin/proxy.js"
+      --add-flags "$targetDir/dist/proxy.js"
+    ln -s mcp-remote-proxy $out/bin/mcp-remote
 
     runHook postInstall
   '';
@@ -66,6 +67,7 @@ stdenv.mkDerivation (finalAttrs: rec {
     description = "Local proxy to connect local MCP clients to remote MCP servers";
     homepage = "https://github.com/punkpeye/mcp-remote";
     license = licenses.mit;
+    mainProgram = "mcp-remote";
     platforms = platforms.all;
   };
 })
