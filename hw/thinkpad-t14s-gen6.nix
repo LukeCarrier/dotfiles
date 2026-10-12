@@ -26,6 +26,17 @@ in
   boot = {
     kernelPackages = pkgs.linuxPackages_latest;
 
+    # Canonical's "thunderbolt: Retry DP tunnel setup on DPRX negotiation
+    # failure" (posted to linux-usb 2026-04-30, not yet upstream). Without it
+    # the driver permanently drops the DP IN adapter on the first DPRX failure,
+    # so the dock's displays never come back after a reconnect.
+    kernelPatches = [
+      {
+        name = "thunderbolt-dprx-retry";
+        patch = ../package/linux/thunderbolt-dprx-retry.patch;
+      }
+    ];
+
     # KIOXIA Exceria Basic (1e0f:003b, fw A1RA0104) has repeatedly failed with
     # `nvme0n1: I/O Cmd ... I/O Error` + uncorrectable CmpltTO AER storms when
     # the controller is allowed non-operational power states. PS4 advertises
@@ -48,6 +59,14 @@ in
       "nvme_core.default_ps_max_latency_us=0"
       "pcie_aspm.policy=performance"
       "pcie_aspm=off"
+
+      # Work around DP-over-USB4/dock detection failures on this platform; see
+      # the DP tunnel DPRX negotiation bug in drivers/thunderbolt/tb.c.
+      "i915.enable_dp_mst=0"
+
+      # Don't tear the DP tunnel down before the GPU driver has read DPRX
+      # (-1 = wait forever; default is 12000 ms).
+      "thunderbolt.dprx_timeout=-1"
     ];
   };
 
