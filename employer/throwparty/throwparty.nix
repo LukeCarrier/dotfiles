@@ -16,4 +16,11 @@
       path = "${config.home.homeDirectory}/.yarnrc.yml";
     };
   };
+
+  programs.firefox.profiles.default.search.engines."throwparty/Go" = {
+    definedAlias = [ "go" ];
+    urls = [
+      { template = "https://go.throw.party/{searchTerms}"; }
+    ];
+  };
 }
