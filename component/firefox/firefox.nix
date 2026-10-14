@@ -181,13 +181,6 @@ in
                 { template = "https://www.perplexity.ai/search?focus=internet&q={searchTerms}"; }
               ];
             };
-
-            "eMed/Go" = {
-              definedAliases = [ "go" ];
-              urls = [
-                { template = "https://api.eu-west-2.emed.health/go-url/{searchTerms}"; }
-              ];
-            };
           };
         };
         settings = {

@@ -298,5 +298,12 @@ in
         "unified-extensions-button"
         browserActions."1password"
       ];
+
+      search.engines."eMed/Go" = {
+        definedAliases = [ "go" ];
+        urls = [
+          { template = "https://api.eu-west-2.emed.health/go-url/{searchTerms}"; }
+        ];
+      };
     };
 }
