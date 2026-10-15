@@ -40,6 +40,7 @@ buildNpmPackage rec {
   meta = with lib; {
     description = "Streamable Excalidraw diagram MCP App server";
     homepage = "https://github.com/antonpk1/excalidraw-mcp-app";
+    mainProgram = "mcp-server-excalidraw";
     license = licenses.mit;
     platforms = platforms.all;
   };

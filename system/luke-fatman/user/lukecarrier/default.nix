@@ -99,7 +99,7 @@ in
       command = getExe pkgs.ghidra-mcp;
     };
     excalidraw = {
-      command = getExe' pkgs.excalidraw-mcp-app "excalidraw-mcp-app";
+      command = getExe pkgs.excalidraw-mcp-app;
       args = [ "--stdio" ];
     };
     playwright = {

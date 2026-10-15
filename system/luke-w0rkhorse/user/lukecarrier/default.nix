@@ -7,7 +7,7 @@
   ...
 }:
 let
-  inherit (lib) getExe';
+  inherit (lib) getExe;
 in
 {
   imports = [
@@ -108,7 +108,7 @@ in
   sops.age.keyFile = lib.mkForce "${config.home.homeDirectory}/.config/sops/age/keys.txt";
 
   programs.mcp.servers.excalidraw = {
-    command = getExe' pkgs.excalidraw-mcp-app "excalidraw-mcp-app";
+    command = getExe pkgs.excalidraw-mcp-app;
     args = [ "--stdio" ];
   };
 
