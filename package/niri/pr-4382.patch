@@ -1,4 +1,4 @@
-From fed2be7e4319e667abb6cf29484d812cfd0364d8 Mon Sep 17 00:00:00 2001
+From ce3b1a49657d7a716f2ee665c636ee7e1735edb8 Mon Sep 17 00:00:00 2001
 From: Luke Carrier <luke@carrier.family>
 Date: Sun, 2 Aug 2026 01:41:36 +0100
 Subject: [PATCH 1/2] feat(input): column navigation with trackpoint
@@ -12,10 +12,10 @@ Subject: [PATCH 1/2] feat(input): column navigation with trackpoint
  5 files changed, 231 insertions(+), 2 deletions(-)
 
 diff --git a/niri-config/src/input.rs b/niri-config/src/input.rs
-index 5a2eb136..96f91dd9 100644
+index 78e3ed21..a8ce1b52 100644
 --- a/niri-config/src/input.rs
 +++ b/niri-config/src/input.rs
-@@ -267,6 +267,8 @@ pub struct Trackpoint {
+@@ -269,6 +269,8 @@ pub struct Trackpoint {
      pub left_handed: bool,
      #[knuffel(child)]
      pub middle_emulation: bool,
@@ -25,10 +25,10 @@ index 5a2eb136..96f91dd9 100644
  
  #[derive(knuffel::Decode, Debug, Default, Clone, PartialEq)]
 diff --git a/niri-config/src/lib.rs b/niri-config/src/lib.rs
-index 77f07967..9866a6d3 100644
+index 22e0d3db..c9f10c10 100644
 --- a/niri-config/src/lib.rs
 +++ b/niri-config/src/lib.rs
-@@ -1079,6 +1079,7 @@ mod tests {
+@@ -1105,6 +1105,7 @@ mod tests {
                      scroll_button_lock: false,
                      left_handed: false,
                      middle_emulation: false,
@@ -37,10 +37,10 @@ index 77f07967..9866a6d3 100644
                  trackball: Trackball {
                      off: true,
 diff --git a/src/input/backend_ext.rs b/src/input/backend_ext.rs
-index 99f4a904..0fdbbe8a 100644
+index 862bbbfd..116a5ee9 100644
 --- a/src/input/backend_ext.rs
 +++ b/src/input/backend_ext.rs
-@@ -21,6 +21,10 @@ pub trait NiriInputDevice: input::Device {
+@@ -22,6 +22,10 @@ pub trait NiriInputDevice: input::Device {
      // but it's not clear that this matters in practice?
      // it might be more obvious once we implement it for libinput
      fn output(&self, state: &State) -> Option<Output>;
@@ -51,7 +51,7 @@ index 99f4a904..0fdbbe8a 100644
  }
  
  impl NiriInputDevice for libinput::Device {
-@@ -28,6 +32,14 @@ impl NiriInputDevice for libinput::Device {
+@@ -29,6 +33,14 @@ impl NiriInputDevice for libinput::Device {
          // FIXME: Allow specifying the output per-device?
          None
      }
@@ -67,19 +67,19 @@ index 99f4a904..0fdbbe8a 100644
  
  impl NiriInputDevice for WinitVirtualDevice {
 diff --git a/src/input/mod.rs b/src/input/mod.rs
-index 7a0a95ba..5733ec0a 100644
+index 10c1d02c..c8027ec9 100644
 --- a/src/input/mod.rs
 +++ b/src/input/mod.rs
-@@ -66,7 +66,7 @@ pub mod swipe_tracker;
+@@ -70,7 +70,7 @@ pub mod spatial_movement_grab;
+ pub mod swipe_tracker;
  pub mod touch_overview_grab;
- pub mod touch_resize_grab;
  
 -use backend_ext::{NiriInputBackend as InputBackend, NiriInputDevice as _};
 +use backend_ext::{NiriInputBackend as InputBackend, NiriInputDevice};
  
  pub const DOUBLE_CLICK_TIME: Duration = Duration::from_millis(400);
  
-@@ -3404,7 +3404,92 @@ impl State {
+@@ -3499,7 +3499,92 @@ impl State {
                  }
              }
  
@@ -173,7 +173,7 @@ index 7a0a95ba..5733ec0a 100644
                  let ticks = self
                      .niri
                      .horizontal_finger_scroll_tracker
-@@ -3492,9 +3577,15 @@ impl State {
+@@ -3587,9 +3672,15 @@ impl State {
  
          let device_scroll_factor = {
              let config = self.niri.config.borrow();
@@ -189,7 +189,7 @@ index 7a0a95ba..5733ec0a 100644
                  _ => None,
              }
          };
-@@ -5131,6 +5222,28 @@ pub fn mods_with_tablet_stylus_binds(mod_key: ModKey, binds: &Binds) -> HashSet<
+@@ -5334,6 +5425,28 @@ pub fn mods_with_tablet_stylus_binds(mod_key: ModKey, binds: &Binds) -> HashSet<
      )
  }
  
@@ -218,7 +218,7 @@ index 7a0a95ba..5733ec0a 100644
  fn grab_allows_hot_corner(grab: &(dyn PointerGrab<State> + 'static)) -> bool {
      let grab = grab.as_any();
  
-@@ -5557,3 +5670,102 @@ mod tests {
+@@ -5571,3 +5684,102 @@ mod tests {
          );
      }
  }
@@ -230,7 +230,7 @@ index 7a0a95ba..5733ec0a 100644
 +    use niri_config::binds::{Bind, Key, Binds};
 +    use niri_config::Action;
 +    use crate::input::Trigger;
-+    use crate::input::{mods_with_wheel_binds, scroll_tracker::ScrollTracker};
++    use crate::input::{mods_with_horizontal_wheel_binds, scroll_tracker::ScrollTracker};
 +
 +    #[test]
 +    fn trackpoint_scroll_outside_overview_switches_columns() {
@@ -269,7 +269,7 @@ index 7a0a95ba..5733ec0a 100644
 +        ]);
 +
 +        let mod_key = ModKey::Super;
-+        let wheel_mods = mods_with_wheel_binds(mod_key, &binds);
++        let wheel_mods = mods_with_horizontal_wheel_binds(mod_key, &binds);
 +        assert!(wheel_mods.contains(&Modifiers::empty()));
 +    }
 +
@@ -322,10 +322,10 @@ index 7a0a95ba..5733ec0a 100644
 +    }
 +}
 diff --git a/src/niri.rs b/src/niri.rs
-index c7bff2c5..64c66aa1 100644
+index 449d2b0f..8ac6fb4a 100644
 --- a/src/niri.rs
 +++ b/src/niri.rs
-@@ -379,6 +379,7 @@ pub struct Niri {
+@@ -427,6 +427,7 @@ pub struct Niri {
      pub mods_with_tablet_stylus_binds: HashSet<Modifiers>,
      pub vertical_finger_scroll_tracker: ScrollTracker,
      pub horizontal_finger_scroll_tracker: ScrollTracker,
@@ -333,7 +333,7 @@ index c7bff2c5..64c66aa1 100644
      pub mods_with_finger_scroll_binds: HashSet<Modifiers>,
  
      pub lock_state: LockState,
-@@ -2603,6 +2604,7 @@ impl Niri {
+@@ -2859,6 +2860,7 @@ impl Niri {
              // 10 is copied from Clutter: DISCRETE_SCROLL_STEP.
              vertical_finger_scroll_tracker: ScrollTracker::new(10),
              horizontal_finger_scroll_tracker: ScrollTracker::new(10),
@@ -345,20 +345,20 @@ index c7bff2c5..64c66aa1 100644
 2.55.0
 
 
-From d49f0f203548c0a74191ae83acde33020e5c2cbd Mon Sep 17 00:00:00 2001
+From 38585a62a70f8f1c8cc36e87cd46fec0cf226963 Mon Sep 17 00:00:00 2001
 From: Luke Carrier <luke@carrier.family>
 Date: Mon, 3 Aug 2026 18:05:59 +0100
-Subject: [PATCH 2/2] hopefully fix snap back
+Subject: [PATCH 2/2] fix(input): properly handle end of trackpoint gesture
 
 ---
  src/input/mod.rs | 20 ++++++++++++++++++++
  1 file changed, 20 insertions(+)
 
 diff --git a/src/input/mod.rs b/src/input/mod.rs
-index 5733ec0a..cbecc2bf 100644
+index c8027ec9..63c4fcc9 100644
 --- a/src/input/mod.rs
 +++ b/src/input/mod.rs
-@@ -3488,6 +3488,26 @@ impl State {
+@@ -3583,6 +3583,26 @@ impl State {
                      }
  
                      return;
