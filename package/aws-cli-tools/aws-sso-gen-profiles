@@ -28,11 +28,14 @@ parse_args() {
 process_account() {
   local dest_account_index="$1" dest_account_id="$2" dest_account_name="$3" outfile="$4"
   echo "$0: processing ${dest_account_name} (${dest_account_id}; $(( dest_account_index + 1 )) of ${num_accounts})" >&2
+  # The AWS CLI silently ignores profile names containing whitespace, so slugify
+  # the account name before building the profile stanza.
+  local dest_account_slug="${dest_account_name//[[:space:]]/-}"
   local template
   if (( $direct == 0 )); then
-    template='.roleList[] | "[profile '"${prefix}${dest_account_name}"'--\(.roleName)]\nsso_session = '"$sso_session"'\nsso_account_id = '"$dest_account_id"'\nsso_role_name = \(.roleName)\u0000"'
+    template='.roleList[] | "[profile '"${prefix}${dest_account_slug}"'--\(.roleName)]\nsso_session = '"$sso_session"'\nsso_account_id = '"$dest_account_id"'\nsso_role_name = \(.roleName)\u0000"'
   else
-    template='.roleList[] | "[profile '"${prefix}${dest_account_name}"'--\(.roleName)]\nsso_start_url = '"$start_url"'\nsso_region = '"$sso_region"'\nsso_account_id = '"$dest_account_id"'\nsso_role_name = \(.roleName)\u0000"'
+    template='.roleList[] | "[profile '"${prefix}${dest_account_slug}"'--\(.roleName)]\nsso_start_url = '"$start_url"'\nsso_region = '"$sso_region"'\nsso_account_id = '"$dest_account_id"'\nsso_role_name = \(.roleName)\u0000"'
   fi
   aws sso list-account-roles \
       --region "$sso_region" \
