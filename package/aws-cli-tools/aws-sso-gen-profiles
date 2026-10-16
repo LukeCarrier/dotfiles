@@ -51,6 +51,10 @@ main() {
   local cache_key
   if [[ -n "$start_url" ]]; then
     # sso_start_url is defined directly in the profile
+    if (( $direct == 0 )); then
+      echo "$0: either use a separate sso-session node and sso_session property in profiles, or specify --direct" >&2
+      exit 1
+    fi
     cache_key="$(printf "%s" "$start_url" | shasum -a 1 | awk '{print $1}')"
   else
     # sso_session might be defined in the profile
@@ -62,10 +66,6 @@ main() {
     start_url="$(sed -nr "/^\[sso-session[ ]*${sso_session}\]/ { :l /^sso_start_url[ ]*=/ { s/[^=]*=[ ]*//; p; q; }; n; b l; }" "$config")"
     if [[ -z "$start_url" ]]; then
       echo "$0: failed to determine sso_start_url for profile ${profile}" >&2
-      exit 1
-    fi
-    if (( $direct == 0 )); then
-      echo "$0: either use separate sso-session node snd sso_session property in profiles, or specify --direct" >&1
       exit 1
     fi
     # Use the session name as the cache key, idk why they do this
