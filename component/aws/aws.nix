@@ -14,7 +14,10 @@ in
     fzf
   ];
 
-  programs.docker-cli.settings.credHelpers = {
+  sops.secrets.aws-config = {
+    format = "yaml";
+    key = "aws/config";
+    path = "${config.home.homeDirectory}/.aws/config";
   };
 
   programs.bash.shellAliases.aws-profile = ''

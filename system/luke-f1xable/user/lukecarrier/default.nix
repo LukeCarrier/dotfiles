@@ -96,11 +96,6 @@
 
   sops.age.keyFile = "${config.home.homeDirectory}/Code/LukeCarrier/dotfiles/.sops/keys";
 
-  sops.secrets.aws-config = {
-    format = "yaml";
-    key = "aws/config";
-    path = "${config.home.homeDirectory}/.aws/config";
-  };
 
   programs.home-manager.enable = true;
 

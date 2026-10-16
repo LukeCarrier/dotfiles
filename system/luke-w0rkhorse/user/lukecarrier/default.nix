@@ -112,12 +112,6 @@ in
     args = [ "--stdio" ];
   };
 
-  sops.secrets.aws-config = {
-    format = "yaml";
-    key = "aws/config";
-    path = "${config.home.homeDirectory}/.aws/config";
-  };
-
   services.nirivana.enable = true;
 
   programs.home-manager.enable = true;

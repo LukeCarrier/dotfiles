@@ -141,11 +141,6 @@ in
         path = "${config.home.homeDirectory}/.finicky.js";
       };
 
-      aws-config = {
-        format = "yaml";
-        key = "aws/config";
-        path = "${config.home.homeDirectory}/.aws/config";
-      };
 
       npmrc = {
         format = "yaml";
