@@ -48,6 +48,7 @@ in
     ../../../../component/tmux/tmux.nix
     ../../../../component/helix/helix.nix
     ../../../../component/vim/vim.nix
+    ../../../../component/vscode/vscode.nix
     ../../../../component/zed/zed.nix
     ../../../../component/gnupg/gnupg.nix
     ../../../../component/git/git.nix
@@ -86,12 +87,13 @@ in
     allowUnfreePredicate =
       let
         names = [
-          "cursor"
-          "cursor-cli"
-
           "claude-code"
           "obsbot-sdk"
           "terraform"
+          "vscode-extension-github-copilot"
+          "vscode-extension-github-copilot-chat"
+          "vscode-extension-ms-vscode-remote-remote-containers"
+          "vscode-extension-ms-vsliveshare-vsliveshare"
         ];
       in
       pkg: builtins.elem (lib.getName pkg) names;
