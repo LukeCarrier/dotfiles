@@ -25,7 +25,7 @@ in
     in
     builtins.toJSON attrs;
 
-  programs.vscode =
+  programs.vscodium =
     let
       globalExtensions =
         (with pkgs.open-vsx; [
