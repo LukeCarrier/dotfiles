@@ -68,15 +68,5 @@ with AccountsService enumeration, real PAM login and `passwd`,
 password persistence across reboot, metadata and key updates, logged-in migration
 refusal, interrupted migration recovery, password aging, and stable system IDs.
 
-```sh
-nix build --no-link --impure --expr '
-  let f = builtins.getFlake ("path:" + toString ./.);
-  in import ./platform/nixos/accounts-test.nix {
-    pkgs = f.nixosConfigurations.luke-w0rkhorse.pkgs;
-    inputs = { inherit (f.inputs) impermanence; };
-  }
-'
-```
-
 The host installation tests additionally check password persistence through ZFS
 root rollback and first-login Home Manager activation.
