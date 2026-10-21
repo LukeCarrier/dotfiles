@@ -10,7 +10,11 @@ in
     parent_comm=$(ps -p $PPID -o comm=)
     if [[ $- == *i* ]] && [[ "$parent_comm" != "fish" ]] && [[ "$parent_comm" != *"OpenCode"* ]] && [[ -z ''${ZSH_EXECUTION_STRING} ]]; then
       [[ $- == *l* ]] && LOGIN_OPTION='--login' || LOGIN_OPTION=
-      exec fish $LOGIN_OPTION
+      if command -v fish >/dev/null; then
+        exec fish $LOGIN_OPTION
+      else
+        echo "$0: would invoke fish, but it's not on path"
+      fi
     fi
   '';
 
@@ -18,7 +22,11 @@ in
     parent_comm=$(ps -p $PPID -o comm=)
     if [[ $- == *i* ]] && [[ "$parent_comm" != "fish" ]] && [[ "$parent_comm" != *"OpenCode"* ]] && [[ -z ''${BASH_EXECUTION_STRING} ]]; then
       [[ $- == *l* ]] && LOGIN_OPTION='--login' || LOGIN_OPTION=
-      exec fish $LOGIN_OPTION
+      if command -v fish >/dev/null; then
+        exec fish $LOGIN_OPTION
+      else
+        echo "$0: would invoke fish, but it's not on path"
+      fi
     fi
   '';
 
