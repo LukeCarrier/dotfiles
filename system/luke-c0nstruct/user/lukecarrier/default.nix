@@ -12,7 +12,6 @@ in
 {
   imports = [
     inputs.niri.homeModules.niri
-    inputs.nirivana.homeManagerModules.default
     inputs.vicinae.homeManagerModules.default
     inputs.nix-flatpak.homeManagerModules.nix-flatpak
     inputs.sops-nix.homeManagerModules.sops
@@ -107,8 +106,6 @@ in
     command = getExe pkgs.excalidraw-mcp-app ;
     args = [ "--stdio" ];
   };
-
-  services.nirivana.enable = true;
 
   programs.home-manager.enable = true;
 
