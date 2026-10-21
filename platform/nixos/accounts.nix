@@ -1,4 +1,4 @@
-{ config, lib, pkgs, utils, ... }:
+{ config, lib, ... }:
 let
   cfg = config.dotfiles.accounts;
   # Rootless containers need subordinate IDs inside systemd's container range
@@ -9,35 +9,6 @@ let
   containerRangeEnd = 1879048191;
   subordinateCount = 65536;
   subordinateStart = uid: containerRangeStart + uid * subordinateCount;
-  users = lib.mapAttrs (name: user: {
-    inherit (user) initialPassword;
-    record = {
-      userName = name;
-      inherit (user) uid;
-      realName = user.description;
-      shell = utils.toShellPath user.shell;
-      memberOf = user.extraGroups;
-      privileged.sshAuthorizedKeys = user.authorizedKeys;
-      storage = "directory";
-      homeDirectory = "/home/${name}";
-      imagePath = "/home/${name}.homedir";
-    };
-    subUidRanges = [ { startUid = subordinateStart user.uid; count = subordinateCount; } ];
-    subGidRanges = [ { startGid = subordinateStart user.uid; count = subordinateCount; } ];
-  }) cfg.users;
-  userConfig = pkgs.writeText "homed-users.json" (builtins.toJSON {
-    inherit users;
-    legacyShadow = "${config.dotfiles.persistence.root}/etc/shadow";
-    systemUsers = builtins.attrNames config.users.users;
-    systemGroups = builtins.attrNames config.users.groups;
-  });
-  manageAccounts = pkgs.writeShellApplication {
-    name = "manage-homed-accounts";
-    runtimeInputs = [ config.systemd.package pkgs.glibc.bin pkgs.mkpasswd ];
-    text = ''
-      exec ${pkgs.python3}/bin/python3 ${./accounts.py} ${userConfig} "$@"
-    '';
-  };
 in
 {
   options.dotfiles.accounts.users = lib.mkOption {
@@ -75,30 +46,5 @@ in
       settings.Home.DefaultStorage = "directory";
     };
     services.userdbd.silenceHighSystemUsers = true;
-
-    systemd.services = {
-      systemd-sysusers = {
-        unitConfig.RequiresMountsFor = [ "/var/lib/nixos" ];
-        serviceConfig.ExecStartPre = [ "${lib.getExe manageAccounts} import-ids" ];
-      };
-
-      homed-accounts = {
-        description = "Provision and migrate systemd-homed login accounts";
-        wantedBy = [ "multi-user.target" ];
-        requires = [ "systemd-homed.service" "systemd-sysusers.service" ];
-        after = [ "systemd-homed.service" "systemd-sysusers.service" ];
-        before = [ "systemd-user-sessions.service" "sshd.service" "greetd.service" ];
-        restartTriggers = [ userConfig ];
-        unitConfig.RequiresMountsFor = [ "/home" "/var/lib/systemd" ];
-        serviceConfig = {
-          Type = "oneshot";
-          RemainAfterExit = true;
-          StateDirectory = "systemd/home-migration";
-          StateDirectoryMode = "0700";
-          UMask = "0077";
-          ExecStart = "${lib.getExe manageAccounts} provision";
-        };
-      };
-    };
   };
 }
