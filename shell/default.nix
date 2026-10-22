@@ -353,7 +353,7 @@ in
       shellHook = ''
         cat ${toolVersions}
       '';
-      nativeBuildInputs = with pkgs; [
+      nativeBuildInputs = [
         default
         lldb_19
         pkg-config
