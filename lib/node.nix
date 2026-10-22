@@ -1,6 +1,5 @@
 { pkgs, stdenv }:
 let
-  inherit (pkgs) fetchPnpmDeps npmHooks;
   inherit (stdenv) mkDerivation;
 in
 {
