@@ -39,7 +39,9 @@ let
     name: nodejs:
     let
       inherit (pkgs) bun hyperfine;
-      pnpm = pkgs.pnpm.override { inherit nodejs; };
+      pnpm = pkgs.pnpm.override {
+        nodejs-slim = pkgs."nodejs-slim_${lib.versions.major nodejs.version}";
+      };
       typescript-language-server = pkgs.typescript-language-server.override { inherit nodejs; };
       yarn = pkgs.yarn.override { inherit nodejs; };
       toolVersions = mkToolVersions name ''
