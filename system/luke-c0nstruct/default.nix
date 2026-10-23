@@ -98,6 +98,11 @@
       enable = true;
       pools = [ "c0nstruct" ];
     };
+    scx = {
+      enable = true;
+      package = pkgs.scx.rustscheds;
+      scheduler = "scx_bpfland";
+    };
   };
 
   systemd.oomd.enableUserSlices = true;
