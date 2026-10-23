@@ -65,6 +65,17 @@
 
   boot.kernelParams = [ "zfs.zfs_arc_max=${toString (8 * 1024 * 1024 * 1024)}" ];
 
+  zramSwap = {
+    enable = true;
+    memoryPercent = 50;
+    algorithm = "zstd";
+  };
+
+  boot.kernel.sysctl = {
+    "vm.swappiness" = 150;
+    "vm.min_free_kbytes" = 262144;
+  };
+
   # Resume must inspect the LUKS-backed swap LV before ZFS changes disk state.
   boot.initrd.systemd.services.zfs-import-c0nstruct = {
     after = [ "systemd-hibernate-resume.service" ];
