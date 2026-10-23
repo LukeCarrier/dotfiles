@@ -100,6 +100,8 @@
     };
   };
 
+  systemd.oomd.enableUserSlices = true;
+
   boot.loader = {
     systemd-boot = {
       enable = true;
