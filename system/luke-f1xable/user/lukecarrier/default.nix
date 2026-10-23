@@ -96,6 +96,23 @@
 
   sops.age.keyFile = "${config.home.homeDirectory}/Code/LukeCarrier/dotfiles/.sops/keys";
 
+  sops.secrets.home-assistant-token = {
+    sopsFile = ../../../../secrets/personal.yaml;
+    format = "yaml";
+    key = "mcp/home-assistant";
+  };
+
+  programs.mcp.servers.homeassistant = {
+    command = lib.getExe (pkgs.writeShellApplication {
+      name = "mcp-homeassistant";
+      runtimeInputs = [ pkgs.mcp-remote ];
+      text = ''
+        exec mcp-remote https://homeassistant.peacehaven.carrier.family/api/mcp \
+          --header "Authorization: Bearer $(cat ${lib.escapeShellArg config.sops.secrets.home-assistant-token.path})"
+      '';
+    });
+    enabled = false;
+  };
 
   programs.home-manager.enable = true;
 
