@@ -107,6 +107,12 @@
 
   systemd.oomd.enableUserSlices = true;
 
+  systemd.user.slices."background".sliceConfig = {
+    CPUWeight = 10;
+    IOWeight = 30;
+    MemoryHigh = "16G";
+  };
+
   boot.loader = {
     systemd-boot = {
       enable = true;
