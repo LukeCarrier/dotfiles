@@ -61,7 +61,6 @@ in
         wf-recorder
         crosspipe
 
-        mako
         libnotify
 
         floww
