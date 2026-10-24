@@ -241,7 +241,7 @@ rec {
         jjConfig.signing.key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJdSgkw5KbsBb2bE658DYljtOSYXd5PWYShAqvQfVupW luke+id_ed25519_2025@carrier.family";
         kanshiConfig =
           let
-            exec = "systemctl restart --user ashell.service wpaper.service";
+            exec = "systemctl restart --user noctalia.service wpaper.service";
           in
           [
             {
