@@ -1,0 +1,25 @@
+# Local Tardy integration for Noctalia.
+#
+# A headless service owns the `tardy daemon --format=waybar` stream and
+# publishes its JSON status lines through the plugin state channel. The bar
+# widget is a thin client of that state, so every bar instance shows the same
+# meeting without spawning its own daemon.
+
+id = "lukecarrier/tardy"
+name = "Tardy"
+version = "0.1.0"
+plugin_api = 3
+author = "lukecarrier"
+license = "MIT"
+icon = "calendar-event"
+description = "Shows the current or next meeting from Tardy and opens it on click."
+dependencies = ["tardy"]
+tags = ["bar", "calendar", "productivity", "service", "time"]
+
+[[service]]
+id = "daemon"
+entry = "service.luau"
+
+[[widget]]
+id = "bar"
+entry = "bar.luau"
