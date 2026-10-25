@@ -117,18 +117,6 @@
 
   services.xserver.enable = true;
   services.libinput.enable = true;
-  services.greetd.enable = true;
-  services.displayManager.regreet = {
-    enable = true;
-    cageArgs = [
-      "-m"
-      "last"
-      "-s"
-    ];
-    settings = {
-      GTK.application_prefer_dark_theme = true;
-    };
-  };
 
   # Won't have any effect on Niri, which we configure to use xwayland-satellite.
   programs.xwayland.enable = lib.mkForce true;
