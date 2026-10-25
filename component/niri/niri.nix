@@ -30,6 +30,8 @@ let
   spaceMod = "Alt";
 in
 {
+  imports = [ ../xdg-desktop-portal-logind/xdg-desktop-portal-logind.nix ];
+
   options.programs.niri = {
     launcher = lib.mkOption {
       type = lib.types.listOf lib.types.str;
