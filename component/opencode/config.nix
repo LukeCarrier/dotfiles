@@ -179,7 +179,7 @@ let
   configFiles =
     {
       "opencode.jsonc" = pkgs.writeText "opencode.jsonc" (builtins.toJSON fullConfig);
-      "tui.json" = ./tui.json;
+      "cli.json" = ./cli.json;
       "AGENTS.md" = ../agents/AGENTS.md;
       "antigravity.json" = ./antigravity.json;
     }

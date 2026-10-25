@@ -1,14 +1,13 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "plugin": [
-    "@cortexkit/opencode-antigravity-auth@2.0.1",
+  "plugins": [
+    "@cortexkit/opencode-antigravity-auth@3.0.11",
     "@zhafron/opencode-kiro-auth@2.0.0",
-    "opencode-claude-auth@2.1.6",
-    "opencode-cursor-oauth@0.1.1"
+    "opencode-claude-auth@3.0.0",
+    "opencode-cursor-oauth@0.2.0"
   ],
   "compaction": {
     "auto": true,
-    "prune": false,
     "reserved": 10000
   },
   "tools": {
