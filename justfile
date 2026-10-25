@@ -30,6 +30,18 @@ host *args=args:
 host-android op=op flake=flake *args=args:
 	nix-on-droid "{{op}}" --flake "{{flake}}" {{args}}
 
+# Boot a NixOS host configuration in an interactive QEMU VM. The VM gets a
+# local account (password "nixos"), the host's Home Manager profile, and the
+# sops age key when one is available.
+vm:
+	vm="$(nix build --no-link --print-out-paths --impure --expr \
+		"import ./platform/nixos/vm { flake = builtins.getFlake (toString ./.); hostname = \"{{hostname}}\"; user = \"{{user}}\"; }")"; \
+	vm_dir="${XDG_STATE_HOME:-$HOME/.local/state}/dotfiles/vm/{{hostname}}"; \
+	mkdir -p "$vm_dir/shared"; \
+	if [ -s .sops/keys ]; then cp .sops/keys "$vm_dir/shared/age-keys.txt"; fi; \
+	cd "$vm_dir"; \
+	SHARED_DIR="$vm_dir/shared" exec "$vm"/bin/run-*-vm
+
 [arg("op", long="op")]
 [arg("flake", long="flake")]
 [arg("hostname", long="hostname")]
