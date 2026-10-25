@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ config, lib, utils, ... }:
 let
   cfg = config.dotfiles.accounts;
   # Rootless containers need subordinate IDs inside systemd's container range
@@ -61,5 +61,16 @@ in
       settings.Home.DefaultStorage = "directory";
     };
     services.userdbd.silenceHighSystemUsers = true;
+
+    # homed reads /etc/machine-id at startup. The impermanence bind mount for
+    # that file is torn down and recreated during activation, so order homed
+    # after the mount to avoid it starting with no machine ID.
+    systemd.services.systemd-homed = lib.mkIf (
+      config.services.homed.enable && config.dotfiles.persistence.enable
+    ) {
+      after = [
+        "persist-${utils.escapeSystemdPath "${config.dotfiles.persistence.root}/etc/machine-id"}.service"
+      ];
+    };
   };
 }
