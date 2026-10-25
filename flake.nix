@@ -286,6 +286,13 @@
               handy = handy.packages.${system}.handy.overrideAttrs (old: {
                 buildInputs = (old.buildInputs or [ ]) ++ [ prev.wtype ];
                 patches = (old.patches or [ ]) ++ [ ./package/handy/pr-1337.patch ];
+                # https://github.com/cjpais/Handy/issues/2166
+                # Upstream sets this to 1; the WebKit UI renders incorrectly with
+                # the dmabuf renderer disabled. Appended last so it wins over the
+                # --set-default in the upstream preFixup.
+                preFixup = (old.preFixup or "") + ''
+                  gappsWrapperArgs+=(--set WEBKIT_DISABLE_DMABUF_RENDERER 0)
+                '';
               });
               niri = niri.packages.${system}.niri-unstable.overrideAttrs (old: {
                 patches = (old.patches or [ ]) ++ [
