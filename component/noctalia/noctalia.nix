@@ -82,6 +82,17 @@ in
 
       notification.enable_daemon = true;
 
+      lockscreen = {
+        enabled = true;
+        lock_before_suspend = true;
+      };
+
+      idle.behavior.lock = {
+        action = "lock";
+        enabled = true;
+        timeout = 120;
+      };
+
       system.monitor.enabled = true;
 
       calendar.enabled = true;
