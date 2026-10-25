@@ -24,8 +24,6 @@ in
     ../../../../component/gnome-headless/gnome-headless.nix
     ../../../../component/vicinae/vicinae.nix
     ../../../../component/noctalia/noctalia.nix
-    ../../../../component/swayidle/swayidle.nix
-    ../../../../component/swaylock/swaylock.nix
     ../../../../component/niri/niri.nix
     ../../../../component/bash/bash.nix
     ../../../../component/fish/fish.nix
