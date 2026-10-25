@@ -24,7 +24,8 @@ in
   ];
 
   boot = {
-    kernelPackages = pkgs.linuxPackages_latest;
+    # ZFS only supports up to 7.2, so stay one release behind latest (7.3).
+    kernelPackages = pkgs.linuxPackages_7_2;
 
     # Canonical's "thunderbolt: Retry DP tunnel setup on DPRX negotiation
     # failure" (posted to linux-usb 2026-04-30, not yet upstream). Without it

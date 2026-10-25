@@ -6,7 +6,8 @@
   ];
 
   boot = {
-    kernelPackages = pkgs.linuxPackages_latest;
+    # ZFS only supports up to 7.2, so stay one release behind latest (7.3).
+    kernelPackages = pkgs.linuxPackages_7_2;
     kernelParams = [ ];
   };
 
