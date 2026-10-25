@@ -25,11 +25,6 @@
   programs.vicinae.input-server.package = pkgs.vicinae;
 
   boot = {
-    initrd = {
-      systemd.enable = true;
-      verbose = false;
-    };
-
     plymouth = {
       enable = true;
       theme = "bgrt";
