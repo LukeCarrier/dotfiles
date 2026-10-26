@@ -18,7 +18,7 @@
   };
 
   programs.firefox.profiles.default.search.engines."throwparty/Go" = {
-    definedAlias = [ "go" ];
+    definedAliases = [ "go" ];
     urls = [
       { template = "https://go.throw.party/{searchTerms}"; }
     ];
