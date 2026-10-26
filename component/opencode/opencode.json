@@ -6,6 +6,9 @@
     "opencode-claude-auth@3.0.0",
     "opencode-cursor-oauth@0.2.0"
   ],
+  "experimental": {
+    "todo": true
+  },
   "compaction": {
     "auto": true,
     "reserved": 10000
