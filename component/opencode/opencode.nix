@@ -6,7 +6,9 @@
 }:
 let
   agentsLib = import ../../lib/agents.nix { inherit lib; };
-  opencodeConfigPkg = import ./config.nix {
+  mergeConfig = import ../../lib/merge-json-config.nix { inherit pkgs; };
+
+  opencodeConfig = import ./config.nix {
     inherit pkgs config lib agentsLib;
   };
 
@@ -35,15 +37,25 @@ in
   ]
   ++ userFacingPkgs;
 
-  # Copy the built configuration to ~/.config/opencode during activation
-  # (can't symlink - opencode writes .gitignore and state files there)
+  # Replace the Nix-owned configuration files in place. They are copied rather
+  # than symlinked because the store tree is read-only and older generations
+  # left read-only copies behind. cli.json is not copied: it belongs to the TUI
+  # (theme, permissions, tabs are written there), so only the managed keys are
+  # merged over it at activation.
   home.activation.opencodeConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    ${mergeConfig}
+
     target="$HOME/.config/opencode"
-    mkdir -p "$(dirname "$target")"
-    
-    # Remove old config and copy new one with writable permissions
-    $DRY_RUN_CMD rm -rf "$target"
-    $DRY_RUN_CMD cp -r ${opencodeConfigPkg} "$target"
-    $DRY_RUN_CMD chmod -R u+w "$target"
+    $DRY_RUN_CMD mkdir -p "$target"
+
+    # Earlier generations copied a read-only tree; make it replaceable.
+    $DRY_RUN_CMD chmod -R u+w "$target" || true
+
+    $DRY_RUN_CMD rm -rf "$target/agent" "$target/commands" "$target/skills"
+    $DRY_RUN_CMD rm -f "$target/AGENTS.md" "$target/antigravity.json" "$target/opencode.jsonc"
+
+    $DRY_RUN_CMD cp -r --no-preserve=mode ${opencodeConfig.immutable}/. "$target"/
+
+    mergeJsonConfig "${opencodeConfig.cliDefaults}" "$target/cli.json"
   '';
 }

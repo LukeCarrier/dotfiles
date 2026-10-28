@@ -176,10 +176,11 @@ let
   skillFiles = buildSkillFiles "skills";
   fixtureFiles = buildCommandFixtures "commands";
 
+  # cli.json is deliberately excluded: it is a mutable file owned by the TUI,
+  # so it is merged at activation rather than replaced.
   configFiles =
     {
       "opencode.jsonc" = pkgs.writeText "opencode.jsonc" (builtins.toJSON fullConfig);
-      "cli.json" = ./cli.json;
       "AGENTS.md" = ../agents/AGENTS.md;
       "antigravity.json" = ./antigravity.json;
     }
@@ -188,17 +189,21 @@ let
     // skillFiles
     // fixtureFiles;
 in
-pkgs.runCommand "opencode-config" { } ''
-  mkdir -p $out
-  ${lib.concatStringsSep "\n" (
-    lib.mapAttrsToList (relPath: srcPath: ''
-      mkdir -p $out/$(dirname "${relPath}")
-      ${
-        if lib.isDerivation srcPath || lib.isStorePath srcPath then
-          "ln -s ${srcPath} $out/${relPath}"
-        else
-          "cp -r ${srcPath} $out/${relPath}"
-      }
-    '') configFiles
-  )}
-''
+{
+  immutable = pkgs.runCommand "opencode-config" { } ''
+    mkdir -p $out
+    ${lib.concatStringsSep "\n" (
+      lib.mapAttrsToList (relPath: srcPath: ''
+        mkdir -p $out/$(dirname "${relPath}")
+        ${
+          if lib.isDerivation srcPath || lib.isStorePath srcPath then
+            "ln -s ${srcPath} $out/${relPath}"
+          else
+            "cp -r ${srcPath} $out/${relPath}"
+        }
+      '') configFiles
+    )}
+  '';
+
+  cliDefaults = pkgs.writeText "opencode-cli.json" (builtins.readFile ./cli.json);
+}

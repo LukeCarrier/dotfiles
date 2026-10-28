@@ -1,12 +1,11 @@
 {
   "$schema": "https://opencode.ai/v2/cli.json",
-  "theme": {
-    "name": "synthwave84",
-    "mode": "system"
-  },
   "keybinds": {
     "input.submit": "ctrl+enter",
     "input.newline": "enter"
+  },
+  "tabs": {
+    "mode": "off"
   },
   "diffs": {
     "wrap": "word"
