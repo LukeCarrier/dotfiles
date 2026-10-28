@@ -23,7 +23,7 @@
     ../../platform/nixos/region/en-gb.nix
     ../../platform/nixos/secure-boot.nix
     ../../platform/nixos/graphical.nix
-    ../../platform/nixos/greeter/regreet.nix
+    ../../platform/nixos/greeter/noctalia.nix
     ../../platform/nixos/containers.nix
     ../../platform/nixos/virt.nix
     ../../component/gnome-headless/nixos.nix

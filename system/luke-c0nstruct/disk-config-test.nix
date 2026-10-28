@@ -243,7 +243,7 @@
       avahi.enable = lib.mkForce false;
       blueman.enable = lib.mkForce false;
       colord.enable = lib.mkForce false;
-      displayManager.regreet.enable = lib.mkForce false;
+      displayManager.noctalia-greeter.enable = lib.mkForce false;
       flatpak.enable = lib.mkForce false;
       greetd.enable = lib.mkForce false;
       gvfs.enable = lib.mkForce false;
