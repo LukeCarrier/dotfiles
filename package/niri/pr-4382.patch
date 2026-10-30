@@ -228,7 +228,7 @@ index 10c1d02c..c8027ec9 100644
 +    use niri_config::{Input, FloatOrInt, ModKey, Modifiers};
 +    use niri_config::input::ScrollFactor;
 +    use niri_config::binds::{Bind, Key, Binds};
-+    use niri_config::Action;
++    use niri_config::{Action, BoundAction};
 +    use crate::input::Trigger;
 +    use crate::input::{mods_with_horizontal_wheel_binds, scroll_tracker::ScrollTracker};
 +
@@ -247,7 +247,7 @@ index 10c1d02c..c8027ec9 100644
 +                    trigger: Trigger::WheelScrollLeft,
 +                    modifiers: Modifiers::empty(),
 +                },
-+                action: Action::FocusColumnLeft,
++                action: BoundAction::Press(Action::FocusColumnLeft),
 +                repeat: true,
 +                cooldown: None,
 +                allow_when_locked: false,
@@ -259,7 +259,7 @@ index 10c1d02c..c8027ec9 100644
 +                    trigger: Trigger::WheelScrollRight,
 +                    modifiers: Modifiers::empty(),
 +                },
-+                action: Action::FocusColumnRight,
++                action: BoundAction::Press(Action::FocusColumnRight),
 +                repeat: true,
 +                cooldown: None,
 +                allow_when_locked: false,
@@ -387,4 +387,3 @@ index c8027ec9..63c4fcc9 100644
                  let ticks = self
 -- 
 2.55.0
-
