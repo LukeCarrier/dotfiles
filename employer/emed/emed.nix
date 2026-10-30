@@ -19,9 +19,19 @@ let
       homepage = "https://github.com/honsiorovskyi/open-url-in-container";
     };
   };
+  compass = pkgs.writeShellScriptBin "compass" ''
+    set -euo pipefail
+    umask 077
+    configDir=$(${pkgs.coreutils}/bin/mktemp -d)
+    trap '${pkgs.coreutils}/bin/rm -rf "$configDir"' EXIT
+    ${pkgs.gnused}/bin/sed \
+      's|Browser::build("firefox",|Browser::build("${getExe config.programs.firefox.package}",|g' \
+      ${lib.escapeShellArg config.sops.secrets.compass-config.path} > "$configDir/config.rhai"
+    COMPASS_CONFIG="$configDir/config.rhai" ${getExe pkgs.compass} "$@"
+  '';
   compassDesktop = pkgs.makeDesktopItem {
     name = "compass";
-    exec = "${getExe pkgs.compass} open %U";
+    exec = "${getExe compass} open %U";
     desktopName = "Compass";
     mimeTypes = [
       "text/html"
