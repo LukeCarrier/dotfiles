@@ -50,12 +50,15 @@ ADR workflow commands in `adr/*.md`, routed to Adrian for the planning steps:
 
 | Command | Agent | Purpose |
 |---------|-------|---------|
+| `chart` | Adrian | Open a map of decision tickets for work whose route is unknown |
 | `adr.specify` | Adrian | Build or refine `spec.toon` (rendered to `spec.md`) |
 | `adr.plan` | Adrian | Create technical plan in `plan.toon` (rendered to `plan.md`) |
 | `adr.tasks` | Adrian | Break plan into implementable tasks in `tasks.toon` (rendered to `tasks.md`) |
 | `adr.implement` | (general) | Execute implementation per tasks |
 | `adr.reflect` | Adrian | Capture learnings in `retro.toon` (rendered to `retro.md`) |
 | `adr.housekeeping` | (general) | Regenerate ADR README index from `spec.toon` files |
+
+The stages and the gates between them are described in [`adr/README.md`](adr/README.md).
 
 Parameters (feature name, current date) are declared in `agents.nix` and lowered per-format.
 
