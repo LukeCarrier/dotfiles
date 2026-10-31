@@ -334,6 +334,7 @@ in
 
   agents.skills = {
     align.source = ./skills/align/SKILL.md;
+    cartography.source = ./skills/cartography/SKILL.md;
     code-review = {
       source = ./skills/code-review/SKILL.md;
       fixtures = codeReviewFixtures;
@@ -355,6 +356,14 @@ in
   };
 
   agents.commands = {
+    "chart" = {
+      title = "Chart";
+      description = "Open a map of decision tickets for unknown work";
+      body = builtins.readFile ./cartography/chart.md;
+      agent = "adrian";
+      parameters = featureParams;
+      fixtures = adrFixtures;
+    };
     "adr.specify" = {
       title = "ADR Specify";
       description = "Generate or refine an ADR specification";
