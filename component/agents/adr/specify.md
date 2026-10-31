@@ -17,10 +17,11 @@ Create an ADR specification in TOON format. This is the first stage of the ADR p
 
 ## Process
 
-1. If the description is anything but fully settled, run the `align` skill to reach a shared understanding before writing.
-2. Check whether an existing ADR already covers this topic — if so, tell the user and stop.
-3. Write a specification file at `adrs/<YYYY-MM-DD>-<feature-slug>/spec.toon` with the TOON schema below.
-4. Run `bash ${FIXTURES_DIR}/adr.build.sh adrs/<YYYY-MM-DD>-<feature-slug>`. It validates `spec.toon` against `${FIXTURES_DIR}/spec.schema.json` and writes `spec.md`. Fix anything it reports and run it again. Never invoke `toon` or `check-jsonschema` yourself: neither is on `PATH`, and the script already embeds both.
+1. **Research before writing.** List every claim the spec will make — that a primitive exists, that a workload runs, that a mechanism behaves. For each, either cite the evidence that establishes it, or mark it `assumption` and name what would falsify it. Prefer checking over assuming: run the command, read the header, ask the library. When a claim cannot be settled, stop and return it to the caller with what would settle it. This stage does not run experiments; it reports what it cannot establish.
+2. **Check coverage.** If an existing ADR already covers the topic, say so and stop.
+3. If the description is anything but fully settled, run the `align` skill before writing.
+4. Write `adrs/<YYYY-MM-DD>-<feature-slug>/spec.toon` with the TOON schema below.
+5. Run `bash ${FIXTURES_DIR}/adr.build.sh adrs/<YYYY-MM-DD>-<feature-slug>`. It validates `spec.toon` against `${FIXTURES_DIR}/spec.schema.json` and writes `spec.md`. Fix anything it reports and run it again. Never invoke `toon` or `check-jsonschema` yourself: neither is on `PATH`, and the script already embeds both.
 
 ## TOON Schema
 

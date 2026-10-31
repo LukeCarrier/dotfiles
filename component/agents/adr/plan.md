@@ -17,8 +17,9 @@ Create a technical plan in TOON format. This must happen after `specify`.
 
 ## Process
 
-1. Read `adrs/<YYYY-MM-DD>-<feature-slug>/spec.toon` to understand the requirements.
+1. Read `adrs/<YYYY-MM-DD>-<feature-slug>/spec.toon` to understand the requirements. Note every requirement and non-functional requirement marked `assumption`: those are unknowns wearing a requirement's clothes.
 2. Determine the appropriate implementation approach and architecture.
+3. For each assumption, stop and return it with what would settle it. This stage does not run experiments: it plans against facts that are already established.
 3. Write the plan to `adrs/<YYYY-MM-DD>-<feature-slug>/plan.toon` with the TOON schema below.
 4. Run `bash ${FIXTURES_DIR}/adr.build.sh adrs/<YYYY-MM-DD>-<feature-slug>`. It validates `plan.toon` against `${FIXTURES_DIR}/plan.schema.json` and writes `plan.md`. Fix anything it reports and run it again. Never invoke `toon` or `check-jsonschema` yourself: neither is on `PATH`, and the script already embeds both.
 
