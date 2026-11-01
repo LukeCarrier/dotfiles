@@ -5,6 +5,8 @@
   "properties": {
     "destination": { "type": "string", "minLength": 1 },
     "created": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+    "decision": { "type": "string" },
+    "adr": { "type": "string", "pattern": "^adrs/[0-9]{4}-[0-9]{2}-[0-9]{2}-[a-z0-9-]+/?$" },
     "tickets": {
       "type": "array",
       "items": {

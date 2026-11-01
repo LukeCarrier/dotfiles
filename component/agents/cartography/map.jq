@@ -66,5 +66,13 @@ def is_blocked($tickets):
         elif (.evidence | startswith("evidence/")) then "| Evidence | [\(.evidence)](\(.evidence)) |"
         else "| Evidence | \(.evidence) |"
         end),
-       "")
+       ""),
+
+    (if ($root.decision // "") != "" then
+       "## Decision", "", $root.decision, ""
+     else empty end),
+
+    (if ($root.adr // "") != "" then
+       "ADR: `\($root.adr)`", ""
+     else empty end)
   )

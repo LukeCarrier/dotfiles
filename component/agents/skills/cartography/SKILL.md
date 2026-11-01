@@ -40,6 +40,8 @@ States are `open`, `probing`, `answered` and `abandoned`. `blocked` is derived f
 
 `map.md` is generated, not authored: `bash ${FIXTURES_DIR}/map.build.sh maps/<YYYY-MM-DD>-<slug>` validates `map.toon` against `map.schema.json` and renders it with `map.jq`. Edit the `.toon` and re-run the script; a hand-edited `.md` is lost on the next render. Never invoke `toon` or `check-jsonschema` directly.
 
+The decision and the ADR directory it spawned live in the same file, as `decision:` and `adr:`. Both are rendered into `map.md`.
+
 Rules:
 
 - A ticket is a question, never a requirement. If it reads like "implement X", it belongs to the ADR.
@@ -59,7 +61,7 @@ Rules:
 
 5. **Recompute.** Add spawned tickets, recompute blockers, take the new frontier. Render with `map.build.sh` so `map.md` matches the map. Completion: the frontier is empty.
 
-6. **Decide.** Record the chosen direction, the tickets that justify it, and the risks that remain. Completion: a reader follows the answer lines from destination to decision without opening an evidence file.
+6. **Decide.** Record the chosen direction in `decision`, the ADR directory it spawned in `adr`, and the risks that remain. Completion: a reader follows the answer lines from destination to decision without opening an evidence file.
 
 ## Handover to the ADR
 
