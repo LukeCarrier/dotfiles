@@ -24,6 +24,10 @@ Open a map of decision tickets for a piece of unknown work. This is the entry po
 6. Render: run `bash ${FIXTURES_DIR}/map.build.sh maps/<YYYY-MM-DD>-<feature-slug>`. It validates `map.toon` against `${FIXTURES_DIR}/map.schema.json` and writes `map.md`. Fix anything it reports and run it again. Never invoke `toon` or `check-jsonschema` yourself: neither is on `PATH`.
 7. When the frontier is empty and the decision is recorded, hand over by running `adr.specify` with the same feature slug.
 
+## Sessions
+
+Steps 2–6 are resumable. A session may stop after any step; re-running `/chart <feature-slug>` reads `map.toon`, takes the current frontier, and continues. `map.toon` is the only state: `map.md` is generated.
+
 ## Output
 
 - `maps/<YYYY-MM-DD>-<feature-slug>/map.toon` — destination, tickets and state
