@@ -39,7 +39,9 @@ in
 
   # Replace the Nix-owned configuration files in place. They are copied rather
   # than symlinked because the store tree is read-only and older generations
-  # left read-only copies behind. cli.json is not copied: it belongs to the TUI
+  # left read-only copies behind. Modes are preserved so build scripts keep
+  # their executable bit, and ownership bits are re-added afterwards so the
+  # copies stay replaceable. cli.json is not copied: it belongs to the TUI
   # (theme, permissions, tabs are written there), so only the managed keys are
   # merged over it at activation.
   home.activation.opencodeConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
@@ -54,7 +56,9 @@ in
     $DRY_RUN_CMD rm -rf "$target/agent" "$target/commands" "$target/skills"
     $DRY_RUN_CMD rm -f "$target/AGENTS.md" "$target/antigravity.json" "$target/opencode.jsonc"
 
-    $DRY_RUN_CMD cp -r --no-preserve=mode ${opencodeConfig.immutable}/. "$target"/
+    $DRY_RUN_CMD cp -r ${opencodeConfig.immutable}/. "$target"/
+    $DRY_RUN_CMD chmod -R u+w "$target"/agent "$target"/commands "$target"/skills || true
+    $DRY_RUN_CMD chmod u+w "$target"/AGENTS.md "$target"/antigravity.json "$target"/opencode.jsonc || true
 
     mergeJsonConfig "${opencodeConfig.cliDefaults}" "$target/cli.json"
   '';
