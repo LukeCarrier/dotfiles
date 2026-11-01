@@ -255,6 +255,22 @@ let
     "retro.schema.json" = "${adrDir}/retro.schema.json";
   };
 
+  cartographyDir = pkgs.runCommand "cartography-fixtures" {
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+  } ''
+    mkdir -p $out
+    cp ${./cartography/map.build.sh} $out/map.build.sh
+    cp ${./cartography/map.jq} $out/map.jq
+    cp ${./cartography/map.schema.json} $out/map.schema.json
+    chmod +x $out/map.build.sh
+    wrapProgram $out/map.build.sh --prefix PATH : "${lib.makeBinPath (with pkgs; [ toon-cli jq check-jsonschema ])}"
+  '';
+  cartographyFixtures = {
+    "map.build.sh" = "${cartographyDir}/map.build.sh";
+    "map.jq" = "${cartographyDir}/map.jq";
+    "map.schema.json" = "${cartographyDir}/map.schema.json";
+  };
+
   codeReviewDir = pkgs.runCommand "code-review-fixtures" {
     nativeBuildInputs = [ pkgs.makeWrapper ];
   } ''
@@ -334,7 +350,10 @@ in
 
   agents.skills = {
     align.source = ./skills/align/SKILL.md;
-    cartography.source = ./skills/cartography/SKILL.md;
+    cartography = {
+      source = ./skills/cartography/SKILL.md;
+      fixtures = cartographyFixtures;
+    };
     code-review = {
       source = ./skills/code-review/SKILL.md;
       fixtures = codeReviewFixtures;
@@ -362,7 +381,7 @@ in
       body = builtins.readFile ./cartography/chart.md;
       agent = "adrian";
       parameters = featureParams;
-      fixtures = adrFixtures;
+      fixtures = adrFixtures // cartographyFixtures;
     };
     "adr.specify" = {
       title = "ADR Specify";

@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["destination", "created", "tickets"],
+  "properties": {
+    "destination": { "type": "string", "minLength": 1 },
+    "created": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+    "tickets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "question", "state"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^T-[0-9]{3}$" },
+          "question": { "type": "string", "minLength": 1 },
+          "blockers": {
+            "type": ["string", "null"],
+            "pattern": "^$|^T-[0-9]{3}(,\\s*T-[0-9]{3})*$"
+          },
+          "state": { "type": "string", "enum": ["open", "probing", "answered", "abandoned"] },
+          "answer": { "type": ["string", "null"] },
+          "evidence": { "type": ["string", "null"] }
+        },
+        "allOf": [
+          {
+            "if": {
+              "required": ["state"],
+              "properties": { "state": { "const": "answered" } }
+            },
+            "then": {
+              "required": ["answer", "evidence"],
+              "properties": {
+                "answer": { "type": "string", "minLength": 1 },
+                "evidence": { "type": "string", "minLength": 1 }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": ["state"],
+              "properties": { "state": { "const": "abandoned" } }
+            },
+            "then": {
+              "required": ["answer"],
+              "properties": { "answer": { "type": "string", "minLength": 1 } }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

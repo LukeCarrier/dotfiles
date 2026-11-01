@@ -21,11 +21,13 @@ Open a map of decision tickets for a piece of unknown work. This is the entry po
 3. State the destination in one line. Invoke the `align` skill to settle any question whose framing is unclear — a badly framed ticket is expensive, because it gets probed.
 4. Write the tickets standing between the destination and what is already known. Seed them from the questions given and from what the map is missing.
 5. Resolve tickets: dispatch one agent per ticket on the frontier, each in its own worktree, and record evidence under `evidence/` before writing the answer.
-6. When the frontier is empty and the decision is recorded, hand over by running `adr.specify` with the same feature slug.
+6. Render: run `bash ${FIXTURES_DIR}/map.build.sh maps/<YYYY-MM-DD>-<feature-slug>`. It validates `map.toon` against `${FIXTURES_DIR}/map.schema.json` and writes `map.md`. Fix anything it reports and run it again. Never invoke `toon` or `check-jsonschema` yourself: neither is on `PATH`.
+7. When the frontier is empty and the decision is recorded, hand over by running `adr.specify` with the same feature slug.
 
 ## Output
 
-- `maps/<YYYY-MM-DD>-<feature-slug>/map.toon`
+- `maps/<YYYY-MM-DD>-<feature-slug>/map.toon` — destination, tickets and state
+- `maps/<YYYY-MM-DD>-<feature-slug>/map.md` — human-readable rendering (generated)
 - `maps/<YYYY-MM-DD>-<feature-slug>/evidence/T-00N.md`
 
 ## Direction of control

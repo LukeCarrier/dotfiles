@@ -38,6 +38,8 @@ tickets[3]{id,question,blockers,state,answer,evidence}:
 
 States are `open`, `probing`, `answered` and `abandoned`. `blocked` is derived from `blockers` and never written by hand.
 
+`map.md` is generated, not authored: `bash ${FIXTURES_DIR}/map.build.sh maps/<YYYY-MM-DD>-<slug>` validates `map.toon` against `map.schema.json` and renders it with `map.jq`. Edit the `.toon` and re-run the script; a hand-edited `.md` is lost on the next render. Never invoke `toon` or `check-jsonschema` directly.
+
 Rules:
 
 - A ticket is a question, never a requirement. If it reads like "implement X", it belongs to the ADR.
@@ -55,7 +57,7 @@ Rules:
 
 4. **Resolve.** Write the one-line answer, mark `answered`, delete the worktree. Completion: no ticket is `answered` without evidence, and no spike branch survives.
 
-5. **Recompute.** Add spawned tickets, recompute blockers, take the new frontier. Completion: the frontier is empty.
+5. **Recompute.** Add spawned tickets, recompute blockers, take the new frontier. Render with `map.build.sh` so `map.md` matches the map. Completion: the frontier is empty.
 
 6. **Decide.** Record the chosen direction, the tickets that justify it, and the risks that remain. Completion: a reader follows the answer lines from destination to decision without opening an evidence file.
 

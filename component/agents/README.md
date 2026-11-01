@@ -85,4 +85,6 @@ Skills are installed by each harness into the agent's config directory. The shar
 
 **ADR TOON pipeline**: All ADR artifacts (spec, plan, tasks, retro) are authored in TOON format and built to human-readable markdown via `adr/adr.build.sh` (exposed as `commands/adr.build.sh` in the fixtures), which validates each `.toon` against its JSON Schema then renders with jq. The `.toon` file is the source of truth; `.md` files are generated.
 
+**Cartography TOON pipeline**: `maps/<date>-<slug>/map.toon` is the source of truth for a map. `cartography/map.build.sh` (exposed as `commands/map.build.sh`) validates it against `map.schema.json` — ticket id and state enums, answered-requires-evidence, blockers naming existing tickets — then renders `map.md` with `map.jq`. Edit the `.toon`, never the generated `.md`.
+
 **AGENTS.md**: `AGENTS.md` contains ground-rules shared across all harnesses. Each component links it into its config directory.
