@@ -112,8 +112,6 @@ in
     args = [ "--stdio" ];
   };
 
-  services.nirivana.enable = true;
-
   programs.home-manager.enable = true;
 
   dconf.settings = {
