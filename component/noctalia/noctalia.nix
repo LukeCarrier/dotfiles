@@ -4,6 +4,24 @@
 }:
 let
   fontFamily = builtins.elemAt config.fonts.fontconfig.defaultFonts.sansSerif 0;
+
+  loginBoxSettings = {
+    background_color = "surface_container";
+    background_opacity = 0.88;
+    background_radius = 12.0;
+    center_password_text = false;
+    input_opacity = 1.0;
+    input_radius = 6.0;
+    layout = "regular";
+    show_caps_lock = true;
+    show_keyboard_layout = true;
+    show_login_button = true;
+    show_media = true;
+    show_password_reveal = true;
+    show_session_buttons = true;
+    show_unlock_hint = true;
+    show_weather = true;
+  };
 in
 {
   programs.noctalia = {
@@ -70,14 +88,18 @@ in
         settings_window_translucent = true;
         panel = {
           floating_layer = "top";
-          transparency_mode = "soft";
+          transparency_mode = "glass";
         };
+        privacy.mic_filter_regex = "handy";
       };
 
       theme = {
         mode = "dark";
         source = "wallpaper";
+        builtin = "Tokyo-Night";
+        community_palette = "ADW";
         custom_palette = "Ashell";
+        wallpaper_scheme = "m3-content";
       };
 
       notification.enable_daemon = true;
@@ -85,6 +107,8 @@ in
       lockscreen = {
         enabled = true;
         lock_before_suspend = true;
+        allow_empty_password = true;
+        transition = [ "zoom" ];
       };
 
       idle.behavior.lock = {
@@ -97,6 +121,11 @@ in
 
       calendar.enabled = true;
 
+      control_center = {
+        sidebar = "full";
+        sidebar_section = "none";
+      };
+
       location.address = "London";
 
       nightlight.enabled = true;
@@ -107,23 +136,56 @@ in
       };
 
       dock = {
-        enabled = true;
+        enabled = false;
         background_opacity = 0.35;
+        position = "left";
         launcher_position = "start";
         reserve_space = false;
-        shadow = false;
+        shadow = true;
         smart_auto_hide = true;
       };
 
       lockscreen_widgets = {
-        enabled = false;
+        enabled = true;
         schema_version = 2;
-        widget_order = [ "lockscreen-login-box@eDP-1" ];
+        widget_order = [
+          "lockscreen-login-box@DP-1"
+          "lockscreen-login-box@DP-2"
+          "lockscreen-login-box@eDP-1"
+        ];
 
         grid = {
           cell_size = 16;
           major_interval = 4;
           visible = true;
+        };
+
+        widget."lockscreen-login-box@DP-1" = {
+          box_height = 196.0;
+          box_width = 810.0;
+          cx = 1536.0;
+          cy = 878.0;
+          output = "DP-1";
+          placement_height = 1728.0;
+          placement_width = 3072.0;
+          rotation = 0.0;
+          type = "login_box";
+
+          settings = loginBoxSettings;
+        };
+
+        widget."lockscreen-login-box@DP-2" = {
+          box_height = 196.0;
+          box_width = 810.0;
+          cx = 1536.0;
+          cy = 880.0;
+          output = "DP-2";
+          placement_height = 1728.0;
+          placement_width = 3072.0;
+          rotation = 0.0;
+          type = "login_box";
+
+          settings = loginBoxSettings;
         };
 
         widget."lockscreen-login-box@eDP-1" = {
@@ -137,23 +199,7 @@ in
           rotation = 0.0;
           type = "login_box";
 
-          settings = {
-            background_color = "surface_variant";
-            background_opacity = 0.88;
-            background_radius = 12.0;
-            center_password_text = false;
-            input_opacity = 1.0;
-            input_radius = 6.0;
-            layout = "regular";
-            show_caps_lock = true;
-            show_keyboard_layout = true;
-            show_login_button = true;
-            show_media = true;
-            show_password_reveal = true;
-            show_session_buttons = true;
-            show_unlock_hint = true;
-            show_weather = true;
-          };
+          settings = loginBoxSettings;
         };
       };
 
@@ -162,29 +208,76 @@ in
         transition = [ "disc" ];
         transition_on_startup = true;
         automation.enabled = true;
-        default.path = "/home/lukecarrier/Pictures/Wallpaper/Red Panda (Unknown via Flickr).jpg";
-        last.path = "/home/lukecarrier/Pictures/Wallpaper/Red Panda (Unknown via Flickr).jpg";
-        monitors."eDP-1".path = "/home/lukecarrier/Pictures/Wallpaper/Red Panda (Unknown via Flickr).jpg";
+        default.path = "/home/lukecarrier/Pictures/Wallpaper/Tree-lined lake (Petr Ganaj).jpg";
+        last.path = "/home/lukecarrier/Pictures/Wallpaper/Tree-lined lake (Petr Ganaj).jpg";
+        monitors."DP-1".path = "/home/lukecarrier/Pictures/Wallpaper/Squirrel (Adrian Westra).jpg";
+        monitors."DP-2".path = "/home/lukecarrier/Pictures/Wallpaper/Squirrel (Adrian Westra).jpg";
+        monitors."eDP-1".path = "/home/lukecarrier/Pictures/Wallpaper/Tree-lined lake (Petr Ganaj).jpg";
       };
 
       bar.main = {
         position = "top";
         background_opacity = 0.8;
+        capsule = true;
+        contact_shadow = true;
+        margin_ends = 4;
         start = [ "workspaces" ];
         center = [
           "privacy"
-          "cpu"
-          "memory"
-          "temperature"
-          "download"
-          "upload"
-          "media"
+          "control-center"
+          "group:g2"
+          "group:g1"
         ];
         end = [
           "clock"
           "tardy"
-          "settings"
-          "tray"
+          "group:g4"
+        ];
+
+        capsule_group = [
+          {
+            id = "g2";
+            enabled = true;
+            accordion = false;
+            accordion_direction = "end";
+            border_width = 1.0;
+            fill = "surface_container";
+            members = [
+              "battery"
+              "cpu"
+              "memory"
+              "temperature"
+              "network_rx"
+              "network_tx"
+            ];
+            opacity = 1.0;
+            padding = 6.0;
+          }
+          {
+            id = "g1";
+            enabled = true;
+            accordion = false;
+            accordion_direction = "end";
+            border_width = 1.0;
+            fill = "surface_container";
+            members = [
+              "media"
+              "audio_visualizer"
+            ];
+            opacity = 1.0;
+            padding = 6.0;
+          }
+          {
+            id = "g4";
+            enabled = true;
+            accordion = false;
+            accordion_direction = "end";
+            border_width = 1.0;
+            fill = "surface_container";
+            members = [ "tray" ];
+            opacity = 1.0;
+            padding = 6.0;
+          }
         ];
       };
 
@@ -195,8 +288,27 @@ in
           empty_color = "secondary";
           focused_output_only = true;
           label_source = "name";
+          labels_only_when_occupied = true;
           max_label_chars = 20;
         };
+
+        battery = {
+          display_mode = "graphic";
+          label_content = "time";
+        };
+
+        clock = {
+          capsule = true;
+          format = "{:%y-%M-%d %H:%M}";
+        };
+
+        "control-center" = {
+          capsule = true;
+          glyph = "adjustments";
+          actions.right = "session lock";
+        };
+
+        privacy.capsule = true;
 
         cpu = {
           type = "sysmon";
@@ -225,7 +337,11 @@ in
           network_speed_compact = true;
         };
 
-        tardy.type = "lukecarrier/tardy:bar";
+        tardy = {
+          type = "lukecarrier/tardy:bar";
+          capsule = true;
+          actions.left = "exec tardy open";
+        };
       };
     };
   };
