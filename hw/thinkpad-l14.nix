@@ -1,9 +1,18 @@
 { lib, pkgs, ... }:
+let
+  resetCharging = pkgs.writeShellScriptBin "thinkpad-l14-reset-charging" ''
+    set -euo pipefail
+    ${pkgs.kmod}/bin/modprobe -r ucsi_acpi
+    ${pkgs.kmod}/bin/modprobe ucsi_acpi
+  '';
+in
 {
   imports = [
     ../component/bolt/nixos.nix
     ../component/fwupd/nixos.nix
   ];
+
+  environment.systemPackages = [ resetCharging ];
 
   boot = {
     # ZFS only supports up to 7.2, so stay one release behind latest (7.3).
