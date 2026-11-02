@@ -25,7 +25,7 @@ in
     ../../../../component/kanshi/kanshi.nix
     ../../../../component/gnome-headless/gnome-headless.nix
     ../../../../component/vicinae/vicinae.nix
-    ../../../../component/ashell/ashell.nix
+    ../../../../component/noctalia/noctalia.nix
     ../../../../component/swayidle/swayidle.nix
     ../../../../component/swaylock/swaylock.nix
     ../../../../component/wpaperd/wpaperd.nix
