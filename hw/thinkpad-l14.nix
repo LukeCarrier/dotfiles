@@ -8,7 +8,14 @@
   boot = {
     # ZFS only supports up to 7.2, so stay one release behind latest (7.3).
     kernelPackages = pkgs.linuxPackages_7_2;
-    kernelParams = [ ];
+    kernelPatches = [
+      {
+        name = "ucsi-init-retry";
+        patch = ../package/linux/ucsi-init-retry.patch;
+      }
+    ];
+    # Wait for the GPU to read DPRX instead of tearing down the DP tunnel.
+    kernelParams = [ "thunderbolt.dprx_timeout=-1" ];
   };
 
   services.acpid = {

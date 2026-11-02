@@ -27,14 +27,10 @@ in
     # ZFS only supports up to 7.2, so stay one release behind latest (7.3).
     kernelPackages = pkgs.linuxPackages_7_2;
 
-    # Canonical's "thunderbolt: Retry DP tunnel setup on DPRX negotiation
-    # failure" (posted to linux-usb 2026-04-30, not yet upstream). Without it
-    # the driver permanently drops the DP IN adapter on the first DPRX failure,
-    # so the dock's displays never come back after a reconnect.
     kernelPatches = [
       {
-        name = "thunderbolt-dprx-retry";
-        patch = ../package/linux/thunderbolt-dprx-retry.patch;
+        name = "ucsi-init-retry";
+        patch = ../package/linux/ucsi-init-retry.patch;
       }
     ];
 
