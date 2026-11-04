@@ -1,5 +1,4 @@
 {
-  config,
   lib,
   pkgs,
   ...
@@ -31,24 +30,8 @@ let
       valueFish = ''$argv[1]'';
     };
   };
-in
-{
-  home.packages = with pkgs; [
-    kubectl
-    kubernetes-client-tools
-    krew
-    kyverno
-  ];
 
-  home.sessionPath = [
-    "$HOME/.krew/bin"
-  ];
-
-  home.file = {
-    ".kube/go-template/resources.gotmpl".source = ./go-template/resources.gotmpl;
-  };
-
-  programs.bash.initExtra = lib.strings.concatStringsSep "\n" (
+  kubeFunctions = lib.strings.concatStringsSep "\n" (
     lib.attrsets.attrValues (
       lib.attrsets.mapAttrs (
         name: options:
@@ -68,6 +51,24 @@ in
       ) selectCmds
     )
   );
+in
+{
+  home.packages = with pkgs; [
+    kubectl
+    kubernetes-client-tools
+    krew
+    kyverno
+  ];
+
+  home.sessionPath = [
+    "$HOME/.krew/bin"
+  ];
+
+  home.file = {
+    ".kube/go-template/resources.gotmpl".source = ./go-template/resources.gotmpl;
+  };
+
+  programs.bash.initExtra = kubeFunctions;
   programs.fish.functions = lib.attrsets.mapAttrs' (
     name: options:
     lib.attrsets.nameValuePair "kube-${name}" {
@@ -83,5 +84,5 @@ in
       + ''"'';
     }
   ) selectCmds;
-  programs.zsh.initContent = config.programs.bash.initExtra;
+  programs.zsh.initContent = kubeFunctions;
 }

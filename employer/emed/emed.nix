@@ -255,7 +255,11 @@ in
     '';
     shellInit = "";
   };
-  programs.zsh.initContent = config.programs.bash.initExtra;
+  programs.zsh.initContent = ''
+    emed-mini-platform() {
+      eval "$(${getExe selectMiniplatform})"
+    }
+  '';
 
   programs.firefox.profiles.default =
     let
