@@ -59,6 +59,7 @@ in
     ../../../../component/ghostty/default.nix
     ../../../../component/rust/cargo.nix
     ../../../../component/aws/aws.nix
+    ../../../../component/terraform/terraform.nix
     ../../../../component/helm/helm.nix
     ../../../../component/kubernetes-client/kubernetes-client.nix
   ];
