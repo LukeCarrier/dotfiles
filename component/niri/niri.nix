@@ -147,7 +147,6 @@ in
             tap = true;
           };
           warp-mouse-to-focus.enable = true;
-          focus-follows-mouse = { };
         };
         clipboard.disable-primary = true;
         blur = {
