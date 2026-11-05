@@ -1,6 +1,13 @@
 { pkgs, ... }:
 let
   inherit (pkgs.stdenv.hostPlatform) isLinux;
+  stripAnsi = pkgs.writeShellApplication {
+    name = "strip-ansi";
+    runtimeInputs = [ pkgs.python3 ];
+    text = ''
+      exec python3 ${./bin/strip-ansi.py} "$@"
+    '';
+  };
 in
 {
   home.packages =
@@ -18,6 +25,7 @@ in
       jq
       ripgrep
       tree
+      stripAnsi
     ]
     ++ (
       if isLinux then
@@ -35,7 +43,12 @@ in
 
   programs.bat = {
     enable = true;
-    extraPackages = with pkgs.bat-extras; [ batdiff batman batgrep batwatch ];
+    extraPackages = with pkgs.bat-extras; [
+      batdiff
+      batman
+      batgrep
+      batwatch
+    ];
     config = {
       theme = "base16-256";
     };
