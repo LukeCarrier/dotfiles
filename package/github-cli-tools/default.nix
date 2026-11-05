@@ -12,6 +12,13 @@ let
   githubWorkflowsReferencing = pkgs.writeShellScriptBin "github-workflows-referencing" (
     builtins.readFile ./github-workflows-referencing.sh
   );
+  stripGithubTimestamps = pkgs.writeShellApplication {
+    name = "strip-github-timestamps";
+    runtimeInputs = [ pkgs.python3 ];
+    text = ''
+      exec python3 ${./strip-github-timestamps.py} "$@"
+    '';
+  };
 in
 pkgs.symlinkJoin {
   pname = "github-cli-tools";
@@ -21,6 +28,7 @@ pkgs.symlinkJoin {
     githubDependabotMerge
     githubSyncStack
     githubWorkflowsReferencing
+    stripGithubTimestamps
   ]
   ++ (with pkgs; [
     coreutils
