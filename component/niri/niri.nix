@@ -440,6 +440,11 @@ in
               action = consume-or-expel-window-right;
               hotkey-overlay.title = "Consume or expel the window to the right";
             };
+            # Focus between monitors
+            "${mainMod}+Ctrl+Tab" = {
+              action = focus-monitor-next;
+              hotkey-overlay.title = "Focus the next monitor";
+            };
             # Shift column between monitors
             "${mainMod}+${moveMod}+Tab" = {
               action = move-column-to-monitor-next;
