@@ -299,7 +299,7 @@ in
 
         clock = {
           capsule = true;
-          format = "{:%y-%M-%d %H:%M}";
+          format = "{:%Y-%m-%d %H:%M}";
         };
 
         "control-center" = {
