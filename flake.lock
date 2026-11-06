@@ -344,11 +344,11 @@
         "systems": "systems_3"
       },
       "locked": {
-        "lastModified": 1793384461,
-        "narHash": "sha256-+OF04gMg2pwMQQH7dpOJ0uAZircD6gD23P1TwmPjnuM=",
+        "lastModified": 1793957618,
+        "narHash": "sha256-GFmU4NvN8BoV+JA6/yP3kOLtAuGEIrxL0VFHBxUzCQs=",
         "ref": "refs/heads/main",
-        "rev": "f1f4d58bf458450b7597d41ddaa8b32df3f72ac1",
-        "revCount": 21,
+        "rev": "04cd31f1b8f678b2f45538e01274d441b140b27a",
+        "revCount": 22,
         "type": "git",
         "url": "ssh://git@github.com/emed-labs/nix"
       },
