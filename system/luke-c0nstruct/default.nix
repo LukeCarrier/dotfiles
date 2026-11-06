@@ -99,10 +99,9 @@
       enable = true;
       pools = [ "c0nstruct" ];
     };
-    scx = {
+    scx-loader = {
       enable = true;
-      package = pkgs.scx.rustscheds;
-      scheduler = "scx_bpfland";
+      config.default_sched = "scx_bpfland";
     };
   };
 
