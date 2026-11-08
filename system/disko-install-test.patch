@@ -1,7 +1,9 @@
 diff --git a/lib/tests.nix b/lib/tests.nix
+index eef986d..407fb8a 100644
 --- a/lib/tests.nix
 +++ b/lib/tests.nix
-@@ -119,6 +119,6 @@
+@@ -120,7 +120,7 @@ let
+         # so /dev/vdb becomes /dev/vda etc.
          testConfigBooted = testLib.prepareDiskoConfig diskoConfigWithArgs testLib.devices;
  
 -        tsp-generator = pkgs.callPackage ../. { checked = true; };
@@ -9,7 +11,7 @@ diff --git a/lib/tests.nix b/lib/tests.nix
          tsp-format = (tsp-generator._cliFormat testConfigInstall) pkgs;
          tsp-mount = (tsp-generator._cliMount testConfigInstall) pkgs;
          tsp-unmount = (tsp-generator._cliUnmount testConfigInstall) pkgs;
-@@ -184,17 +184,6 @@
+@@ -186,17 +186,6 @@ let
                    boot.loader.grub.efiSupport = efi;
                    boot.loader.systemd-boot.graceful = true;
  
@@ -27,7 +29,7 @@ diff --git a/lib/tests.nix b/lib/tests.nix
                    # /dev/disk-by-id is empty in QEMU VMs, /dev/disk/by-uuid only shows one entry
                    # per ZFS pool as members use the pool's GUID, /dev/disk/by-partuuid only shows
                    # partitions so LVM backed members are missed. /dev is the only thing that catches all.
-@@ -222,6 +211,11 @@
+@@ -224,6 +213,11 @@ let
                )
              ];
            }).config.system.build.toplevel;
@@ -39,25 +41,27 @@ diff --git a/lib/tests.nix b/lib/tests.nix
  
        in
        makeTest' {
-@@ -302,6 +296,8 @@
+@@ -303,7 +297,9 @@ let
+             ) testConfigInstall.networking.hostId;
  
              virtualisation = {
+-              emptyDiskImages = builtins.genList (_: 4096) num-disks;
 +              memorySize = 2048;
 +              cores = 4;
--              emptyDiskImages = builtins.genList (_: 4096) num-disks;
 +              emptyDiskImages = builtins.genList (_: 131072) num-disks;
                qemu.options = lib.mkIf enableCanokey [
                  "-device pci-ohci,id=usb-bus"
                  "-device canokey,bus=usb-bus.0,file=/tmp/canokey-file"
-@@ -309,6 +305,7 @@
+@@ -311,6 +307,7 @@ let
  
                # REMOVEME when Canokey support is enabled upstream
                qemu.package = lib.mkForce qemuPkg;
 +              additionalPaths = [ installedClosureArchive ];
              };
+ 
              # useful for debugging via repl
-             system.build.systemToInstall = installed-system-eval;
-@@ -320,5 +317,12 @@
+@@ -321,6 +318,13 @@ let
+           { nodes, ... }:
            ''
              import shlex
 +            import os
@@ -70,7 +74,7 @@ diff --git a/lib/tests.nix b/lib/tests.nix
  
              def disks(oldmachine, num_disks):
                  disk_flags = []
-@@ -331,6 +335,49 @@
+@@ -333,6 +337,49 @@ let
                      ]
                  return disk_flags
  
@@ -120,14 +124,16 @@ diff --git a/lib/tests.nix b/lib/tests.nix
              def create_test_machine(
                  oldmachine=None, **kwargs
              ):  # taken from <nixpkgs/nixos/tests/installer.nix>
-@@ -341,9 +388,14 @@
+@@ -340,16 +387,21 @@ let
+                 # shlex.split properly handles the command string with options like "-machine virt,gic-version=max"
+                 start_command = shlex.split("${qemuBinaryString}") + [
                      "-m",
 -                    "1024",
+-                    "-virtfs",
+-                    "local,path=/nix/store,security_model=none,mount_tag=nix-store",
 +                    "2048",
 +                    "-smp",
 +                    "4",
--                    "-virtfs",
--                    "local,path=/nix/store,security_model=none,mount_tag=nix-store",
                      *disks(oldmachine, ${toString num-disks})
                  ]
 +                start_command += [
@@ -138,14 +144,14 @@ diff --git a/lib/tests.nix b/lib/tests.nix
                  ${lib.optionalString efi ''
                    start_command += ["-drive",
                      "if=pflash,format=raw,unit=0,readonly=on,file=${pkgs.OVMF.firmware}",
-@@ -349,5 +401,5 @@
                      "-drive",
 -                    "if=pflash,format=raw,unit=1,readonly=on,file=${pkgs.OVMF.variables}"
 +                    "if=pflash,format=raw,unit=1,file=$NIX_EFI_VARS"
                    ]
                  ''}
                  ${lib.optionalString enableCanokey ''
-@@ -356,5 +408,8 @@
+@@ -357,27 +409,31 @@ let
+                     "-device", "canokey,bus=usb-bus.0,file=/tmp/canokey-file"
                    ]
                  ''}
 +                assert oldmachine is not None
@@ -154,11 +160,11 @@ diff --git a/lib/tests.nix b/lib/tests.nix
                  machine = create_machine(start_command=" ".join(start_command), **kwargs)
                  driver.machines_qemu.append(machine)
                  return machine
-@@ -362,2 +417,3 @@
+ 
 +            swtpm_process = start_swtpm()
              machine.start()
              machine.succeed("echo -n 'additionalSecret' > /tmp/additionalSecret.key")
-@@ -365,14 +421,14 @@
+             machine.succeed("echo -n 'secretsecret' > /tmp/secret.key")
              ${lib.optionalString (testMode == "direct") ''
                # running direct mode
 -              machine.succeed("${lib.getExe tsp-format}")
@@ -166,14 +172,16 @@ diff --git a/lib/tests.nix b/lib/tests.nix
 -              machine.succeed("${lib.getExe tsp-mount}") # verify that mount is idempotent
 -              machine.succeed("${lib.getExe tsp-unmount}")
 -              machine.succeed("${lib.getExe tsp-unmount}") # verify that umount is idempotent
--              machine.succeed("${lib.getExe tsp-mount}") # verify that mount is idempotent
--              machine.succeed("${lib.getExe tsp-disko} --yes-wipe-all-disks") # verify that we can destroy and recreate
 +              machine.succeed("IN_DISKO_TEST=1 ${lib.getExe tsp-format}")
 +              machine.succeed("IN_DISKO_TEST=1 ${lib.getExe tsp-mount}")
 +              machine.succeed("IN_DISKO_TEST=1 ${lib.getExe tsp-mount}") # verify that mount is idempotent
 +              machine.succeed("IN_DISKO_TEST=1 ${lib.getExe tsp-unmount}")
 +              machine.succeed("IN_DISKO_TEST=1 ${lib.getExe tsp-unmount}") # verify that umount is idempotent
+               ${postUnmountPreMount}
+-              machine.succeed("${lib.getExe tsp-mount}") # verify that mount is idempotent
 +              machine.succeed("IN_DISKO_TEST=1 ${lib.getExe tsp-mount}") # verify that mount is idempotent
+               ${postMount}
+-              machine.succeed("${lib.getExe tsp-disko} --yes-wipe-all-disks") # verify that we can destroy and recreate
 +              machine.succeed("IN_DISKO_TEST=1 ${lib.getExe tsp-disko} --yes-wipe-all-disks") # verify that we can destroy and recreate
                machine.succeed("mkdir -p /mnt/home")
                machine.succeed("touch /mnt/home/testfile")
@@ -181,10 +189,8 @@ diff --git a/lib/tests.nix b/lib/tests.nix
 +              machine.succeed("IN_DISKO_TEST=1 ${lib.getExe tsp-format}") # verify that format is idempotent
                machine.succeed("test -e /mnt/home/testfile")
              ''}
-@@ -393,15 +449,12 @@
- 
-             ${postDisko}
- 
+             ${lib.optionalString (testMode == "module") ''
+@@ -402,23 +458,22 @@ let
              ${lib.optionalString testBoot ''
                # mount nix-store in /mnt
                machine.succeed("mkdir -p /mnt/nix/store")
@@ -199,11 +205,12 @@ diff --git a/lib/tests.nix b/lib/tests.nix
                # fix "this is not a NixOS installation"
                machine.succeed("mkdir -p /mnt/etc")
                machine.succeed("touch /mnt/etc/NIXOS")
-@@ -409,2 +462,2 @@
+ 
                machine.succeed("mkdir -p /mnt/nix/var/nix/profiles")
 -              machine.succeed("nix-env -p /mnt/nix/var/nix/profiles/system --set ${installedTopLevel}")
 +              machine.succeed("nix-env --store /mnt -p /mnt/nix/var/nix/profiles/system --set ${installedTopLevel}")
-@@ -413,6 +466,8 @@
+               machine.succeed("NIXOS_INSTALL_BOOTLOADER=1 nixos-enter --root /mnt -- ${installedTopLevel}/bin/switch-to-configuration boot")
+               machine.succeed("sync")
                machine.shutdown()
  
                machine = create_test_machine(oldmachine=machine, name="booted_machine")

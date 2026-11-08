@@ -4,6 +4,16 @@ let
 
   powerprofilesctl = getExe' pkgs.power-profiles-daemon "powerprofilesctl";
 
+  # ZFS 2.4.4 doesn't support Linux 7.3 yet. Backport the upstream 7.3
+  # compatibility changes (openzfs/zfs#19082) until nixpkgs ships a release
+  # that includes them.
+  linuxPackages = pkgs.linuxPackages_latest;
+  zfsModule = linuxPackages.zfs_2_4.overrideAttrs (old: {
+    patches = (old.patches or [ ]) ++ [ ../package/zfs/linux-7.3.patch ];
+    configureFlags = (old.configureFlags or [ ]) ++ [ "--enable-linux-experimental" ];
+    meta = old.meta // { broken = false; };
+  });
+
   platformProfileSync = pkgs.writeShellScriptBin "platform-profile-sync" ''
     profile="$(${powerprofilesctl} get 2>/dev/null)" || exit 0
     case "$profile" in
@@ -24,13 +34,13 @@ in
   ];
 
   boot = {
-    # ZFS only supports up to 7.2, so stay one release behind latest (7.3).
-    kernelPackages = pkgs.linuxPackages_7_2;
+    kernelPackages = linuxPackages;
+    zfs.modulePackage = zfsModule;
 
     kernelPatches = [
       {
         name = "ucsi-init-retry";
-        patch = ../package/linux/ucsi-init-retry.patch;
+        patch = ../package/linux/ucsi-init-retry-7.3.patch;
       }
     ];
 
