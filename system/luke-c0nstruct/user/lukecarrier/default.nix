@@ -13,6 +13,7 @@ in
   imports = [
     inputs.niri.homeModules.niri
     inputs.vicinae.homeManagerModules.default
+    inputs.hex.homeManagerModules.default
     inputs.nix-flatpak.homeManagerModules.nix-flatpak
     inputs.sops-nix.homeManagerModules.sops
     ../../../../employer/throwparty/throwparty.nix
@@ -33,6 +34,7 @@ in
     ../../../../component/firefox/firefox.nix
     ../../../../component/bitwarden/bitwarden.nix
     ../../../../component/handy/nixos-home.nix
+    ../../../../component/hex/hex.nix
     ../../../../component/goose/goose.nix
     ../../../../component/opencode/opencode.nix
     ../../../../component/claude-code/claude-code.nix

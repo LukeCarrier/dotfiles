@@ -70,6 +70,13 @@
         bun2nix.inputs.systems.follows = "systems";
       };
     };
+    hex = {
+      url = "github:anomalyco/hex";
+      inputs = {
+        home-manager.follows = "home-manager";
+        nixpkgs.follows = "nixpkgs-unstable";
+      };
+    };
     home-manager = {
       url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
@@ -187,6 +194,7 @@
       emed-nix,
       flake-utils,
       handy,
+      hex,
       home-manager,
       impermanence,
       lanzaboote,
@@ -414,6 +422,7 @@
         darwin
         disko
         emed-nix
+        hex
         home-manager
         impermanence
         lanzaboote

@@ -2,6 +2,7 @@
   darwin,
   disko,
   emed-nix,
+  hex,
   home-manager,
   impermanence,
   lanzaboote,
@@ -221,6 +222,7 @@ rec {
       extraSpecialArgs = {
         inputs = {
           inherit
+            hex
             niri
             nirivana
             nix-flatpak
