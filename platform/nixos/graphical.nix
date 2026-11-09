@@ -82,6 +82,14 @@
           }
         ];
       };
+
+      # The discovered AirPlay receiver advertises a session latency that is
+      # not an integer multiple of its RTP packet time, and mod.raop-sink logs
+      # ~33 warnings about it on every startup. Hold just that topic at error
+      # level; the global level stays at the default so other warnings show.
+      "99-raop-log" = {
+        "context.properties"."log.level" = "mod.raop*:E";
+      };
     };
   };
 
