@@ -86,13 +86,23 @@ in
   # restores the full power limit.
   services.power-profiles-daemon.enable = true;
 
+  # The module only adds the package to systemd.packages, which links ppd's
+  # unit in without honouring its [Install] section, so nothing would start it
+  # at boot. Point it at graphical.target, matching upstream's WantedBy; it
+  # cannot be multi-user.target because ppd orders itself After=multi-user.
+  systemd.services.power-profiles-daemon.wantedBy = [ "graphical.target" ];
+
   # ppd only writes the ACPI platform profile when the profile *changes*; at
   # boot it restores its saved profile without rewriting, so DYTC stays clamped
   # at low-power until the user next switches. Re-assert it once ppd is up.
+  #
+  # Pulled in by ppd rather than multi-user.target: ppd 0.30 orders itself
+  # After=multi-user.target, and targets implicitly order themselves after
+  # everything they Wants, so wantedBy multi-user.target closes an ordering
+  # cycle that systemd breaks by deleting this service's start job.
   systemd.services.platform-profile-sync = {
     description = "Re-assert power-profiles-daemon's profile on the ACPI platform profile";
-    wantedBy = [ "multi-user.target" ];
-    wants = [ "power-profiles-daemon.service" ];
+    wantedBy = [ "power-profiles-daemon.service" ];
     after = [ "power-profiles-daemon.service" ];
     serviceConfig = {
       Type = "oneshot";
