@@ -5,12 +5,16 @@
   fetchFromGitHub,
   fetchurl,
   rustPlatform,
+  aws-lc,
   cmake,
   dbus,
   libxcb,
   pkg-config,
   protobuf,
   openssl,
+  oniguruma,
+  sqlite,
+  zstd,
   cacert,
   writableTmpDirAsHomeHook,
   versionCheckHook,
@@ -90,8 +94,15 @@ rustPlatform.buildRustPackage (finalAttrs: {
   ];
 
   buildInputs = [
+    # cargoUseSystemLibs (cargo-setup-hook.sh) forces the bundled copies of
+    # aws-lc, sqlite, zstd and oniguruma off, so the system libraries must be
+    # available for the corresponding -sys crates to find.
+    aws-lc
     dbus
+    oniguruma
     openssl
+    sqlite
+    zstd
   ]
   ++ lib.optionals stdenv.hostPlatform.isLinux [ libxcb ];
 

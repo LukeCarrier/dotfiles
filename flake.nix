@@ -277,7 +277,13 @@
               });
             })
             (final: prev: {
-              asciinema = asciinema.packages.${system}.default;
+              # cargoUseSystemLibs (cargo-setup-hook.sh) exports
+              # ZSTD_SYS_USE_PKG_CONFIG=1 and expects the matching system
+              # library to be supplied.
+              asciinema = asciinema.packages.${system}.default.overrideAttrs (old: {
+                nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ prev.pkg-config ];
+                buildInputs = (old.buildInputs or [ ]) ++ [ prev.zstd ];
+              });
               ashell = ashell.packages.${system}.default;
               # NixOS/nixpkgs#535887
               cantarell-fonts =
@@ -292,7 +298,13 @@
                 });
 
               handy = handy.packages.${system}.handy.overrideAttrs (old: {
-                buildInputs = (old.buildInputs or [ ]) ++ [ prev.wtype ];
+                # cargoUseSystemLibs (cargo-setup-hook.sh) exports
+                # LIBSQLITE3_SYS_USE_PKG_CONFIG=1 and expects the matching
+                # system library to be supplied.
+                buildInputs = (old.buildInputs or [ ]) ++ [
+                  prev.sqlite
+                  prev.wtype
+                ];
                 patches = (old.patches or [ ]) ++ [ ./package/handy/pr-1337.patch ];
                 # https://github.com/cjpais/Handy/issues/2166
                 # Upstream sets this to 1; the WebKit UI renders incorrectly with
