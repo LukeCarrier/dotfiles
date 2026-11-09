@@ -103,7 +103,10 @@ in
           ExecStart = "${niri-float-sticky} -title '^Picture-in-Picture$' -title '^Meet – '";
           Restart = "on-failure";
           RestartSec = "2";
-          Type = "notify";
+          # niri-float-sticky never calls sd_notify, so Type=notify leaves the
+          # unit in "activating" until the 90s start timeout kills it. Type=exec
+          # marks it started as soon as the binary has been exec'd.
+          Type = "exec";
         };
       };
 
