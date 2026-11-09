@@ -54,6 +54,26 @@ host-darwin op=op flake=flake hostname=hostname *args=args:
 host-linux op=op flake=flake hostname=hostname *args=args:
 	nh os "{{op}}" "{{flake}}" --hostname "{{hostname}}" {{args}}
 
+# Push a NixOS closure to a remote machine over SSH and switch it.
+host-push target config=hostname flake=flake *args="":
+	toplevel="$(nix build --no-link --print-out-paths "{{flake}}#nixosConfigurations.{{config}}.config.system.build.toplevel" {{args}})"; \
+	./scripts/push-closure.sh "{{target}}" "$toplevel"; \
+	ssh -t "{{target}}" "sudo '$toplevel/bin/switch-to-configuration' switch"
+
+# Push a Home Manager closure to a remote machine over SSH and activate it.
+home-push target user=user hostname=hostname flake=flake *args="":
+	target="{{target}}"; test "${target%%@*}" = "{{user}}" || { echo "home-push: target must be {{user}}@host" >&2; exit 1; }; \
+	activation="$(nix build --no-link --print-out-paths "{{flake}}#homeConfigurations.\"{{user}}@{{hostname}}\".activationPackage" {{args}})"; \
+	./scripts/push-closure.sh "{{target}}" "$activation"; \
+	ssh -t "{{target}}" "'$activation/activate'"
+
+# Push arbitrary store paths or flake installables to a remote machine.
+push target *paths:
+	store_paths="$(nix build --no-link --print-out-paths {{paths}})"; \
+	for path in $store_paths; do \
+		./scripts/push-closure.sh "{{target}}" "$path"; \
+	done
+
 # Profile a flake evaluation: nixos:<host>, darwin:<host>, home:<config>, attr:<path>
 profile target:
 	./scripts/eval-profile.sh "{{target}}"
