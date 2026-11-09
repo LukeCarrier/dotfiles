@@ -62,15 +62,26 @@ in
     };
     services.userdbd.silenceHighSystemUsers = true;
 
-    # homed reads /etc/machine-id at startup. The impermanence bind mount for
-    # that file is torn down and recreated during activation, so order homed
-    # after the mount to avoid it starting with no machine ID.
-    systemd.services.systemd-homed = lib.mkIf (
-      config.services.homed.enable && config.dotfiles.persistence.enable
-    ) {
-      after = [
-        "persist-${utils.escapeSystemdPath "${config.dotfiles.persistence.root}/etc/machine-id"}.service"
-      ];
-    };
+    systemd.services.systemd-homed = lib.mkMerge [
+      # homed reads /etc/machine-id at startup. The impermanence bind mount for
+      # that file is torn down and recreated during activation, so order homed
+      # after the mount to avoid it starting with no machine ID.
+      (lib.mkIf (config.services.homed.enable && config.dotfiles.persistence.enable) {
+        after = [
+          "persist-${utils.escapeSystemdPath "${config.dotfiles.persistence.root}/etc/machine-id"}.service"
+        ];
+      })
+
+      # systemd-homed-activate's ExecStop is `homectl deactivate-all`, and
+      # systemd-homed restarting drops every user record for a moment. A
+      # switch-to-configuration run that restarts either one therefore tears
+      # down the active home and every user service that resolves the user
+      # mid-switch (rootless docker, xdg-document-portal, ...). Skip them on
+      # switch; a systemd upgrade picks the new units up at the next boot.
+      (lib.mkIf config.services.homed.enable {
+        restartIfChanged = false;
+      })
+    ];
+    systemd.services.systemd-homed-activate.restartIfChanged = lib.mkIf config.services.homed.enable false;
   };
 }
