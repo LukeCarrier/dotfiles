@@ -28,7 +28,6 @@ in
     ../../../../component/noctalia/noctalia.nix
     ../../../../component/swayidle/swayidle.nix
     ../../../../component/swaylock/swaylock.nix
-    ../../../../component/wpaperd/wpaperd.nix
     ../../../../component/mako/mako.nix
     ../../../../component/niri/niri.nix
     ../../../../component/bash/bash.nix
