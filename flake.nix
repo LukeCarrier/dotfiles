@@ -253,6 +253,7 @@
             (final: prev: {
               wpaperd = prev.wpaperd.overrideAttrs (old: {
                 cargoBuildFlags = (old.cargoBuildFlags or [ ]) ++ [ "--features" "wpaperd/avif" ];
+                nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ prev.rust-jemalloc-sys ];
                 buildInputs = (old.buildInputs or [ ]) ++ [ prev.dav1d ];
               });
             })
