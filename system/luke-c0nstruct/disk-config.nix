@@ -15,6 +15,13 @@
               type = "filesystem";
               format = "vfat";
               mountpoint = "/boot";
+              # The ESP holds loader/random-seed. bootctl refuses to trust it
+              # while the mount is world-accessible, so keep the mount and the
+              # files on it root-only.
+              mountOptions = [
+                "fmask=0077"
+                "dmask=0077"
+              ];
             };
           };
           root = {
