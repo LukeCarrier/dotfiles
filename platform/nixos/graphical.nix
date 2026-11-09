@@ -98,6 +98,16 @@
   services.blueman.enable = true;
 
   networking.networkmanager.enable = true;
+
+  # NetworkManager is the only DHCP client here. Otherwise the facter
+  # networking module enables per-interface useDHCP and dhcpcd (which defaults
+  # to on) manages every link, so both daemons lease the same interface: dhcpcd
+  # flips the MAC back and forth, NM's supplicant interface asserts, and
+  # dhcpcd segfaults in inet_getroutes() when the link is torn down during a
+  # switch.
+  hardware.facter.detected.dhcp.enable = lib.mkDefault false;
+  networking.dhcpcd.enable = lib.mkDefault false;
+
   services.avahi = {
     enable = true;
     nssmdns4 = true;
