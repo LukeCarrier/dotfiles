@@ -24,6 +24,54 @@ let
       "$niri" msg action set-workspace-name "$name"
     fi
   '';
+  zoomOverlayPositioner = pkgs.writeShellScriptBin "niri-zoom-overlay-positioner" ''
+    set -o pipefail
+    ${niri} msg --json event-stream | \
+    while IFS= read -r event; do
+      case "$event" in
+        *Window*|*Workspace*) ;;
+        *) continue ;;
+      esac
+
+      ${niri} msg --json windows | ${getExe' pkgs.jq "jq"} -r --argjson workspaces "$(${niri} msg --json workspaces)" '
+        . as $windows
+        | .[]
+        | select((.app_id == "zoom" or .app_id == "us.zoom.Zoom") and (.title == "annotate_toolbar" or .title == "meeting topbar popup" or .title == "Meeting security" or .title == "Meeting info"))
+        | . as $overlay
+        | $windows[]
+        | select(.app_id == $overlay.app_id and .title == "Meeting" and .pid == $overlay.pid)
+        | . as $meeting
+        | ($workspaces[] | select(.id == $meeting.workspace_id)) as $workspace
+        | if $overlay.title == "annotate_toolbar" and ($overlay.layout.window_size[0] < 118 or $overlay.layout.window_size[0] > 122 or $overlay.layout.window_size[1] < 118 or $overlay.layout.window_size[1] > 122) then
+            [$overlay.id, "120", "120", "resize"] | @tsv
+          elif $overlay.workspace_id != $meeting.workspace_id then
+            [$overlay.id, $workspace.output, ($workspace.name // ($workspace.idx | tostring)), "move"] | @tsv
+          elif .layout.tile_pos_in_workspace_view == null or $overlay.layout.tile_pos_in_workspace_view == null then
+            empty
+          else
+            (($meeting.layout.tile_pos_in_workspace_view[0] + ($meeting.layout.window_size[0] - $overlay.layout.window_size[0]) / 2 - $overlay.layout.tile_pos_in_workspace_view[0]) | round) as $dx
+            | (($meeting.layout.tile_pos_in_workspace_view[1] + (if $overlay.title == "annotate_toolbar" then ($meeting.layout.window_size[1] - $overlay.layout.window_size[1]) / 2 else 100 end) - $overlay.layout.tile_pos_in_workspace_view[1]) | round) as $dy
+            | select($dx != 0 or $dy != 0)
+            | [$overlay.id, (if $dx >= 0 then "+" else "" end) + ($dx | tostring), (if $dy >= 0 then "+" else "" end) + ($dy | tostring), "position"]
+            | @tsv
+          end
+      ' | while IFS=$'\t' read -r id x y action; do
+        case "$action" in
+          resize)
+            ${niri} msg action set-window-width --id "$id" "$x"
+            ${niri} msg action set-window-height --id "$id" "$y"
+            ;;
+          move)
+            ${niri} msg action move-window-to-monitor --id "$id" "$x"
+            ${niri} msg action move-window-to-workspace --window-id "$id" --focus false "$y"
+            ;;
+          position)
+            ${niri} msg action move-floating-window --id "$id" --x="$x" --y="$y"
+            ;;
+        esac
+      done
+    done
+  '';
   urgent-color = "#ff0000";
   mainMod = "Super";
   moveMod = "Shift";
@@ -106,6 +154,20 @@ in
           # niri-float-sticky never calls sd_notify, so Type=notify leaves the
           # unit in "activating" until the 90s start timeout kills it. Type=exec
           # marks it started as soon as the binary has been exec'd.
+          Type = "exec";
+        };
+      };
+
+      niri-zoom-overlay-positioner = {
+        Unit = {
+          Description = "Position Zoom overlays over the meeting window";
+          After = [ "niri.service" ];
+        };
+        Install.WantedBy = [ "graphical-session.target" ];
+        Service = {
+          ExecStart = "${getExe zoomOverlayPositioner}";
+          Restart = "on-failure";
+          RestartSec = "2";
           Type = "exec";
         };
       };
@@ -637,6 +699,16 @@ in
             open-floating = true;
             open-focused = true;
           }
+          # Zoom auxiliary windows, excluding the main app and meeting window
+          {
+            matches = [ { app-id = "^(zoom|us.zoom.Zoom)$"; } ];
+            excludes = [
+              { title = "^Zoom Workplace - "; }
+              { title = "^Meeting$"; }
+            ];
+            open-floating = true;
+            open-focused = false;
+          }
           # PiP overlays
           {
             matches = [
@@ -692,6 +764,19 @@ in
               blur = true;
               xray = false;
             };
+          }
+          {
+            matches = [
+              { app-id = "^(zoom|us.zoom.Zoom)$"; title = "^annotate_toolbar$"; }
+              { app-id = "^(zoom|us.zoom.Zoom)$"; title = "^meeting topbar popup$"; }
+            ];
+            background-effect.blur = false;
+          }
+          {
+            matches = [
+              { app-id = "^(zoom|us.zoom.Zoom)$"; title = "^annotate_toolbar$"; }
+            ];
+            shadow.enable = false;
           }
         ];
       };
