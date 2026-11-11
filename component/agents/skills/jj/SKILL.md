@@ -1,6 +1,6 @@
 ---
 name: jj
-description: Working with jj (Jujutsu) version control. Load when the user mentions jj, or asks to commit, rebase, push, or inspect history in a jj repo.
+description: Working with jj (Jujutsu) version control. Load when the user mentions jj, or asks to commit, rebase, push, inspect history, or reclaim disk space in a jj repo.
 ---
 
 ## When to use me
@@ -90,10 +90,52 @@ jj bisect run --range '<good>::<bad>' -- <command>
 
 Walks the range bisecting on exit code: 0 = good, non-0 = bad. Prints the first bad revision when done. To discard any commits created during the search, run the `jj op restore` command it prints at the end.
 
+### Reclaiming space
+
+Deleting a bookmark does not free its objects. jj protects every commit its **operation log** references with a `refs/jj/keep/<oid>` ref, and `git` counts those as reachable. `jj util gc` alone will not drop them, even with `--expire=now`; its `--help` names the missing step — abandon the operations that reference them first.
+
+```bash
+# 1. What still holds them?
+git for-each-ref --contains <commit> --format='%(refname)'
+
+# 2. Drop the operation history that references them.
+#    Bookmarks and commits are unchanged; undo history before @ is not.
+jj op abandon '..@-'
+
+# 3. Collect: jj removes the keep refs, then runs git gc itself.
+jj util gc --expire=now
+
+# 4. Verify
+git for-each-ref refs/jj/keep                      # the object is gone
+git rev-list --objects --all | grep -c '<path>/'   # 0
+du -sh .git
+```
+
+`..@-` abandons every operation before the current one. To keep recent history, abandon up to the operation that introduced the objects instead: `jj op abandon '..<op-id>'`.
+
+**Order matters in a co-located repo.** Run `git gc --prune=now` first and it deletes the objects while the operation log still references them. jj then recreates the keep ref during its next `jj util gc` and fails:
+
+```
+refs/jj/keep/<oid> does not point to a valid object!
+```
+
+Repair by deleting the dangling ref, then abandoning the operations that reference it:
+
+```bash
+git update-ref -d refs/jj/keep/<oid>
+jj op abandon '..@-'      # add --ignore-working-copy if the working-copy snapshot re-reads the ref
+jj util gc --expire=now
+```
+
+Delete only the dangling keep ref. Removing other `refs/jj/keep/*` entries drops commits jj still needs.
+
+Done when `git for-each-ref refs/jj/keep` no longer lists the object, `jj log -r @` works, and `.git` has dropped the paths.
+
 ## Caveats
 
 - **`jj git push` won't force-push by default.** It errors if the remote diverged. Use with care.
 - **Bookmarks don't auto-track.** Push explicitly with `--bookmark`; after a rebase the local and remote bookmark diverge until you push.
 - **Undo is cheap.** A wrong mutation is recoverable via `jj undo` / `jj op restore` — prefer fixing forward over aborting.
+- **`jj op abandon` is not undoable.** It discards operation history, so `jj undo` and `jj op restore` cannot reach anything from before the abandoned point. Bookmarks and the current view are untouched.
 - **`jj squash` opens an editor by default.** Pass `--message` to avoid it: `jj squash --into <rev> --message "<msg>"`.
 - **Anything that writes a description may open an editor.** `jj split`, `jj squash` and `jj describe` all do. Pass `-m/--message` where the command accepts it. Where it does not, set `EDITOR=true` — a bare command name resolved on `PATH`, *not* `/bin/true`, which does not exist on every system. Without a TTY the editor panics (`reader source not set`) and jj rolls the whole operation back, so the command appears to do nothing.
