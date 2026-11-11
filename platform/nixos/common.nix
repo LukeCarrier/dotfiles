@@ -12,7 +12,7 @@
       "/var/lib/nixos"
       "/var/lib/systemd"
       "/var/log"
-    ];
+    ] ++ lib.optional config.services.fprintd.enable "/var/lib/fprint";
     files = [
       "/etc/machine-id"
     ] ++ lib.optional (!config.systemd.sysusers.enable) "/etc/shadow"
