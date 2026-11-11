@@ -681,23 +681,25 @@ in
           # Password managers
           {
             matches = [
-              { app-id = "^1password$"; }
+              { app-id = "^com.onepassword.OnePassword$"; }
               { app-id = "^Bitwarden$"; }
             ];
             block-out-from = "screen-capture";
           }
           # 1Password prompts (SSH agent approval, unlock) — the prompt window has
           # the bare title "1Password", unlike the main app ("… — 1Password").
-          # niri can't anchor to the requesting app, so float it centred + focused.
+          # niri can't anchor to the requesting app, so float it centred. Don't
+          # focus it: a prompt grabbing focus while a key is held (or when the
+          # previous prompt closes mid-keypress) receives the stray Esc/Enter.
           {
             matches = [
               {
-                app-id = "^1password$";
+                app-id = "^com.onepassword.OnePassword$";
                 title = "^1Password$";
               }
             ];
             open-floating = true;
-            open-focused = true;
+            open-focused = false;
           }
           # Zoom auxiliary windows, excluding the main app and meeting window
           {
