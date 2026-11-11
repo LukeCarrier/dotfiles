@@ -41,10 +41,12 @@
         };
 
         signing = {
-          behavior = "own";
+          behavior = "drop";
           backend = "ssh";
           key = jjConfig.signing.key;
         };
+
+        revsets.git-sign-on-push = "~signed() & mine()";
 
         ui = {
           show-cryptographic-signatures = true;
