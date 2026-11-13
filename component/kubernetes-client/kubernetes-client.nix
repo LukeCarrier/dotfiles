@@ -17,15 +17,11 @@ let
     };
     context = rec {
       env = "KUBECTX";
-      optionCmdFish =
-        ''kubectl config get-contexts --output name | fzf --preview-window wrap --preview 'kubectl config view --output jsonpath=\'{.contexts[?(@.name == "{}")]}\''' --prompt "Kubernetes context (currently $''
-        + env
-        + '')"'';
       optionCmd =
-        ''kubectl config get-contexts --output name | fzf --preview-window wrap --preview 'kubectl config view --output jsonpath='{.contexts[?(@.name == "{}")]}''' --prompt "Kubernetes context (currently $''
+        ''kubectl config get-contexts --output name | fzf --preview-window wrap --preview 'kubectl config view --minify --context {}' --prompt "Kubernetes context (currently $''
         + env
         + '')"'';
-      setCmd = ''kubectl config use-context "$'' + env + ''"'';
+      setCmd = ''kubectl config use-context "$selected"'';
       value = "$1";
       valueFish = ''$argv[1]'';
     };
@@ -37,11 +33,15 @@ let
         name: options:
         ''
           kube-${name}() {
+            local selected
             if [[ -n "$1" ]]; then
-              export ${options.env}="${options.value}"
+              selected="${options.value}" || return
             else
-              export ${options.env}="$(${options.optionCmd})"
+              selected="$(${options.optionCmd})" || return
             fi
+            [[ -n "$selected" ]] || return 1
+            ${lib.optionalString (options ? setCmd) "${options.setCmd} || return"}
+            export ${options.env}="$selected"
             echo "Selected $''
         + options.env
         + ''
@@ -73,12 +73,16 @@ in
     name: options:
     lib.attrsets.nameValuePair "kube-${name}" {
       body = ''
+        set -l selected
         if test -n "$argv[1]"
-          export ${options.env}=${options.valueFish}
+          set selected ${options.valueFish}
         else
-          export ${options.env}=(${options.optionCmdFish or options.optionCmd})
+          set selected (${options.optionCmd})
         end
-        ${options.setCmd or ""}
+        or return $status
+        test -n "$selected"; or return 1
+        ${lib.optionalString (options ? setCmd) "${options.setCmd}; or return $status"}
+        export ${options.env}="$selected"
         echo "Selected $''
       + options.env
       + ''"'';
