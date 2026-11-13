@@ -784,18 +784,22 @@ in
       };
     };
 
-    # The upstream niri module writes config.kdl from `programs.niri.finalConfig`.
-    # It can't express the trackpoint scroll-factor (which we add ourselves via
-    # package/niri/pr-4382.patch), so inject that node into the generated input
-    # block.
+    # The upstream niri module writes config.kdl from `programs.niri.finalConfigFile`.
+    # Its schema can't express the trackpoint scroll-factor (which we add
+    # ourselves via package/niri/pr-4382.patch), so inject that node into the
+    # generated input block.
     xdg.configFile.niri-config = lib.mkForce {
       target = "niri/config.kdl";
-      source = pkgs.writeText "niri-config.kdl" (
-        lib.replaceStrings
-          [ ''mod-key "Super"'' ]
-          [ "    trackpoint {\n        scroll-factor 0.5\n    }\n    mod-key \"Super\"" ]
-          config.programs.niri.finalConfig
-      );
+      source = pkgs.runCommand "niri-config.kdl" { } ''
+        awk '
+          /^[[:space:]]*mod-key "Super"/ {
+            print "    trackpoint {"
+            print "        scroll-factor 0.5"
+            print "    }"
+          }
+          { print }
+        ' ${config.programs.niri.finalConfigFile} > $out
+      '';
     };
 
     programs.waybar.settings.mainBar = {
