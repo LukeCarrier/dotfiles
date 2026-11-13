@@ -21,6 +21,7 @@ in
     ../../platform/nixos/secure-boot.nix
     ../../platform/nixos/graphical.nix
     ../../platform/nixos/greeter/regreet.nix
+    ../../component/bootvine/nixos.nix
     ../../component/gnome-headless/nixos.nix
     ../../component/niri/nixos.nix
     ../../component/librepods/nixos.nix

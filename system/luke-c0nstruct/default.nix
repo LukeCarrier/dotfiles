@@ -26,6 +26,7 @@
     ../../platform/nixos/greeter/noctalia.nix
     ../../platform/nixos/containers.nix
     ../../platform/nixos/virt.nix
+    ../../component/bootvine/nixos.nix
     ../../component/gnome-headless/nixos.nix
     ../../employer/throwparty/nixos.nix
     ../../component/niri/nixos.nix

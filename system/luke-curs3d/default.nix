@@ -18,6 +18,7 @@
     ../../platform/nixos/cuda.nix
     ../../platform/nixos/graphical.nix
     ../../platform/nixos/greeter/regreet.nix
+    ../../component/bootvine/nixos.nix
     ../../component/gnome-headless/nixos.nix
     ../../component/librepods/nixos.nix
     ../../component/niri/nixos.nix
