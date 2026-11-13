@@ -16,10 +16,10 @@ recipients:
     - *me
     - *curs3d
     - *f1xable
-    - *fatman
   - &throwparty
     - *me
     - *c0nstruct
+    - *fatman
 creation_rules:
   - path_regex: ^secrets/employer-emed\.yaml$
     age: *emed
