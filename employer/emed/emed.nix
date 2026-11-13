@@ -41,6 +41,11 @@ let
       "x-scheme-handler/unknown"
     ];
   };
+  miniplatformRouting = pkgs.writeShellApplication {
+    name = "emed-mini-platform-routing";
+    runtimeInputs = [ pkgs.awscli2 pkgs.jq ];
+    text = builtins.readFile ./bin/emed-mini-platform-routing;
+  };
   selectMiniplatform = pkgs.writeShellScriptBin "emed-mini-platform" ''
     awsEksUpdateKubeconfig="${getExe' pkgs.aws-cli-tools "aws-eks-update-kubeconfig"}"
     fzf="${getExe pkgs.fzf}"
@@ -67,24 +72,18 @@ let
     printf 'export KUBECONFIG=%s\n' "$kubeconfig"
     printf '%s --region %s\n' "$awsEksUpdateKubeconfig" "$aws_region"
     if "$jq" -e 'type == "object" and (.clusters | type == "array")' <<< "$clusters" >/dev/null 2>&1; then
-      cluster_count="$("$jq" '.clusters | length' <<< "$clusters")"
-      if [[ "$cluster_count" == 1 ]]; then
-        cluster="$("$jq" -r '.clusters[0].name' <<< "$clusters")"
-      else
-        cluster="$("$jq" -r '[.clusters[] | select(.status == "stable")] | if length == 1 then .[0].name else empty end' <<< "$clusters")"
-        if [[ -n "$cluster" ]]; then
-          printf '(!) Multiple clusters are enabled in this region; selecting stable cluster %s\n' "$cluster" >&2
-        else
-          printf '(!) No unique stable cluster is available; select one with kubectl config use-context\n' >&2
-        fi
-      fi
-      if [[ -n "$cluster" ]]; then
-        printf 'kubectl config use-context %s' "$aws_profile--$cluster"
-      fi
-    elif [[ "$clusters" == *","* ]]; then
-      printf "(!) Multiple clusters are enabled in this region; select one with kubectl config use-context %s\n" "$clusters" >&2
+      cluster_names="$("$jq" '[.clusters[].name]' <<< "$clusters")"
     else
-      printf 'kubectl config use-context %s' "$aws_profile--$clusters"
+      cluster_names="$("$jq" -Rn --arg names "$clusters" '$names | split(",")')"
+    fi
+    printf 'Available clusters: %s\n' "$("$jq" -r 'join(", ")' <<< "$cluster_names")" >&2
+    if cluster="$(env AWS_PROFILE="$aws_profile" AWS_REGION="$aws_region" \
+        ${getExe miniplatformRouting} "$cluster_names")"; then
+      if [[ -n "$cluster" ]]; then
+        printf 'kubectl config use-context %s\n' "$aws_profile--$cluster"
+      fi
+    else
+      printf '(!) LB routing lookup failed; using the kubeconfig default. Select with kubectl config use-context\n' >&2
     fi
   '';
   emedHelmTemplate = pkgs.writeShellApplication {

@@ -1,0 +1,69 @@
+set -euo pipefail
+
+cluster_names="$1"
+target_groups="$(aws elbv2 describe-target-groups --output json)"
+groups="$(jq --argjson names "$cluster_names" '
+  [.TargetGroups[] | . as $group | $names[] as $cluster
+   | select($group.TargetGroupName == $cluster or $group.TargetGroupName == ($cluster + "-traefik"))
+   | {arn: .TargetGroupArn, cluster: $cluster, lbs: .LoadBalancerArns}]
+' <<< "$target_groups")"
+load_balancers="$(aws elbv2 describe-load-balancers --output json)"
+lbs="$(jq --argjson groups "$groups" '
+  [.LoadBalancers[]
+   | select(.Type == "application" and .Scheme == "internet-facing")
+   | select(.LoadBalancerArn as $arn | any($groups[].lbs[]; . == $arn))]
+' <<< "$load_balancers")"
+if [[ "$(jq length <<< "$lbs")" != 1 ]]; then
+  printf '(!) Cannot identify a unique public cluster ALB\n' >&2
+  exit 1
+fi
+
+lb_arn="$(jq -r '.[0].LoadBalancerArn' <<< "$lbs")"
+lb_name="$(jq -r '.[0].LoadBalancerName' <<< "$lbs")"
+listeners="$(aws elbv2 describe-listeners --load-balancer-arn "$lb_arn" --output json)"
+routes="$(jq --argjson groups "$groups" '
+  def targets:
+    if .ForwardConfig.TargetGroups then .ForwardConfig.TargetGroups
+    elif .TargetGroupArn then [{TargetGroupArn: .TargetGroupArn, Weight: 1}]
+    else [] end;
+  [.Listeners[] | select(any(.DefaultActions[]; .Type == "forward"))
+   | {listener: .ListenerArn, protocol: .Protocol, port: .Port,
+      targets: [.DefaultActions[] | select(.Type == "forward") | targets[]
+        | . as $target
+        | {arn: .TargetGroupArn, weight: (.Weight // 1),
+           cluster: ([$groups[] | select(.arn == $target.TargetGroupArn) | .cluster][0] // null)}]}]
+' <<< "$listeners")"
+
+printf 'ALB %s default routing (configured weights, not measured traffic):\n' "$lb_name" >&2
+jq -r '.[] | "  \(.protocol):\(.port): " +
+  ([.targets[] | "\(.cluster // .arn)=\(.weight)"] | join(", "))' <<< "$routes" >&2
+while IFS= read -r listener; do
+  rules="$(aws elbv2 describe-rules --listener-arn "$listener" --output json)"
+  jq -r '.Rules[] | select(.IsDefault == false) |
+    "  override rule \(.Priority): " +
+    ([.Conditions[] | if .Field == "http-header" then
+        "\(.HttpHeaderConfig.HttpHeaderName)=\(.HttpHeaderConfig.Values | join(","))"
+      else tojson end] | join(" AND ")) + " -> " +
+    ([.Actions[] | if .Type == "forward" then
+        (if .ForwardConfig.TargetGroups then
+           [.ForwardConfig.TargetGroups[] |
+             "\(.TargetGroupArn | split("/")[1])=\(.Weight // 1)"] | join(", ")
+         else .TargetGroupArn | split("/")[1] end)
+      else .Type end] | join(", "))' <<< "$rules" >&2
+done < <(jq -r '.[].listener' <<< "$routes")
+
+cluster="$(jq -r '
+  [.[] | [.targets[] | select(.weight > 0)]
+   | if length > 0 and all(.[]; .cluster != null) then
+       (map(.cluster) | unique | if length == 1 then .[0] else null end)
+     else null end] as $choices
+  | if ($choices | length) > 0 and all($choices[]; . != null)
+       and ($choices | unique | length) == 1
+    then $choices[0] else empty end
+' <<< "$routes")"
+if [[ -n "$cluster" ]]; then
+  printf 'Selecting %s: 100%% of configured default routing weight\n' "$cluster" >&2
+  printf '%s\n' "$cluster"
+else
+  printf '(!) Default routing is not 100%% on one cluster; using the kubeconfig default\n' >&2
+fi
