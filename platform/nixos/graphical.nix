@@ -25,11 +25,6 @@
   programs.vicinae.input-server.package = pkgs.vicinae;
 
   boot = {
-    plymouth = {
-      enable = true;
-      theme = "bgrt";
-    };
-
     consoleLogLevel = lib.mkDefault 0;
 
     kernelModules = [
@@ -40,7 +35,6 @@
 
     kernelParams = [
       "quiet"
-      "splash"
       "shell_on_fail"
       "loglevel=3"
       "rd.systemd.show_status=false"
