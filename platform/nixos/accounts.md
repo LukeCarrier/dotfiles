@@ -61,6 +61,16 @@ its password to activate: interactive SSH can use systemd's fallback-shell
 prompt after key authentication. Key-only unattended commands and SFTP should
 use an already activated home; an SSH key alone cannot activate it.
 
+## Garbage collection
+
+Profiles, Home Manager generations and direnv shells are kept alive by indirect
+GC roots under `/home/<user>`, which only exists while the home is active. Nix
+deletes roots whose target is missing and collects everything behind them, so
+`nix-gc.service` skips collection while any homed home is inactive, including
+the timer's catch-up run at boot. A registered home that never activates blocks
+automatic collection. Don't run `nix-collect-garbage` as root while a home is
+inactive.
+
 ## Verification
 
 The focused VM test covers fresh provisioning, adoption of a pre-staged home

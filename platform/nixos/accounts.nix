@@ -1,6 +1,19 @@
-{ config, lib, utils, ... }:
+{ config, lib, pkgs, utils, ... }:
 let
   cfg = config.dotfiles.accounts;
+  # ExecCondition semantics: 1 skips the run, 255 fails the unit.
+  requireActiveHomes = pkgs.writeShellApplication {
+    name = "nix-gc-require-active-homes";
+    runtimeInputs = [ config.systemd.package pkgs.jq ];
+    text = ''
+      homes=$(homectl list --json=short) || exit 255
+      inactive=$(jq -r '.[] | select(.state != "active") | "\(.name) (\(.state))"' <<<"$homes") || exit 255
+      if [[ -n $inactive ]]; then
+        printf 'Not collecting garbage; GC roots in these homes would be dropped as stale:\n%s\n' "$inactive"
+        exit 1
+      fi
+    '';
+  };
   # Rootless containers need subordinate IDs inside systemd's container range
   # (0x80000-0x6fff0000): homed UID-shifts home mounts to expose only that range
   # alongside the user's own IDs. Cross-check with `userdbctl` ("begin container
@@ -83,5 +96,16 @@ in
       })
     ];
     systemd.services.systemd-homed-activate.restartIfChanged = lib.mkIf config.services.homed.enable false;
+
+    # A homed home only exists at /home/<user> while it's active. Nix deletes
+    # indirect GC roots whose target is missing, then collects their closures,
+    # so collecting with an inactive home (e.g. nix-gc.timer catching up at
+    # boot, before login) destroys every Home Manager generation, profile and
+    # direnv root inside it.
+    systemd.services.nix-gc = lib.mkIf (config.nix.enable && config.services.homed.enable) {
+      wants = [ "systemd-homed.service" ];
+      after = [ "systemd-homed.service" ];
+      serviceConfig.ExecCondition = lib.getExe requireActiveHomes;
+    };
   };
 }
