@@ -12,6 +12,7 @@ in
 {
   imports = [
     inputs.niri.homeModules.niri
+    inputs.nirivana.homeManagerModules.default
     inputs.vicinae.homeManagerModules.default
     inputs.hex.homeManagerModules.default
     inputs.nix-flatpak.homeManagerModules.nix-flatpak
@@ -121,6 +122,38 @@ in
       '';
     });
     enabled = false;
+  };
+
+  services.nirivana = {
+    enable = true;
+
+    applications = {
+      # Flatpak apps record their sandbox executable, which does not exist on
+      # the host, so they need an explicit command.
+      bitwarden = {
+        command = [
+          "flatpak"
+          "run"
+          "com.bitwarden.desktop"
+        ];
+        policy = "per-window";
+      };
+      "org.mozilla.thunderbird" = {
+        command = [
+          "flatpak"
+          "run"
+          "org.mozilla.thunderbird"
+        ];
+        policy = "per-window";
+      };
+
+      # These apps open a new window per invocation, so one launch per recorded
+      # window restores their window count and workspaces.
+      firefox.policy = "per-window";
+      "com.mitchellh.ghostty".policy = "per-window";
+      "dev.zed.Zed".policy = "per-window";
+      "ai.opencode.desktop".policy = "per-window";
+    };
   };
 
   programs.home-manager.enable = true;
