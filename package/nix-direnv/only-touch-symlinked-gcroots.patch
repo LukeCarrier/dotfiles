@@ -1,0 +1,53 @@
+Only touch symlinked gcroots when refreshing them
+
+_nix_refresh_gcroots globs `${layout_dir}/flake-profile-*` and
+`${layout_dir}/nix-profile-*`, which also match the regular
+`flake-profile-<hash>.rc` / `nix-profile-<hash>.rc` cache files.
+`use_flake` and `use_nix` pass those `.rc` files to `watch_file` so that
+manual cache refreshes take effect. Touching them on every cache hit
+rewrites their mtime, so:
+
+  1. shell A loads the environment and records the `.rc` mtime;
+  2. any other evaluation (second shell, `direnv exec`, tooling) bumps
+     the `.rc` mtime;
+  3. shell A's next prompt sees a changed watch file and reloads, which
+     bumps the `.rc` mtime again;
+  4. shell B's next prompt sees the change and reloads, and so on.
+
+With more than one shell open this reloads on every prompt, forever.
+
+Only the symlinks are gcroots, so restrict the touch to those and keep
+the nh garbage-collection intent.
+
+Upstream removed the whole function in 94e4fe0 ("Don't refresh
+gcroots") because nh now offers `nh clean --keep-one`; this patch keeps
+the refresh until that reaches a nix-direnv release.
+
+diff --git a/direnvrc b/direnvrc
+index a96152b..c37a1c4 100644
+--- a/direnvrc
++++ b/direnvrc
+@@ -214,12 +214,19 @@ _nix_add_gcroot() {
+ _nix_refresh_gcroots() {
+   # Use touch to update all symlinks' timestamps to prevent nh
+   # from garbage collecting the frequently used direnv environment.
+-  local layout_dir
++  #
++  # Only symlinks are gcroots. The globs also match the regular `.rc`
++  # cache files that use_flake/use_nix pass to watch_file; touching
++  # those makes every shell reload on its next prompt, which touches
++  # them again and keeps all other shells reloading forever.
++  local layout_dir f
+   layout_dir=$(direnv_layout_dir)
+ 
+-  if ! touch -h "${layout_dir}"/flake-profile-* "${layout_dir}"/flake-inputs/* "${layout_dir}"/nix-profile-* 2>/dev/null; then
+-    _nix_direnv_warning "could not refresh gcroots; layout directory may be read-only"
+-  fi
++  for f in "${layout_dir}"/flake-profile-* "${layout_dir}"/flake-inputs/* "${layout_dir}"/nix-profile-*; do
++    if [[ -L $f ]]; then
++      touch -h "$f"
++    fi
++  done
+ }
+ 
+ _nix_clean_old_gcroots() {

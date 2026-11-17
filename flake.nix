@@ -258,6 +258,22 @@
               });
             })
             (final: prev: {
+              # nix-direnv 3.2.0 refreshes gcroots by touching
+              # `flake-profile-*`/`nix-profile-*`, which also matches the
+              # regular `*.rc` cache files that use_flake/use_nix pass to
+              # watch_file. Every shell load therefore invalidates every other
+              # shell's watch and they all reload on every prompt in a loop.
+              # Upstream deleted the function in 94e4fe0; keep the nh gcroot
+              # refresh but only touch the gcroots (symlinks).
+              nix-direnv = prev.nix-direnv.overrideAttrs (_: {
+                src = prev.nix-direnv.unresholved.overrideAttrs (old: {
+                  patches = (old.patches or [ ]) ++ [
+                    ./package/nix-direnv/only-touch-symlinked-gcroots.patch
+                  ];
+                });
+              });
+            })
+            (final: prev: {
               fwupd = prev.fwupd.overrideAttrs (old: {
                 mesonFlags = (old.mesonFlags or []) ++ [ "-Defi_app_location=/run/fwupd-efi" ];
               });
