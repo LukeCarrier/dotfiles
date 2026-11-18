@@ -331,6 +331,15 @@
                   gappsWrapperArgs+=(--set WEBKIT_DISABLE_DMABUF_RENDERER 0)
                 '';
               });
+              hex = hex.packages.${system}.hex.overrideAttrs (_: {
+                # rune_ui's history tests call labs::apply, which writes the
+                # process-global Labs gates. In parallel, another test can
+                # turn Dictation stats off between the frame that opens the
+                # dialog and the one that draws it, so the new stats dialog
+                # tests fail at random. Run the suite one test at a time
+                # until hex isolates those gates.
+                dontUseCargoParallelTests = true;
+              });
               niri = niri.packages.${system}.niri-unstable.overrideAttrs (old: {
                 patches = (old.patches or [ ]) ++ [
                   # niri-wm/niri#4382: column navigation with trackpoint swipe gestures.
