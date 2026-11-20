@@ -47,6 +47,8 @@ let
     text = builtins.readFile ./bin/emed-mini-platform-routing;
   };
   selectMiniplatform = pkgs.writeShellScriptBin "emed-mini-platform" ''
+    set -euo pipefail
+
     awsEksUpdateKubeconfig="${getExe' pkgs.aws-cli-tools "aws-eks-update-kubeconfig"}"
     fzf="${getExe pkgs.fzf}"
     jq="${getExe pkgs.jq}"
@@ -69,25 +71,26 @@ let
     clusters="$(env AWS_PROFILE="$aws_profile" AWS_REGION="$aws_region" aws ssm get-parameter \
         --name /eks/current_cluster --query Parameter.Value --output text)"
 
-    printf 'export EMED_PLATFORM_INTEGRATIONS=%s\n' "$platform_integrations"
-    printf 'export EMED_PLATFORM_SERVICES=%s\n' "$platform_services"
-    printf 'export AWS_PROFILE=%s\n' "$aws_profile"
-    printf 'export AWS_REGION=%s\n' "$aws_region"
-    printf 'export KUBECONFIG=%s\n' "$kubeconfig"
-    printf '%s --region %s\n' "$awsEksUpdateKubeconfig" "$aws_region"
     if "$jq" -e 'type == "object" and (.clusters | type == "array")' <<< "$clusters" >/dev/null 2>&1; then
       cluster_names="$("$jq" '[.clusters[].name]' <<< "$clusters")"
     else
       cluster_names="$("$jq" -Rn --arg names "$clusters" '$names | split(",")')"
     fi
     printf 'Available clusters: %s\n' "$("$jq" -r 'join(", ")' <<< "$cluster_names")" >&2
-    if cluster="$(env AWS_PROFILE="$aws_profile" AWS_REGION="$aws_region" \
+    if ! cluster="$(env AWS_PROFILE="$aws_profile" AWS_REGION="$aws_region" \
         ${getExe miniplatformRouting} "$cluster_names")"; then
-      if [[ -n "$cluster" ]]; then
-        printf 'kubectl config use-context %s\n' "$aws_profile--$cluster"
-      fi
-    else
       printf '(!) LB routing lookup failed; using the kubeconfig default. Select with kubectl config use-context\n' >&2
+      cluster=""
+    fi
+
+    printf 'export EMED_PLATFORM_INTEGRATIONS=%s\n' "$platform_integrations"
+    printf 'export EMED_PLATFORM_SERVICES=%s\n' "$platform_services"
+    printf 'export AWS_PROFILE=%s\n' "$aws_profile"
+    printf 'export AWS_REGION=%s\n' "$aws_region"
+    printf 'export KUBECONFIG=%s\n' "$kubeconfig"
+    printf '%s --region %s\n' "$awsEksUpdateKubeconfig" "$aws_region"
+    if [[ -n "$cluster" ]]; then
+      printf 'kubectl config use-context %s\n' "$aws_profile--$cluster"
     fi
   '';
   emedHelmTemplate = pkgs.writeShellApplication {
@@ -265,18 +268,23 @@ in
 
   programs.bash.initExtra = ''
     emed-mini-platform() {
-      eval "$(${getExe selectMiniplatform} "$@")"
+      local selection
+      selection="$(${getExe selectMiniplatform} "$@")" || return $?
+      eval "$selection"
     }
   '';
   programs.fish = {
     functions.emed-mini-platform = ''
-      ${getExe selectMiniplatform} "$argv" | source
+      set -l selection (${getExe selectMiniplatform} "$argv"); or return $status
+      string join \n -- $selection | source
     '';
     shellInit = "";
   };
   programs.zsh.initContent = ''
     emed-mini-platform() {
-      eval "$(${getExe selectMiniplatform} "$@")"
+      local selection
+      selection="$(${getExe selectMiniplatform} "$@")" || return $?
+      eval "$selection"
     }
   '';
 
