@@ -51,28 +51,28 @@ main() {
   local region="$(aws configure get region --profile "${profile}")"
   local start_url="$(aws configure get sso_start_url --profile "${profile}")"
 
-  local cache_key
-  if [[ -n "$start_url" ]]; then
-    # sso_start_url is defined directly in the profile
-    if (( $direct == 0 )); then
-      echo "$0: either use a separate sso-session node and sso_session property in profiles, or specify --direct" >&2
-      exit 1
+  local cache_key sso_session="$(aws configure get sso_session --profile "${profile}")"
+  local registration_scopes=
+  if [[ -n "$sso_session" ]]; then
+    if [[ -z "$start_url" ]]; then
+      start_url="$(sed -nr "/^\[sso-session[ ]*${sso_session}\]/ { :l /^sso_start_url[ ]*=/ { s/[^=]*=[ ]*//; p; q; }; n; b l; }" "$config")"
     fi
-    cache_key="$(printf "%s" "$start_url" | shasum -a 1 | awk '{print $1}')"
-  else
-    # sso_session might be defined in the profile
-    local sso_session="$(aws configure get sso_session --profile "${profile}")"
-    if [[ -z "$sso_session" ]]; then
-      echo "$0: failed to determine sso_start_url and sso_session for profile ${profile}" >&2
-      exit 1
-    fi
-    start_url="$(sed -nr "/^\[sso-session[ ]*${sso_session}\]/ { :l /^sso_start_url[ ]*=/ { s/[^=]*=[ ]*//; p; q; }; n; b l; }" "$config")"
     if [[ -z "$start_url" ]]; then
       echo "$0: failed to determine sso_start_url for profile ${profile}" >&2
       exit 1
     fi
-    # Use the session name as the cache key, idk why they do this
     cache_key="$(printf "%s" "$sso_session" | shasum -a 1 | awk '{print $1}')"
+    if (( $direct == 0 )); then
+      registration_scopes="$(aws configure get sso_registration_scopes --sso-session "$sso_session" || true)"
+    fi
+  elif [[ -n "$start_url" ]]; then
+    cache_key="$(printf "%s" "$start_url" | shasum -a 1 | awk '{print $1}')"
+    sso_session="${start_url#*://}"
+    sso_session="${sso_session%%[/:?#]*}"
+    registration_scopes="sso:account:access"
+  else
+    echo "$0: failed to determine sso_start_url and sso_session for profile ${profile}" >&2
+    exit 1
   fi
   echo "$0: using cached credential ${cache_key}" >&2
 
@@ -102,6 +102,14 @@ main() {
       "$workdir/$dest_account_index" &
   done < <(printf "%s" "$accounts" | jq -r '.accountList | to_entries[] | [.key, .value.accountId, .value.accountName] | @tsv')
   wait
+
+  if (( $direct == 0 )); then
+    printf '[sso-session %s]\nsso_start_url = %s\nsso_region = %s\n' "$sso_session" "$start_url" "$sso_region"
+    if [[ -n "$registration_scopes" ]]; then
+      printf 'sso_registration_scopes = %s\n' "$registration_scopes"
+    fi
+    printf '\n'
+  fi
 
   # Collect every worker's stanzas, sort them (by profile name, since that heads
   # each NUL-terminated record) and emit, one blank line between stanzas.
