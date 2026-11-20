@@ -53,8 +53,12 @@ let
     yq="${getExe pkgs.yq-go}"
     platforms="$HOME/.config/emed/miniplatforms.yaml"
 
-    index="$("$yq" eval -r '. | keys[]' "$platforms" | \
-      "$fzf" --preview "'$yq' eval '.[\"{}\"]' '$platforms'")"
+    if [[ $# -gt 0 ]]; then
+      index="$1"
+    else
+      index="$("$yq" eval -r '. | keys[]' "$platforms" | \
+        "$fzf" --preview "'$yq' eval '.[\"{}\"]' '$platforms'")"
+    fi
     platform_integrations="$("$yq" eval -r ".$index.emed.platformIntegrations" "$platforms")"
     platform_services="$("$yq" eval -r ".$index.emed.platformServices" "$platforms")"
     aws_profile="$("$yq" eval -r ".$index.aws.profile" "$platforms")"
@@ -261,18 +265,18 @@ in
 
   programs.bash.initExtra = ''
     emed-mini-platform() {
-      eval "$(${getExe selectMiniplatform})"
+      eval "$(${getExe selectMiniplatform} "$@")"
     }
   '';
   programs.fish = {
     functions.emed-mini-platform = ''
-      ${getExe selectMiniplatform} | source
+      ${getExe selectMiniplatform} "$argv" | source
     '';
     shellInit = "";
   };
   programs.zsh.initContent = ''
     emed-mini-platform() {
-      eval "$(${getExe selectMiniplatform})"
+      eval "$(${getExe selectMiniplatform} "$@")"
     }
   '';
 
