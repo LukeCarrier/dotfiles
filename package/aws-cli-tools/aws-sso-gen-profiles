@@ -100,24 +100,27 @@ main() {
     done
     process_account "$dest_account_index" "$dest_account_id" "$dest_account_name" \
       "$workdir/$dest_account_index" &
-  done < <(printf "%s" "$accounts" | jq -r '.accountList | to_entries[] | [.key, .value.accountId, .value.accountName] | @tsv')
+  done < <(printf "%s" "$accounts" | jq -r '.accountList | sort_by([(.accountName | gsub("[[:space:]]"; "-")), .accountId]) | to_entries[] | [.key, .value.accountId, .value.accountName] | @tsv')
   wait
 
+  # Sort profiles within each account, separating only non-empty accounts.
+  local first_account=1
   if (( $direct == 0 )); then
     printf '[sso-session %s]\nsso_start_url = %s\nsso_region = %s\n' "$sso_session" "$start_url" "$sso_region"
     if [[ -n "$registration_scopes" ]]; then
       printf 'sso_registration_scopes = %s\n' "$registration_scopes"
     fi
-    printf '\n'
+    first_account=0
   fi
-
-  # Collect every worker's stanzas, sort them (by profile name, since that heads
-  # each NUL-terminated record) and emit, one blank line between stanzas.
-  shopt -s nullglob
-  files=("$workdir"/*)
-  if [ ${#files[@]} -gt 0 ]; then
-    cat "$workdir"/* | sort -z | awk 'BEGIN { RS = "\0"; ORS = "\n\n" } length'
-  fi
+  for (( i = 0; i < num_accounts; i++ )); do
+    if [[ -s "$workdir/$i" ]]; then
+      if (( ! first_account )); then
+        printf '\n'
+      fi
+      sort -z "$workdir/$i" | awk 'BEGIN { RS = "\0"; ORS = "\n" } length'
+      first_account=0
+    fi
+  done
   
   rm -rf "$workdir"
 }
