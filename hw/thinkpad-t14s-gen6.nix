@@ -14,6 +14,26 @@ let
     meta = old.meta // { broken = false; };
   });
 
+  # Deauthorise the Goodix 27c6:6594 fingerprint reader while the lid is shut.
+  # greetd substacks login, which runs pam_fprintd ahead of pam_unix, and the
+  # module blocks for up to 30s waiting for a finger that cannot reach the
+  # sensor in clamshell. With the interface deauthorised fprintd reports no
+  # device and PAM falls through to the password prompt immediately.
+  lidFprint = pkgs.writeShellScriptBin "t14s-gen6-lid-fprint" ''
+    AUTH_PATH="/sys/bus/usb/devices/3-7:1.0/authorized"
+    LID_PATH="/proc/acpi/button/lid/LID/state"
+
+    lid="$(cat "$LID_PATH")"
+    lid="''${lid##* }"
+
+    auth="0"
+    if [[ "$lid" == "open" ]]; then
+      auth="1"
+    fi
+
+    echo "$auth" >"$AUTH_PATH"
+  '';
+
   platformProfileSync = pkgs.writeShellScriptBin "platform-profile-sync" ''
     profile="$(${powerprofilesctl} get 2>/dev/null)" || exit 0
     case "$profile" in
@@ -79,6 +99,7 @@ in
 
   services.acpid = {
     enable = true;
+    lidEventCommands = ''${getExe lidFprint}'';
   };
 
   # Without a daemon owning the ACPI platform profile, the firmware leaves it
