@@ -72,6 +72,51 @@ let
       done
     done
   '';
+  slackHuddleTiler = pkgs.writeShellScriptBin "niri-slack-huddle-tiler" ''
+    set -o pipefail
+    declare -A previews=()
+
+    ${niri} msg --json event-stream | \
+    ${getExe' pkgs.jq "jq"} --unbuffered -r '
+      def slack_window:
+        select(.app_id == "com.slack.Slack" and .title != null)
+        | if .title == "Slack – Huddle preview" then
+            [.id, "preview"]
+          elif (.title | test("^.+ - .+ - Slack$")) then
+            [.id, "joined"]
+          else
+            empty
+          end
+        | @tsv;
+
+      if .WindowsChanged then
+        .WindowsChanged.windows[] | slack_window
+      elif .WindowOpenedOrChanged then
+        .WindowOpenedOrChanged.window | slack_window
+      elif .WindowClosed then
+        [.WindowClosed.id, "closed"] | @tsv
+      else
+        empty
+      end
+    ' | while IFS=$'\t' read -r id event; do
+      case "$event" in
+        preview)
+          previews["$id"]=1
+          ;;
+        joined)
+          if [[ -v "previews[$id]" ]]; then
+            unset 'previews[$id]'
+            if ${niri} msg action move-window-to-tiling --id "$id"; then
+              ${niri} msg action reset-window-height --id "$id"
+            fi
+          fi
+          ;;
+        closed)
+          unset 'previews[$id]'
+          ;;
+      esac
+    done
+  '';
   urgent-color = "#ff0000";
   mainMod = "Super";
   moveMod = "Shift";
@@ -166,6 +211,20 @@ in
         Install.WantedBy = [ "graphical-session.target" ];
         Service = {
           ExecStart = "${getExe zoomOverlayPositioner}";
+          Restart = "on-failure";
+          RestartSec = "2";
+          Type = "exec";
+        };
+      };
+
+      niri-slack-huddle-tiler = {
+        Unit = {
+          Description = "Tile Slack huddles after the preview";
+          After = [ "niri.service" ];
+        };
+        Install.WantedBy = [ "graphical-session.target" ];
+        Service = {
+          ExecStart = "${getExe slackHuddleTiler}";
           Restart = "on-failure";
           RestartSec = "2";
           Type = "exec";
@@ -643,7 +702,6 @@ in
         ];
         window-rules = [
           {
-            open-floating = false;
             open-fullscreen = false;
             open-maximized = false;
             # open-maximized-to-edges = false;
@@ -655,6 +713,14 @@ in
               bottom-left = 8.0;
               bottom-right = 8.0;
             };
+          }
+          # Let niri auto-float fixed-size 1Password prompts and Slack overlays.
+          {
+            excludes = [
+              { app-id = "^com.onepassword.OnePassword$"; }
+              { app-id = "^com.slack.Slack$"; }
+            ];
+            open-floating = false;
           }
           # Splash screens
           {
@@ -686,10 +752,9 @@ in
             ];
             block-out-from = "screen-capture";
           }
-          # 1Password prompts (SSH agent approval, unlock) — the prompt window has
-          # the bare title "1Password", unlike the main app ("… — 1Password").
-          # niri can't anchor to the requesting app, so float it centred. Don't
-          # focus it: a prompt grabbing focus while a key is held (or when the
+          # 1Password prompts use the bare title "1Password". The main window
+          # may also have this title initially and match before its title changes.
+          # Don't focus it: a prompt grabbing focus while a key is held (or when the
           # previous prompt closes mid-keypress) receives the stray Esc/Enter.
           {
             matches = [
@@ -698,8 +763,32 @@ in
                 title = "^1Password$";
               }
             ];
-            open-floating = true;
             open-focused = false;
+          }
+          # Slack changes the huddle preview title after opening.
+          {
+            matches = [
+              {
+                app-id = "^com.slack.Slack$";
+                title = "^Slack – Huddle preview$";
+              }
+            ];
+            open-floating = true;
+          }
+          # Slack's screen-sharing bar opens as a fixed-size floating window.
+          {
+            matches = [
+              {
+                app-id = "^com.slack.Slack$";
+                title = "^Slack$";
+              }
+            ];
+            open-focused = false;
+            default-floating-position = {
+              x = 0;
+              y = 24;
+              relative-to = "bottom";
+            };
           }
           # Zoom auxiliary windows, excluding the main app and meeting window
           {
@@ -714,7 +803,6 @@ in
           # PiP overlays
           {
             matches = [
-              { title = "^Slack$"; }
               { title = " is sharing your screen.$"; }
               { title = "^Picture-in-Picture$"; }
               {
