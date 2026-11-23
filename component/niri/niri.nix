@@ -794,7 +794,7 @@ in
           {
             matches = [ { app-id = "^(zoom|us.zoom.Zoom)$"; } ];
             excludes = [
-              { title = "^Zoom Workplace - "; }
+              { title = "^Zoom Workplace($| - )"; }
               { title = "^Meeting$"; }
             ];
             open-floating = true;
