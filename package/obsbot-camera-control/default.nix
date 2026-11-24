@@ -31,6 +31,7 @@ let
     hash = "sha256-Q9Y+TpD0W0CdFYrDNfi5CvF9crViCiSzc+nJUBh6MGI=";
   };
 
+  patches = [ ./fit-tab-to-current-page.patch ];
   obsbot-sdk = stdenv.mkDerivation {
     pname = "obsbot-sdk";
     version = "1.3.0";
@@ -61,7 +62,7 @@ let
     pname = "obsbot-camera-control";
     version = "1.3.0";
 
-    inherit src;
+    inherit src patches;
 
     # Required for autoPatchelfHook to resolve libstdc++.so.6 and libgcc_s.so.1
     buildInputs = [ stdenv.cc.cc obsbot-sdk ] ++ commonBuildInputs;

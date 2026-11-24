@@ -1,0 +1,83 @@
+diff --git a/src/gui/MainWindow.cpp b/src/gui/MainWindow.cpp
+index f04e8d9..6f57d87 100644
+--- a/src/gui/MainWindow.cpp
++++ b/src/gui/MainWindow.cpp
+@@ -403,16 +403,10 @@ void MainWindow::setupUI()
+     m_effectsWidget->reset();
+ 
+     // Resize tab widget to fit the current tab (QTabWidget normally sizes to the tallest)
+-    auto fitTabToCurrentPage = [this]() {
+-        QWidget *page = m_tabWidget->currentWidget();
+-        if (!page) return;
+-        m_tabWidget->setMaximumHeight(
+-            page->sizeHint().height() + m_tabWidget->tabBar()->sizeHint().height());
+-    };
+-    connect(m_tabWidget, &QTabWidget::currentChanged, this, [fitTabToCurrentPage](int) {
++    connect(m_tabWidget, &QTabWidget::currentChanged, this, [this](int) {
+         fitTabToCurrentPage();
+     });
+-    QTimer::singleShot(0, this, fitTabToCurrentPage);
++    QTimer::singleShot(0, this, &MainWindow::fitTabToCurrentPage);
+ 
+     QGroupBox *virtualCameraGroup = new QGroupBox(tr("Virtual Camera"), scrollContent);
+     QVBoxLayout *virtualLayout = new QVBoxLayout(virtualCameraGroup);
+@@ -1063,6 +1057,39 @@ void MainWindow::onStateChanged(const CameraController::CameraState &state)
+     // Update all widgets with new state
+     m_trackingWidget->updateFromState(state);
+     m_settingsWidget->updateFromState(state);
++
++    fitTabToCurrentPage();
++}
++
++void MainWindow::fitTabToCurrentPage()
++{
++    QWidget *page = m_tabWidget->currentWidget();
++    if (!page) return;
++
++    // Cached size hints go stale when children are shown/hidden; rebuild them
++    // before measuring.
++    const auto children = page->findChildren<QWidget *>();
++    for (QWidget *child : children) {
++        if (child->layout()) child->layout()->invalidate();
++    }
++    if (page->layout()) {
++        page->layout()->invalidate();
++        page->layout()->activate();
++    }
++    page->updateGeometry();
++
++    const int pageHeight = qMax(page->sizeHint().height(), page->minimumSizeHint().height());
++    m_tabWidget->setMaximumHeight(pageHeight + m_tabWidget->tabBar()->sizeHint().height());
++
++    // Visibility changes are applied lazily; measure again once they settle.
++    if (!m_tabFitPending) {
++        m_tabFitPending = true;
++        QTimer::singleShot(0, this, [this]() {
++            fitTabToCurrentPage();
++        });
++    } else {
++        m_tabFitPending = false;
++    }
+ }
+ 
+ void MainWindow::onCommandFailed(const QString &description, int errorCode)
+diff --git a/src/gui/MainWindow.h b/src/gui/MainWindow.h
+index b8427a1..4a96c33 100644
+--- a/src/gui/MainWindow.h
++++ b/src/gui/MainWindow.h
+@@ -46,6 +46,7 @@ private slots:
+     void onCommandFailed(const QString &description, int errorCode);
+     void updateStatus();
+     void onStateChangedSaveConfig();
++    void fitTabToCurrentPage();
+     void onTogglePreview(bool enabled);
+     void onDetachPreviewToggled(bool checked);
+     void onPreviewStarted();
+@@ -102,6 +103,7 @@ private:
+     QLabel *m_previewPlaceholder;
+     QFrame *m_controlCard;
+     QTabWidget *m_tabWidget;
++    bool m_tabFitPending = false;
+     QFrame *m_statusBanner;
+     QHBoxLayout *m_mainLayout;
+     QCheckBox *m_virtualCameraCheckbox;
