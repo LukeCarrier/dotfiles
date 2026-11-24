@@ -6,6 +6,7 @@
 }:
 let
   body = name: builtins.readFile (./agent + "/${name}.md");
+  reviewBody = name: body name + "\n\n" + body "review-context";
   adrBody = name: builtins.readFile (./adr + "/${name}.md");
 
   featureParams = [
@@ -515,7 +516,7 @@ in
       description = "Architecture Reviewer";
       mode = "subagent";
       temperature = 0.1;
-      body = body "archie";
+      body = reviewBody "archie";
       permission = reviewPermissions;
     };
 
@@ -523,7 +524,7 @@ in
       description = "Operations Engineer";
       mode = "subagent";
       temperature = 0.1;
-      body = body "ollie";
+      body = reviewBody "ollie";
       permission = reviewPermissions;
     };
 
@@ -531,7 +532,7 @@ in
       description = "Product Reviewer";
       mode = "subagent";
       temperature = 0.1;
-      body = body "paige";
+      body = reviewBody "paige";
       permission = reviewPermissions;
     };
 
@@ -539,7 +540,7 @@ in
       description = "QA Engineer";
       mode = "subagent";
       temperature = 0.1;
-      body = body "quest";
+      body = reviewBody "quest";
       permission = reviewPermissions;
     };
 
@@ -547,7 +548,7 @@ in
       description = "Security Engineer";
       mode = "subagent";
       temperature = 0.1;
-      body = body "scout";
+      body = reviewBody "scout";
       permission = reviewPermissions;
     };
   };
