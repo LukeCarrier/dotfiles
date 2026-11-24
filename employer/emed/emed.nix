@@ -214,9 +214,7 @@ in
   };
 
   programs.mcp.servers = {
-    atlassian = {
-      url = "https://mcp.atlassian.com/v1/mcp";
-    };
+    atlassian.url = "https://mcp.atlassian.com/v2/mcp";
 
     coralogix-uk-nonprod.command = lib.getExe (pkgs.writeShellApplication {
       name = "mcp-coralogix-uk-nonprod";
