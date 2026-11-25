@@ -63,6 +63,11 @@
       url = "github:numtide/flake-utils";
       inputs.systems.follows = "systems";
     };
+    handoff = {
+      url = "github:xatuke/handoff";
+      inputs.flake-utils.follows = "flake-utils";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
     handy = {
       url = "github:cjpais/handy";
       inputs = {
@@ -193,6 +198,7 @@
       disko,
       emed-nix,
       flake-utils,
+      handoff,
       handy,
       hex,
       home-manager,
@@ -244,6 +250,15 @@
             code-insiders.overlays.default
             compass.overlays.default
             dagger.overlays.default
+            handoff.overlays.default
+            (final: prev: {
+              airpods-handoff = prev.airpods-handoff.overrideAttrs (old: {
+                patches = (old.patches or [ ]) ++ [
+                  ./package/airpods-handoff/pr-5.patch
+                  ./package/airpods-handoff/refresh-audio-device.patch
+                ];
+              });
+            })
             niri.overlays.niri
             nix-vscode-extensions.overlays.default
             nur.overlays.default
@@ -252,7 +267,10 @@
             wpaperd.overlays.default
             (final: prev: {
               wpaperd = prev.wpaperd.overrideAttrs (old: {
-                cargoBuildFlags = (old.cargoBuildFlags or [ ]) ++ [ "--features" "wpaperd/avif" ];
+                cargoBuildFlags = (old.cargoBuildFlags or [ ]) ++ [
+                  "--features"
+                  "wpaperd/avif"
+                ];
                 nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ prev.rust-jemalloc-sys ];
                 buildInputs = (old.buildInputs or [ ]) ++ [ prev.dav1d ];
               });
@@ -303,16 +321,11 @@
               });
               ashell = ashell.packages.${system}.default;
               # NixOS/nixpkgs#535887
-              cantarell-fonts =
-                prev.cantarell-fonts.overrideAttrs (old: {
-                  nativeBuildInputs = map (
-                    drv:
-                    if (drv.pname or null) == "afdko" then
-                      prev.python3.pkgs.afdko
-                    else
-                      drv
-                  ) old.nativeBuildInputs;
-                });
+              cantarell-fonts = prev.cantarell-fonts.overrideAttrs (old: {
+                nativeBuildInputs = map (
+                  drv: if (drv.pname or null) == "afdko" then prev.python3.pkgs.afdko else drv
+                ) old.nativeBuildInputs;
+              });
 
               handy = handy.packages.${system}.handy.overrideAttrs (old: {
                 # cargoUseSystemLibs (cargo-setup-hook.sh) exports

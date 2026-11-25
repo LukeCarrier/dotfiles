@@ -638,6 +638,29 @@
         "type": "github"
       }
     },
+    "handoff": {
+      "inputs": {
+        "flake-utils": [
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "nixpkgs-unstable"
+        ]
+      },
+      "locked": {
+        "lastModified": 1763671675,
+        "narHash": "sha256-MzYhN1iMSKJyVI7R0TTXXRNHzS2X6s66z5v5HvK8EMQ=",
+        "owner": "xatuke",
+        "repo": "handoff",
+        "rev": "4568bde6f19efe480bdc0e26058f49998bb58912",
+        "type": "github"
+      },
+      "original": {
+        "owner": "xatuke",
+        "repo": "handoff",
+        "type": "github"
+      }
+    },
     "handy": {
       "inputs": {
         "bun2nix": "bun2nix",
@@ -1480,6 +1503,7 @@
         "disko": "disko",
         "emed-nix": "emed-nix",
         "flake-utils": "flake-utils_3",
+        "handoff": "handoff",
         "handy": "handy",
         "hex": "hex",
         "home-manager": "home-manager",

@@ -24,7 +24,7 @@ in
     ../../component/bootvine/nixos.nix
     ../../component/gnome-headless/nixos.nix
     ../../component/niri/nixos.nix
-    ../../component/librepods/nixos.nix
+    ../../component/airpods-handoff/nixos.nix
     ../../component/minikube/nixos.nix
     ../../platform/nixos/containers.nix
     ../../platform/nixos/virt.nix

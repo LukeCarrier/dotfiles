@@ -1,0 +1,70 @@
+diff --git a/media/mediacontroller.cpp b/media/mediacontroller.cpp
+index f7c9529..ce408fd 100644
+--- a/media/mediacontroller.cpp
++++ b/media/mediacontroller.cpp
+@@ -3,10 +3,7 @@
+ MediaController::MediaController(const QString &deviceMac, QObject *parent)
+     : QObject(parent), deviceMac(deviceMac)
+ {
+-    cardName = PulseAudio::getCardForDevice(deviceMac);
+-    sinkName = PulseAudio::getSinkForDevice(deviceMac);
+-    std::cout << "[" << getTimestamp().toStdString() << "] [Media] Card name: " << cardName.toStdString() << std::endl;
+-    std::cout << "[" << getTimestamp().toStdString() << "] [Media] Sink name: " << sinkName.toStdString() << std::endl;
++    refreshAudioDevice();
+ 
+     // Monitor MPRIS for media playback state changes
+     QDBusConnection::sessionBus().connect(
+@@ -19,8 +16,23 @@ MediaController::MediaController(const QString &deviceMac, QObject *parent)
+         SLOT(onPropertiesChanged(QString,QVariantMap,QStringList)));
+ }
+ 
++void MediaController::refreshAudioDevice()
++{
++    const QString newCardName = PulseAudio::getCardForDevice(deviceMac);
++    const QString newSinkName = PulseAudio::getSinkForDevice(deviceMac);
++
++    if (newCardName != cardName || newSinkName != sinkName) {
++        cardName = newCardName;
++        sinkName = newSinkName;
++        std::cout << "[" << getTimestamp().toStdString() << "] [Media] Card name: " << cardName.toStdString() << std::endl;
++        std::cout << "[" << getTimestamp().toStdString() << "] [Media] Sink name: " << sinkName.toStdString() << std::endl;
++    }
++}
++
+ void MediaController::reclaimAudioStream()
+ {
++    refreshAudioDevice();
++
+     if (sinkName.isEmpty()) {
+         std::cerr << "[" << getTimestamp().toStdString() << "] [Media] No sink name, falling back to profile cycling" << std::endl;
+         cycleProfiles();
+@@ -54,6 +66,8 @@ void MediaController::reclaimAudioStream()
+ 
+ void MediaController::cycleProfiles()
+ {
++    refreshAudioDevice();
++
+     if (cardName.isEmpty()) {
+         std::cerr << "[" << getTimestamp().toStdString() << "] [Media] No card name, cannot cycle profiles" << std::endl;
+         return;
+@@ -114,6 +128,8 @@ bool MediaController::isMediaPlaying()
+ 
+ bool MediaController::hasActiveAudio()
+ {
++    refreshAudioDevice();
++
+     if (sinkName.isEmpty()) {
+         std::cout << "[" << getTimestamp().toStdString() << "] [Media] No sink name, can't check for active audio" << std::endl;
+         return false;
+diff --git a/media/mediacontroller.h b/media/mediacontroller.h
+index e63ca69..8b0aaec 100644
+--- a/media/mediacontroller.h
++++ b/media/mediacontroller.h
+@@ -38,6 +38,7 @@ private slots:
+     void onPropertiesChanged(const QString &interface, const QVariantMap &changed, const QStringList &invalidated);
+ 
+ private:
++    void refreshAudioDevice();
+     QString deviceMac;
+     QString cardName;
+     QString sinkName;

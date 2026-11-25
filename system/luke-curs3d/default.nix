@@ -20,7 +20,7 @@
     ../../platform/nixos/greeter/regreet.nix
     ../../component/bootvine/nixos.nix
     ../../component/gnome-headless/nixos.nix
-    ../../component/librepods/nixos.nix
+    ../../component/airpods-handoff/nixos.nix
     ../../component/niri/nixos.nix
     ../../component/niri/nvidia.nix
     ../../platform/nixos/containers.nix

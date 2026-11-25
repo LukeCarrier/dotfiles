@@ -31,7 +31,7 @@
     ../../component/gnome-headless/nixos.nix
     ../../employer/emed/nixos.nix
     ../../component/niri/nixos.nix
-    ../../component/librepods/nixos.nix
+    ../../component/airpods-handoff/nixos.nix
     ../../component/1password/nixos.nix
     ../../component/gnome-network-displays/gnome-network-displays.nix
   ];
